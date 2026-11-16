@@ -38,6 +38,10 @@ extension KeyboardShortcuts.Name {
 /// Handlers run on the main thread, because the package delivers hotkey
 /// events through Carbon on the main run loop. Keep the closures quick, and
 /// do any slow work after they return.
+///
+/// The class is `@MainActor` because the KeyboardShortcuts calls it makes
+/// are main-actor isolated in the package's current version.
+@MainActor
 final class HotkeyManager {
     /// The one manager for the whole app.
     static let shared = HotkeyManager()
