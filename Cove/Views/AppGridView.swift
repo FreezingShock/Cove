@@ -74,8 +74,20 @@ struct AppGridView: View {
     /// The icon that has keyboard focus, if any. Arrow keys move it.
     @FocusState private var focusedApp: AppItem.ID?
 
+    /// The bucket the grid is filtered to. Nil shows every app.
+    /// Starts on the last bucket used when "Remember last category" is on.
+    @State private var category: AppCategory? = CoveSettings.startingCategory
+    /// Spotlight file matches for the query, shown under the search field.
+    @State private var fileSearch = FileSearch()
+
     /// Column count from Settings > Grid (5 to 9, default 7).
     @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
+    /// Settings > General and Search. Read here so each change applies at once.
+    @AppStorage(CoveSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
+    @AppStorage(CoveSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
+    @AppStorage(CoveSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
+    @AppStorage(CoveSettings.Key.searchIncludesFiles.rawValue) private var searchIncludesFiles = true
+    @AppStorage(CoveSettings.Key.searchFileResultCount.rawValue) private var fileResultCount = 5
 
     /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
     private var columns: [GridItem] {
@@ -92,8 +104,13 @@ struct AppGridView: View {
 
     /// True when the query has something other than spaces in it.
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
-    /// The apps to show: all of them, or the matches best-first.
-    private var shownApps: [AppItem] { AppSearch.results(for: query, in: library.apps) }
+    /// The apps to show. Searching looks through every app, since the category
+    /// bar is hidden then. Otherwise the grid shows the selected bucket.
+    /// Matches come back best-first.
+    private var shownApps: [AppItem] {
+        let pool = isSearching ? library.apps : AppCategory.filter(library.apps, by: category)
+        return AppSearch.results(for: query, in: pool)
+    }
     /// The best match. Return opens it. Only exists while searching.
     private var topHit: AppItem? { isSearching ? shownApps.first : nil }
 
@@ -118,12 +135,18 @@ struct AppGridView: View {
                     isFocused: $searchFocused,
                     topHit: topHit,
                     matchCount: shownApps.count,
+                    files: fileSearch.results,
                     onOpenTopHit: openTopHit,
+                    onOpenFile: openFile,
+                    onRevealFile: revealFile,
                     onDown: enterGrid
                 )
                 .padding(.bottom, CoveSpace.xl)
-                // HOOK (T3.3, categories): CategoryBar goes here, with
-                // isFaded: isSearching, so it fades out while typing.
+
+                // Fades out while typing, so the search results take its place.
+                // It keeps its space, so the grid below does not jump.
+                CategoryBar(selection: $category, isFaded: isSearching)
+                    .padding(.bottom, CoveSpace.l)
 
                 content
             }
@@ -137,8 +160,18 @@ struct AppGridView: View {
         // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
         // Typing again returns keyboard focus to the field from the grid.
-        .onChange(of: query) { _, _ in
+        .onChange(of: query) { _, newQuery in
             focusedApp = nil
+            // Zero when the setting is off, which clears the file rows.
+            fileSearch.update(
+                query: newQuery,
+                resultCount: searchIncludesFiles ? fileResultCount : 0
+            )
+        }
+        .onChange(of: category) { _, newCategory in
+            if rememberLastCategory {
+                CoveSettings.saveLastCategory(newCategory)
+            }
         }
         // Keys are handled here on the root so they work from the field and
         // from any icon. Each handler returns .ignored when it doesn't apply,
@@ -166,7 +199,7 @@ struct AppGridView: View {
             if library.hasScanned {
                 Text(isSearching
                      ? "\(shownApps.count) of \(library.apps.count)"
-                     : "\(library.apps.count) apps")
+                     : "\(shownApps.count) apps")
                     .font(CoveFont.section)
                     .foregroundStyle(CoveText.secondary(contrast))
             }
@@ -228,13 +261,32 @@ struct AppGridView: View {
 
     // MARK: Actions
 
-    /// Launches an app and closes the overlay, so the next open starts fresh.
-    /// The overlay hides first, then the app opens (spec: Launch).
-    private func launch(_ app: AppItem) {
+    /// Clears the search and closes the overlay, when "Close after launch" is on.
+    /// The overlay hides first, then the app or file opens (spec: Launch).
+    private func closeAfterAction() {
+        guard closeAfterLaunch else { return }
         query = ""
         focusedApp = nil
         dismissOverlay()
+    }
+
+    /// Launches an app. The overlay closes first if the setting is on, so the
+    /// next open starts fresh.
+    private func launch(_ app: AppItem) {
+        closeAfterAction()
         AppLauncher.launch(app)
+    }
+
+    /// A tap on a file row: open the file with its default app.
+    private func openFile(_ file: FileItem) {
+        closeAfterAction()
+        file.open()
+    }
+
+    /// Cmd+Return in the field: select the file in a Finder window.
+    private func revealFile(_ file: FileItem) {
+        closeAfterAction()
+        file.revealInFinder()
     }
 
     /// Return in the field, or a tap on the top-hit row: open the top hit.
@@ -291,7 +343,7 @@ struct AppGridView: View {
 
     /// Escape clears the field first. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
-        if isSearching {
+        if isSearching && escapeClearsSearchFirst {
             query = ""
             focusedApp = nil
             searchFocused = true

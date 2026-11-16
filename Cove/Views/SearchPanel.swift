@@ -20,8 +20,14 @@ struct SearchPanel: View {
     let topHit: AppItem?
     /// How many apps match the query, for the row's caption.
     let matchCount: Int
+    /// Spotlight file matches for the query, best first. Shown under the top hit.
+    let files: [FileItem]
     /// Return in the field (or a tap on the top-hit row) opens the top hit.
     let onOpenTopHit: () -> Void
+    /// A tap on a file row opens that file.
+    let onOpenFile: (FileItem) -> Void
+    /// Cmd+Return in the field reveals the top file in Finder.
+    let onRevealFile: (FileItem) -> Void
     /// Down arrow in the field moves focus into the grid.
     let onDown: () -> KeyPress.Result
 
@@ -31,8 +37,8 @@ struct SearchPanel: View {
     @Namespace private var glassNamespace
 
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
-    /// The panel only opens when there is a top hit to show.
-    private var isExpanded: Bool { isSearching && topHit != nil }
+    /// The panel opens when there is an app or a file to show.
+    private var isExpanded: Bool { isSearching && (topHit != nil || !files.isEmpty) }
     /// The field widens a little when it has focus, per the spec (500 -> 560).
     private var width: CGFloat {
         isFocused.wrappedValue ? CoveSize.searchFieldFocusedWidth : CoveSize.searchField.width
@@ -43,12 +49,17 @@ struct SearchPanel: View {
             VStack(spacing: 0) {
                 field
 
-                if let topHit, isExpanded {
-                    topHitRow(topHit)
-                        .padding(.horizontal, CoveSpace.s)
-                        .padding(.bottom, CoveSpace.s)
-                    // HOOK (T3.2, Spotlight file results): file rows go here,
-                    // below the top hit, as their own section.
+                if isExpanded {
+                    if let topHit {
+                        topHitRow(topHit)
+                            .padding(.horizontal, CoveSpace.s)
+                            .padding(.bottom, CoveSpace.s)
+                    }
+                    if !files.isEmpty {
+                        fileRows
+                            .padding(.horizontal, CoveSpace.s)
+                            .padding(.bottom, CoveSpace.s)
+                    }
                 }
             }
             .frame(width: width)
@@ -83,10 +94,48 @@ struct SearchPanel: View {
             .focused(isFocused)
             .onSubmit(onOpenTopHit)                 // Return opens the top hit
             .onKeyPress(.downArrow) { onDown() }   // Down moves into the grid
+            .onKeyPress(.return, phases: .down) { press in
+                // Cmd+Return reveals the top file match in Finder. Plain Return
+                // is left to onSubmit above.
+                guard press.modifiers.contains(.command), let first = files.first else {
+                    return .ignored
+                }
+                onRevealFile(first)
+                return .handled
+            }
             .accessibilityLabel("Search apps")
         }
         .padding(.horizontal, CoveSpace.l)
         .frame(height: CoveSize.searchField.height)
+    }
+
+    // MARK: Files
+
+    /// The file matches from Spotlight, under a small "Files" caption with a
+    /// hint for Cmd+Return. Each row is a button, so Tab and VoiceOver reach it.
+    /// Tapping opens the file.
+    private var fileRows: some View {
+        VStack(alignment: .leading, spacing: CoveSpace.xxs) {
+            HStack(spacing: CoveSpace.s) {
+                Text("Files")
+                Spacer(minLength: 0)
+                Text("⌘Return reveals top file")
+            }
+            .font(CoveFont.caption)
+            .foregroundStyle(CoveText.secondary(contrast))
+            .padding(.horizontal, CoveSpace.m)
+            .padding(.top, CoveSpace.xs)
+
+            ForEach(files) { file in
+                Button {
+                    onOpenFile(file)
+                } label: {
+                    FileResultRow(item: file)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: Top hit

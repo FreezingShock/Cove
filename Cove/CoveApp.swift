@@ -10,6 +10,7 @@
 //  `OverlayController` owns, and `AppDelegate` starts it.
 //
 
+import AppKit
 import SwiftUI
 
 @main
@@ -42,6 +43,9 @@ struct CoveApp: App {
         .commands {
             CoveCommands(library: appDelegate.library, updater: updater)
         }
+
+        // The menu bar icon is an NSStatusItem, started by AppDelegate.
+        // See MenuBarController for why it is not a MenuBarExtra scene.
     }
 }
 
