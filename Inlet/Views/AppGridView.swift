@@ -228,11 +228,11 @@ struct AppGridView: View {
         // so the field keeps its normal typing and cursor keys.
         .onKeyPress(.escape) { handleEscape() }
         .onKeyPress(.return) { openFocusedApp() }
-        .onKeyPress(.leftArrow) { arrow($0, by: -1) }
-        .onKeyPress(.rightArrow) { arrow($0, by: 1) }
-        .onKeyPress(.upArrow) { arrow($0, by: -gridColumns) }
-        .onKeyPress(.downArrow) { arrow($0, by: gridColumns) }
-        .onKeyPress(.delete) { _ in deleteFocusedApp() }
+        .onKeyPress(.leftArrow, phases: .down) { arrow($0, by: -1) }
+        .onKeyPress(.rightArrow, phases: .down) { arrow($0, by: 1) }
+        .onKeyPress(.upArrow, phases: .down) { arrow($0, by: -gridColumns) }
+        .onKeyPress(.downArrow, phases: .down) { arrow($0, by: gridColumns) }
+        .onKeyPress(.delete, phases: .down) { _ in deleteFocusedApp() }
         // No scan here: the app scans once at launch (spec: never scan on open).
     }
 
