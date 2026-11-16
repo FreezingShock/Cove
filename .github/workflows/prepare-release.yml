@@ -1,0 +1,118 @@
+name: Prepare release
+
+# Bumps Cove's version, writes the CHANGELOG section from merged PR titles and
+# opens a PR into integration. Run it from the Actions tab when integration is
+# ready to ship. When that PR merges, nate deploys integration to main himself.
+# See RELEASING.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump. Ignored when version is set.
+        type: choice
+        options: [minor, patch, major]
+        default: minor
+      version:
+        description: Exact version to use, such as 0.2 or 1.0. Leave empty to use the bump.
+        type: string
+        default: ""
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out integration
+        uses: actions/checkout@v4
+        with:
+          ref: integration
+          fetch-depth: 0
+          # A PR opened with the default GITHUB_TOKEN does not start CI, so
+          # auto-merge would wait forever. RELEASE_TOKEN (a PAT or GitHub App
+          # token with contents and pull-requests write) fixes that. Without
+          # it, the PR is still opened and nate merges it by hand.
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - name: Check there is something to release
+        run: |
+          git fetch --no-tags origin main
+          COUNT="$(git rev-list --count origin/main..HEAD)"
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::error::integration has no commits that are not on main. Nothing to release."
+            exit 1
+          fi
+          echo "$COUNT commits on integration since main."
+
+      - name: Bump version
+        id: bump
+        env:
+          BUMP: ${{ inputs.bump }}
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          KIND="${VERSION_INPUT:-$BUMP}"
+          OUT="$(python3 scripts/release/version.py bump "$KIND")"
+          read -r VERSION BUILD <<< "$OUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "Version is now $VERSION (build $BUILD)."
+
+      - name: Write CHANGELOG section
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          BUILD: ${{ steps.bump.outputs.build }}
+        run: |
+          python3 scripts/release/changelog.py write \
+            --version "$VERSION" \
+            --build "$BUILD" \
+            --range origin/main..HEAD
+
+      - name: Commit, push and open PR into integration
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          BUILD: ${{ steps.bump.outputs.build }}
+        run: |
+          BRANCH="release/v$VERSION"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "::error::Branch $BRANCH already exists on origin. Delete it or pick another version."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add Cove.xcodeproj/project.pbxproj CHANGELOG.md
+          git commit \
+            -m "Release $VERSION" \
+            -m "Bump Cove to $VERSION (build $BUILD) and add the changelog section. Prepared by the Prepare release workflow."
+          git push -u origin "$BRANCH"
+
+          NOTES="$(python3 scripts/release/changelog.py extract --version "$VERSION")"
+          BODY="$(printf '%s\n\n%s\n\n%s\n' \
+            "Bumps Cove to $VERSION (build $BUILD) and adds the CHANGELOG section." \
+            "$NOTES" \
+            "Merge this into integration. Then nate deploys integration to main, which builds and publishes the release.")"
+          URL="$(gh pr create --base integration --head "$BRANCH" --title "Release $VERSION" --body "$BODY")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Opened $URL"
+
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+          PR_URL: ${{ steps.pr.outputs.url }}
+        run: |
+          if ! gh pr merge "$PR_URL" --auto --squash; then
+            echo "::warning::Could not enable auto-merge on $PR_URL. Check that RELEASE_TOKEN is set and auto-merge is allowed in repo settings, then merge by hand once checks pass."
+          fi
