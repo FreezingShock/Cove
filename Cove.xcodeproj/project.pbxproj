@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C0FE0000000000000000000D /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE0000000000000000000E /* KeyboardShortcuts */; };
+		C0FE00000000000000000010 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE00000000000000000012 /* KeyboardShortcuts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0FE0000000000000000000D /* KeyboardShortcuts in Frameworks */,
+				C0FE00000000000000000010 /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			);
 			name = Cove;
 			packageProductDependencies = (
-				C0FE0000000000000000000E /* KeyboardShortcuts */,
+				C0FE00000000000000000012 /* KeyboardShortcuts */,
 			);
 			productName = Cove;
 			productReference = C0FE00000000000000000001 /* Cove.app */;
@@ -101,7 +101,7 @@
 			mainGroup = C0FE00000000000000000004;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C0FE0000000000000000000F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C0FE00000000000000000005 /* Products */;
@@ -274,7 +274,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C0FE0000000000000000000F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+		C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
@@ -285,9 +285,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C0FE0000000000000000000E /* KeyboardShortcuts */ = {
+		C0FE00000000000000000012 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C0FE0000000000000000000F /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			package = C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */
