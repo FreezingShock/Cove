@@ -415,7 +415,7 @@ kbd {
   color: var(--text-3);
 }
 .hero .grid { --cols: 7; --tile: 56px; gap: 22px 2px; }
-.hero .cell .name { padding: 1px 2px; }
+.hero .cell .name { padding: 1px 2px; font-size: 11px; }
 .hero .stage { min-height: 560px; }
 .hero .scrim { display: flex; flex-direction: column; gap: 26px; }
 .stage-foot {
