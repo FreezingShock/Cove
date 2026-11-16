@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- DRAFT. Not legal advice. Have a lawyer review this before wide release,
+     especially the update check and crash report sections, and check whether
+     the website host's own request logs need a disclosure. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy · Cove</title>
+<meta name="description" content="How Cove handles your data. Cove runs on your Mac and keeps its data there.">
+<meta name="color-scheme" content="light dark">
+<style>
+  /* Tokens follow design-system/cove-tokens.css (v1.2). Accent is a fill, never text. */
+  :root {
+    --base: #E6ECF2; --base-2: #F6F8FB;
+    --glow-a: rgba(70,230,214,0.42); --glow-b: rgba(122,138,255,0.34);
+    --grouped: #FFFFFF; --g-fill: rgba(250,252,255,0.62); --g-edge: rgba(12,22,44,0.10);
+    --g-shadow: rgba(28,44,80,0.16);
+    --text: #0B111C; --text-2: rgba(16,24,40,0.70); --text-3: rgba(16,24,40,0.62);
+    --hair: rgba(12,22,44,0.10); --hover: rgba(12,22,44,0.05); --field: rgba(12,22,44,0.05);
+    --accent: #0A7F74; --accent-soft: rgba(10,127,116,0.14);
+    --r-sm: 10px; --r-md: 16px; --r-panel: 32px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --base: #05070C; --base-2: #0B0F18;
+      --glow-a: rgba(48,196,186,0.36); --glow-b: rgba(70,90,200,0.34);
+      --grouped: rgba(255,255,255,0.055); --g-fill: rgba(12,16,26,0.66); --g-edge: rgba(255,255,255,0.12);
+      --g-shadow: rgba(0,0,0,0.55);
+      --text: #FFFFFF; --text-2: rgba(235,240,255,0.78); --text-3: rgba(235,240,255,0.66);
+      --hair: rgba(255,255,255,0.12); --hover: rgba(255,255,255,0.07); --field: rgba(255,255,255,0.07);
+      --accent: #3FD9C9; --accent-soft: rgba(63,217,201,0.16);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --base: #05070C; --base-2: #0B0F18;
+    --glow-a: rgba(48,196,186,0.36); --glow-b: rgba(70,90,200,0.34);
+    --grouped: rgba(255,255,255,0.055); --g-fill: rgba(12,16,26,0.66); --g-edge: rgba(255,255,255,0.12);
+    --g-shadow: rgba(0,0,0,0.55);
+    --text: #FFFFFF; --text-2: rgba(235,240,255,0.78); --text-3: rgba(235,240,255,0.66);
+    --hair: rgba(255,255,255,0.12); --hover: rgba(255,255,255,0.07); --field: rgba(255,255,255,0.07);
+    --accent: #3FD9C9; --accent-soft: rgba(63,217,201,0.16);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text); background-color: var(--base);
+    background-image:
+      radial-gradient(60% 46% at 12% 0%, var(--glow-a), transparent 70%),
+      radial-gradient(50% 42% at 92% 8%, var(--glow-b), transparent 72%),
+      linear-gradient(180deg, var(--base-2), var(--base));
+    background-attachment: fixed;
+    font: 400 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+  }
+  a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-color: var(--text); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 28px 0 20px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .brand::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .brand:hover { text-decoration: none; }
+  nav.site ul { list-style: none; display: flex; gap: 4px; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav.site a { display: inline-block; padding: 8px 12px; border-radius: 999px; font-size: 14px; color: var(--text-2); text-decoration: none; }
+  nav.site a:hover { background: var(--hover); color: var(--text); }
+  nav.site a[aria-current="page"] { background: var(--field); color: var(--text); font-weight: 600; }
+
+  main.doc {
+    margin: 8px auto 56px; padding: 40px; border-radius: var(--r-panel);
+    background: var(--g-fill); border: 1px solid var(--g-edge);
+    box-shadow: 0 28px 60px -28px var(--g-shadow);
+    -webkit-backdrop-filter: blur(40px) saturate(200%); backdrop-filter: blur(40px) saturate(200%);
+  }
+  main.doc > :first-child { margin-top: 0; }
+  h1 { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -0.015em; margin: 0 0 8px; }
+  h2 { font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 10px; scroll-margin-top: 24px; }
+  h3 { font-size: 15px; line-height: 1.4; font-weight: 600; margin: 24px 0 6px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .meta { font-size: 13px; color: var(--text-2); margin: 0 0 24px; }
+  .lede { font-size: 17px; color: var(--text-2); margin-bottom: 20px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; }
+  kbd { display: inline-block; padding: 1px 7px; border: 1px solid var(--hair); border-bottom-width: 2px; border-radius: 6px; background: var(--field); line-height: 1.5; }
+  code { background: var(--field); padding: 1px 6px; border-radius: 6px; }
+
+  .note { padding: 16px 18px; border-radius: var(--r-md); background: var(--accent-soft); margin: 0 0 24px; }
+  .note p:last-child { margin-bottom: 0; }
+  .note strong { font-weight: 600; }
+
+  .toc { margin: 0 0 8px; padding: 16px 18px; border-radius: var(--r-md); border: 1px solid var(--hair); background: var(--grouped); }
+  .toc h2 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 24px; }
+  .toc li { margin: 2px 0; break-inside: avoid; font-size: 14px; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 8px 0 16px; font-size: 14px; border: 1px solid var(--hair); border-radius: var(--r-md); overflow: hidden; }
+  th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--hair); }
+  th { font-weight: 600; color: var(--text-2); background: var(--grouped); font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+
+  footer.foot { max-width: 760px; margin: 0 auto; padding: 0 16px 40px; font-size: 13px; color: var(--text-2); display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+  footer.foot a { color: var(--text-2); }
+
+  @media (max-width: 600px) {
+    main.doc { padding: 28px 20px; border-radius: 24px; margin-top: 4px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; margin-top: 32px; }
+    .toc ol { columns: 1; }
+    table, thead, tbody, tr, th, td { display: block; width: 100%; }
+    thead { display: none; }
+    tr { border-bottom: 1px solid var(--hair); padding: 10px 0; }
+    tr:last-child { border-bottom: 0; }
+    td { border: 0; padding: 4px 14px; white-space: normal; }
+    td:first-child { padding-top: 10px; }
+    td::before { content: attr(data-label); display: block; font-size: 12px; color: var(--text-2); font-weight: 600; margin-bottom: 2px; }
+    td:first-child::before { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html">Cove</a>
+    <nav class="site" aria-label="Site">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="privacy.html" aria-current="page">Privacy</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="doc">
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated November 16, 2026</p>
+
+    <div class="note">
+      <p><strong>The short version.</strong> Cove runs on your Mac and keeps its data there. It has no accounts, no analytics, and no ads. Cove doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is an update check to GitHub, and you can turn that off. Crash reports and feedback are opt-in. Nothing is sent unless you choose to send it.</p>
+    </div>
+
+    <nav class="toc" aria-label="On this page">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#scope">What this policy covers</a></li>
+        <li><a href="#stored">Data stored on your Mac</a></li>
+        <li><a href="#search">Search stays on your Mac</a></li>
+        <li><a href="#network">Network connections</a></li>
+        <li><a href="#reports">Crash reports and feedback</a></li>
+        <li><a href="#permissions">Permissions</a></li>
+        <li><a href="#choices">Your choices</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#children">Children</a></li>
+        <li><a href="#changes">Changes to this policy</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="scope">1. What this policy covers</h2>
+    <p>This policy covers Cove, the macOS app, and the Cove website. It doesn't cover the other apps Cove opens, which have their own policies. It also doesn't cover GitHub, which hosts Cove's source code and release files. GitHub's own <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">privacy statement</a> applies when you visit it.</p>
+
+    <h2 id="stored">2. Data stored on your Mac</h2>
+    <p>Cove keeps a small amount of data in its own folder in your Library's Application Support area. Nothing is stored anywhere else by Cove.</p>
+    <table>
+      <thead>
+        <tr><th scope="col">Data</th><th scope="col">What it is</th><th scope="col">How to delete it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td data-label="Data">Settings</td><td data-label="What it is">Your hotkeys, the Dock click behavior, appearance choices, and other preferences.</td><td data-label="How to delete it">Delete Cove and its Application Support folder (section 8).</td></tr>
+        <tr><td data-label="Data">Launch history</td><td data-label="What it is">The apps you opened through Cove. Cove uses it to build the Recents row.</td><td data-label="How to delete it">Settings, Privacy, Erase Launch History.</td></tr>
+        <tr><td data-label="Data">Recent files</td><td data-label="What it is">Cove doesn't store these. It reads last-used dates that macOS already keeps in Spotlight.</td><td data-label="How to delete it">Managed by macOS. Cove doesn't keep its own copy.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="search">3. Search stays on your Mac</h2>
+    <p>Cove searches apps and files through Spotlight, the search system built into macOS. Spotlight runs on your Mac. Cove doesn't keep its own search index, and it doesn't save the text you type into the search field. Spotlight only finds what it has already indexed, so files in folders you have excluded from Spotlight won't appear in Cove.</p>
+
+    <h2 id="network">4. Network connections</h2>
+    <p>Cove doesn't make network connections for its core features. It makes these connections:</p>
+    <ul>
+      <li><strong>Update checks.</strong> Cove uses the Sparkle framework to check for new versions. The check contacts GitHub, where Cove's release files are hosted. The request includes the information any web request includes, such as your IP address, and it tells GitHub which version of Cove you have. You can turn automatic checks off in Settings, and you can still check by hand from the app menu.</li>
+      <li><strong>Crash reports and feedback.</strong> These only happen if you turn on crash reporting or choose to send feedback. See section 5.</li>
+    </ul>
+    <p>Visiting this website sends your browser's standard request to the web host. The host may keep server logs, such as IP address and browser type, under its own policy. The website doesn't use analytics or tracking cookies.</p>
+
+    <h2 id="reports">5. Crash reports and feedback</h2>
+    <p>Crash reporting is off by default. If you turn it on in Settings, Cove can prepare a report after it crashes. You can look at a report before anything is sent. Cove never sends a report without your say-so.</p>
+    <p>A crash report can include the app version, your macOS version, and the technical details of the crash. Reports don't include the contents of your files or your search history. <!-- PENDING crash-reporting thread: confirm exact fields, destination, and the Settings name. --></p>
+    <p>The Send Feedback menu item opens a feedback form in your browser, on GitHub. Anything you type there goes to GitHub, under GitHub's policy.</p>
+
+    <h2 id="permissions">6. Permissions</h2>
+    <p>Cove doesn't ask for Accessibility or Screen Recording access in version 1. You won't see those prompts. Launch at login uses the macOS login item setting. You can change it at any time in System Settings, General, Login Items.</p>
+
+    <h2 id="choices">7. Your choices</h2>
+    <ul>
+      <li>Erase launch history at any time from Settings, Privacy.</li>
+      <li>Turn off automatic update checks in Settings. You can still check for updates by hand.</li>
+      <li>Keep crash reporting off, which is the default. Turn it on or off in Settings.</li>
+      <li>Turn off launch at login in System Settings, General, Login Items.</li>
+      <li>Delete Cove and its data (section 8).</li>
+    </ul>
+
+    <h2 id="security">8. Data protection and deletion</h2>
+    <p>Cove's files sit in your user account, so they're protected by your Mac's account permissions. If you turn on FileVault, they're also encrypted on disk. To remove everything, quit Cove, move it from Applications to the Trash, and delete its folder in your Library's Application Support area. Emptying the Trash removes the app. Deleting the folder removes your settings and launch history.</p>
+
+    <h2 id="children">9. Children</h2>
+    <p>Cove isn't directed at children under 13. It doesn't knowingly collect personal information from anyone, of any age, because it doesn't collect personal information at all.</p>
+
+    <h2 id="changes">10. Changes to this policy</h2>
+    <p>If this policy changes, the date at the top changes too. Changes that affect what data Cove handles will also appear in the release notes on GitHub, before the update ships.</p>
+
+    <h2 id="contact">11. Contact</h2>
+    <p>For questions about this policy, open an issue on <a href="https://github.com/FreezingShock/Cove/issues">Cove's GitHub issues page</a>. Please don't include personal information in a public issue. The <a href="support.html">support page</a> has more on reporting problems.</p>
+  </main>
+</div>
+
+<footer class="foot">
+  <span>Cove is an independent project by FreezingShock.</span>
+  <span><a href="index.html">Home</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></span>
+</footer>
+</body>
+</html>
