@@ -14,6 +14,8 @@ struct CoveApp: App {
     /// One shared list of installed apps for the whole program.
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
+    /// The saved grid layout: order, folders and hidden apps.
+    @State private var layoutStore = LayoutStore()
 
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
@@ -21,6 +23,7 @@ struct CoveApp: App {
         Window("Cove", id: "main") {
             AppGridView()
                 .environment(library)       // hand the library to every view inside
+                .environment(layoutStore)
                 .preferredColorScheme(.dark) // Cove is always dark
         }
         .defaultSize(width: Theme.windowWidth, height: 760)
