@@ -62,7 +62,7 @@ final class MenuBarController: NSObject {
     private func makeMenu() -> NSMenu {
         let menu = NSMenu()
 
-        let show = NSMenuItem(title: "Show Inlet", action: #selector(showCove), keyEquivalent: "")
+        let show = NSMenuItem(title: "Show Inlet", action: #selector(showInlet), keyEquivalent: "")
         show.target = self
         menu.addItem(show)
 
@@ -72,14 +72,14 @@ final class MenuBarController: NSObject {
 
         menu.addItem(.separator())
 
-        let quit = NSMenuItem(title: "Quit Inlet", action: #selector(quitCove), keyEquivalent: "q")
+        let quit = NSMenuItem(title: "Quit Inlet", action: #selector(quitInlet), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
 
         return menu
     }
 
-    @objc private func showCove() {
+    @objc private func showInlet() {
         // The grid is the overlay, not a window. AppDelegate brings it forward.
         (NSApp.delegate as? AppDelegate)?.showGrid()
     }
@@ -90,7 +90,7 @@ final class MenuBarController: NSObject {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 
-    @objc private func quitCove() {
+    @objc private func quitInlet() {
         NSApp.terminate(nil)
     }
 }

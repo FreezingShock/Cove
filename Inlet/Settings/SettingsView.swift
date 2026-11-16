@@ -112,7 +112,7 @@ struct SettingsTile: View {
 
 /// Applies the Appearance setting (Auto, Light or Dark) to a window's content.
 /// Auto passes `nil`, which means "follow the system".
-struct FollowsCoveAppearance: ViewModifier {
+struct FollowsInletAppearance: ViewModifier {
     @AppStorage(InletSettings.Key.appearance.rawValue)
     private var mode = InletSettings.AppearanceMode.auto.rawValue
 
@@ -132,6 +132,6 @@ struct FollowsCoveAppearance: ViewModifier {
 extension View {
     /// Use on the root view of every Inlet window.
     func inletAppearance() -> some View {
-        modifier(FollowsCoveAppearance())
+        modifier(FollowsInletAppearance())
     }
 }
