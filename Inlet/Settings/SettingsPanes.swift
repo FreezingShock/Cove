@@ -225,20 +225,59 @@ struct QuickPanelPane: View {
 // MARK: - Privacy
 
 struct PrivacyPane: View {
+    @AppStorage(InletSettings.Key.crashReports.rawValue) private var crashReports = false
     @State private var confirmErase = false
+    @State private var confirmEraseReports = false
 
     var body: some View {
         Form {
+            Section {
+                Toggle("Send crash reports", isOn: $crashReports)
+            } footer: {
+                // Off by default. Reports are saved on this Mac only, and only
+                // leave it if you open an issue or copy one yourself.
+                Text("When something crashes or hangs, macOS can save a diagnostic report. Inlet keeps these on this Mac only. Nothing is uploaded. You choose whether to share one, from Help > Send Feedback.")
+            }
+
+            Section {
+                Button("Erase Crash Reports", role: .destructive) {
+                    confirmEraseReports = true
+                }
+            } footer: {
+                Text("Deletes every saved crash report from this Mac.")
+            }
+
             Section {
                 Button("Erase Launch History", role: .destructive) {
                     confirmErase = true
                 }
             } footer: {
-                Text("Clears Recent Apps and Recent Files. Inlet sends nothing anywhere, so this is the only history it keeps.")
+                Text("Clears Recent Apps and Recent Files. Crash reports are erased separately above.")
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Privacy")
+        .onChange(of: crashReports) { _, isOn in
+            // Subscribe or unsubscribe right away, so the toggle takes effect
+            // without a relaunch. Saved reports stay until erased.
+            if isOn {
+                DiagnosticsCollector.shared.start()
+            } else {
+                DiagnosticsCollector.shared.stop()
+            }
+        }
+        .confirmationDialog(
+            "Erase crash reports?",
+            isPresented: $confirmEraseReports,
+            titleVisibility: .visible
+        ) {
+            Button("Erase", role: .destructive) {
+                DiagnosticStore.shared.eraseAll()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Every saved crash report will be deleted. This can't be undone.")
+        }
         .confirmationDialog(
             "Erase launch history?",
             isPresented: $confirmErase,
