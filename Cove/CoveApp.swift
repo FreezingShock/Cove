@@ -19,6 +19,11 @@ struct CoveApp: App {
     /// class that publishes changes, which the menu item watches.
     @StateObject private var updater = AppUpdater()
 
+    init() {
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
+    }
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
@@ -52,6 +57,14 @@ struct CoveCommands: Commands {
         // Adds "Check for Updates…" right after "About Cove" in the Cove menu.
         CommandGroup(after: .appInfo) {
             CheckForUpdatesButton(updater: updater)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }

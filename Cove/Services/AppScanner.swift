@@ -85,7 +85,8 @@ enum AppScanner {
         return AppItem(
             name: displayName(for: url),
             url: url,
-            bundleIdentifier: info["CFBundleIdentifier"] as? String
+            bundleIdentifier: info["CFBundleIdentifier"] as? String,
+            categoryType: info["LSApplicationCategoryType"] as? String
         )
     }
 
