@@ -26,11 +26,21 @@ struct AppGridView: View {
     /// The icon that has keyboard focus, if any. Arrow keys move it.
     @FocusState private var focusedApp: AppItem.ID?
 
-    /// Seven fixed-width columns, per the spec.
-    private let columns = Array(
-        repeating: GridItem(.fixed(CoveSize.gridCell.width), spacing: 0),
-        count: CoveSize.gridColumns
-    )
+    /// Column count from Settings > Grid (5 to 9, default 7).
+    @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
+
+    /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
+    private var columns: [GridItem] {
+        Array(
+            repeating: GridItem(.fixed(CoveSize.gridCell.width), spacing: 0),
+            count: gridColumns
+        )
+    }
+
+    /// Smallest window that fits the current column count plus side padding.
+    private var minimumGridWidth: CGFloat {
+        CoveSize.gridCell.width * CGFloat(gridColumns) + CoveSize.gridSidePadding * 2
+    }
 
     /// True when the query has something other than spaces in it.
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
@@ -64,7 +74,7 @@ struct AppGridView: View {
                 proxy.scrollTo(id, anchor: .center)
             }
         }
-        .frame(minWidth: CoveSize.gridWindowWidth, minHeight: 480)
+        .frame(minWidth: minimumGridWidth, minHeight: 480)
         .background(CoveColor.base)
         // The field has focus when the window opens, so you can type at once.
         .defaultFocus($searchFocused, true)
@@ -79,8 +89,8 @@ struct AppGridView: View {
         .onKeyPress(.return) { openFocusedApp() }
         .onKeyPress(.leftArrow) { moveFocus(by: -1) }
         .onKeyPress(.rightArrow) { moveFocus(by: 1) }
-        .onKeyPress(.upArrow) { moveFocus(by: -CoveSize.gridColumns) }
-        .onKeyPress(.downArrow) { moveFocus(by: CoveSize.gridColumns) }
+        .onKeyPress(.upArrow) { moveFocus(by: -gridColumns) }
+        .onKeyPress(.downArrow) { moveFocus(by: gridColumns) }
         // First scan when the window appears.
         .task { library.reload() }
         // Rescan whenever you switch back to Cove, so apps installed or
@@ -202,7 +212,7 @@ struct AppGridView: View {
         let apps = shownApps
         guard let index = apps.firstIndex(where: { $0.id == current }) else { return .ignored }
 
-        let columns = CoveSize.gridColumns
+        let columns = gridColumns
         let target = index + offset
 
         if target < 0 {
