@@ -87,23 +87,32 @@
         <p class="keys"><kbd>⌥</kbd><kbd>Space</kbd><span>opens the grid by default. You can change the shortcut.</span></p>
       </div>
 
-      <div class="stage" id="heroStage" role="region" aria-label="Inlet grid, animated sample">
-        <div class="scrim">
-          <div class="grid-top">
-            <div class="glass capsule searchbar bloom" aria-hidden="true">
-              <svg class="sm-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
-              <span>Search apps and files</span>
-            </div>
-            <div class="seg" aria-hidden="true">
+      <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, animated sample">
+        <div class="win" id="heroWin">
+          <div class="win-bar">
+            <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win-title">Inlet</span>
+            <span class="win-dots" aria-hidden="true"></span>
+          </div>
+          <div class="win-body">
+            <label class="win-search">
+              <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+              <input id="heroQ" type="search" placeholder="Search apps and files" aria-label="Search sample apps" autocomplete="off" spellcheck="false">
+              <kbd class="win-enter" aria-hidden="true">↩</kbd>
+            </label>
+            <div class="win-tape" id="heroTape" aria-hidden="true"></div>
+            <div class="seg win-seg" aria-hidden="true">
               <span class="on">All</span><span>Create</span><span>Everyday</span><span>Build</span>
             </div>
+            <div class="grid" id="heroGrid"></div>
           </div>
-          <div class="grid" id="heroGrid"></div>
-          <div class="stage-foot">
-            <span class="caption-line">Sample apps. Inlet shows the icons already on your Mac.</span>
-            <button class="capsule-btn glass capsule" type="button" id="replayBtn">Replay</button>
+          <div class="win-foot">
+            <span class="win-status" id="heroStatus" aria-live="polite">16 apps</span>
+            <button class="capsule-btn" type="button" id="replayBtn">Replay</button>
           </div>
+          <span class="glint" aria-hidden="true"></span>
         </div>
+        <p class="win-caption">Sample apps. Inlet shows the icons already on your Mac.</p>
       </div>
     </div>
   </section>
@@ -475,6 +484,7 @@
 </footer>
 
 <script src="js/site.js" defer></script>
+<script src="js/hero.js" defer></script>
 <script src="js/scroll.js" defer></script>
 <script src="js/home.js" defer></script>
 <script src="js/nav.js" defer></script>
