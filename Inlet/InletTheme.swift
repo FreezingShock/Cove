@@ -111,8 +111,8 @@ enum InletColor {
     static let hover = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.05), dark: .init(r: 1, g: 1, b: 1, a: 0.07))
     /// rgba(236,241,246,0.42) / rgba(4,6,10,0.44)
     static let scrim = Color.inlet(light: .init(r: 0.925, g: 0.945, b: 0.965, a: 0.42), dark: .init(r: 0.016, g: 0.024, b: 0.039, a: 0.44))
-    /// rgba(12,22,44,0.46) / rgba(255,255,255,0.40). Meets 3:1 for control state.
-    static let track = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.46), dark: .init(r: 1, g: 1, b: 1, a: 0.40))
+    /// rgba(12,22,44,0.50) / rgba(255,255,255,0.40). Meets 3:1 for control state on Light (3.3:1 on base).
+    static let track = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.50), dark: .init(r: 1, g: 1, b: 1, a: 0.40))
     /// #FFFFFF / #F4F6FA
     static let knob = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.957, g: 0.965, b: 0.980))
     /// rgba(12,22,44,0.05) / rgba(255,255,255,0.07)

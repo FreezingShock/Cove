@@ -34,6 +34,8 @@ struct GridTile: View {
     let onOpen: () -> Void
     /// Hides the app. Used by VoiceOver only: the grid handles the badge tap.
     let onHide: () -> Void
+    /// Moves the app by a slot offset in the layout. Used by VoiceOver in Edit mode.
+    let onMove: (Int) -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Swings between -1.3 and 1.3 degrees while the grid wobbles.
@@ -100,6 +102,8 @@ struct GridTile: View {
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default) { onOpen() }
         .accessibilityAction(named: Text("Hide")) { onHide() }
+        .accessibilityAction(named: Text("Move earlier")) { onMove(-1) }
+        .accessibilityAction(named: Text("Move later")) { onMove(1) }
     }
 
     /// Size for press and lift. Under Reduce Motion nothing scales.

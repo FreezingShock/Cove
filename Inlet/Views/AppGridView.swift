@@ -228,10 +228,11 @@ struct AppGridView: View {
         // so the field keeps its normal typing and cursor keys.
         .onKeyPress(.escape) { handleEscape() }
         .onKeyPress(.return) { openFocusedApp() }
-        .onKeyPress(.leftArrow) { moveFocus(by: -1) }
-        .onKeyPress(.rightArrow) { moveFocus(by: 1) }
-        .onKeyPress(.upArrow) { moveFocus(by: -gridColumns) }
-        .onKeyPress(.downArrow) { moveFocus(by: gridColumns) }
+        .onKeyPress(.leftArrow, phases: .down) { arrow($0, by: -1) }
+        .onKeyPress(.rightArrow, phases: .down) { arrow($0, by: 1) }
+        .onKeyPress(.upArrow, phases: .down) { arrow($0, by: -gridColumns) }
+        .onKeyPress(.downArrow, phases: .down) { arrow($0, by: gridColumns) }
+        .onKeyPress(.delete, phases: .down) { _ in deleteFocusedApp() }
         // No scan here: the app scans once at launch (spec: never scan on open).
     }
 
@@ -243,6 +244,7 @@ struct AppGridView: View {
                 .font(InletFont.wordmark)
                 .tracking(InletTracking.display)
                 .foregroundStyle(InletColor.text)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer()
 
@@ -256,13 +258,13 @@ struct AppGridView: View {
 
             if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
-                    withAnimation(.inletOpen) { showsHidden.toggle() }
+                    withAnimation(motion(.inletOpen)) { showsHidden.toggle() }
                 }
             }
 
             if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
-                    withAnimation(.inletOpen) { isEditing.toggle() }
+                    withAnimation(motion(.inletOpen)) { isEditing.toggle() }
                 }
             }
         }
@@ -312,7 +314,8 @@ struct AppGridView: View {
                 focusedID: focusedApp,
                 isEditing: $isEditing,
                 onLaunch: launch,
-                onHide: hide
+                onHide: hide,
+                onMove: move
             )
         } else {
             scrollGrid
@@ -357,7 +360,7 @@ struct AppGridView: View {
             HiddenAppsPanel(rows: hiddenRows, onRestore: restore)
                 .padding(.top, 64)
                 .padding(.trailing, InletSize.gridSidePadding)
-                .transition(.opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
+                .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
         }
     }
 
@@ -367,7 +370,7 @@ struct AppGridView: View {
         if let undo {
             UndoToast(message: "Hidden \(undo.name)") { restore(undo.appID) }
                 .padding(.bottom, InletSpace.xxl)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
         }
     }
 
@@ -461,11 +464,53 @@ struct AppGridView: View {
         return .handled
     }
 
+    /// Spring when Reduce Motion is off, a 0.2 s crossfade when it is on.
+    private func motion(_ animation: Animation) -> Animation {
+        reduceMotion ? .easeInOut(duration: 0.2) : animation
+    }
+
+    /// Left, right, up and down. Option + arrow in Edit mode moves the focused
+    /// icon in the saved layout. A plain arrow moves the focus ring.
+    private func arrow(_ press: KeyPress, by offset: Int) -> KeyPress.Result {
+        if isEditing, press.modifiers.contains(.option) {
+            guard let id = focusedApp, let app = navApps.first(where: { $0.id == id }) else { return .ignored }
+            move(app, by: offset)
+            return .handled
+        }
+        return moveFocus(by: offset)
+    }
+
+    /// Moves an app `offset` slots in the saved layout, clamped at the ends.
+    /// Edit mode only. VoiceOver's Move earlier and Move later call this too.
+    private func move(_ app: AppItem, by offset: Int) {
+        guard isEditing else { return }
+        let entryID = GridEntry.app(app.id).id
+        let entries = layoutStore.layout.entries
+        guard let index = entries.firstIndex(where: { $0.id == entryID }) else { return }
+        let target = min(max(index + offset, 0), entries.count - 1)
+        guard target != index else { return }
+        withAnimation(motion(.inletSettle)) {
+            layoutStore.update { $0.moveEntry(withID: entryID, to: target) }
+        }
+    }
+
+    /// Edit mode: Delete hides the focused icon, the keyboard path to the minus
+    /// badge. Focus moves to the icon that takes its place.
+    private func deleteFocusedApp() -> KeyPress.Result {
+        guard isEditing, let id = focusedApp,
+              let app = navApps.first(where: { $0.id == id }), app.isHideable else { return .ignored }
+        let index = navApps.firstIndex(where: { $0.id == id }) ?? 0
+        hide(app)
+        let remaining = navApps
+        focusedApp = remaining.isEmpty ? nil : remaining[min(index, remaining.count - 1)].id
+        return .handled
+    }
+
     /// Escape leaves Edit mode first. Then it clears the field when the setting
     /// is on. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
         if isEditing {
-            withAnimation(.inletDismiss) { isEditing = false }
+            withAnimation(motion(.inletDismiss)) { isEditing = false }
         } else if isSearching && escapeClearsSearchFirst {
             query = ""
             focusedApp = nil
@@ -480,9 +525,11 @@ struct AppGridView: View {
     private func hide(_ app: AppItem) {
         layoutStore.update { $0.hideApp(app.id) }
         undoTimer?.cancel()
-        withAnimation(.inletRise) {
+        withAnimation(motion(.inletRise)) {
             undo = HideUndo(appID: app.id, name: app.name)
         }
+        // The toast is visual only, so say it out loud for VoiceOver.
+        AccessibilityNotification.Announcement("Hidden \(app.name). Undo is available for a few seconds.").post()
         undoTimer = Task { @MainActor in
             try? await Task.sleep(for: .seconds(4.2))
             guard !Task.isCancelled else { return }
@@ -499,7 +546,7 @@ struct AppGridView: View {
     private func dismissUndo() {
         undoTimer?.cancel()
         undoTimer = nil
-        withAnimation(.inletDismiss) { undo = nil }
+        withAnimation(motion(.inletDismiss)) { undo = nil }
     }
 
     /// Makes the saved layout match the installed apps.
