@@ -22,6 +22,8 @@ final class AppLibrary {
     /// True once the first scan has finished (so we can tell "still
     /// loading" apart from "found nothing").
     private(set) var hasScanned = false
+    /// When the last scan finished. Shown in Settings > About.
+    private(set) var lastScanned: Date?
 
     /// Rescans the app folders in the background.
     /// Safe to call often: if a scan is already running, this does nothing.
@@ -43,6 +45,7 @@ final class AppLibrary {
             }
             isScanning = false
             hasScanned = true
+            lastScanned = Date()
         }
     }
 }

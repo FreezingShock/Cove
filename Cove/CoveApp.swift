@@ -15,18 +15,29 @@ struct CoveApp: App {
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
 
+    init() {
+        // Give every setting its default before any window reads it.
+        CoveSettings.registerDefaults()
+    }
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
         Window("Cove", id: "main") {
             AppGridView()
-                .environment(library)        // hand the library to every view inside
-                .preferredColorScheme(.dark) // Cove is always dark for now; Appearance settings come in 0.5
+                .environment(library)   // hand the library to every view inside
+                .coveAppearance()       // Light, Dark or Auto, from Settings > Appearance
         }
         .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
         .windowResizability(.contentMinSize)
         .commands {
             CoveCommands(library: library)
+        }
+
+        // Settings window, opened by Cmd+, and the app menu.
+        Settings {
+            SettingsView()
+                .environment(library)
         }
     }
 }

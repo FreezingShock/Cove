@@ -14,18 +14,28 @@ struct AppGridView: View {
     /// Read from the system so Increase Contrast applies to secondary text.
     @Environment(\.colorSchemeContrast) private var contrast
 
-    /// Seven fixed-width columns, per the spec.
-    private let columns = Array(
-        repeating: GridItem(.fixed(CoveSize.gridCell.width), spacing: 0),
-        count: CoveSize.gridColumns
-    )
+    /// Column count from Settings > Grid (5 to 9, default 7).
+    @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
+
+    /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
+    private var columns: [GridItem] {
+        Array(
+            repeating: GridItem(.fixed(CoveSize.gridCell.width), spacing: 0),
+            count: gridColumns
+        )
+    }
+
+    /// Smallest window that fits the current column count plus side padding.
+    private var minimumGridWidth: CGFloat {
+        CoveSize.gridCell.width * CGFloat(gridColumns) + CoveSize.gridSidePadding * 2
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             header
             content
         }
-        .frame(minWidth: CoveSize.gridWindowWidth, minHeight: 480)
+        .frame(minWidth: minimumGridWidth, minHeight: 480)
         .background(CoveColor.base)
         // First scan when the window appears.
         .task { library.reload() }
