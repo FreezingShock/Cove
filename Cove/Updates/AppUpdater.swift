@@ -33,11 +33,18 @@ final class AppUpdater: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
+    /// True when Xcode runs the unit tests inside this app. Xcode sets
+    /// XCTestConfigurationFilePath for that. Sparkle's launch-time check can
+    /// stall the test host, so the updater stays off during tests.
+    private static var isRunningUnitTests: Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }
+
     init() {
         // startingUpdater: true starts scheduled checks right away.
         // Both delegates are nil because Cove doesn't customise behaviour yet.
         let controller = SPUStandardUpdaterController(
-            startingUpdater: true,
+            startingUpdater: !AppUpdater.isRunningUnitTests,
             updaterDelegate: nil,
             userDriverDelegate: nil
         )
