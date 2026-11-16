@@ -6,6 +6,9 @@
 //  A SwiftUI `App` describes its windows ("scenes") and menu commands;
 //  macOS handles the rest (Dock icon, menu bar, window management).
 //
+//  The grid is not a window. It is the full-screen overlay that
+//  `OverlayController` owns, and `CoveAppDelegate` starts it.
+//
 
 import SwiftUI
 
@@ -14,17 +17,22 @@ struct CoveApp: App {
     /// Owns the app list and the overlay. Stays alive for the whole run.
     @NSApplicationDelegateAdaptor(CoveAppDelegate.self) private var appDelegate
 
+    /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
+    /// Also starts crash collection, which only runs if the user opted in.
+    @MainActor
     init() {
+        // Give every setting its default before any window reads it.
+        CoveSettings.registerDefaults()
+        HotkeyManager.shared.start()
         // Starts crash collection only if the user has opted in. Off by default.
         DiagnosticsCollector.shared.startIfEnabled()
     }
 
     var body: some Scene {
-        // Cove's UI is the full-screen overlay, which the delegate owns.
-        // This placeholder scene is here only because an App needs a scene.
-        // The Settings window replaces it in 0.5.
+        // Settings window, opened by Cmd+, and the app menu.
         Settings {
-            EmptyView()
+            SettingsView()
+                .environment(appDelegate.library)
         }
         .commands {
             CoveCommands(library: appDelegate.library)
@@ -43,6 +51,13 @@ final class CoveAppDelegate: NSObject, NSApplicationDelegate {
         OverlayController.shared.configure(library: library)
         // Scan once at launch. The overlay never scans on open (spec).
         library.reload()
+
+        // The grid hotkey toggles the overlay: the first press opens it, the
+        // second closes it. (The quick panel hotkey is wired in 0.4.)
+        HotkeyManager.shared.onGridHotkey = {
+            MainActor.assumeIsolated { OverlayController.shared.toggle() }
+        }
+
         OverlayController.shared.show()
     }
 

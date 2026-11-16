@@ -2,8 +2,8 @@
 //  OverlayController.swift
 //  Cove
 //
-//  The full-screen grid overlay. One borderless panel is created the first
-//  time it is needed, then only shown and hidden. Creating it once keeps
+//  The full-screen grid overlay. One borderless panel is created once, in
+//  `configure(library:)`, then only shown and hidden. Creating it once keeps
 //  the SwiftUI view (and its icons) alive, so opening is a cheap show.
 //
 
@@ -11,7 +11,7 @@ import AppKit
 import SwiftUI
 
 /// A borderless panel that can still become key, so it receives the
-/// keyboard (Escape). A plain borderless window refuses key status.
+/// keyboard. A plain borderless window refuses key status.
 final class OverlayPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
@@ -19,8 +19,8 @@ final class OverlayPanel: NSPanel {
 
 @MainActor
 final class OverlayController {
-    /// One controller for the whole app. `AppLauncher` uses it to hide
-    /// the overlay before it opens an app.
+    /// One controller for the whole app. The grid hotkey, the Dock click and
+    /// `AppLauncher` all reach the overlay through it.
     static let shared = OverlayController()
 
     /// Drives the open choreography inside the SwiftUI view.
@@ -28,8 +28,6 @@ final class OverlayController {
 
     /// Created once in `configure(library:)`, then reused.
     private var panel: OverlayPanel?
-    /// Watches for the Escape key while the overlay is open.
-    private var keyMonitor: Any?
 
     private init() {}
 
@@ -58,6 +56,8 @@ final class OverlayController {
         // Appear on every Space, and over full-screen apps.
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
 
+        // Escape is handled inside SwiftUI (AppGridView), so it can clear
+        // the search first and close only when there is nothing to clear.
         let root = OverlayView(
             motion: motion,
             onDismiss: { [weak self] in self?.hide() }
@@ -66,6 +66,18 @@ final class OverlayController {
 
         panel.contentView = NSHostingView(rootView: root)
         self.panel = panel
+    }
+
+    /// True while the overlay is on screen.
+    var isVisible: Bool { panel?.isVisible ?? false }
+
+    /// The grid hotkey: opens the overlay, or closes it if it is already open.
+    func toggle() {
+        if isVisible {
+            hide()
+        } else {
+            show()
+        }
     }
 
     /// Shows the overlay on the screen under the cursor.
@@ -84,7 +96,6 @@ final class OverlayController {
         motion.isOpen = false
         NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
-        installKeyMonitor()
 
         DispatchQueue.main.async {
             MainActor.assumeIsolated { self.motion.isOpen = true }
@@ -95,28 +106,8 @@ final class OverlayController {
     /// for an animation.
     func hide() {
         guard let panel, panel.isVisible else { return }
-        removeKeyMonitor()
         panel.orderOut(nil)
         motion.isOpen = false
-    }
-
-    // MARK: Escape
-
-    private func installKeyMonitor() {
-        guard keyMonitor == nil else { return }
-        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            // Keycode 53 is Escape. Only handle keys sent to our panel.
-            guard event.keyCode == 53, event.window === self?.panel else { return event }
-            MainActor.assumeIsolated { self?.hide() }
-            return nil
-        }
-    }
-
-    private func removeKeyMonitor() {
-        if let keyMonitor {
-            NSEvent.removeMonitor(keyMonitor)
-        }
-        keyMonitor = nil
     }
 }
 

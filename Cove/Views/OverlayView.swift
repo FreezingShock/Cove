@@ -8,10 +8,23 @@
 
 import SwiftUI
 
+/// Lets any view in the overlay close it (Escape, or after an app opens).
+private struct DismissOverlayKey: EnvironmentKey {
+    static let defaultValue: () -> Void = {}
+}
+
+extension EnvironmentValues {
+    /// Closes the overlay. Set by `OverlayView`, read by `AppGridView`.
+    var dismissOverlay: () -> Void {
+        get { self[DismissOverlayKey.self] }
+        set { self[DismissOverlayKey.self] = newValue }
+    }
+}
+
 struct OverlayView: View {
     /// Open state, set by `OverlayController`.
     let motion: OverlayMotion
-    /// Called when the user clicks the empty scrim.
+    /// Closes the overlay. Used by the scrim and by the grid.
     let onDismiss: () -> Void
 
     /// Read from the system, so the overlay follows Reduce Motion.
@@ -30,5 +43,7 @@ struct OverlayView: View {
             AppGridView(isOpen: motion.isOpen)
         }
         .ignoresSafeArea()
+        .environment(\.dismissOverlay, onDismiss)
+        .coveAppearance()  // Light, Dark or Auto, from Settings > Appearance
     }
 }
