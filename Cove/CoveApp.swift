@@ -16,9 +16,12 @@ struct CoveApp: App {
     @State private var library = AppLibrary()
 
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
+    /// Also starts crash collection, which only runs if the user opted in.
     @MainActor
     init() {
         HotkeyManager.shared.start()
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
     }
 
     var body: some Scene {
@@ -48,6 +51,14 @@ struct CoveCommands: Commands {
                 library.reload()
             }
             .keyboardShortcut("r", modifiers: .command)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }

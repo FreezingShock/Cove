@@ -6,12 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		C0FE0000000000000000001C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0FE0000000000000000000A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0FE00000000000000000006;
+			remoteInfo = Cove;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXBuildFile section */
-		C0FE00000000000000000010 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE00000000000000000012 /* KeyboardShortcuts */; };
+		C0FE00000000000000000101 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE00000000000000000103 /* KeyboardShortcuts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C0FE00000000000000000001 /* Cove.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cove.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0FE00000000000000000011 /* CoveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -20,14 +31,34 @@
 			path = Cove;
 			sourceTree = "<group>";
 		};
+		C0FE00000000000000000012 /* CoveTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CoveTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXTargetDependency section */
+		C0FE0000000000000000001B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0FE00000000000000000006 /* Cove */;
+			targetProxy = C0FE0000000000000000001C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		C0FE00000000000000000003 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0FE00000000000000000010 /* KeyboardShortcuts in Frameworks */,
+				C0FE00000000000000000101 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0FE00000000000000000019 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				C0FE00000000000000000002 /* Cove */,
+				C0FE00000000000000000012 /* CoveTests */,
 				C0FE00000000000000000005 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				C0FE00000000000000000001 /* Cove.app */,
+				C0FE00000000000000000011 /* CoveTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,11 +103,34 @@
 			);
 			name = Cove;
 			packageProductDependencies = (
-				C0FE00000000000000000012 /* KeyboardShortcuts */,
+				C0FE00000000000000000103 /* KeyboardShortcuts */,
 			);
 			productName = Cove;
 			productReference = C0FE00000000000000000001 /* Cove.app */;
 			productType = "com.apple.product-type.application";
+		};
+		C0FE00000000000000000013 /* CoveTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0FE00000000000000000017 /* Build configuration list for PBXNativeTarget "CoveTests" */;
+			buildPhases = (
+				C0FE00000000000000000018 /* Sources */,
+				C0FE00000000000000000019 /* Frameworks */,
+				C0FE0000000000000000001A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0FE0000000000000000001B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C0FE00000000000000000012 /* CoveTests */,
+			);
+			name = CoveTests;
+			packageProductDependencies = (
+			);
+			productName = CoveTests;
+			productReference = C0FE00000000000000000011 /* CoveTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -89,6 +145,10 @@
 					C0FE00000000000000000006 = {
 						CreatedOnToolsVersion = 26.0;
 					};
+					C0FE00000000000000000013 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = C0FE00000000000000000006;
+					};
 				};
 			};
 			buildConfigurationList = C0FE0000000000000000000B /* Build configuration list for PBXProject "Cove" */;
@@ -101,7 +161,7 @@
 			mainGroup = C0FE00000000000000000004;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				C0FE00000000000000000102 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C0FE00000000000000000005 /* Products */;
@@ -109,6 +169,7 @@
 			projectRoot = "";
 			targets = (
 				C0FE00000000000000000006 /* Cove */,
+				C0FE00000000000000000013 /* CoveTests */,
 			);
 		};
 /* End PBXProject section */
@@ -121,10 +182,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0FE0000000000000000001A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C0FE00000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0FE00000000000000000018 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -250,6 +325,52 @@
 			};
 			name = Release;
 		};
+		C0FE0000000000000000001D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freezingshock.CoveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cove.app/Contents/MacOS/Cove";
+			};
+			name = Debug;
+		};
+		C0FE0000000000000000001E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.freezingshock.CoveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cove.app/Contents/MacOS/Cove";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -271,10 +392,19 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		C0FE00000000000000000017 /* Build configuration list for PBXNativeTarget "CoveTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0FE0000000000000000001D /* Debug */,
+				C0FE0000000000000000001E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+		C0FE00000000000000000102 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
@@ -285,9 +415,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C0FE00000000000000000012 /* KeyboardShortcuts */ = {
+		C0FE00000000000000000103 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C0FE00000000000000000011 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			package = C0FE00000000000000000102 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
 		};
 /* End XCSwiftPackageProductDependency section */

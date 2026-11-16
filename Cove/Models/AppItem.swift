@@ -24,4 +24,13 @@ struct AppItem: Identifiable, Hashable, Sendable {
     /// e.g. "com.apple.Safari". Used to drop duplicates. Can be nil for
     /// very old or unusual apps.
     let bundleIdentifier: String?
+    /// The raw `LSApplicationCategoryType` from the app's Info.plist, e.g.
+    /// "public.app-category.developer-tools". Nil when the app declares none.
+    let categoryType: String?
+
+    /// The category-bar bucket this app falls into. Unknown or missing
+    /// categories land in `.other`.
+    var category: AppCategory {
+        AppCategory.bucket(forCategoryType: categoryType)
+    }
 }
