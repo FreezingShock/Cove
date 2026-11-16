@@ -33,6 +33,8 @@ struct CoveApp: App {
             AppGridView()
                 .environment(library)   // hand the library to every view inside
                 .coveAppearance()       // Light, Dark or Auto, from Settings > Appearance
+                // Opens first-run setup once, until the user finishes it.
+                .onAppear { OnboardingWindowController.showOnFirstLaunch() }
         }
         .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
         .windowResizability(.contentMinSize)
@@ -64,6 +66,9 @@ struct CoveCommands: Commands {
         // Replaces the default Help menu contents with one item that opens
         // the in-app feedback form. The form only opens GitHub in the browser.
         CommandGroup(replacing: .help) {
+            Button("Cove Setup…") {
+                OnboardingWindowController.shared.show()
+            }
             Button("Send Feedback…") {
                 FeedbackWindow.shared.show()
             }
