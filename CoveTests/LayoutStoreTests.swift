@@ -55,8 +55,8 @@ final class LayoutStoreTests: XCTestCase {
     }
 
     func testReconcileSavesTheTrimmedLayout() {
-        let mail = AppItem(name: "Mail", url: URL(fileURLWithPath: "/Applications/Mail.app"), bundleIdentifier: nil)
-        let gone = AppItem(name: "Gone", url: URL(fileURLWithPath: "/Applications/Gone.app"), bundleIdentifier: nil)
+        let mail = AppItem(name: "Mail", url: URL(fileURLWithPath: "/Applications/Mail.app"), bundleIdentifier: nil, categoryType: nil)
+        let gone = AppItem(name: "Gone", url: URL(fileURLWithPath: "/Applications/Gone.app"), bundleIdentifier: nil, categoryType: nil)
         let store = LayoutStore(fileURL: fileURL)
         store.update { $0 = GridLayout.makeDefault(for: [mail, gone]) }
 

@@ -19,7 +19,8 @@ final class GridLayoutTests: XCTestCase {
         AppItem(
             name: name,
             url: URL(fileURLWithPath: "/Applications/\(name).app"),
-            bundleIdentifier: "com.example.\(name)"
+            bundleIdentifier: "com.example.\(name)",
+            categoryType: nil
         )
     }
 
