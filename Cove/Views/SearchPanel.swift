@@ -94,7 +94,7 @@ struct SearchPanel: View {
             .focused(isFocused)
             .onSubmit(onOpenTopHit)                 // Return opens the top hit
             .onKeyPress(.downArrow) { onDown() }   // Down moves into the grid
-            .onKeyPress(.return) { press in
+            .onKeyPress(.return, phases: .down) { press in
                 // Cmd+Return reveals the top file match in Finder. Plain Return
                 // is left to onSubmit above.
                 guard press.modifiers.contains(.command), let first = files.first else {
