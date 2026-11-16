@@ -444,9 +444,19 @@ struct EditableGridView: View {
     /// Drops the dragged icon. Saves the new order once, then settles the icon into its slot.
     private func finishDrag() {
         cancelEdge()
-        let order = draft ?? displayItems
+        let appEntries = (draft ?? displayItems).map { GridEntry.app($0.id) }
         layoutStore.update { layout in
-            layout.entries = order.map { GridEntry.app($0.id) }
+            // Folders aren't drawn on the paged grid, so they keep their slot.
+            // App slots take the dragged order, and any apps left over go last.
+            var next = 0
+            var merged = layout.entries.compactMap { entry -> GridEntry? in
+                guard case .app = entry else { return entry }
+                guard next < appEntries.count else { return nil }
+                defer { next += 1 }
+                return appEntries[next]
+            }
+            merged += appEntries[next...]
+            layout.entries = merged
         }
         withAnimation(motion(.covePress)) {
             drag = nil
