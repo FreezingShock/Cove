@@ -2,23 +2,44 @@
 //  AppDelegate.swift
 //  Cove
 //
-//  Handles what happens when the Dock icon is clicked while Cove is running.
-//  SwiftUI can't do this part by itself, so it lives in an AppKit delegate.
+//  The one AppKit delegate. It starts the grid overlay at launch, handles
+//  what happens when the Dock icon is clicked (quick panel or grid, from
+//  Settings), and wires the global hotkeys. SwiftUI can't do these parts
+//  by itself, so they live here.
 //
 
 import AppKit
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    /// Opens the full grid window. CoveApp sets this once the window's
-    /// `openWindow` action is available.
-    var openGridWindow: (() -> Void)?
+    /// One shared list of installed apps for the whole program.
+    let library = AppLibrary()
 
     override init() {
         super.init()
+        // "Show All Apps" in the quick panel opens the full grid overlay.
         QuickPanelController.shared.onShowAll = { [weak self] in
             self?.showGrid()
         }
+    }
+
+    /// Builds the overlay and starts the first scan. Runs once at launch.
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        OverlayController.shared.configure(library: library)
+        // Scan once at launch. The overlay never scans on open (spec).
+        library.reload()
+
+        // Grid hotkey (Option+Space) toggles the full grid overlay: the first
+        // press opens it, the second closes it.
+        HotkeyManager.shared.onGridHotkey = {
+            MainActor.assumeIsolated { OverlayController.shared.toggle() }
+        }
+        // Quick panel hotkey (Control+Option+Space) toggles the quick panel.
+        HotkeyManager.shared.onQuickPanelHotkey = {
+            MainActor.assumeIsolated { QuickPanelController.shared.toggle() }
+        }
+
+        OverlayController.shared.show()
     }
 
     /// Called when the app is reopened: a Dock click, or launching it again
@@ -34,9 +55,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    /// Brings the grid to the front, opening it if it was closed.
+    /// Keep running with the overlay hidden.
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
+
+    /// Brings the grid overlay to the front, opening it if it was closed.
     func showGrid() {
         NSApp.activate(ignoringOtherApps: true)
-        openGridWindow?()
+        OverlayController.shared.show()
     }
 }
