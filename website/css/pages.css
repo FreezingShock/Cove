@@ -5,9 +5,9 @@
 /* ---------- Page header ---------- */
 .page-hero { padding-block: 72px 48px; }
 .page-hero h1 {
-  font-size: clamp(40px, 5.2vw, 64px);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-size: var(--fs-display);
+  line-height: 1.0;
+  letter-spacing: var(--ls-display);
   max-width: 20ch;
   margin-top: 22px;
 }
@@ -51,7 +51,7 @@
 }
 .split.rev > .copy { order: 2; }
 .split.rev > .shot { order: 1; }
-.split .body-2 { margin-top: 18px; max-width: 46ch; font-size: 17px; }
+.split .body-2 { margin-top: 18px; max-width: 46ch; font-size: var(--fs-body); }
 .split .specs { margin-top: 28px; }
 
 .shot {
@@ -88,7 +88,7 @@
 }
 .card .keys-line { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 14px; }
 .card h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-.card p { font-size: 15px; color: var(--text-2); text-wrap: pretty; }
+.card p { font-size: var(--fs-small); color: var(--text-2); text-wrap: pretty; }
 .card .plus { font-size: 13px; color: var(--text-3); margin: 0 2px; }
 
 .panes {
@@ -257,7 +257,7 @@
 .faq details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
 .faq summary:focus-visible { outline-offset: 2px; border-radius: 12px; }
 .faq .answer { padding: 0 0 24px; max-width: 66ch; }
-.faq .answer p { font-size: 16px; color: var(--text-2); text-wrap: pretty; }
+.faq .answer p { font-size: var(--fs-body); color: var(--text-2); text-wrap: pretty; }
 .faq .answer p + p { margin-top: 12px; }
 .faq .answer a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; }
 .faq .answer a:hover { text-decoration-color: var(--text); }
@@ -298,9 +298,7 @@
 }
 @media (max-width: 560px) {
   .page-hero { padding-block: 36px 32px; }
-  .page-hero h1 { font-size: 40px; }
   .band { padding-block: 64px; }
-  .band .h-section, .band .h-feature { font-size: 32px; }
   .shot { border-radius: 24px; }
   .shot-plain { padding: 28px 22px; border-radius: 24px; }
   .timeline li { grid-template-columns: 1fr; gap: 6px; }
@@ -442,19 +440,19 @@ html { scroll-behavior: smooth; }
 .doc-main { max-width: 760px; padding-top: 64px; padding-bottom: 120px; }
 .doc-main .eyebrow { margin-bottom: 14px; }
 .doc-main h1, .doc-main .h-section {
-  font-size: clamp(40px, 5vw, 56px);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  font-size: var(--fs-display);
+  line-height: 1.0;
+  letter-spacing: var(--ls-display);
 }
 .doc-main .meta { margin-top: 14px; font-size: 14px; color: var(--text-3); }
 .doc-main h2 {
-  font-size: 26px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-feature);
+  line-height: 1.12;
+  letter-spacing: var(--ls-feature);
   margin: 64px 0 16px;
   scroll-margin-top: 96px;
 }
-.doc-main p, .doc-main li { font-size: 16px; line-height: 1.65; color: var(--text-2); text-wrap: pretty; }
+.doc-main p, .doc-main li { font-size: var(--fs-body); line-height: 1.6; color: var(--text-2); text-wrap: pretty; }
 .doc-main p + p { margin-top: 14px; }
 .doc-main ul { margin: 12px 0 0; padding-left: 22px; }
 .doc-main li + li { margin-top: 8px; }
