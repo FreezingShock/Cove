@@ -7,6 +7,7 @@
 //  macOS handles the rest (Dock icon, menu bar, window management).
 //
 
+import AppKit
 import SwiftUI
 
 @main
@@ -14,6 +15,10 @@ struct CoveApp: App {
     /// One shared list of installed apps for the whole program.
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
+
+    /// Settings > General. Drives the menu bar icon, live: turning it off
+    /// removes the icon without a relaunch.
+    @AppStorage(CoveSettings.Key.showMenuBarIcon.rawValue) private var showMenuBarIcon = true
 
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
     /// Also starts crash collection, which only runs if the user opted in.
@@ -45,6 +50,38 @@ struct CoveApp: App {
             SettingsView()
                 .environment(library)
         }
+
+        // Menu bar icon, on by default. `isInserted` adds or removes it as
+        // the Settings toggle changes.
+        MenuBarExtra("Cove", systemImage: "square.grid.3x3.fill", isInserted: $showMenuBarIcon) {
+            MenuBarMenu()
+        }
+    }
+}
+
+/// The menu under the menu bar icon: open the grid, open Settings, quit.
+struct MenuBarMenu: View {
+    @Environment(\.openWindow) private var openWindow
+
+    var body: some View {
+        Button("Show Cove") {
+            openWindow(id: "main")
+            // Bring Cove forward even when another app is active.
+            NSApp.activate(ignoringOtherApps: true)
+        }
+
+        // SettingsLink opens the same Settings scene as Cmd+, does.
+        SettingsLink {
+            Text("Settings…")
+        }
+        .keyboardShortcut(",", modifiers: .command)
+
+        Divider()
+
+        Button("Quit Cove") {
+            NSApp.terminate(nil)
+        }
+        .keyboardShortcut("q", modifiers: .command)
     }
 }
 

@@ -34,6 +34,7 @@ enum CoveSettings {
 
         // Grid
         case gridColumns              = "cove.grid.columns"                     // Int, 5...9, 7
+        case lastCategory             = "cove.grid.lastCategory"                // String, an AppCategory raw value, "" for All
 
         // Search
         case searchIncludesFiles      = "cove.search.includeFiles"              // Bool, true
@@ -64,6 +65,7 @@ enum CoveSettings {
             Key.rememberLastCategory.rawValue: true,
             Key.appearance.rawValue: AppearanceMode.auto.rawValue,
             Key.gridColumns.rawValue: 7,
+            Key.lastCategory.rawValue: "",
             Key.searchIncludesFiles.rawValue: true,
             Key.searchFileResultCount.rawValue: 5,
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
@@ -76,6 +78,19 @@ enum CoveSettings {
 
     static var gridColumns: Int {
         clamp(UserDefaults.standard.integer(forKey: Key.gridColumns.rawValue), 5...9, fallback: 7)
+    }
+
+    /// The bucket to open the grid on: the last one the user picked, when
+    /// "Remember last category" is on. Nil means All.
+    static var startingCategory: AppCategory? {
+        guard UserDefaults.standard.bool(forKey: Key.rememberLastCategory.rawValue) else { return nil }
+        let raw = UserDefaults.standard.string(forKey: Key.lastCategory.rawValue) ?? ""
+        return AppCategory(rawValue: raw)
+    }
+
+    /// Saves the bucket the user picked. Nil (All) is stored as an empty string.
+    static func saveLastCategory(_ category: AppCategory?) {
+        UserDefaults.standard.set(category?.rawValue ?? "", forKey: Key.lastCategory.rawValue)
     }
 
     static var searchIncludesFiles: Bool {
