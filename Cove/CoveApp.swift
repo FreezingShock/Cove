@@ -15,6 +15,10 @@ struct CoveApp: App {
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
 
+    /// The Sparkle updater. `@StateObject` (not `@State`) because it is a
+    /// class that publishes changes, which the menu item watches.
+    @StateObject private var updater = AppUpdater()
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
@@ -26,7 +30,7 @@ struct CoveApp: App {
         .defaultSize(width: Theme.windowWidth, height: 760)
         .windowResizability(.contentMinSize)
         .commands {
-            CoveCommands(library: library)
+            CoveCommands(library: library, updater: updater)
         }
     }
 }
@@ -35,6 +39,7 @@ struct CoveApp: App {
 /// single-window app) with File > Reload Apps (Command-R).
 struct CoveCommands: Commands {
     let library: AppLibrary
+    let updater: AppUpdater
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -43,5 +48,23 @@ struct CoveCommands: Commands {
             }
             .keyboardShortcut("r", modifiers: .command)
         }
+
+        // Adds "Check for Updates…" right after "About Cove" in the Cove menu.
+        CommandGroup(after: .appInfo) {
+            CheckForUpdatesButton(updater: updater)
+        }
+    }
+}
+
+/// Its own View so SwiftUI redraws the disabled state when Sparkle's
+/// `canCheckForUpdates` changes. Menu items are not redrawn by themselves.
+struct CheckForUpdatesButton: View {
+    @ObservedObject var updater: AppUpdater
+
+    var body: some View {
+        Button("Check for Updates…") {
+            updater.checkForUpdates()
+        }
+        .disabled(!updater.canCheckForUpdates)
     }
 }

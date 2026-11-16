@@ -10,3 +10,8 @@ build/
 # Swift Package Manager
 .build/
 .swiftpm/
+
+# Sparkle update-signing keys: never commit these (the public key lives in Config/Info.plist)
+sparkle_private_key*
+*.ed25519
+*.pem
