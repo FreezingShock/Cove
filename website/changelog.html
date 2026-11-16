@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Changelog · Inlet</title>
+  <meta name="description" content="Inlet's version plan from 0.1 to 1.0, and how each release's notes are written.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Changelog · Inlet">
+  <meta property="og:description" content="The version plan for Inlet, from 0.1 to 1.0, and how each release is documented.">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/changelog.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <nav class="links" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="changelog.html" aria-current="page">Changelog</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="download.html">Get Inlet</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap page-hero">
+    <p class="eyebrow">Changelog</p>
+    <h1>What changes in each version.</h1>
+    <p class="lede">Inlet is still in development, so there is no public release to list yet. Each version gets its own entry here when it ships, newest first. Until then, this page shows the plan.</p>
+    <ul class="on-page" aria-label="On this page">
+      <li><a href="#plan">Version plan</a></li>
+      <li><a href="#notes">How notes are written</a></li>
+    </ul>
+  </section>
+
+  <section class="wrap band" id="plan">
+    <p class="eyebrow">Version plan</p>
+    <h2 class="h-section">From a plain grid to a daily driver.</h2>
+    <ol class="timeline">
+      <li>
+        <div class="ver">0.1<small>Skeleton</small></div>
+        <div>
+          <h3>A working grid of your apps</h3>
+          <p>An Xcode project that scans your app folders and shows every installed app with its real icon. Click an icon to open the app.</p>
+        </div>
+      </li>
+      <li>
+        <div class="ver">0.2<small>Overlay</small></div>
+        <div>
+          <h3>Full-screen, instant, and on a shortcut</h3>
+          <p>A full-screen glass overlay that appears at once and closes on Escape. A global hotkey opens it from any app.</p>
+        </div>
+      </li>
+      <li>
+        <div class="ver">0.3<small>Search</small></div>
+        <div>
+          <h3>Find an app or a file by typing</h3>
+          <p>Filter apps as you type, with a highlighted top match, Spotlight file results, and keyboard navigation.</p>
+        </div>
+      </li>
+      <li>
+        <div class="ver">0.4<small>Dock panel</small></div>
+        <div>
+          <h3>A quick panel from the Dock</h3>
+          <p>Click the Dock icon to open a compact panel with recent apps and recent files.</p>
+        </div>
+      </li>
+      <li>
+        <div class="ver">0.5<small>Polish</small></div>
+        <div>
+          <h3>The finished look</h3>
+          <p>A full design pass, the final app icon, the animations, and the Settings window.</p>
+        </div>
+      </li>
+      <li>
+        <div class="ver">1.0<small>Daily driver</small></div>
+        <div>
+          <h3>Ready for everyday use</h3>
+          <p>Fixes from a week of daily use with no crashes. Each release lists what it leaves out, so the notes never promise more than the build does.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap band" id="notes">
+    <p class="eyebrow">How notes are written</p>
+    <h2 class="h-section">Written from the changes, checked before release.</h2>
+    <div class="how-notes">
+      <article class="card">
+        <h3>From merged changes</h3>
+        <p>Each entry comes from the titles of the changes that went into the release. Titles are written to be read by people, and any title that reads badly is fixed before the release goes out.</p>
+      </article>
+      <article class="card">
+        <h3>Known limits</h3>
+        <p>Every release states what is not in it yet. Features on the plan but not shipped are listed as not included, not as done.</p>
+      </article>
+    </div>
+    <p class="lede lede-gap">Want the full history? Every change is in the <a href="https://github.com/FreezingShock/Inlet/commits/main" target="_blank" rel="noopener">commit history on GitHub</a>. Releases are on the <a href="https://github.com/FreezingShock/Inlet/releases" target="_blank" rel="noopener">releases page</a>.</p>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Inlet is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
+  <nav aria-label="Footer">
+    <a href="features.html">Features</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="faq.html">FAQ</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="support.html">Support</a>
+    <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</footer>
+
+<script src="js/pages.js" defer></script>
+</body>
+</html>
