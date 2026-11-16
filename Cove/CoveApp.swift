@@ -15,7 +15,11 @@ struct CoveApp: App {
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
 
+    /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
+    /// Also starts crash collection, which only runs if the user opted in.
+    @MainActor
     init() {
+        HotkeyManager.shared.start()
         // Starts crash collection only if the user has opted in. Off by default.
         DiagnosticsCollector.shared.startIfEnabled()
     }
