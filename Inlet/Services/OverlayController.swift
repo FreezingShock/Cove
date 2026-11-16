@@ -75,6 +75,7 @@ final class OverlayController {
     /// The grid hotkey: opens the overlay, or closes it if it is already open.
     func toggle() {
         if isVisible {
+            InletSignpost.cancelHotkeyToVisible()
             hide()
         } else {
             show()
@@ -97,6 +98,8 @@ final class OverlayController {
         motion.isOpen = false
         NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
+        // The panel is on screen now; close the hotkey timing interval.
+        InletSignpost.endHotkeyToVisible()
 
         DispatchQueue.main.async {
             MainActor.assumeIsolated { self.motion.isOpen = true }
