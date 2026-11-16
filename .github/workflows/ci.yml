@@ -6,8 +6,11 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [integration]
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
+# A new push to a PR (or a newer run on the same ref) cancels the run in progress.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -16,61 +19,73 @@ permissions:
   contents: read
 
 jobs:
+  # Decides whether the macOS build is needed. Only changes to app code, the
+  # project, workflows or scripts need it. Docs and website PRs skip it.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+      - name: Check which paths changed
+        id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Default to building. Only skip when the compare call succeeds and
+          # every changed file is outside the app paths.
+          app=true
+          if [ "$EVENT" = "pull_request" ] && files=$(gh api --paginate "repos/$REPO/compare/$BASE...$HEAD" --jq '.files[].filename'); then
+            app=false
+            while IFS= read -r f; do
+              case "$f" in
+                Cove/*|Cove.xcodeproj/*|.github/*|scripts/*) app=true; break ;;
+              esac
+            done <<< "$files"
+          fi
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+          echo "Build needed: $app"
+
+  # Keep the job id and name `build`: it is the required check on integration.
+  # When skipped, the check reports as skipped, which counts as passing.
   build:
-    # macos-26 ships Xcode 26.6 (default) with the macOS 26.5 SDK.
+    needs: changes
+    if: always() && needs.changes.outputs.app != 'false'
     runs-on: macos-26
     timeout-minutes: 30
+    env:
+      SCHEME: Cove
     steps:
       - uses: actions/checkout@v4
 
-      # Bootstrap guard: Cove.xcodeproj arrives with PR #1. Until it is on
-      # integration there is nothing to build, so skip instead of failing.
-      # TODO: remove this guard once PR #1 has landed.
-      - name: Check for Xcode project
-        id: guard
-        run: |
-          if [ -f Cove.xcodeproj/project.pbxproj ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "::notice::No Cove.xcodeproj on this branch yet, nothing to build."
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Select Xcode 26.6
-        if: steps.guard.outputs.present == 'true'
         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
 
       - name: Show toolchain
-        if: steps.guard.outputs.present == 'true'
         run: |
           xcodebuild -version
           xcrun --sdk macosx --show-sdk-version
 
-      - name: Resolve scheme
-        id: scheme
-        if: steps.guard.outputs.present == 'true'
-        run: |
-          SCHEME=$(xcodebuild -list -project Cove.xcodeproj -json | jq -r '.project.schemes[0]')
-          echo "Using scheme: $SCHEME"
-          echo "name=$SCHEME" >> "$GITHUB_OUTPUT"
-
       - name: Build
-        if: steps.guard.outputs.present == 'true'
         run: |
           xcodebuild build \
             -project Cove.xcodeproj \
-            -scheme "${{ steps.scheme.outputs.name }}" \
+            -scheme "$SCHEME" \
             -configuration Debug \
             -destination 'platform=macOS' \
+            COMPILER_INDEX_STORE_ENABLE=NO \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Test
-        if: steps.guard.outputs.present == 'true'
         run: |
           if grep -q 'com.apple.product-type.bundle.unit-test' Cove.xcodeproj/project.pbxproj; then
             xcodebuild test \
               -project Cove.xcodeproj \
-              -scheme "${{ steps.scheme.outputs.name }}" \
+              -scheme "$SCHEME" \
               -destination 'platform=macOS' \
               CODE_SIGNING_ALLOWED=NO
           else

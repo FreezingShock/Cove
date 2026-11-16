@@ -14,6 +14,11 @@ struct CoveApp: App {
     /// Owns the app list and the overlay. Stays alive for the whole run.
     @NSApplicationDelegateAdaptor(CoveAppDelegate.self) private var appDelegate
 
+    init() {
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
+    }
+
     var body: some Scene {
         // Cove's UI is the full-screen overlay, which the delegate owns.
         // This placeholder scene is here only because an App needs a scene.
@@ -64,6 +69,14 @@ struct CoveCommands: Commands {
                 library.reload()
             }
             .keyboardShortcut("r", modifiers: .command)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }
