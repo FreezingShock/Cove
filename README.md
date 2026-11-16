@@ -22,7 +22,11 @@ To stop Cove, press **Command-.** in Xcode or quit Cove normally.
 
 ### App icon files
 
-The Crescent icon's PNG files are in `/mnt/project-files/cove/icon/AppIcon.appiconset/` on the project side and must be copied into `Cove/Assets.xcassets/AppIcon.appiconset/` by hand. The asset catalog already lists their names, so drop in these 12 files: `light-16x16@1x.png`, `light-16x16@2x.png`, `light-32x32@1x.png`, `light-32x32@2x.png`, `light-128x128@1x.png`, `light-128x128@2x.png`, `light-256x256@1x.png`, `light-256x256@2x.png`, `light-512x512@1x.png`, `light-512x512@2x.png`, `dark-1024.png`, `tinted-1024.png`. Binary files can't go through the GitHub connector, so this step is manual. Until it's done, Xcode shows a generic icon.
+The Crescent icon's PNG files aren't stored in git, because binary files can't be committed through the GitHub connector. Copy these 12 files from the Crescent icon set (the `AppIcon.appiconset` folder in the design project) into `Cove/Assets.xcassets/AppIcon.appiconset/`. The asset catalog's `Contents.json` already lists their names:
+
+`light-16x16@1x.png`, `light-16x16@2x.png`, `light-32x32@1x.png`, `light-32x32@2x.png`, `light-128x128@1x.png`, `light-128x128@2x.png`, `light-256x256@1x.png`, `light-256x256@2x.png`, `light-512x512@1x.png`, `light-512x512@2x.png`, `dark-1024.png`, `tinted-1024.png`
+
+Until they're copied in, Xcode shows a generic icon.
 
 ### If something goes wrong
 
