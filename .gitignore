@@ -15,3 +15,5 @@ build/
 sparkle_private_key*
 *.ed25519
 *.pem
+# Python bytecode
+__pycache__/
