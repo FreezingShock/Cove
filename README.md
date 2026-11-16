@@ -43,6 +43,10 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | `Cove/Services/AppLauncher.swift` | Opens an app through macOS and shows an alert if it fails. |
 | `Cove/Views/AppGridView.swift` | The window: header and 7-column grid. |
 | `Cove/Views/AppIconCell.swift` | One grid cell: icon, name, hover and press effects. |
+| `Cove/AppDelegate.swift` | Handles Dock clicks (reopen) and opens the quick panel or grid. |
+| `Cove/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
+| `Cove/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
+| `Cove/CoveTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
 | `Cove/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
 | `Cove/Theme.swift` | Colors and sizes from the design system. |
 
