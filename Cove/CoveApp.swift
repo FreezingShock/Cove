@@ -67,6 +67,9 @@ struct CoveCommands: Commands {
         // Replaces the default Help menu contents with one item that opens
         // the in-app feedback form. The form only opens GitHub in the browser.
         CommandGroup(replacing: .help) {
+            Button("Cove Setup…") {
+                OnboardingWindowController.shared.show()
+            }
             Button("Send Feedback…") {
                 FeedbackWindow.shared.show()
             }

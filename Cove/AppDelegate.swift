@@ -40,6 +40,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         OverlayController.shared.show()
+
+        // First-run setup opens once, until the user finishes it. It is also
+        // reachable from Help > Cove Setup…
+        OnboardingWindowController.showOnFirstLaunch()
     }
 
     /// Called when the app is reopened: a Dock click, or launching it again
