@@ -32,6 +32,7 @@ jobs:
           xcrun --sdk macosx --show-sdk-version
 
       - name: Resolve scheme
+        id: scheme
         run: |
           SCHEME=$(xcodebuild -list -project Cove.xcodeproj -json | jq -r '.project.schemes[0]')
           echo "Using scheme: $SCHEME"
