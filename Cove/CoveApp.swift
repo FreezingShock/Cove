@@ -18,6 +18,8 @@ struct CoveApp: App {
     init() {
         // Give every setting its default before any window reads it.
         CoveSettings.registerDefaults()
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
     }
 
     var body: some Scene {
@@ -53,6 +55,14 @@ struct CoveCommands: Commands {
                 library.reload()
             }
             .keyboardShortcut("r", modifiers: .command)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }
