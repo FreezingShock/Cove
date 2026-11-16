@@ -78,7 +78,6 @@
   main.doc > :first-child { margin-top: 0; }
   h1 { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -0.015em; margin: 0 0 8px; }
   h2 { font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 10px; scroll-margin-top: 24px; }
-  h3 { font-size: 15px; line-height: 1.4; font-weight: 600; margin: 24px 0 6px; }
   p { margin: 0 0 14px; }
   ul, ol { margin: 0 0 14px; padding-left: 22px; }
   li { margin: 4px 0; }
@@ -86,10 +85,6 @@
   code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; }
   kbd { display: inline-block; padding: 1px 7px; border: 1px solid var(--hair); border-bottom-width: 2px; border-radius: 6px; background: var(--field); line-height: 1.5; }
   code { background: var(--field); padding: 1px 6px; border-radius: 6px; }
-
-  .note { padding: 16px 18px; border-radius: var(--r-md); background: var(--accent-soft); margin: 0 0 24px; }
-  .note p:last-child { margin-bottom: 0; }
-  .note strong { font-weight: 600; }
 
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 0 0 8px; padding: 0; list-style: none; }
   .cards li { margin: 0; }
@@ -143,14 +138,14 @@
       <li><a href="#opening">Opening Cove<span>Dock, hotkey, and first launch</span></a></li>
       <li><a href="#hotkeys">Hotkey problems<span>Conflicts and shortcuts that don't respond</span></a></li>
       <li><a href="#permissions">Permissions<span>What Cove asks for, and what it doesn't</span></a></li>
-      <li><a href="#erase">Erasing data<span>Recents and everything Cove keeps</span></a></li>
+      <li><a href="#erase">Erasing data<span>Launch history, crash reports, and removal</span></a></li>
       <li><a href="#report">Report a bug<span>What to include, and where to send it</span></a></li>
     </ul>
 
     <h2 id="opening">Opening Cove</h2>
     <details open>
       <summary>How do I open Cove?</summary>
-      <p>Click Cove's icon in the Dock to open the quick panel. It shows your recent apps and files, plus a Show All Apps button. Press <kbd>⌥</kbd> <kbd>Space</kbd> to open the full grid of apps from anywhere. If you turned on the menu bar icon in Settings, you can also open Cove from there.</p>
+      <p>Click Cove's icon in the Dock to open the quick panel. It shows your recent apps and files, plus a Show All Apps button. Press <kbd>⌥</kbd> <kbd>Space</kbd> to open the full grid of apps from anywhere. If you turn on the menu bar icon in Settings, you can open Cove from there too.</p>
     </details>
     <details>
       <summary>What does Cove replace?</summary>
@@ -158,15 +153,15 @@
     </details>
     <details>
       <summary>Which Mac does Cove need?</summary>
-      <p>Cove needs macOS 26 or later. It is built for Apple silicon and Intel Macs running that version or newer.</p>
+      <p>Cove needs macOS 26 or later.</p>
     </details>
     <details>
       <summary>Do I need an internet connection?</summary>
-      <p>No. Cove works offline. Its only outside connection is the update check, which you can turn off in Settings.</p>
+      <p>No. Cove works offline. Its only outside connection is the update check, which you can turn off in Settings, Updates.</p>
     </details>
     <details id="gatekeeper">
       <summary>macOS says it can't verify Cove, so it won't open</summary>
-      <p>Early builds of Cove aren't signed with an Apple Developer ID yet, so macOS may block the first launch. Only do this for a copy you downloaded from Cove's official GitHub releases page. Then follow these steps (macOS 15 and later):</p>
+      <p>Early builds of Cove aren't signed with an Apple Developer ID yet, so macOS may block the first launch. Only do this for a copy you downloaded from Cove's official GitHub releases page. Then follow these steps on macOS 15 and later:</p>
       <ol class="steps">
         <li>Open Cove from your Applications folder. When macOS shows the warning, click <strong>Done</strong>.</li>
         <li>Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>.</li>
@@ -174,46 +169,48 @@
         <li>Click <strong>Open</strong> in the confirmation dialog. Cove will open, and macOS won't ask again.</li>
       </ol>
     </details>
-  </main>
 
-  <main class="doc" style="margin-top:0">
     <h2 id="hotkeys">Hotkey problems</h2>
     <details open>
       <summary>⌥ Space types a strange space in other apps</summary>
-      <p>Cove's default grid shortcut is <kbd>⌥</kbd> <kbd>Space</kbd>. macOS normally uses that combination to type a non-breaking space, so while Cove is running, that key goes to Cove first. If you'd rather keep the character, change the grid shortcut in <strong>Settings, Keyboard</strong>. The quick panel's default, <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd>, is separate and can be changed too.</p>
+      <p>Cove's default grid shortcut is <kbd>⌥</kbd> <kbd>Space</kbd>. macOS normally uses that combination to type a non-breaking space, so while Cove is running, that key goes to Cove first. If you'd rather keep the character, change the grid shortcut in Settings, Keyboard. The quick panel's default, <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd>, is separate and can be changed too.</p>
     </details>
     <details>
       <summary>The shortcut doesn't open Cove</summary>
-      <p>Another app or a macOS shortcut may already use the same keys. Cove shows a message when a shortcut conflicts with one that's already taken. Pick a different combination in <strong>Settings, Keyboard</strong>. Cove doesn't use <kbd>⌘</kbd> <kbd>Space</kbd>, because that opens Spotlight.</p>
-      <p>Some apps block global shortcuts, and password fields do too. macOS does this on purpose to protect typing. Click outside the field or switch to another app, then try again.</p>
+      <p>Another app or a macOS shortcut may already use the same keys. Cove shows a message when a shortcut is already taken. Pick a different combination in Settings, Keyboard. Cove doesn't use <kbd>⌘</kbd> <kbd>Space</kbd>, because that opens Spotlight.</p>
+      <p>Some apps block global shortcuts, and password fields do too. macOS does this on purpose to protect what you type. Click outside the field or switch to another app, then try again.</p>
     </details>
     <details>
       <summary>Arrow keys or Tab don't move through results the way I expect</summary>
-      <p>Full Keyboard Access changes how Tab and the arrow keys move focus in macOS apps. Check it in <strong>System Settings, Accessibility, Keyboard</strong>. Turn it off, try again, and if the problem stays, <a href="#report">report it</a> with your macOS version.</p>
+      <p>Full Keyboard Access changes how Tab and the arrow keys move focus in macOS apps. Check it in System Settings, Accessibility, Keyboard. Turn it off and try again. If the problem stays, <a href="#report">report it</a> with your macOS version.</p>
     </details>
 
     <h2 id="permissions">Permissions</h2>
     <details open>
       <summary>Does Cove ask for Accessibility or Screen Recording access?</summary>
-      <p>No, not in version 1. You won't see those prompts. Cove only asks macOS for what it needs to work, and it leaves the rest alone.</p>
+      <p>No, not in version 1. You won't see those prompts.</p>
     </details>
     <details>
       <summary>How do I turn off launch at login?</summary>
-      <p>Open <strong>System Settings, General, Login Items</strong> and switch off Cove. You can also turn it off in Cove's own Settings.</p>
+      <p>Open System Settings, General, Login Items, and switch off Cove.</p>
     </details>
     <details>
       <summary>Why doesn't a file show up in search?</summary>
-      <p>Cove's file results come from Spotlight, which only finds what it has indexed. If a folder is excluded from Spotlight in <strong>System Settings, Siri &amp; Spotlight</strong>, files in it won't appear in Cove either. Cove doesn't keep its own index.</p>
+      <p>Cove's file results come from Spotlight, which only finds what it has indexed. If a folder is excluded from Spotlight in System Settings, Siri &amp; Spotlight, files in it won't appear in Cove either. Cove doesn't keep its own index.</p>
     </details>
 
     <h2 id="erase">Erasing data</h2>
     <details open>
-      <summary>How do I clear my recent apps and files?</summary>
-      <p>Open <strong>Settings, Privacy</strong> and choose <strong>Erase Launch History</strong>. This clears the recent apps Cove shows in its quick panel. Recent files come from Spotlight, so Cove can't clear those. Clear them from Spotlight's own settings if you need to.</p>
+      <summary>How do I clear my recent apps?</summary>
+      <p>Open Settings, Privacy and choose Erase Launch History. This clears the recent apps Cove shows in its quick panel. Recent files come from Spotlight, so Cove can't clear those. Clear them from Spotlight's own settings if you need to.</p>
+    </details>
+    <details>
+      <summary>How do I erase saved crash reports?</summary>
+      <p>Open Settings, Privacy and use the Erase button. Cove keeps crash reports only if you turned on crash reporting, and it keeps up to 20 of them on your Mac. Nothing is sent anywhere unless you choose to share a report.</p>
     </details>
     <details>
       <summary>How do I remove Cove completely?</summary>
-      <p>Quit Cove. Move it from your Applications folder to the Trash, then empty the Trash. To delete your settings and launch history too, open your Library's Application Support folder and remove the folder for Cove. Look for a folder named Cove, or search that folder for it if it isn't where you expect.</p>
+      <p>Quit Cove. Move it from your Applications folder to the Trash, then empty the Trash. To delete your settings, launch history, and saved crash reports too, open Finder, choose Go, Go to Folder, and enter <code>~/Library/Application Support/Cove</code>. Move that folder to the Trash as well.</p>
     </details>
 
     <h2 id="report">Report a bug</h2>
@@ -224,7 +221,8 @@
       <li>What you did, step by step, and what happened instead.</li>
       <li>A screenshot or screen recording, if it helps.</li>
     </ul>
-    <p>Remove personal details before you post, such as file names or folder paths you don't want public. If Cove crashed, you can find the crash report in the Console app, under Crash Reports. Crash reports include file paths and your user name, so check them before you share one. Crash reporting is off by default, so nothing is sent unless you choose to send it.</p>
+    <p>GitHub issues are public, so remove personal details before you post. That includes file names and folder paths you don't want shared. If you turned on crash reporting, Send Feedback in the Help menu lets you preview a report before you share it.</p>
+    <p>If Cove crashed and you want to look at macOS's own crash log, open the Console app and choose Crash Reports in the sidebar. Those logs include file paths and your user name, so check them before you share one.</p>
     <p>Read the <a href="privacy.html">privacy policy</a> for what Cove stores and what it sends.</p>
   </main>
 </div>
