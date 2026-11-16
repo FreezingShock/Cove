@@ -38,10 +38,14 @@ Cove uses a two-branch flow:
 
 ## CI
 
-The `build` job runs on every PR into `integration` and every push to it. It runs `xcodebuild build` with Xcode 26.6 on the `macos-26` runner, and runs tests once a unit-test target exists. It must pass before a PR merges.
+The `build` check runs on every PR into `integration`, every push to it, and every merge queue run. It must pass before a PR merges.
 
-Before you push, build locally:
+- **App changes** (anything under `Cove/`, `Cove.xcodeproj/`, `.github/` or `scripts/`) run the full build: `xcodebuild build` with Xcode 26.6 on the `macos-26` runner. Tests run once a unit-test target exists.
+- **Docs and website changes** (`website/`, `docs/`, Markdown files, anything else outside those paths) skip the macOS build. A small `changes` job decides this in about ten seconds. The `build` check still reports as skipped, which counts as passing, so these PRs can auto-merge without waiting for a Mac.
+- **Superseded runs are cancelled.** Pushing a new commit to a PR cancels the run still in progress for that PR.
+
+Before you push app changes, build locally. Use the same flags CI uses so the local run matches:
 
 ```sh
-xcodebuild build -project Cove.xcodeproj -scheme Cove -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
+xcodebuild build -project Cove.xcodeproj -scheme Cove -configuration Debug -destination 'platform=macOS' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGNING_ALLOWED=NO
 ```
