@@ -339,7 +339,7 @@
       demoBtn.setAttribute("aria-label", playing ? "Pause demo" : "Play demo");
     }
     function playDemo() {
-      if (userPaused) return;
+      if (userPaused || demo.dataset.scrub === "on") return; // pinned demo: scroll drives the video, see scroll.js
       var p = demo.play();
       if (p && p.catch) p.catch(function () { /* autoplay blocked: the poster stays and Play still works */ });
     }
