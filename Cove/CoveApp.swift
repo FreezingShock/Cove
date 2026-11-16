@@ -25,10 +25,10 @@ struct CoveApp: App {
         // which is what a launcher wants. Clicking the Dock icon reopens it.
         Window("Cove", id: "main") {
             AppGridView()
-                .environment(library)       // hand the library to every view inside
-                .preferredColorScheme(.dark) // Cove is always dark
+                .environment(library)        // hand the library to every view inside
+                .preferredColorScheme(.dark) // Cove is always dark for now; Appearance settings come in 0.5
         }
-        .defaultSize(width: Theme.windowWidth, height: 760)
+        .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
         .windowResizability(.contentMinSize)
         .commands {
             CoveCommands(library: library)
