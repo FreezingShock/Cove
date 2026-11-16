@@ -89,8 +89,8 @@ struct AppGridView: View {
         .onKeyPress(.return) { openFocusedApp() }
         .onKeyPress(.leftArrow) { moveFocus(by: -1) }
         .onKeyPress(.rightArrow) { moveFocus(by: 1) }
-        .onKeyPress(.upArrow) { moveFocus(by: -CoveSize.gridColumns) }
-        .onKeyPress(.downArrow) { moveFocus(by: CoveSize.gridColumns) }
+        .onKeyPress(.upArrow) { moveFocus(by: -gridColumns) }
+        .onKeyPress(.downArrow) { moveFocus(by: gridColumns) }
         // First scan when the window appears.
         .task { library.reload() }
         // Rescan whenever you switch back to Cove, so apps installed or
@@ -212,7 +212,7 @@ struct AppGridView: View {
         let apps = shownApps
         guard let index = apps.firstIndex(where: { $0.id == current }) else { return .ignored }
 
-        let columns = CoveSize.gridColumns
+        let columns = gridColumns
         let target = index + offset
 
         if target < 0 {
