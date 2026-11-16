@@ -32,7 +32,7 @@ final class OverlayController {
     private init() {}
 
     /// Builds the panel once. Call this at launch, before the first `show()`.
-    func configure(library: AppLibrary) {
+    func configure(library: AppLibrary, layoutStore: LayoutStore) {
         guard panel == nil else { return }
 
         let panel = OverlayPanel(
@@ -63,6 +63,7 @@ final class OverlayController {
             onDismiss: { [weak self] in self?.hide() }
         )
         .environment(library)
+        .environment(layoutStore)
 
         panel.contentView = NSHostingView(rootView: root)
         self.panel = panel

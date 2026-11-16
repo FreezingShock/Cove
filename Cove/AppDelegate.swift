@@ -14,6 +14,8 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     /// One shared list of installed apps for the whole program.
     let library = AppLibrary()
+    /// The saved grid layout (order, hidden apps), saved to Application Support.
+    let layoutStore = LayoutStore()
 
     override init() {
         super.init()
@@ -25,7 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Builds the overlay and starts the first scan. Runs once at launch.
     func applicationDidFinishLaunching(_ notification: Notification) {
-        OverlayController.shared.configure(library: library)
+        OverlayController.shared.configure(library: library, layoutStore: layoutStore)
         // Scan once at launch. The overlay never scans on open (spec).
         library.reload()
 

@@ -2,10 +2,11 @@
 //  AppGridView.swift
 //  Cove
 //
-//  The full grid, shown on the overlay: a header, the search panel, then
-//  every installed app in a 7-column grid. Typing filters the grid. Arrow
-//  keys move through it. It sits on the overlay's scrim, so it has no
-//  background of its own.
+//  The full grid, shown on the overlay: a header, the search panel, the
+//  category bar, then the grid. Typing filters the grid. Arrow keys move
+//  through it. With no search and no category, the grid is paged and can be
+//  edited: reorder, hide an app, and Undo. It sits on the overlay's scrim, so
+//  it has no background of its own.
 //
 
 import AppKit
@@ -57,6 +58,8 @@ struct OpenPlacement {
 struct AppGridView: View {
     /// The shared app list, provided by the overlay via `.environment(...)`.
     @Environment(AppLibrary.self) private var library
+    /// The saved layout (order, hidden apps), also provided by the overlay.
+    @Environment(LayoutStore.self) private var layoutStore
     /// Read from the system so Increase Contrast applies to secondary text.
     @Environment(\.colorSchemeContrast) private var contrast
     /// Crossfade instead of the scale-in when icons appear in a search.
@@ -79,6 +82,22 @@ struct AppGridView: View {
     @State private var category: AppCategory? = CoveSettings.startingCategory
     /// Spotlight file matches for the query, shown under the search field.
     @State private var fileSearch = FileSearch()
+
+    /// Edit mode: icons wobble, drag to reorder, minus badges hide apps.
+    /// Only the paged grid has it (no search, no category).
+    @State private var isEditing = false
+    /// Whether the Hidden apps panel is open.
+    @State private var showsHidden = false
+    /// The last hidden app, for the Undo toast.
+    @State private var undo: HideUndo?
+    /// Clears the Undo toast after a few seconds.
+    @State private var undoTimer: Task<Void, Never>?
+
+    /// What the Undo toast needs to know.
+    private struct HideUndo: Equatable {
+        let appID: String
+        let name: String
+    }
 
     /// Column count from Settings > Grid (5 to 9, default 7).
     @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
@@ -104,6 +123,10 @@ struct AppGridView: View {
 
     /// True when the query has something other than spaces in it.
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
+
+    /// The paged, editable grid: no search and no category filter.
+    private var isPaged: Bool { !isSearching && category == nil }
+
     /// The apps to show. Searching looks through every app, since the category
     /// bar is hidden then. Otherwise the grid shows the selected bucket.
     /// Matches come back best-first.
@@ -111,6 +134,23 @@ struct AppGridView: View {
         let pool = isSearching ? library.apps : AppCategory.filter(library.apps, by: category)
         return AppSearch.results(for: query, in: pool)
     }
+
+    /// The apps in the order the grid draws them, which arrow keys follow.
+    /// The paged grid uses the saved layout order; everything else uses `shownApps`.
+    private var navApps: [AppItem] {
+        isPaged ? layoutApps : shownApps
+    }
+
+    /// Apps from the saved layout, in grid order. Hidden apps are not here.
+    /// Until the folders change lands, every entry in the layout is an app.
+    private var layoutApps: [AppItem] {
+        let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return layoutStore.layout.entries.compactMap { entry -> AppItem? in
+            guard case .app(let appID) = entry else { return nil }
+            return byID[appID]
+        }
+    }
+
     /// The best match. Return opens it. Only exists while searching.
     private var topHit: AppItem? { isSearching ? shownApps.first : nil }
 
@@ -157,11 +197,15 @@ struct AppGridView: View {
             }
         }
         .frame(minWidth: minimumGridWidth, maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .topTrailing) { hiddenPanel }
+        .overlay(alignment: .bottom) { undoToast }
         // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
         // Typing again returns keyboard focus to the field from the grid.
         .onChange(of: query) { _, newQuery in
             focusedApp = nil
+            // Searching and editing don't mix, since search isn't paged.
+            if isSearching { isEditing = false }
             // Zero when the setting is off, which clears the file rows.
             fileSearch.update(
                 query: newQuery,
@@ -169,10 +213,16 @@ struct AppGridView: View {
             )
         }
         .onChange(of: category) { _, newCategory in
+            // A category filter is not paged, so leave Edit mode with it.
+            if newCategory != nil { isEditing = false }
             if rememberLastCategory {
                 CoveSettings.saveLastCategory(newCategory)
             }
         }
+        // Keep the saved layout in step with what is installed.
+        .onChange(of: library.apps) { _, apps in reconcileLayout(apps) }
+        .onChange(of: library.hasScanned) { _, _ in reconcileLayout(library.apps) }
+        .onAppear { reconcileLayout(library.apps) }
         // Keys are handled here on the root so they work from the field and
         // from any icon. Each handler returns .ignored when it doesn't apply,
         // so the field keeps its normal typing and cursor keys.
@@ -199,14 +249,39 @@ struct AppGridView: View {
             if library.hasScanned {
                 Text(isSearching
                      ? "\(shownApps.count) of \(library.apps.count)"
-                     : "\(shownApps.count) apps")
+                     : "\(navApps.count) apps")
                     .font(CoveFont.section)
                     .foregroundStyle(CoveText.secondary(contrast))
+            }
+
+            if isPaged, !layoutStore.layout.hidden.isEmpty {
+                headerButton("Hidden \(layoutStore.layout.hidden.count)") {
+                    withAnimation(.coveOpen) { showsHidden.toggle() }
+                }
+            }
+
+            if isPaged, library.hasScanned, !library.apps.isEmpty {
+                headerButton(isEditing ? "Done" : "Edit") {
+                    withAnimation(.coveOpen) { isEditing.toggle() }
+                }
             }
         }
         .padding(.horizontal, CoveSize.gridSidePadding)
         .padding(.top, CoveSpace.xxl)
         .padding(.bottom, CoveSpace.xl)
+    }
+
+    /// A small capsule button for the header.
+    private func headerButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(CoveFont.section)
+                .foregroundStyle(CoveColor.text)
+                .padding(.horizontal, CoveSpace.l)
+                .padding(.vertical, CoveSpace.s)
+                .background(Capsule().fill(CoveColor.hover))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Grid
@@ -228,34 +303,79 @@ struct AppGridView: View {
                 .font(CoveFont.subhead)
                 .foregroundStyle(CoveText.secondary(contrast))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if isPaged {
+            // Paged and editable, in the saved layout order.
+            // Arrow keys still move the focus ring here.
+            EditableGridView(
+                apps: library.apps,
+                columns: gridColumns,
+                focusedID: focusedApp,
+                isEditing: $isEditing,
+                onLaunch: launch,
+                onHide: hide
+            )
         } else {
-            let placements = openPlacements
-            ScrollView {
-                // `LazyVGrid` only builds the cells that are on screen,
-                // so icons load as you scroll instead of all at once.
-                LazyVGrid(columns: columns, spacing: CoveSize.gridRowGap) {
-                    ForEach(shownApps) { app in
-                        AppIconCell(
-                            app: app,
-                            onLaunch: launch,
-                            isTopHit: app.id == topHit?.id,
-                            isKeyboardFocused: focusedApp == app.id,
-                            placement: placements[app.id] ?? .none,
-                            isOpen: isOpen
-                        )
-                        .focused($focusedApp, equals: app.id)
-                        .id(app.id)
-                        // New matches scale in from 0.6 (crossfade under Reduce Motion).
-                        .transition(reduceMotion
-                                    ? .opacity
-                                    : .scale(scale: 0.6).combined(with: .opacity))
-                    }
+            scrollGrid
+        }
+    }
+
+    /// The search results and category views: one scrolling grid, keyboard-navigable.
+    private var scrollGrid: some View {
+        let placements = openPlacements
+        return ScrollView {
+            // `LazyVGrid` only builds the cells that are on screen,
+            // so icons load as you scroll instead of all at once.
+            LazyVGrid(columns: columns, spacing: CoveSize.gridRowGap) {
+                ForEach(shownApps) { app in
+                    AppIconCell(
+                        app: app,
+                        onLaunch: launch,
+                        isTopHit: app.id == topHit?.id,
+                        isKeyboardFocused: focusedApp == app.id,
+                        placement: placements[app.id] ?? .none,
+                        isOpen: isOpen
+                    )
+                    .focused($focusedApp, equals: app.id)
+                    .id(app.id)
+                    // New matches scale in from 0.6 (crossfade under Reduce Motion).
+                    .transition(reduceMotion
+                                ? .opacity
+                                : .scale(scale: 0.6).combined(with: .opacity))
                 }
-                .padding(.horizontal, CoveSize.gridSidePadding)
-                .padding(.bottom, CoveSpace.xxxl)
-                // Reflow when the matches change: the `settle` spring.
-                .coveAnimation(.coveSettle, value: shownApps.map(\.id))
             }
+            .padding(.horizontal, CoveSize.gridSidePadding)
+            .padding(.bottom, CoveSpace.xxxl)
+            // Reflow when the matches change: the `settle` spring.
+            .coveAnimation(.coveSettle, value: shownApps.map(\.id))
+        }
+    }
+
+    /// The Hidden apps list, opened from the header.
+    @ViewBuilder
+    private var hiddenPanel: some View {
+        if showsHidden, !layoutStore.layout.hidden.isEmpty {
+            HiddenAppsPanel(rows: hiddenRows, onRestore: restore)
+                .padding(.top, 64)
+                .padding(.trailing, CoveSize.gridSidePadding)
+                .transition(.opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
+        }
+    }
+
+    /// The Undo toast, shown for a few seconds after an app is hidden.
+    @ViewBuilder
+    private var undoToast: some View {
+        if let undo {
+            UndoToast(message: "Hidden \(undo.name)") { restore(undo.appID) }
+                .padding(.bottom, CoveSpace.xxl)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
+    }
+
+    private var hiddenRows: [HiddenAppsPanel.Row] {
+        layoutStore.layout.hidden.map { (hidden: HiddenApp) -> HiddenAppsPanel.Row in
+            let name = library.apps.first(where: { $0.id == hidden.appID })?.name
+                ?? URL(fileURLWithPath: hidden.appID).deletingPathExtension().lastPathComponent
+            return HiddenAppsPanel.Row(id: hidden.appID, name: name)
         }
     }
 
@@ -298,14 +418,14 @@ struct AppGridView: View {
     /// Return while an icon has keyboard focus: open that icon.
     private func openFocusedApp() -> KeyPress.Result {
         guard let id = focusedApp,
-              let app = shownApps.first(where: { $0.id == id }) else { return .ignored }
+              let app = navApps.first(where: { $0.id == id }) else { return .ignored }
         launch(app)
         return .handled
     }
 
     /// Down arrow in the field: focus the first icon in the grid.
     private func enterGrid() -> KeyPress.Result {
-        guard let first = shownApps.first else { return .ignored }
+        guard let first = navApps.first else { return .ignored }
         focusedApp = first.id
         searchFocused = false
         return .handled
@@ -316,7 +436,7 @@ struct AppGridView: View {
     /// row hands focus back to the field.
     private func moveFocus(by offset: Int) -> KeyPress.Result {
         guard let current = focusedApp else { return .ignored }
-        let apps = shownApps
+        let apps = navApps
         guard let index = apps.firstIndex(where: { $0.id == current }) else { return .ignored }
 
         let columns = gridColumns
@@ -341,9 +461,12 @@ struct AppGridView: View {
         return .handled
     }
 
-    /// Escape clears the field first. With nothing to clear, it closes the overlay.
+    /// Escape leaves Edit mode first. Then it clears the field when the setting
+    /// is on. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
-        if isSearching && escapeClearsSearchFirst {
+        if isEditing {
+            withAnimation(.coveDismiss) { isEditing = false }
+        } else if isSearching && escapeClearsSearchFirst {
             query = ""
             focusedApp = nil
             searchFocused = true
@@ -351,5 +474,39 @@ struct AppGridView: View {
             dismissOverlay()
         }
         return .handled
+    }
+
+    /// Hides an app and shows the Undo toast.
+    private func hide(_ app: AppItem) {
+        layoutStore.update { $0.hideApp(app.id) }
+        undoTimer?.cancel()
+        withAnimation(.coveRise) {
+            undo = HideUndo(appID: app.id, name: app.name)
+        }
+        undoTimer = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(4.2))
+            guard !Task.isCancelled else { return }
+            dismissUndo()
+        }
+    }
+
+    /// Puts a hidden app back where it was.
+    private func restore(_ appID: String) {
+        layoutStore.update { $0.restoreApp(appID) }
+        if undo?.appID == appID { dismissUndo() }
+    }
+
+    private func dismissUndo() {
+        undoTimer?.cancel()
+        undoTimer = nil
+        withAnimation(.coveDismiss) { undo = nil }
+    }
+
+    /// Makes the saved layout match the installed apps.
+    /// Skipped before the first scan, and for an empty scan, so a failed
+    /// scan can't wipe the saved layout.
+    private func reconcileLayout(_ apps: [AppItem]) {
+        guard library.hasScanned, !apps.isEmpty else { return }
+        layoutStore.reconcile(with: apps)
     }
 }
