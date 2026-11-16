@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [integration]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [integration]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # macos-26 ships Xcode 26.6 (default) with the macOS 26.5 SDK.
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      SCHEME: Cove
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project Cove.xcodeproj \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Test
+        run: |
+          if grep -q 'com.apple.product-type.bundle.unit-test' Cove.xcodeproj/project.pbxproj; then
+            xcodebuild test \
+              -project Cove.xcodeproj \
+              -scheme "$SCHEME" \
+              -destination 'platform=macOS' \
+              CODE_SIGNING_ALLOWED=NO
+          else
+            echo "No unit test target yet, skipping tests."
+          fi
