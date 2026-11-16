@@ -37,7 +37,7 @@
 .on-page a:hover { color: var(--text); }
 
 /* ---------- Sections ---------- */
-.band { padding-block: 96px; border-top: 1px solid var(--hair); scroll-margin-top: 24px; }
+.band { padding-block: var(--sec-y, 96px); border-top: 1px solid var(--hair); scroll-margin-top: 24px; }
 .band .h-feature, .band .h-section { max-width: 22ch; }
 .band.faq-section { border-top: 0; padding-top: 0; }
 .lede-gap { margin-top: 40px; }
@@ -299,7 +299,7 @@
 @media (max-width: 560px) {
   .page-hero { padding-block: 36px 32px; }
   .page-hero h1 { font-size: 40px; }
-  .band { padding-block: 60px; }
+  .band { padding-block: 64px; }
   .band .h-section, .band .h-feature { font-size: 32px; }
   .shot { border-radius: 24px; }
   .shot-plain { padding: 28px 22px; border-radius: 24px; }
@@ -402,14 +402,27 @@ html { scroll-behavior: smooth; }
 
 /* FAQ search */
 .faq-search { position: relative; margin-top: 40px; max-width: 620px; }
+.faq-search { position: relative; }
+.faq-search::before {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  background: var(--text-3);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
 .faq-search input {
   width: 100%;
   height: 56px;
   padding: 0 24px 0 52px;
   border-radius: 999px;
   border: 1px solid var(--hair);
-  background: var(--field) no-repeat 20px center / 20px 20px
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23808A9C' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4 4'/%3E%3C/svg%3E");
+  background: var(--field);
   color: var(--text);
   font-size: 16px;
   -webkit-appearance: none;
@@ -579,3 +592,44 @@ html { scroll-behavior: smooth; }
   .page-hero::before { height: 300px; }
   .nav-right .btn { white-space: nowrap; }
 }
+
+/* Download hero: the product is the proof, framed like an app window */
+.hero-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: center;
+}
+.hero-split .on-page { margin-top: 28px; }
+.hero-window {
+  margin: 0;
+  border-radius: 32px;
+  border: 1px solid var(--hair);
+  background:
+    radial-gradient(60% 70% at 18% 88%, var(--glow-a), transparent 62%),
+    radial-gradient(55% 65% at 88% 12%, var(--glow-b), transparent 64%),
+    linear-gradient(180deg, var(--base-2), var(--base));
+  overflow: hidden;
+  box-shadow: 0 30px 80px -40px var(--g-shadow);
+}
+.hero-window .window-bar { display: flex; gap: 7px; padding: 14px 18px; border-bottom: 1px solid var(--hair); background: var(--field); }
+.hero-window .window-bar span { width: 10px; height: 10px; border-radius: 50%; background: var(--track); }
+.hero-window img { display: block; width: 100%; height: auto; }
+@media (max-width: 900px) {
+  .hero-split { grid-template-columns: 1fr; gap: 40px; }
+}
+
+/* Nested step lists (Download, First launch): the inner list is plain text inside its card,
+   so it must not inherit the outer card's grid, border, background or counter */
+.steps li > div > ol > li {
+  display: list-item;
+  counter-increment: none;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  border-radius: 0;
+}
+.steps li > div > ol > li::before { content: none; }
+.steps li > div > ol { margin-top: 4px; }
+.steps li > div > ol > li + li { margin-top: 10px; }
