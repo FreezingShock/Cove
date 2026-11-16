@@ -2,8 +2,9 @@
 //  CategoryBar.swift
 //  Cove
 //
-//  The capsule of five category buckets above the grid. Tap a bucket to
-//  filter the grid to it; tap the selected bucket again to show all apps.
+//  The capsule above the grid: All, then the six category buckets. Tap a
+//  bucket to filter the grid to it; tap the selected bucket again, or All,
+//  to show every app.
 //
 
 import SwiftUI
@@ -22,8 +23,14 @@ struct CategoryBar: View {
 
     var body: some View {
         HStack(spacing: 2) {
+            segment(title: "All", isSelected: selection == nil) {
+                selection = nil
+            }
             ForEach(AppCategory.allCases) { category in
-                segment(for: category)
+                segment(title: category.title, isSelected: selection == category) {
+                    // Tapping the selected bucket clears the filter, same as All.
+                    selection = selection == category ? nil : category
+                }
             }
         }
         .padding(3)
@@ -35,14 +42,9 @@ struct CategoryBar: View {
         .animation(.spring(duration: 0.24, bounce: 0), value: selection)
     }
 
-    private func segment(for category: AppCategory) -> some View {
-        let isSelected = selection == category
-
-        return Button {
-            // Tapping the selected bucket clears the filter.
-            selection = isSelected ? nil : category
-        } label: {
-            Text(category.title)
+    private func segment(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
                 .font(.system(size: 11, weight: .semibold))
                 .textCase(.uppercase)
                 .tracking(0.66) // 0.06em at 11 pt
@@ -59,7 +61,7 @@ struct CategoryBar: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(category.title)
+        .accessibilityLabel(title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

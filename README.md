@@ -36,14 +36,14 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 |---|---|
 | `Cove/CoveApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
 | `Cove/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
-| `Cove/Models/AppCategory.swift` | Maps each app's category to the five buckets: Create, Build, School, Everyday, Other. |
+| `Cove/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
 | `Cove/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
 | `Cove/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
 | `Cove/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
 | `Cove/Services/AppLauncher.swift` | Opens an app through macOS and shows an alert if it fails. |
 | `Cove/Views/AppGridView.swift` | The window: header and 7-column grid. |
 | `Cove/Views/AppIconCell.swift` | One grid cell: icon, name, hover and press effects. |
-| `Cove/Views/CategoryBar.swift` | The five-bucket bar above the grid. Tap to filter. Fades out while search has text. |
+| `Cove/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
 | `Cove/Theme.swift` | Colors and sizes from the design system. |
 
 New files you add inside the `Cove` folder appear in Xcode automatically.

@@ -25,12 +25,12 @@ final class AppCategoryTests: XCTestCase {
             // School
             "public.app-category.education": .school,
             "public.app-category.reference": .school,
-            "public.app-category.educational-games": .school,
+            "public.app-category.educational-games": .games,
             // Everyday
             "public.app-category.business": .everyday,
             "public.app-category.entertainment": .everyday,
             "public.app-category.finance": .everyday,
-            "public.app-category.games": .everyday,
+            "public.app-category.games": .games,
             "public.app-category.healthcare-fitness": .everyday,
             "public.app-category.lifestyle": .everyday,
             "public.app-category.medical": .everyday,
@@ -41,24 +41,24 @@ final class AppCategoryTests: XCTestCase {
             "public.app-category.travel": .everyday,
             "public.app-category.utilities": .everyday,
             "public.app-category.weather": .everyday,
-            "public.app-category.action-games": .everyday,
-            "public.app-category.adventure-games": .everyday,
-            "public.app-category.arcade-games": .everyday,
-            "public.app-category.board-games": .everyday,
-            "public.app-category.card-games": .everyday,
-            "public.app-category.casino-games": .everyday,
-            "public.app-category.dice-games": .everyday,
-            "public.app-category.family-games": .everyday,
-            "public.app-category.kids-games": .everyday,
-            "public.app-category.music-games": .everyday,
-            "public.app-category.puzzle-games": .everyday,
-            "public.app-category.racing-games": .everyday,
-            "public.app-category.role-playing-games": .everyday,
-            "public.app-category.simulation-games": .everyday,
-            "public.app-category.sports-games": .everyday,
-            "public.app-category.strategy-games": .everyday,
-            "public.app-category.trivia-games": .everyday,
-            "public.app-category.word-games": .everyday,
+            "public.app-category.action-games": .games,
+            "public.app-category.adventure-games": .games,
+            "public.app-category.arcade-games": .games,
+            "public.app-category.board-games": .games,
+            "public.app-category.card-games": .games,
+            "public.app-category.casino-games": .games,
+            "public.app-category.dice-games": .games,
+            "public.app-category.family-games": .games,
+            "public.app-category.kids-games": .games,
+            "public.app-category.music-games": .games,
+            "public.app-category.puzzle-games": .games,
+            "public.app-category.racing-games": .games,
+            "public.app-category.role-playing-games": .games,
+            "public.app-category.simulation-games": .games,
+            "public.app-category.sports-games": .games,
+            "public.app-category.strategy-games": .games,
+            "public.app-category.trivia-games": .games,
+            "public.app-category.word-games": .games,
         ]
 
         for (value, bucket) in expected {
@@ -87,9 +87,9 @@ final class AppCategoryTests: XCTestCase {
 
     // MARK: - Bucket set
 
-    func testFiveBucketsInBarOrder() {
-        XCTAssertEqual(AppCategory.allCases, [.create, .build, .school, .everyday, .other])
-        XCTAssertEqual(AppCategory.allCases.map(\.title), ["Create", "Build", "School", "Everyday", "Other"])
+    func testSixBucketsInBarOrder() {
+        XCTAssertEqual(AppCategory.allCases, [.create, .build, .school, .everyday, .games, .other])
+        XCTAssertEqual(AppCategory.allCases.map(\.title), ["Create", "Build", "School", "Everyday", "Games", "Other"])
     }
 
     // MARK: - Filtering
@@ -103,6 +103,11 @@ final class AppCategoryTests: XCTestCase {
         let apps = sampleApps()
         let builds = AppCategory.filter(apps, by: .build)
         XCTAssertEqual(builds.map(\.name), ["Xcode"])
+    }
+
+    func testGamesBucketCollectsEveryGame() {
+        let apps = sampleApps()
+        XCTAssertEqual(AppCategory.filter(apps, by: .games).map(\.name), ["Chess"])
     }
 
     func testEveryAppLandsInExactlyOneBucket() {
@@ -131,6 +136,7 @@ final class AppCategoryTests: XCTestCase {
             makeApp(name: "Affinity Photo", categoryType: "public.app-category.photography"),
             makeApp(name: "Xcode", categoryType: "public.app-category.developer-tools"),
             makeApp(name: "Notes", categoryType: "public.app-category.productivity"),
+            makeApp(name: "Chess", categoryType: "public.app-category.strategy-games"),
             makeApp(name: "Khan Academy", categoryType: "public.app-category.education"),
             makeApp(name: "Mystery Tool", categoryType: nil),
             makeApp(name: "Odd Thing", categoryType: "public.app-category.nonsense"),
