@@ -2,25 +2,73 @@
 //  AppGridView.swift
 //  Cove
 //
-//  The main window: a header, the search panel, then the grid. Typing filters
-//  the grid, and arrow keys move through it. With no search, the grid is paged
-//  and can be edited: reorder, hide an app, and Undo.
+//  The full grid, shown on the overlay: a header, the search panel, the
+//  category bar, then the grid. Typing filters the grid. Arrow keys move
+//  through it. With no search and no category, the grid is paged and can be
+//  edited: reorder, hide an app, and Undo. It sits on the overlay's scrim, so
+//  it has no background of its own.
 //
 
 import AppKit
 import SwiftUI
 
+/// Where one grid cell starts and when it begins its open animation.
+/// The grid ripples outward from the middle: cells farther from the
+/// center wait longer, up to a cap.
+struct OpenPlacement {
+    /// Starting offset: 22% of the way from the cell toward the grid center.
+    let offset: CGSize
+    /// Seconds before this cell's open spring starts.
+    let delay: Double
+
+    /// No movement and no delay. Used when a cell has no known position.
+    static let none = OpenPlacement(offset: .zero, delay: 0)
+
+    /// Spec: 0.6 ms of delay per point of distance, capped at 520 ms.
+    private static let delayPerPoint = 0.0006
+    private static let maxDelay = 0.52
+    /// Spec: each icon starts 22% of the way toward the center.
+    private static let startFraction: CGFloat = 0.22
+
+    /// Placement for the cell at `index` in a grid of `total` cells.
+    static func forCell(at index: Int, total: Int) -> OpenPlacement {
+        let columns = CoveSize.gridColumns
+        let rows = Int((Double(total) / Double(columns)).rounded(.up))
+
+        // Center of the grid, in cell units (column and row indexes).
+        let centerColumn = Double(columns - 1) / 2
+        let centerRow = Double(max(rows - 1, 0)) / 2
+
+        // This cell's position from the center, in points.
+        let column = Double(index % columns)
+        let row = Double(index / columns)
+        let dx = (column - centerColumn) * Double(CoveSize.gridCell.width)
+        let dy = (row - centerRow) * Double(CoveSize.gridCell.height + CoveSize.gridRowGap)
+
+        let distance = (dx * dx + dy * dy).squareRoot()
+        let delay = min(distance * delayPerPoint, maxDelay)
+        let offset = CGSize(
+            width: -CGFloat(dx) * startFraction,
+            height: -CGFloat(dy) * startFraction
+        )
+        return OpenPlacement(offset: offset, delay: delay)
+    }
+}
+
 struct AppGridView: View {
-    /// The shared app list, provided by CoveApp via `.environment(...)`.
+    /// The shared app list, provided by the overlay via `.environment(...)`.
     @Environment(AppLibrary.self) private var library
-    /// The saved layout (order, folders, hidden apps), also from CoveApp.
+    /// The saved layout (order, hidden apps), also provided by the overlay.
     @Environment(LayoutStore.self) private var layoutStore
     /// Read from the system so Increase Contrast applies to secondary text.
     @Environment(\.colorSchemeContrast) private var contrast
     /// Crossfade instead of the scale-in when icons appear in a search.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    /// Closes the main window on Escape.
-    @Environment(\.dismissWindow) private var dismissWindow
+    /// Closes the overlay on Escape, and after an app opens.
+    @Environment(\.dismissOverlay) private var dismissOverlay
+
+    /// True once the overlay is open. Drives the open choreography.
+    let isOpen: Bool
 
     /// What the user typed. Empty means "show every app".
     @State private var query = ""
@@ -29,11 +77,14 @@ struct AppGridView: View {
     /// The icon that has keyboard focus, if any. Arrow keys move it.
     @FocusState private var focusedApp: AppItem.ID?
 
-    /// Column count from Settings > Grid (5 to 9, default 7).
-    @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
+    /// The bucket the grid is filtered to. Nil shows every app.
+    /// Starts on the last bucket used when "Remember last category" is on.
+    @State private var category: AppCategory? = CoveSettings.startingCategory
+    /// Spotlight file matches for the query, shown under the search field.
+    @State private var fileSearch = FileSearch()
 
     /// Edit mode: icons wobble, drag to reorder, minus badges hide apps.
-    /// Only the paged grid has it; searching turns it off.
+    /// Only the paged grid has it (no search, no category).
     @State private var isEditing = false
     /// Whether the Hidden apps panel is open.
     @State private var showsHidden = false
@@ -48,6 +99,15 @@ struct AppGridView: View {
         let name: String
     }
 
+    /// Column count from Settings > Grid (5 to 9, default 7).
+    @AppStorage(CoveSettings.Key.gridColumns.rawValue) private var gridColumns = 7
+    /// Settings > General and Search. Read here so each change applies at once.
+    @AppStorage(CoveSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
+    @AppStorage(CoveSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
+    @AppStorage(CoveSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
+    @AppStorage(CoveSettings.Key.searchIncludesFiles.rawValue) private var searchIncludesFiles = true
+    @AppStorage(CoveSettings.Key.searchFileResultCount.rawValue) private var fileResultCount = 5
+
     /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
     private var columns: [GridItem] {
         Array(
@@ -56,7 +116,7 @@ struct AppGridView: View {
         )
     }
 
-    /// Smallest window that fits the current column count plus side padding.
+    /// Smallest width that fits the current column count plus side padding.
     private var minimumGridWidth: CGFloat {
         CoveSize.gridCell.width * CGFloat(gridColumns) + CoveSize.gridSidePadding * 2
     }
@@ -64,14 +124,25 @@ struct AppGridView: View {
     /// True when the query has something other than spaces in it.
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
 
-    /// The apps to show. Searching shows the matches best-first. Otherwise
-    /// it shows the saved grid order, which is the order the pages use, so
-    /// arrow keys follow the page.
+    /// The paged, editable grid: no search and no category filter.
+    private var isPaged: Bool { !isSearching && category == nil }
+
+    /// The apps to show. Searching looks through every app, since the category
+    /// bar is hidden then. Otherwise the grid shows the selected bucket.
+    /// Matches come back best-first.
     private var shownApps: [AppItem] {
-        isSearching ? AppSearch.results(for: query, in: library.apps) : layoutApps
+        let pool = isSearching ? library.apps : AppCategory.filter(library.apps, by: category)
+        return AppSearch.results(for: query, in: pool)
     }
 
-    /// Apps from the saved layout, in grid order. Folders arrive with the folders change.
+    /// The apps in the order the grid draws them, which arrow keys follow.
+    /// The paged grid uses the saved layout order; everything else uses `shownApps`.
+    private var navApps: [AppItem] {
+        isPaged ? layoutApps : shownApps
+    }
+
+    /// Apps from the saved layout, in grid order. Hidden apps are not here.
+    /// Until the folders change lands, every entry in the layout is an app.
     private var layoutApps: [AppItem] {
         let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         return layoutStore.layout.entries.compactMap { entry -> AppItem? in
@@ -83,6 +154,17 @@ struct AppGridView: View {
     /// The best match. Return opens it. Only exists while searching.
     private var topHit: AppItem? { isSearching ? shownApps.first : nil }
 
+    /// Open-animation placement for each shown app. Positions follow the
+    /// shown order, so a search reflows the ripple around the new center.
+    private var openPlacements: [AppItem.ID: OpenPlacement] {
+        let total = shownApps.count
+        var result: [AppItem.ID: OpenPlacement] = [:]
+        for (index, app) in shownApps.enumerated() {
+            result[app.id] = OpenPlacement.forCell(at: index, total: total)
+        }
+        return result
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             VStack(spacing: 0) {
@@ -93,12 +175,18 @@ struct AppGridView: View {
                     isFocused: $searchFocused,
                     topHit: topHit,
                     matchCount: shownApps.count,
+                    files: fileSearch.results,
                     onOpenTopHit: openTopHit,
+                    onOpenFile: openFile,
+                    onRevealFile: revealFile,
                     onDown: enterGrid
                 )
                 .padding(.bottom, CoveSpace.xl)
-                // HOOK (T3.3, categories): CategoryBar goes here, with
-                // isFaded: isSearching, so it fades out while typing.
+
+                // Fades out while typing, so the search results take its place.
+                // It keeps its space, so the grid below does not jump.
+                CategoryBar(selection: $category, isFaded: isSearching)
+                    .padding(.bottom, CoveSpace.l)
 
                 content
             }
@@ -108,18 +196,33 @@ struct AppGridView: View {
                 proxy.scrollTo(id, anchor: .center)
             }
         }
-        .frame(minWidth: minimumGridWidth, minHeight: 480)
-        .background(CoveColor.base)
+        .frame(minWidth: minimumGridWidth, maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .topTrailing) { hiddenPanel }
         .overlay(alignment: .bottom) { undoToast }
-        // The field has focus when the window opens, so you can type at once.
+        // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
         // Typing again returns keyboard focus to the field from the grid.
-        .onChange(of: query) { _, _ in
+        .onChange(of: query) { _, newQuery in
             focusedApp = nil
-            // Searching and editing don't mix, since the search grid isn't paged.
+            // Searching and editing don't mix, since search isn't paged.
             if isSearching { isEditing = false }
+            // Zero when the setting is off, which clears the file rows.
+            fileSearch.update(
+                query: newQuery,
+                resultCount: searchIncludesFiles ? fileResultCount : 0
+            )
         }
+        .onChange(of: category) { _, newCategory in
+            // A category filter is not paged, so leave Edit mode with it.
+            if newCategory != nil { isEditing = false }
+            if rememberLastCategory {
+                CoveSettings.saveLastCategory(newCategory)
+            }
+        }
+        // Keep the saved layout in step with what is installed.
+        .onChange(of: library.apps) { _, apps in reconcileLayout(apps) }
+        .onChange(of: library.hasScanned) { _, _ in reconcileLayout(library.apps) }
+        .onAppear { reconcileLayout(library.apps) }
         // Keys are handled here on the root so they work from the field and
         // from any icon. Each handler returns .ignored when it doesn't apply,
         // so the field keeps its normal typing and cursor keys.
@@ -129,16 +232,7 @@ struct AppGridView: View {
         .onKeyPress(.rightArrow) { moveFocus(by: 1) }
         .onKeyPress(.upArrow) { moveFocus(by: -gridColumns) }
         .onKeyPress(.downArrow) { moveFocus(by: gridColumns) }
-        // First scan when the window appears.
-        .task { library.reload() }
-        // Rescan whenever you switch back to Cove, so apps installed or
-        // deleted in the meantime show up without restarting.
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            library.reload()
-        }
-        // Keep the saved layout in step with what is installed.
-        .onChange(of: library.apps) { _, apps in reconcileLayout(apps) }
-        .onChange(of: library.hasScanned) { _, _ in reconcileLayout(library.apps) }
+        // No scan here: the app scans once at launch (spec: never scan on open).
     }
 
     // MARK: Header
@@ -155,18 +249,18 @@ struct AppGridView: View {
             if library.hasScanned {
                 Text(isSearching
                      ? "\(shownApps.count) of \(library.apps.count)"
-                     : "\(library.apps.count) apps")
+                     : "\(navApps.count) apps")
                     .font(CoveFont.section)
                     .foregroundStyle(CoveText.secondary(contrast))
             }
 
-            if !isSearching, !layoutStore.layout.hidden.isEmpty {
+            if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
                     withAnimation(.coveOpen) { showsHidden.toggle() }
                 }
             }
 
-            if !isSearching, library.hasScanned, !library.apps.isEmpty {
+            if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
                     withAnimation(.coveOpen) { isEditing.toggle() }
                 }
@@ -209,10 +303,9 @@ struct AppGridView: View {
                 .font(CoveFont.subhead)
                 .foregroundStyle(CoveText.secondary(contrast))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if isSearching {
-            searchGrid
-        } else {
-            // Paged and editable. Arrow keys still move the focus ring here.
+        } else if isPaged {
+            // Paged and editable, in the saved layout order.
+            // Arrow keys still move the focus ring here.
             EditableGridView(
                 apps: library.apps,
                 columns: gridColumns,
@@ -221,12 +314,15 @@ struct AppGridView: View {
                 onLaunch: launch,
                 onHide: hide
             )
+        } else {
+            scrollGrid
         }
     }
 
-    /// The search results: one scrolling grid, keyboard-navigable.
-    private var searchGrid: some View {
-        ScrollView {
+    /// The search results and category views: one scrolling grid, keyboard-navigable.
+    private var scrollGrid: some View {
+        let placements = openPlacements
+        return ScrollView {
             // `LazyVGrid` only builds the cells that are on screen,
             // so icons load as you scroll instead of all at once.
             LazyVGrid(columns: columns, spacing: CoveSize.gridRowGap) {
@@ -235,7 +331,9 @@ struct AppGridView: View {
                         app: app,
                         onLaunch: launch,
                         isTopHit: app.id == topHit?.id,
-                        isKeyboardFocused: focusedApp == app.id
+                        isKeyboardFocused: focusedApp == app.id,
+                        placement: placements[app.id] ?? .none,
+                        isOpen: isOpen
                     )
                     .focused($focusedApp, equals: app.id)
                     .id(app.id)
@@ -283,13 +381,32 @@ struct AppGridView: View {
 
     // MARK: Actions
 
-    /// Launches an app and closes Cove, so the next open starts fresh.
-    /// The window hides first, then the app opens (spec: Launch).
-    private func launch(_ app: AppItem) {
+    /// Clears the search and closes the overlay, when "Close after launch" is on.
+    /// The overlay hides first, then the app or file opens (spec: Launch).
+    private func closeAfterAction() {
+        guard closeAfterLaunch else { return }
         query = ""
         focusedApp = nil
-        dismissWindow(id: "main")
+        dismissOverlay()
+    }
+
+    /// Launches an app. The overlay closes first if the setting is on, so the
+    /// next open starts fresh.
+    private func launch(_ app: AppItem) {
+        closeAfterAction()
         AppLauncher.launch(app)
+    }
+
+    /// A tap on a file row: open the file with its default app.
+    private func openFile(_ file: FileItem) {
+        closeAfterAction()
+        file.open()
+    }
+
+    /// Cmd+Return in the field: select the file in a Finder window.
+    private func revealFile(_ file: FileItem) {
+        closeAfterAction()
+        file.revealInFinder()
     }
 
     /// Return in the field, or a tap on the top-hit row: open the top hit.
@@ -301,14 +418,14 @@ struct AppGridView: View {
     /// Return while an icon has keyboard focus: open that icon.
     private func openFocusedApp() -> KeyPress.Result {
         guard let id = focusedApp,
-              let app = shownApps.first(where: { $0.id == id }) else { return .ignored }
+              let app = navApps.first(where: { $0.id == id }) else { return .ignored }
         launch(app)
         return .handled
     }
 
     /// Down arrow in the field: focus the first icon in the grid.
     private func enterGrid() -> KeyPress.Result {
-        guard let first = shownApps.first else { return .ignored }
+        guard let first = navApps.first else { return .ignored }
         focusedApp = first.id
         searchFocused = false
         return .handled
@@ -319,7 +436,7 @@ struct AppGridView: View {
     /// row hands focus back to the field.
     private func moveFocus(by offset: Int) -> KeyPress.Result {
         guard let current = focusedApp else { return .ignored }
-        let apps = shownApps
+        let apps = navApps
         guard let index = apps.firstIndex(where: { $0.id == current }) else { return .ignored }
 
         let columns = gridColumns
@@ -344,17 +461,17 @@ struct AppGridView: View {
         return .handled
     }
 
-    /// Escape leaves Edit mode first. Then it clears the field, and with
-    /// nothing to clear, it closes the window.
+    /// Escape leaves Edit mode first. Then it clears the field when the setting
+    /// is on. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
         if isEditing {
             withAnimation(.coveDismiss) { isEditing = false }
-        } else if isSearching {
+        } else if isSearching && escapeClearsSearchFirst {
             query = ""
             focusedApp = nil
             searchFocused = true
         } else {
-            dismissWindow(id: "main")
+            dismissOverlay()
         }
         return .handled
     }

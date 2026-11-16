@@ -6,16 +6,21 @@
 //  A SwiftUI `App` describes its windows ("scenes") and menu commands;
 //  macOS handles the rest (Dock icon, menu bar, window management).
 //
+//  The grid is not a window. It is the full-screen overlay that
+//  `OverlayController` owns, and `AppDelegate` starts it.
+//
 
+import AppKit
 import SwiftUI
 
 @main
 struct CoveApp: App {
-    /// One shared list of installed apps for the whole program.
-    /// `@State` keeps this object alive for as long as the app runs.
-    @State private var library = AppLibrary()
-    /// The saved grid layout: order, folders and hidden apps.
-    @State private var layoutStore = LayoutStore()
+    /// Owns the app list, the overlay and Dock clicks. Stays alive for the whole run.
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
+    /// The Sparkle updater. `@StateObject` (not `@State`) because it is a
+    /// class that publishes changes, which the menu item watches.
+    @StateObject private var updater = AppUpdater()
 
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
     /// Also starts crash collection, which only runs if the user opted in.
@@ -29,25 +34,18 @@ struct CoveApp: App {
     }
 
     var body: some Scene {
-        // `Window` (instead of `WindowGroup`) gives exactly one main window,
-        // which is what a launcher wants. Clicking the Dock icon reopens it.
-        Window("Cove", id: "main") {
-            AppGridView()
-                .environment(library)   // hand the library to every view inside
-                .environment(layoutStore)
-                .coveAppearance()       // Light, Dark or Auto, from Settings > Appearance
-        }
-        .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
-        .windowResizability(.contentMinSize)
-        .commands {
-            CoveCommands(library: library)
-        }
-
         // Settings window, opened by Cmd+, and the app menu.
         Settings {
             SettingsView()
-                .environment(library)
+                .environment(appDelegate.library)
+                .environmentObject(updater)
         }
+        .commands {
+            CoveCommands(library: appDelegate.library, updater: updater)
+        }
+
+        // The menu bar icon is an NSStatusItem, started by AppDelegate.
+        // See MenuBarController for why it is not a MenuBarExtra scene.
     }
 }
 
@@ -55,6 +53,7 @@ struct CoveApp: App {
 /// single-window app) with File > Reload Apps (Command-R).
 struct CoveCommands: Commands {
     let library: AppLibrary
+    let updater: AppUpdater
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -64,12 +63,33 @@ struct CoveCommands: Commands {
             .keyboardShortcut("r", modifiers: .command)
         }
 
+        // Adds "Check for Updates…" right after "About Cove" in the Cove menu.
+        CommandGroup(after: .appInfo) {
+            CheckForUpdatesButton(updater: updater)
+        }
+
         // Replaces the default Help menu contents with one item that opens
         // the in-app feedback form. The form only opens GitHub in the browser.
         CommandGroup(replacing: .help) {
+            Button("Cove Setup…") {
+                OnboardingWindowController.shared.show()
+            }
             Button("Send Feedback…") {
                 FeedbackWindow.shared.show()
             }
         }
+    }
+}
+
+/// Its own View so SwiftUI redraws the disabled state when Sparkle's
+/// `canCheckForUpdates` changes. Menu items are not redrawn by themselves.
+struct CheckForUpdatesButton: View {
+    @ObservedObject var updater: AppUpdater
+
+    var body: some View {
+        Button("Check for Updates…") {
+            updater.checkForUpdates()
+        }
+        .disabled(!updater.canCheckForUpdates)
     }
 }
