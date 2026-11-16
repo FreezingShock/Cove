@@ -283,17 +283,12 @@
     }
   });
 
-  /* ---------- Settings: columns, category bar, appearance ---------- */
-  var cols = $("#cols"), colsOut = $("#colsOut"), miniGrid = $("#miniGrid"), bar = $("#bar"), miniBar = $("#miniBar");
+  /* ---------- Settings: columns and the grid preview ---------- */
+  var cols = $("#cols"), colsOut = $("#colsOut"), miniGrid = $("#miniGrid");
   fillGrid(miniGrid, APPS, false);
   cols.addEventListener("input", function () {
     miniGrid.style.setProperty("--cols", cols.value);
     colsOut.textContent = cols.value;
-  });
-  bar.addEventListener("click", function () {
-    var on = bar.getAttribute("aria-checked") !== "true";
-    bar.setAttribute("aria-checked", String(on));
-    miniBar.hidden = !on;
   });
 
   /* ---------- Appearance: Auto follows the system, Light and Dark set the page ---------- */

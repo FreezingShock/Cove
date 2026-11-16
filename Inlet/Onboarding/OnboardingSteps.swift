@@ -286,7 +286,7 @@ struct AccessStep: View {
 
             HStack(spacing: InletSpace.s) {
                 OnboardingIconTile(systemName: "lock.fill", tint: OnboardingTint.green, size: 24)
-                Text("Inlet never connects to the internet.")
+                Text("The only network call Inlet makes is an optional update check.")
                     .font(InletFont.body)
                     .foregroundStyle(InletColor.text)
             }
