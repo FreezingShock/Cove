@@ -25,17 +25,20 @@ button, input { font: inherit; color: inherit; }
 
 /* ---------- Type roles ---------- */
 .eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 14px;
+  color: var(--text-2);
+  margin-bottom: 16px;
 }
-.h-display { font-size: clamp(42px, 5.6vw, 72px); line-height: 1; letter-spacing: -0.035em; }
-.h-section { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.04; letter-spacing: -0.03em; }
-.h-feature { font-size: clamp(26px, 2.9vw, 34px); line-height: 1.1; letter-spacing: -0.025em; }
-.lede { font-size: 19px; line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
+/* Type scale for the page, all SF Pro. Each level is clearly one step below the one above it:
+   display 68 > section 44 > feature 32 > lede 20 > body 17 > small 15 > caption 13 > label 12. */
+:root { --sec-y: 96px; }
+.h-display { font-size: clamp(44px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; }
+.h-section { font-size: clamp(32px, 4.2vw, 44px); line-height: 1.08; letter-spacing: -0.03em; }
+.h-feature { font-size: clamp(26px, 2.8vw, 32px); line-height: 1.12; letter-spacing: -0.025em; }
+.lede { font-size: 20px; line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
 .body-2 { color: var(--text-2); text-wrap: pretty; }
 .caption { font-size: 12px; color: var(--text-3); }
 
@@ -343,7 +346,7 @@ kbd {
 }
 
 /* ---------- Hero ---------- */
-.hero { padding: 40px 0 112px; }
+.hero { padding: 48px 0 var(--sec-y); }
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -353,6 +356,8 @@ kbd {
 .hero h1 { margin: 22px 0 22px; }
 .hero .lede { max-width: 34ch; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.cta .btn { min-height: 52px; padding: 0 28px; font-size: 17px; }
+.cta .btn-ghost { background: transparent; }
 .keys {
   display: flex;
   flex-wrap: wrap;
@@ -417,7 +422,7 @@ kbd {
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: 56px;
   align-items: center;
-  padding: 104px 0;
+  padding: var(--sec-y) 0;
   border-top: 1px solid var(--hair);
 }
 .feature.rev .copy { order: 2; }
@@ -619,7 +624,7 @@ kbd {
 }
 
 /* ---------- Privacy ---------- */
-.privacy { padding: 104px 0; border-top: 1px solid var(--hair); }
+.privacy { padding: var(--sec-y) 0; border-top: 1px solid var(--hair); }
 .privacy-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: end; }
 .facts {
   margin-top: 56px;
@@ -635,9 +640,11 @@ kbd {
 }
 .fact h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
 .fact p { font-size: 15px; color: var(--text-2); }
+.privacy-link { margin-top: 24px; font-size: 15px; color: var(--text-2); }
+.privacy-link a { color: var(--text); font-weight: 600; text-underline-offset: 4px; }
 
 /* ---------- Get Inlet ---------- */
-.get { padding: 104px 0; border-top: 1px solid var(--hair); }
+.get { padding: var(--sec-y) 0; border-top: 1px solid var(--hair); }
 .get-lede { margin-top: 18px; max-width: 52ch; }
 .get-box {
   margin-top: 40px;
@@ -685,9 +692,9 @@ kbd {
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .hero-grid, .feature, .feature.rev, .privacy-head { grid-template-columns: 1fr; gap: 36px; }
-  .feature, .feature.rev { padding: 80px 0; }
+  .feature, .feature.rev { padding: 72px 0; }
   .feature.rev .copy, .feature.rev .stage { order: 0; }
-  .hero { padding: 24px 0 88px; }
+  .hero { padding: 24px 0 72px; }
   .hero .stage { min-height: 0; }
   .get-box { grid-template-columns: 1fr; }
 }
@@ -720,7 +727,7 @@ kbd {
 .skip-link:focus { top: 16px; }
 
 /* ---------- Demo video ---------- */
-.showcase { padding-top: 104px; padding-bottom: 96px; }
+.showcase { padding-top: var(--sec-y); padding-bottom: var(--sec-y); }
 .showcase-head { max-width: 640px; margin-bottom: 40px; }
 .demo-figure { margin: 0; }
 .demo-frame {

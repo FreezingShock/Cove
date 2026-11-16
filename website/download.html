@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Download · Inlet</title>
+  <meta name="description" content="Download Inlet for Mac, install it on macOS 26 or later, get past the first-launch warning, or build it from source.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Download Inlet for Mac">
+  <meta property="og:description" content="Install Inlet on macOS 26 or later. Download, drag to Applications, and open it.">
+  <meta property="og:url" content="https://freezingshock.github.io/Cove/download.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <nav class="links" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="download.html" aria-current="page">Download</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="download.html">Get Inlet</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap page-hero">
+    <p class="eyebrow">Download</p>
+    <h1>Install Inlet on your Mac.</h1>
+    <p class="lede">Download the disk image, drag Inlet into Applications, and open it. Inlet needs macOS 26 or later. Some builds are not notarized yet, so the first launch may need one extra step. The steps below cover both cases.</p>
+    <div class="download-row">
+      <a class="btn btn-primary" href="https://github.com/FreezingShock/Cove/releases/latest/download/Inlet.dmg" rel="noopener">Download Inlet</a>
+      <a class="btn btn-ghost" href="https://github.com/FreezingShock/Cove/releases" target="_blank" rel="noopener">All releases on GitHub</a>
+    </div>
+    <div class="chips-row" aria-label="Requirements">
+      <span>macOS 26 or later</span>
+      <span>Built with SwiftUI and AppKit</span>
+      <span>No account needed</span>
+    </div>
+    <p class="note"><strong>No release is out yet?</strong> The download button points to the newest published release on GitHub. If it shows a GitHub 404 page, no release has been published yet. Until one is, you can <a href="#build">build Inlet from source</a>.</p>
+    <ul class="on-page" aria-label="On this page">
+      <li><a href="#install">Install</a></li>
+      <li><a href="#first-launch">First launch</a></li>
+      <li><a href="#build">Build from source</a></li>
+      <li><a href="#updates">Updates</a></li>
+      <li><a href="#uninstall">Uninstall</a></li>
+    </ul>
+  </section>
+
+  <section class="wrap band" id="install">
+    <p class="eyebrow">Install</p>
+    <h2 class="h-section">Three steps, about a minute.</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Download the disk image</h3>
+          <p>Click <strong>Download Inlet</strong>. Your browser saves <code>Inlet.dmg</code> to Downloads.</p>
+          <p>To check the file, compare its checksum with <code>SHA256SUMS.txt</code> on the same release page:</p>
+          <pre class="cmd">shasum -a 256 ~/Downloads/Inlet.dmg</pre>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Drag Inlet into Applications</h3>
+          <p>Open <code>Inlet.dmg</code>, then drag the Inlet icon onto the Applications folder next to it. Eject the disk image when the copy finishes.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Open Inlet</h3>
+          <p>Open Inlet from the Applications folder. If macOS opens it without a warning, you are done. If macOS says it cannot verify the app, go to <a href="#first-launch">First launch</a>.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap band" id="first-launch">
+    <p class="eyebrow">First launch</p>
+    <h2 class="h-section">Get past the first-launch warning.</h2>
+    <p class="lede">Notarized releases open with no warning. A build that is not notarized is blocked the first time, so macOS asks you to allow it once. Use either method below.</p>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>In Finder</h3>
+          <ol>
+            <li>Open Inlet. macOS says it cannot verify the app. Click <strong>Done</strong>.</li>
+            <li>Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>.</li>
+            <li>Scroll to the Security section and click <strong>Open Anyway</strong> next to Inlet. Confirm with your password.</li>
+          </ol>
+          <p>macOS keeps the Open Anyway button for a short time after the first attempt. If it is gone, open Inlet again and it will return.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>In Terminal</h3>
+          <p>Remove the download flag from the app, then open Inlet as usual:</p>
+          <pre class="cmd">xattr -dr com.apple.quarantine /Applications/Inlet.app</pre>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Set up the optional permissions</h3>
+          <p>Setup asks for two things, and both are optional. <strong>Files and Folders</strong> lets Inlet find files for search. <strong>Open at Login</strong> starts Inlet when you log in. You can skip either and change it later in Settings.</p>
+          <p>Right-click does not bypass this check on recent macOS releases, so use one of the two methods above.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap band" id="build">
+    <p class="eyebrow">Build from source</p>
+    <h2 class="h-section">Build it yourself with Xcode.</h2>
+    <p class="lede">You need macOS 26 and Xcode 26 or later. Xcode is free from the Mac App Store. You do not need a paid Apple Developer account.</p>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Get the code</h3>
+          <p>Clone the repository, or choose <strong>Code, Download ZIP</strong> on GitHub and unzip it.</p>
+          <pre class="cmd">git clone https://github.com/FreezingShock/Cove.git</pre>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Open and run the project</h3>
+          <p>Double-click <code>Inlet.xcodeproj</code>. Make sure the scheme reads <strong>Inlet</strong> and the destination reads <strong>My Mac</strong>, then press <strong>Command R</strong>.</p>
+          <p>If Xcode asks for a development team, open the Inlet target, go to Signing &amp; Capabilities, and choose <strong>Sign to Run Locally</strong>.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Keep it</h3>
+          <p>Choose Product, Show Build Folder in Finder, open <code>Products/Debug</code>, and copy <code>Inlet.app</code> to Applications. It then opens like any other app.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap band" id="updates">
+    <p class="eyebrow">Updates</p>
+    <h2 class="h-section">Updates are checked once a day.</h2>
+    <p class="lede">Inlet checks GitHub about once a day for a newer release. The check asks only for release information. It never sends your files, your searches or your app list. To update by hand instead, turn the automatic check off in Settings, About.</p>
+  </section>
+
+  <section class="wrap band" id="uninstall">
+    <p class="eyebrow">Uninstall</p>
+    <h2 class="h-section">Remove Inlet and its data.</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Turn off Open at Login</h3>
+          <p>In Inlet, open Settings, General and switch off <strong>Open at login</strong>. Do this first, so macOS does not try to start a missing app.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Move the app to the Trash</h3>
+          <p>Drag <code>Inlet.app</code> from Applications to the Trash, then empty the Trash.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Delete the data folder (optional)</h3>
+          <p>Inlet keeps its settings, recent apps and files, and any diagnostic reports in one folder. Delete it to remove them completely:</p>
+          <pre class="cmd">~/Library/Application Support/Inlet</pre>
+        </div>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Inlet is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
+  <nav aria-label="Footer">
+    <a href="features.html">Features</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="faq.html">FAQ</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="support.html">Support</a>
+    <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</footer>
+
+<script src="js/pages.js" defer></script>
+</body>
+</html>

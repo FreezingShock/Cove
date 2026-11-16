@@ -283,17 +283,12 @@
     }
   });
 
-  /* ---------- Settings: columns, category bar, appearance ---------- */
-  var cols = $("#cols"), colsOut = $("#colsOut"), miniGrid = $("#miniGrid"), bar = $("#bar"), miniBar = $("#miniBar");
+  /* ---------- Settings: columns and the grid preview ---------- */
+  var cols = $("#cols"), colsOut = $("#colsOut"), miniGrid = $("#miniGrid");
   fillGrid(miniGrid, APPS, false);
   cols.addEventListener("input", function () {
     miniGrid.style.setProperty("--cols", cols.value);
     colsOut.textContent = cols.value;
-  });
-  bar.addEventListener("click", function () {
-    var on = bar.getAttribute("aria-checked") !== "true";
-    bar.setAttribute("aria-checked", String(on));
-    miniBar.hidden = !on;
   });
 
   /* ---------- Appearance: Auto follows the system, Light and Dark set the page ---------- */
@@ -339,7 +334,7 @@
       demoBtn.setAttribute("aria-label", playing ? "Pause demo" : "Play demo");
     }
     function playDemo() {
-      if (userPaused) return;
+      if (userPaused || demo.dataset.scrub === "on") return; // pinned demo: scroll drives the video, see scroll.js
       var p = demo.play();
       if (p && p.catch) p.catch(function () { /* autoplay blocked: the poster stays and Play still works */ });
     }

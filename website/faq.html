@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FAQ · Inlet</title>
+  <meta name="description" content="Answers about Inlet: what it does, how to install it, what it stores, and how to change its shortcuts.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="FAQ · Inlet">
+  <meta property="og:description" content="Answers about Inlet: what it does, how to install it, what it stores, and how to change its shortcuts.">
+  <meta property="og:url" content="https://freezingshock.github.io/Cove/faq.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <nav class="links" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="faq.html" aria-current="page">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="download.html">Get Inlet</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap page-hero">
+    <p class="eyebrow">FAQ</p>
+    <h1>Questions about Inlet.</h1>
+    <p class="lede">Short answers to the questions people ask most. If yours is not here, see <a href="support.html">Support</a>.</p>
+  </section>
+
+  <section class="wrap band faq-section" aria-labelledby="faq-about">
+    <div class="faq-wrap">
+
+      <div class="faq-group">
+        <h2 id="faq-about">About Inlet</h2>
+        <div class="faq">
+          <details>
+            <summary>What is Inlet?</summary>
+            <div class="answer">
+              <p>A full-screen grid of every app on your Mac, with one search field for apps and files. Inlet is for macOS 26 and later, and it replaces Launchpad, which was removed in macOS 26 Tahoe.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Who makes Inlet?</summary>
+            <div class="answer">
+              <p>Inlet is a personal project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc. The code is on <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Will it show dark and tinted icons?</summary>
+            <div class="answer">
+              <p>Not in version 1.0. Inlet shows each app's full-colour icon, the one macOS already uses for it.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group">
+        <h2 id="faq-install">Install and first launch</h2>
+        <div class="faq">
+          <details>
+            <summary>macOS says it cannot verify Inlet. What do I do?</summary>
+            <div class="answer">
+              <p>Some builds are not notarized yet, so macOS blocks them the first time. Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>, and click <strong>Open Anyway</strong> next to Inlet. Or run <code>xattr -dr com.apple.quarantine /Applications/Inlet.app</code> in Terminal. Both steps are on the <a href="download.html#first-launch">Download page</a>.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Do I need a paid Apple Developer account?</summary>
+            <div class="answer">
+              <p>No. You do not need one to run Inlet or to build it from source. Xcode builds it to run on your own Mac.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Why isn't Inlet on the Mac App Store?</summary>
+            <div class="answer">
+              <p>Inlet is distributed directly from GitHub. The App Store requires a sandbox, and a sandboxed app cannot freely read the app folders or open other apps. Inlet needs both to do its job.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do I update Inlet?</summary>
+            <div class="answer">
+              <p>Inlet checks GitHub about once a day for a newer release. You can turn the automatic check off in Settings, About, and then download new versions yourself from the <a href="download.html">Download page</a>.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do I remove Inlet?</summary>
+            <div class="answer">
+              <p>Turn off Open at Login in Settings, then move Inlet to the Trash. To delete its data as well, remove the <code>Inlet</code> folder in <code>~/Library/Application Support</code>. The steps are on the <a href="download.html#uninstall">Download page</a>.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group">
+        <h2 id="faq-privacy">Privacy and data</h2>
+        <div class="faq">
+          <details>
+            <summary>Does Inlet need an account or an internet connection?</summary>
+            <div class="answer">
+              <p>No account and no sign-in. The grid, search and apps all work without a connection. The only thing Inlet fetches from the internet is the optional update check.</p>
+            </div>
+          </details>
+          <details>
+            <summary>What does Inlet send anywhere?</summary>
+            <div class="answer">
+              <p>The update check asks GitHub for the latest release information. Inlet never sends your files, your searches or your app list. There is no analytics and no usage reporting. Read the <a href="privacy.html">privacy policy</a> for the full details.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Where does Inlet keep its data?</summary>
+            <div class="answer">
+              <p>On your Mac, in <code>~/Library/Application Support/Inlet</code>. The folder holds your settings, your recent apps and files, and any diagnostic reports you chose to save. Inlet does not build its own search index. File search uses Spotlight.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Are crash reports sent automatically?</summary>
+            <div class="answer">
+              <p>No. Crash reporting is off by default. If you turn it on, reports are saved on your Mac, and nothing is uploaded by itself. Sharing a report is your decision. A GitHub issue is public, so check what it contains first.</p>
+            </div>
+          </details>
+          <details>
+            <summary>How do I clear what Inlet remembers?</summary>
+            <div class="answer">
+              <p>In Settings, Privacy, choose <strong>Erase Launch History</strong>. It clears your recent apps and recent files.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="faq-group">
+        <h2 id="faq-using">Using Inlet</h2>
+        <div class="faq">
+          <details>
+            <summary>An app I installed doesn't show up. Why?</summary>
+            <div class="answer">
+              <p>Inlet looks in <code>/Applications</code>, <code>~/Applications</code> and <code>/System/Applications</code>, including the folders inside them. An app stored anywhere else will not appear. Inlet also rescans when you switch back to it. See the <a href="support.html#opening">Support page</a> if an app is still missing.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Can I change the shortcuts?</summary>
+            <div class="answer">
+              <p>Yes. Open Settings, then Keyboard. Press the keys you want. Press Escape to cancel. A shortcut that another app already uses is refused. The defaults are Option Space for the grid and Control Option Space for the quick panel. More detail is on the <a href="features.html#shortcuts">Features page</a>.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Option Space stopped typing a space in my text. Why?</summary>
+            <div class="answer">
+              <p>Option Space normally types a non-breaking space. While Inlet runs, its grid shortcut takes that combination in every app. Change the grid shortcut in Settings, Keyboard if this gets in your way. The <a href="support.html#hotkeys">Support page</a> covers other shortcut problems.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Can I rearrange the grid, group apps or hide some?</summary>
+            <div class="answer">
+              <p>Yes. Press and hold an icon to enter Edit mode, then drag icons into the order you want. Group apps into folders of up to nine. In Edit mode, tap the minus badge to hide an app, and restore it from the Hidden apps list. Your layout is saved on your Mac. See the <a href="features.html#arrange">Features page</a>.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Does Inlet work with Reduce Motion and Reduce Transparency?</summary>
+            <div class="answer">
+              <p>Yes. With Reduce Motion on, animations become a short fade. With Reduce Transparency on, the glass panels become solid. Increase Contrast also works. Nothing needs to be set inside Inlet.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="still">
+      <div>
+        <h2>Still have a question?</h2>
+        <p>The Support page covers opening Inlet, hotkeys, permissions, and reporting a bug.</p>
+      </div>
+      <a class="btn btn-primary" href="support.html">Go to Support</a>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Inlet is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
+  <nav aria-label="Footer">
+    <a href="features.html">Features</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="faq.html">FAQ</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="support.html">Support</a>
+    <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</footer>
+
+<script src="js/pages.js" defer></script>
+</body>
+</html>
