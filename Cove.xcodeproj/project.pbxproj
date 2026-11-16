@@ -18,6 +18,7 @@
 
 /* Begin PBXBuildFile section */
 		C0FE00000000000000000101 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE00000000000000000103 /* KeyboardShortcuts */; };
+		C0FE00000000000000000040 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C0FE00000000000000000041 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0FE00000000000000000101 /* KeyboardShortcuts in Frameworks */,
+				C0FE00000000000000000040 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +106,7 @@
 			name = Cove;
 			packageProductDependencies = (
 				C0FE00000000000000000103 /* KeyboardShortcuts */,
+				C0FE00000000000000000041 /* Sparkle */,
 			);
 			productName = Cove;
 			productReference = C0FE00000000000000000001 /* Cove.app */;
@@ -162,6 +165,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C0FE00000000000000000102 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				C0FE00000000000000000042 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C0FE00000000000000000005 /* Products */;
@@ -282,6 +286,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cove;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -310,6 +315,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cove;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -412,6 +418,14 @@
 				minimumVersion = 3.1.0;
 			};
 		};
+		C0FE00000000000000000042 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -419,6 +433,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C0FE00000000000000000102 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
+		};
+		C0FE00000000000000000041 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0FE00000000000000000042 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

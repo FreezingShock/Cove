@@ -229,6 +229,7 @@ struct PrivacyPane: View {
 
 struct AboutPane: View {
     @Environment(AppLibrary.self) private var library
+    @EnvironmentObject private var updater: AppUpdater
 
     var body: some View {
         Form {
@@ -237,6 +238,9 @@ struct AboutPane: View {
                 LabeledContent("Apps found", value: "\(library.apps.count)")
                 LabeledContent("Last scan", value: lastScanText)
             }
+
+            // Automatic-check toggle, last check time and a manual check button.
+            UpdatesSettingsSection(updater: updater)
         }
         .formStyle(.grouped)
         .navigationTitle("About")
