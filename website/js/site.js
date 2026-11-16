@@ -250,7 +250,7 @@
   });
 
   /* ---------- Quick panel: rises from the Dock icon, closes with no bounce ---------- */
-  var qp = $("#qp"), qpWrap = $("#qpWrap"), dockCove = $("#dockCove");
+  var qp = $("#qp"), qpWrap = $("#qpWrap"), dockInlet = $("#dockInlet");
   fillGrid($("#qpApps"), APPS.slice(0, 8), true);
   $("#qpFiles").innerHTML = FILES.slice(0, 3).map(function (f) {
     return '<li><span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
@@ -268,9 +268,9 @@
   }
   var panelOpen = true;
   setPanel(1);
-  dockCove.addEventListener("click", function () {
+  dockInlet.addEventListener("click", function () {
     panelOpen = !panelOpen;
-    dockCove.setAttribute("aria-expanded", String(panelOpen));
+    dockInlet.setAttribute("aria-expanded", String(panelOpen));
     if (panelOpen) {
       qpWrap.hidden = false;
       var from = qp.__v == null ? 0 : qp.__v;
