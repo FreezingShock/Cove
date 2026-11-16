@@ -9,10 +9,10 @@
 import CoreGraphics
 import Foundation
 
-/// Sizes the paged grid needs, on top of `Theme`.
+/// Sizes the paged grid needs, on top of `CoveSize`.
 enum GridMetrics {
-    /// One grid cell: the icon, then its name.
-    static let cellHeight: CGFloat = 108
+    /// One grid cell: the icon, then its name. Same as the search grid.
+    static let cellHeight: CGFloat = CoveSize.gridCell.height
     /// Room under the icons for the page dots.
     static let dotsHeight: CGFloat = 56
     /// How close to a window edge a drag has to get before the page flips.

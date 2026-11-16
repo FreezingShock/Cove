@@ -3,7 +3,7 @@
 //  Cove
 //
 //  The panels that float over the grid: the Hidden apps list and the Undo
-//  toast that follows a hide.
+//  toast that follows a hide. Both use the Cove glass and tokens.
 //
 
 import SwiftUI
@@ -18,37 +18,40 @@ struct HiddenAppsPanel: View {
     let rows: [Row]
     let onRestore: (String) -> Void
 
+    @Environment(\.colorSchemeContrast) private var contrast
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: CoveSpace.xxs) {
             Text("Hidden apps")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Theme.textSecondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
+                .font(CoveFont.section)
+                .foregroundStyle(CoveText.secondary(contrast))
+                .padding(.horizontal, CoveSpace.s)
+                .padding(.vertical, CoveSpace.s)
 
             ForEach(rows) { row in
-                HStack(spacing: 10) {
+                HStack(spacing: CoveSpace.m) {
                     Text(row.name)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Theme.text)
+                        .font(CoveFont.subhead)
+                        .foregroundStyle(CoveColor.text)
                         .lineLimit(1)
-                    Spacer(minLength: 8)
+                    Spacer(minLength: CoveSpace.s)
                     Button("Restore") { onRestore(row.id) }
                         .buttonStyle(.plain)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Theme.base)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(Theme.aqua))
+                        .font(CoveFont.section)
+                        .foregroundStyle(CoveColor.accentInk)
+                        .padding(.horizontal, CoveSpace.l)
+                        .padding(.vertical, CoveSpace.s)
+                        .background(Capsule().fill(CoveColor.accent))
+                        .contentShape(Capsule())
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, CoveSpace.s)
+                .padding(.vertical, CoveSpace.xs)
             }
         }
-        .padding(8)
+        .padding(CoveSpace.s)
         .frame(width: 280, alignment: .leading)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(color: .black.opacity(0.3), radius: 18, y: 8)
+        .covePanelGlass(cornerRadius: CoveRadius.panel)
+        .shadow(color: CoveColor.gShadow, radius: 18, y: 8)
     }
 }
 
@@ -58,24 +61,25 @@ struct UndoToast: View {
     let onUndo: () -> Void
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: CoveSpace.l) {
             Text(message)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(Theme.text)
+                .font(CoveFont.subhead)
+                .foregroundStyle(CoveColor.text)
                 .lineLimit(1)
 
             Button("Undo", action: onUndo)
                 .buttonStyle(.plain)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Theme.base)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 6)
-                .background(Capsule().fill(Theme.aqua))
+                .font(CoveFont.section)
+                .foregroundStyle(CoveColor.accentInk)
+                .padding(.horizontal, CoveSpace.l)
+                .padding(.vertical, CoveSpace.s)
+                .background(Capsule().fill(CoveColor.accent))
+                .contentShape(Capsule())
         }
-        .padding(.leading, 16)
-        .padding(.trailing, 8)
-        .padding(.vertical, 8)
-        .background(.regularMaterial, in: Capsule())
-        .shadow(color: .black.opacity(0.3), radius: 16, y: 6)
+        .padding(.leading, CoveSpace.l)
+        .padding(.trailing, CoveSpace.s)
+        .padding(.vertical, CoveSpace.s)
+        .coveCapsuleGlass(interactive: false)
+        .shadow(color: CoveColor.gShadow, radius: 16, y: 6)
     }
 }

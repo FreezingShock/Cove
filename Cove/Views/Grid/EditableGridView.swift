@@ -15,6 +15,10 @@ import SwiftUI
 struct EditableGridView: View {
     /// Installed apps, from the library.
     let apps: [AppItem]
+    /// Column count from Settings > Grid (5 to 9).
+    let columns: Int
+    /// The icon with keyboard focus, if any. Its page is shown when focus moves.
+    let focusedID: String?
     /// Edit mode. AppGridView owns it, so the header can show Done.
     @Binding var isEditing: Bool
     /// Opens an app.
@@ -35,6 +39,8 @@ struct EditableGridView: View {
     @State private var drag: Drag?
     /// The order while an icon is dragged. Saved only when the drag ends.
     @State private var draft: [AppItem]?
+    /// The icon under the pointer, if any. Drawn with the hover fill.
+    @State private var hoveredID: String?
     /// Counts down the hold that turns a press into Edit mode.
     @State private var holdTask: Task<Void, Never>?
     /// Counts down the pause that flips the page at a window edge.
@@ -71,9 +77,9 @@ struct EditableGridView: View {
     /// Radius of the minus badge's tap target.
     private static let badgeRadius: CGFloat = 18
 
-    /// Page changes and reorders. Reduce Motion gets a short crossfade.
-    private var paging: Animation {
-        reduceMotion ? .easeInOut(duration: 0.2) : .spring(duration: 0.6, bounce: 0.18)
+    /// Wraps a Cove spring. Under Reduce Motion it becomes a short crossfade.
+    private func motion(_ animation: Animation) -> Animation {
+        reduceMotion ? .easeInOut(duration: 0.2) : animation
     }
 
     /// Apps in grid order, with the saved layout applied. A drag shows its draft order instead.
@@ -81,7 +87,8 @@ struct EditableGridView: View {
         draft ?? visibleItems
     }
 
-    /// Apps from the saved layout, in order. Folders arrive with the folders change.
+    /// Apps from the saved layout, in order. Until the folders change lands,
+    /// every entry in the layout is an app.
     private var visibleItems: [AppItem] {
         let byID = Dictionary(apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         return layoutStore.layout.entries.compactMap { entry -> AppItem? in
@@ -95,9 +102,9 @@ struct EditableGridView: View {
             let stageHeight = max(1, proxy.size.height - GridMetrics.dotsHeight)
             let geo = GridGeometry.make(
                 pageSize: CGSize(width: max(1, proxy.size.width), height: stageHeight),
-                columns: Theme.columns,
-                cellSize: CGSize(width: Theme.cellWidth, height: GridMetrics.cellHeight),
-                rowSpacing: Theme.rowSpacing
+                columns: columns,
+                cellSize: CoveSize.gridCell,
+                rowSpacing: CoveSize.gridRowGap
             )
             let items = displayItems
             let pages = geo.pageCount(itemCount: items.count)
@@ -127,10 +134,13 @@ struct EditableGridView: View {
                     isEditing: isEditing,
                     showsBadge: isEditing && app.isHideable,
                     isLifted: drag?.id == app.id,
+                    isPressed: isPressed(app),
+                    isKeyboardFocused: app.id == focusedID,
+                    isHovered: drag == nil && hoveredID == app.id,
                     onOpen: { onLaunch(app) },
                     onHide: { if app.isHideable { onHide(app) } }
                 )
-                .frame(width: Theme.cellWidth, height: GridMetrics.cellHeight, alignment: .top)
+                .frame(width: CoveSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
                 .position(tilePosition(for: app, index: index, geo: geo, track: track))
                 // The dragged icon follows the pointer exactly, so it doesn't animate.
                 .transaction { transaction in
@@ -145,8 +155,21 @@ struct EditableGridView: View {
         .contentShape(Rectangle())
         .coordinateSpace(name: Self.space)
         .gesture(pressGesture(geo: geo))
+        .onContinuousHover(coordinateSpace: .named(Self.space)) { phase in
+            updateHover(phase, geo: geo)
+        }
+        // Keyboard focus moves to another page: show that page.
+        .onChange(of: focusedID) { _, id in
+            revealPage(of: id, geo: geo)
+        }
         // Reorders and page changes animate. Ids only, so a swipe doesn't re-animate.
-        .animation(paging, value: items.map(\.id))
+        .animation(motion(.coveSettle), value: items.map(\.id))
+    }
+
+    /// True while the press is on this icon and hasn't turned into a swipe or drag.
+    private func isPressed(_ app: AppItem) -> Bool {
+        guard drag == nil, let press else { return false }
+        return press.hitID == app.id && !press.moved
     }
 
     /// Where an icon's center sits, in the stage's own coordinates.
@@ -159,13 +182,13 @@ struct EditableGridView: View {
 
     /// Page dots. Tapping one jumps to that page. Hidden when there is only one page.
     private func pageDots(current: Int, pages: Int) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: CoveSpace.xs) {
             ForEach(0..<pages, id: \.self) { index in
                 Button {
-                    withAnimation(paging) { page = index }
+                    withAnimation(motion(.coveSettle)) { page = index }
                 } label: {
-                    Circle()
-                        .fill(index == current ? Theme.aqua : Theme.textSecondary.opacity(0.5))
+                    Capsule()
+                        .fill(index == current ? CoveColor.accent : CoveColor.track)
                         .frame(width: index == current ? 16 : 7, height: 7)
                         .frame(width: 22, height: 22)
                         .contentShape(Rectangle())
@@ -174,6 +197,7 @@ struct EditableGridView: View {
                 .accessibilityLabel("Page \(index + 1) of \(pages)")
             }
         }
+        .coveAnimation(.coveSnap, value: current)
         .opacity(pages > 1 ? 1 : 0)
         .allowsHitTesting(pages > 1)
         .frame(maxWidth: .infinity)
@@ -247,7 +271,7 @@ struct EditableGridView: View {
             } else if swipeOffset > width * 0.2 || predicted > width / 2 {
                 target = current - 1
             }
-            withAnimation(paging) {
+            withAnimation(motion(.coveSettle)) {
                 page = min(max(target, 0), last)
                 swipeOffset = 0
             }
@@ -260,7 +284,7 @@ struct EditableGridView: View {
         if isEditing {
             guard let hitID = state.hitID, let app = displayItems.first(where: { $0.id == hitID }) else {
                 // A tap on empty space leaves Edit mode.
-                withAnimation(.spring(duration: 0.26, bounce: 0)) { isEditing = false }
+                withAnimation(motion(.coveDismiss)) { isEditing = false }
                 return
             }
             if app.isHideable, isOnBadge(state.start, id: app.id, geo: geo) {
@@ -298,12 +322,24 @@ struct EditableGridView: View {
     private func isOnBadge(_ point: CGPoint, id: String, geo: GridGeometry) -> Bool {
         guard let index = displayItems.firstIndex(where: { $0.id == id }) else { return false }
         let slot = geo.center(ofIndex: index)
-        // The icon's top-left corner, where the badge sits.
+        // The icon's top-left corner, where the badge sits. The icon is centered
+        // in its cell and sits 10 pt below the cell's top edge (see GridTile).
         let badge = CGPoint(
-            x: slot.x + trackOffset(geo) - Theme.iconSize / 2,
-            y: slot.y - GridMetrics.cellHeight / 2 + 4
+            x: slot.x + trackOffset(geo) - CoveSize.gridIcon / 2,
+            y: slot.y - GridMetrics.cellHeight / 2 + CoveSpace.s + CoveSpace.xxs
         )
         return hypot(point.x - badge.x, point.y - badge.y) <= Self.badgeRadius
+    }
+
+    /// Tracks the icon under the pointer for the hover fill.
+    private func updateHover(_ phase: HoverPhase, geo: GridGeometry) {
+        switch phase {
+        case .active(let point):
+            let id = item(at: point, geo: geo)?.id
+            if hoveredID != id { hoveredID = id }
+        case .ended:
+            hoveredID = nil
+        }
     }
 
     // MARK: - Edit mode
@@ -315,7 +351,7 @@ struct EditableGridView: View {
             try? await Task.sleep(for: Self.holdTime)
             guard !Task.isCancelled, press?.moved == false else { return }
             press?.enteredEdit = true
-            withAnimation(.spring(duration: 0.46, bounce: 0.24)) { isEditing = true }
+            withAnimation(motion(.coveOpen)) { isEditing = true }
         }
     }
 
@@ -349,8 +385,7 @@ struct EditableGridView: View {
         let pointer = CGPoint(x: active.center.x - track, y: active.center.y)
 
         if let from = order.firstIndex(where: { $0.id == active.id }) {
-            let shown = currentPage(geo)
-            let first = shown * geo.perPage
+            let first = currentPage(geo) * geo.perPage
             let last = min(order.count, first + geo.perPage)
             var nearest = from
             var nearestDistance = CGFloat.greatestFiniteMagnitude
@@ -396,7 +431,7 @@ struct EditableGridView: View {
         edgeTask = Task { @MainActor in
             try? await Task.sleep(for: Self.edgeDwell)
             guard !Task.isCancelled, drag != nil else { return }
-            withAnimation(paging) { page = target }
+            withAnimation(motion(.coveSettle)) { page = target }
             edgeTask = nil
         }
     }
@@ -413,7 +448,7 @@ struct EditableGridView: View {
         layoutStore.update { layout in
             layout.entries = order.map { GridEntry.app($0.id) }
         }
-        withAnimation(.spring(duration: 0.26, bounce: 0.42)) {
+        withAnimation(motion(.covePress)) {
             drag = nil
             draft = nil
         }
@@ -424,6 +459,14 @@ struct EditableGridView: View {
         cancelEdge()
         drag = nil
         draft = nil
+    }
+
+    /// Shows the page that holds the focused icon, when keyboard focus moves to another page.
+    private func revealPage(of id: String?, geo: GridGeometry) {
+        guard let id, let index = displayItems.firstIndex(where: { $0.id == id }) else { return }
+        let target = index / geo.perPage
+        guard target != currentPage(geo) else { return }
+        withAnimation(motion(.coveSettle)) { page = target }
     }
 
     /// Past the first or last page the swipe is pulled back, like a rubber band.

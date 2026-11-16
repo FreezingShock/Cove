@@ -17,19 +17,36 @@ struct CoveApp: App {
     /// The saved grid layout: order, folders and hidden apps.
     @State private var layoutStore = LayoutStore()
 
+    /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
+    /// Also starts crash collection, which only runs if the user opted in.
+    @MainActor
+    init() {
+        // Give every setting its default before any window reads it.
+        CoveSettings.registerDefaults()
+        HotkeyManager.shared.start()
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
+    }
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
         Window("Cove", id: "main") {
             AppGridView()
-                .environment(library)       // hand the library to every view inside
+                .environment(library)   // hand the library to every view inside
                 .environment(layoutStore)
-                .preferredColorScheme(.dark) // Cove is always dark
+                .coveAppearance()       // Light, Dark or Auto, from Settings > Appearance
         }
-        .defaultSize(width: Theme.windowWidth, height: 760)
+        .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
         .windowResizability(.contentMinSize)
         .commands {
             CoveCommands(library: library)
+        }
+
+        // Settings window, opened by Cmd+, and the app menu.
+        Settings {
+            SettingsView()
+                .environment(library)
         }
     }
 }
@@ -45,6 +62,14 @@ struct CoveCommands: Commands {
                 library.reload()
             }
             .keyboardShortcut("r", modifiers: .command)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }
