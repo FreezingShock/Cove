@@ -26,6 +26,8 @@ struct SearchPanel: View {
     let onOpenTopHit: () -> Void
     /// A tap on a file row opens that file.
     let onOpenFile: (FileItem) -> Void
+    /// Cmd+Return in the field reveals the top file in Finder.
+    let onRevealFile: (FileItem) -> Void
     /// Down arrow in the field moves focus into the grid.
     let onDown: () -> KeyPress.Result
 
@@ -92,6 +94,15 @@ struct SearchPanel: View {
             .focused(isFocused)
             .onSubmit(onOpenTopHit)                 // Return opens the top hit
             .onKeyPress(.downArrow) { onDown() }   // Down moves into the grid
+            .onKeyPress(.return) { press in
+                // Cmd+Return reveals the top file match in Finder. Plain Return
+                // is left to onSubmit above.
+                guard press.modifiers.contains(.command), let first = files.first else {
+                    return .ignored
+                }
+                onRevealFile(first)
+                return .handled
+            }
             .accessibilityLabel("Search apps")
         }
         .padding(.horizontal, CoveSpace.l)
@@ -100,15 +111,20 @@ struct SearchPanel: View {
 
     // MARK: Files
 
-    /// The file matches from Spotlight, under a small "Files" caption.
-    /// Each row is a button, so Tab and VoiceOver reach it. Tapping opens the file.
+    /// The file matches from Spotlight, under a small "Files" caption with a
+    /// hint for Cmd+Return. Each row is a button, so Tab and VoiceOver reach it.
+    /// Tapping opens the file.
     private var fileRows: some View {
         VStack(alignment: .leading, spacing: CoveSpace.xxs) {
-            Text("Files")
-                .font(CoveFont.caption)
-                .foregroundStyle(CoveText.secondary(contrast))
-                .padding(.horizontal, CoveSpace.m)
-                .padding(.top, CoveSpace.xs)
+            HStack(spacing: CoveSpace.s) {
+                Text("Files")
+                Spacer(minLength: 0)
+                Text("⌘Return reveals top file")
+            }
+            .font(CoveFont.caption)
+            .foregroundStyle(CoveText.secondary(contrast))
+            .padding(.horizontal, CoveSpace.m)
+            .padding(.top, CoveSpace.xs)
 
             ForEach(files) { file in
                 Button {

@@ -79,6 +79,7 @@ struct AppGridView: View {
                     files: fileSearch.results,
                     onOpenTopHit: openTopHit,
                     onOpenFile: openFile,
+                    onRevealFile: revealFile,
                     onDown: enterGrid
                 )
                 .padding(.bottom, CoveSpace.xl)
@@ -225,6 +226,12 @@ struct AppGridView: View {
     private func openFile(_ file: FileItem) {
         closeAfterAction()
         file.open()
+    }
+
+    /// Cmd+Return in the field: select the file in a Finder window.
+    private func revealFile(_ file: FileItem) {
+        closeAfterAction()
+        file.revealInFinder()
     }
 
     /// Return in the field, or a tap on the top-hit row: open the top hit.
