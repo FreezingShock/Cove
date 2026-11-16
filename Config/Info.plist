@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Extra Info.plist keys for Sparkle. Xcode merges this file with the keys it
+  generates (GENERATE_INFOPLIST_FILE = YES), so keep only what Sparkle needs here.
+
+  SUPublicEDKey is a placeholder until you run Sparkle's generate_keys once on your
+  Mac and paste the public key it prints. Sparkle refuses to install updates
+  until the real key is in place. See docs/auto-updates.md.
+-->
+<plist version="1.0">
+<dict>
+	<!-- Where Sparkle looks for the list of releases (the appcast). -->
+	<key>SUFeedURL</key>
+	<string>https://github.com/FreezingShock/Cove/releases/latest/download/appcast.xml</string>
+
+	<!-- Public half of the EdDSA signing key. Safe to commit. Replace the placeholder. -->
+	<key>SUPublicEDKey</key>
+	<string>REPLACE_WITH_SPARKLE_PUBLIC_KEY</string>
+
+	<!-- Check in the background without asking first. -->
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+
+	<!-- Background check interval in seconds: 86400 = once a day. -->
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
+</dict>
+</plist>

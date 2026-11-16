@@ -15,6 +15,10 @@ struct CoveApp: App {
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
 
+    /// The Sparkle updater. `@StateObject` (not `@State`) because it is a
+    /// class that publishes changes, which the menu item watches.
+    @StateObject private var updater = AppUpdater()
+
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
     /// Also starts crash collection, which only runs if the user opted in.
     @MainActor
@@ -37,13 +41,14 @@ struct CoveApp: App {
         .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
         .windowResizability(.contentMinSize)
         .commands {
-            CoveCommands(library: library)
+            CoveCommands(library: library, updater: updater)
         }
 
         // Settings window, opened by Cmd+, and the app menu.
         Settings {
             SettingsView()
                 .environment(library)
+                .environmentObject(updater)
         }
     }
 }
@@ -52,6 +57,7 @@ struct CoveApp: App {
 /// single-window app) with File > Reload Apps (Command-R).
 struct CoveCommands: Commands {
     let library: AppLibrary
+    let updater: AppUpdater
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -61,6 +67,11 @@ struct CoveCommands: Commands {
             .keyboardShortcut("r", modifiers: .command)
         }
 
+        // Adds "Check for Updates…" right after "About Cove" in the Cove menu.
+        CommandGroup(after: .appInfo) {
+            CheckForUpdatesButton(updater: updater)
+        }
+
         // Replaces the default Help menu contents with one item that opens
         // the in-app feedback form. The form only opens GitHub in the browser.
         CommandGroup(replacing: .help) {
@@ -68,5 +79,18 @@ struct CoveCommands: Commands {
                 FeedbackWindow.shared.show()
             }
         }
+    }
+}
+
+/// Its own View so SwiftUI redraws the disabled state when Sparkle's
+/// `canCheckForUpdates` changes. Menu items are not redrawn by themselves.
+struct CheckForUpdatesButton: View {
+    @ObservedObject var updater: AppUpdater
+
+    var body: some View {
+        Button("Check for Updates…") {
+            updater.checkForUpdates()
+        }
+        .disabled(!updater.canCheckForUpdates)
     }
 }
