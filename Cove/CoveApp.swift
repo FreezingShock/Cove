@@ -50,9 +50,7 @@ struct CoveApp: App {
 
         // Menu bar icon, on by default. `isInserted` adds or removes it as
         // the Settings toggle changes.
-        MenuBarExtra("Cove", systemImage: "square.grid.3x3.fill", isInserted: menuBarInserted) {
-            MenuBarMenu()
-        }
+        // EXPERIMENT: scene removed to test whether MenuBarExtra stalls the test host.
     }
 
     /// Whether the menu bar icon is shown. Off inside unit tests: with the icon
