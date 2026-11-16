@@ -20,6 +20,8 @@ jobs:
     # macos-26 ships Xcode 26.6 (default) with the macOS 26.5 SDK.
     runs-on: macos-26
     timeout-minutes: 30
+    env:
+      SCHEME: Cove
     steps:
       - uses: actions/checkout@v4
 
@@ -31,18 +33,11 @@ jobs:
           xcodebuild -version
           xcrun --sdk macosx --show-sdk-version
 
-      - name: Resolve scheme
-        id: scheme
-        run: |
-          SCHEME=$(xcodebuild -list -project Cove.xcodeproj -json | jq -r '.project.schemes[0]')
-          echo "Using scheme: $SCHEME"
-          echo "name=$SCHEME" >> "$GITHUB_OUTPUT"
-
       - name: Build
         run: |
           xcodebuild build \
             -project Cove.xcodeproj \
-            -scheme "${{ steps.scheme.outputs.name }}" \
+            -scheme "$SCHEME" \
             -configuration Debug \
             -destination 'platform=macOS' \
             CODE_SIGNING_ALLOWED=NO
@@ -52,7 +47,7 @@ jobs:
           if grep -q 'com.apple.product-type.bundle.unit-test' Cove.xcodeproj/project.pbxproj; then
             xcodebuild test \
               -project Cove.xcodeproj \
-              -scheme "${{ steps.scheme.outputs.name }}" \
+              -scheme "$SCHEME" \
               -destination 'platform=macOS' \
               CODE_SIGNING_ALLOWED=NO
           else
