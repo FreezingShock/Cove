@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cove for Mac</title>
+  <meta name="description" content="Cove is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="assets/cove-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/cove-icon-256.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Cove, back to top">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Cove</span>
+    </a>
+    <nav class="links" aria-label="Page sections">
+      <a href="#features">Features</a>
+      <a href="#settings">Settings</a>
+      <a href="#privacy">Privacy</a>
+    </nav>
+    <div class="nav-right">
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="#get">Get Cove</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="pill"><span class="dot" aria-hidden="true"></span>In development · Requires macOS 26 or later</p>
+        <h1 class="h-display">Every app, one keystroke away.</h1>
+        <p class="lede">Cove is a full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#get">Get Cove</a>
+          <a class="btn btn-ghost" href="#features">See how it works</a>
+        </div>
+        <p class="keys"><kbd>⌥</kbd><kbd>Space</kbd><span>opens the grid by default. You can change the shortcut.</span></p>
+      </div>
+
+      <div class="stage" id="heroStage" aria-label="Cove grid, animated sample">
+        <div class="scrim">
+          <div class="grid-top">
+            <div class="glass capsule searchbar bloom" aria-hidden="true">
+              <svg class="sm-ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+              <span>Search apps and files</span>
+            </div>
+            <div class="seg" aria-hidden="true">
+              <span class="on">All</span><span>Create</span><span>Everyday</span><span>Build</span>
+            </div>
+          </div>
+          <div class="grid" id="heroGrid"></div>
+          <div class="stage-foot">
+            <span class="caption-line">Sample apps. Cove shows the icons already on your Mac.</span>
+            <button class="capsule-btn glass capsule" type="button" id="replayBtn">Replay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: search -->
+  <section class="wrap feature" id="features">
+    <div class="copy">
+      <p class="eyebrow">Search</p>
+      <h2 class="h-feature">Search finds apps and files together.</h2>
+      <p class="body-2">Type once and the grid filters as you go. The best match gets a highlight, and matching files appear underneath. Search uses Spotlight, so anything Spotlight can find, Cove can find.</p>
+      <ul class="specs">
+        <li>Return opens the top hit</li>
+        <li>Apps and files in one list</li>
+        <li>Files come from Spotlight</li>
+      </ul>
+    </div>
+    <div class="stage search-stage" aria-label="Search demo">
+      <div class="scrim">
+        <div class="glass capsule searchbar bloom">
+          <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+          <input id="q" type="search" placeholder="Search apps and files" aria-label="Search sample apps and files" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="chips" aria-label="Try a search">
+          <button class="chip" type="button" data-q="note">note</button>
+          <button class="chip" type="button" data-q="mail">mail</button>
+          <button class="chip" type="button" data-q="pho">pho</button>
+        </div>
+        <div class="grid sm" id="searchGrid"></div>
+        <p class="empty" id="emptyMsg" hidden>Nothing matches that search.</p>
+        <div class="files glass bloom" id="filesPanel" hidden>
+          <p class="eyebrow">Files</p>
+          <ul class="rows" id="fileRows"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: quick panel -->
+  <section class="wrap feature rev" id="quick">
+    <div class="copy">
+      <p class="eyebrow">Quick panel</p>
+      <h2 class="h-feature">A quick panel from your Dock.</h2>
+      <p class="body-2">Click the Cove icon in the Dock for a compact panel with recent apps, recent files, and a button to open the full grid. It rises out of the icon when it opens, and it closes fast with no bounce.</p>
+      <ul class="specs">
+        <li>Eight recent apps in a 4 by 2 grid</li>
+        <li>Three recent files</li>
+        <li>Rises from the Dock icon</li>
+      </ul>
+    </div>
+    <div class="stage qp-stage" aria-label="Quick panel demo">
+      <div class="scrim">
+        <div class="ghost" aria-hidden="true"></div>
+        <div class="qp-wrap" id="qpWrap">
+          <div class="qp glass bloom" id="qp">
+            <div class="qp-search glass capsule">
+              <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+              <span>Search</span>
+            </div>
+            <div class="grid qp-apps" id="qpApps"></div>
+            <ul class="rows qp-files" id="qpFiles"></ul>
+            <button class="wide-btn" type="button">Show All Apps</button>
+          </div>
+        </div>
+        <div class="glass capsule dock" role="group" aria-label="Dock sample">
+          <div class="dock-plain" id="dockApps"></div>
+          <button class="dock-btn" type="button" id="dockCove" aria-label="Cove" aria-expanded="true">
+            <span class="ico cove"><img src="assets/cove-icon-dark.svg" alt="" width="44" height="44"></span>
+            <span class="ind" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: settings -->
+  <section class="wrap feature" id="settings">
+    <div class="copy">
+      <p class="eyebrow">Settings</p>
+      <h2 class="h-feature">Set it up your way.</h2>
+      <p class="body-2">Choose how many columns the grid shows, whether the category bar appears, and whether Cove uses light, dark, or your Mac's setting. Changes apply right away, as they do in the demo here.</p>
+      <ul class="specs">
+        <li>5 to 9 columns</li>
+        <li>Category bar on or off</li>
+        <li>Light, Dark, or Auto</li>
+      </ul>
+    </div>
+    <div class="stage settings-stage" aria-label="Settings demo">
+      <div class="scrim">
+        <div class="group glass bloom">
+          <div class="row">
+            <label for="cols">Columns</label>
+            <div class="row-ctrl">
+              <input id="cols" type="range" min="5" max="9" step="1" value="7">
+              <output id="colsOut" for="cols">7</output>
+            </div>
+          </div>
+          <div class="row">
+            <span id="barLbl">Category bar</span>
+            <button class="switch" type="button" role="switch" aria-checked="true" aria-labelledby="barLbl" id="bar"></button>
+          </div>
+          <div class="row">
+            <span id="appLbl">Appearance</span>
+            <div class="seg" role="group" aria-labelledby="appLbl">
+              <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+              <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+              <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+            </div>
+          </div>
+        </div>
+        <div class="mini-stage">
+          <div class="seg catbar" id="miniBar" aria-hidden="true"><span class="on">All</span><span>Create</span><span>Everyday</span><span>Build</span></div>
+          <div class="grid mini" id="miniGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: motion -->
+  <section class="wrap feature rev" id="motion">
+    <div class="copy">
+      <p class="eyebrow">Motion</p>
+      <h2 class="h-feature">Springs with fixed rules.</h2>
+      <p class="body-2">Every animation runs on one of seven springs, each with a set duration and bounce. Things that open bounce a little. Things that close never do. With Reduce Motion on, everything becomes a short fade.</p>
+      <ul class="specs">
+        <li>Open: 0.46 s, bounce 0.24</li>
+        <li>Press: 0.26 s, bounce 0.42</li>
+        <li>Dismiss: 0.26 s, no bounce</li>
+      </ul>
+    </div>
+    <div class="stage motion-stage" aria-label="Spring demo">
+      <div class="scrim">
+        <div class="mcard glass bloom" data-spring="open" data-from="0" data-to="1">
+          <div class="mhead"><b>Open</b><span>0.46 s · bounce 0.24</span></div>
+          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
+        </div>
+        <div class="mcard glass bloom" data-spring="press" data-from="0" data-to="1">
+          <div class="mhead"><b>Press</b><span>0.26 s · bounce 0.42</span></div>
+          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
+        </div>
+        <div class="mcard glass bloom" data-spring="dismiss" data-from="1" data-to="0">
+          <div class="mhead"><b>Dismiss</b><span>0.26 s · no bounce</span></div>
+          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="wrap privacy" id="privacy">
+    <div class="privacy-head">
+      <div>
+        <p class="eyebrow">Privacy</p>
+        <h2 class="h-section">Nothing leaves your Mac.</h2>
+      </div>
+      <p class="lede">Cove has no network code, no accounts, and no analytics. Everything it shows comes from your Mac, and the only history it keeps is the one you can erase.</p>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <h4>No network</h4>
+        <p>Cove makes no network connections. Nothing is sent, and nothing is fetched.</p>
+      </div>
+      <div class="fact">
+        <h4>No accounts</h4>
+        <p>There is no sign-in, no profile, and no sync between machines.</p>
+      </div>
+      <div class="fact">
+        <h4>No tracking</h4>
+        <p>No analytics and no usage counts. Without a connection, nothing can be reported.</p>
+      </div>
+      <div class="fact">
+        <h4>Your own search</h4>
+        <p>File search uses Spotlight, which already runs on your Mac. Cove does not build a second index.</p>
+      </div>
+      <div class="fact">
+        <h4>Erase history</h4>
+        <p>Clear the list of recent apps and files in one step, from Settings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Get Cove -->
+  <section class="wrap get" id="get">
+    <p class="eyebrow">Get Cove</p>
+    <h2 class="h-section">Get Cove for Mac.</h2>
+    <p class="lede get-lede">Download the latest release for macOS 26 or later. Release notes and source live on GitHub.</p>
+    <div class="get-box">
+      <div>
+        <h3>Follow the build on GitHub</h3>
+        <p>Source, issues, and release notes all live in the same repository.</p>
+        <div class="reqs" aria-label="Requirements">
+          <span>macOS 26 or later</span>
+          <span>Built with SwiftUI and AppKit</span>
+        </div>
+      </div>
+      <div class="get-actions">
+        <a class="btn btn-primary" href="https://github.com/FreezingShock/Cove/releases/latest/download/Cove.dmg" rel="noopener">Download Cove</a>
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Cove is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
+  <nav aria-label="Footer">
+    <a href="#features">Features</a>
+    <a href="#settings">Settings</a>
+    <a href="#privacy">Privacy</a>
+    <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+</footer>
+
+<script src="js/site.js" defer></script>
+</body>
+</html>

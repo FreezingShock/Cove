@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support · Cove</title>
+<meta name="description" content="Help for Cove: opening the app, hotkeys, permissions, erasing data, and reporting bugs.">
+<meta name="color-scheme" content="light dark">
+<style>
+  /* Tokens follow design-system/cove-tokens.css (v1.2). Accent is a fill, never text. */
+  :root {
+    --base: #E6ECF2; --base-2: #F6F8FB;
+    --glow-a: rgba(70,230,214,0.42); --glow-b: rgba(122,138,255,0.34);
+    --grouped: #FFFFFF; --g-fill: rgba(250,252,255,0.62); --g-edge: rgba(12,22,44,0.10);
+    --g-shadow: rgba(28,44,80,0.16);
+    --text: #0B111C; --text-2: rgba(16,24,40,0.70); --text-3: rgba(16,24,40,0.62);
+    --hair: rgba(12,22,44,0.10); --hover: rgba(12,22,44,0.05); --field: rgba(12,22,44,0.05);
+    --accent: #0A7F74; --accent-soft: rgba(10,127,116,0.14);
+    --r-sm: 10px; --r-md: 16px; --r-panel: 32px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --base: #05070C; --base-2: #0B0F18;
+      --glow-a: rgba(48,196,186,0.36); --glow-b: rgba(70,90,200,0.34);
+      --grouped: rgba(255,255,255,0.055); --g-fill: rgba(12,16,26,0.66); --g-edge: rgba(255,255,255,0.12);
+      --g-shadow: rgba(0,0,0,0.55);
+      --text: #FFFFFF; --text-2: rgba(235,240,255,0.78); --text-3: rgba(235,240,255,0.66);
+      --hair: rgba(255,255,255,0.12); --hover: rgba(255,255,255,0.07); --field: rgba(255,255,255,0.07);
+      --accent: #3FD9C9; --accent-soft: rgba(63,217,201,0.16);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --base: #05070C; --base-2: #0B0F18;
+    --glow-a: rgba(48,196,186,0.36); --glow-b: rgba(70,90,200,0.34);
+    --grouped: rgba(255,255,255,0.055); --g-fill: rgba(12,16,26,0.66); --g-edge: rgba(255,255,255,0.12);
+    --g-shadow: rgba(0,0,0,0.55);
+    --text: #FFFFFF; --text-2: rgba(235,240,255,0.78); --text-3: rgba(235,240,255,0.66);
+    --hair: rgba(255,255,255,0.12); --hover: rgba(255,255,255,0.07); --field: rgba(255,255,255,0.07);
+    --accent: #3FD9C9; --accent-soft: rgba(63,217,201,0.16);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text); background-color: var(--base);
+    background-image:
+      radial-gradient(60% 46% at 12% 0%, var(--glow-a), transparent 70%),
+      radial-gradient(50% 42% at 92% 8%, var(--glow-b), transparent 72%),
+      linear-gradient(180deg, var(--base-2), var(--base));
+    background-attachment: fixed;
+    font: 400 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+  }
+  a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-color: var(--text); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 28px 0 20px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .brand::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .brand:hover { text-decoration: none; }
+  nav.site ul { list-style: none; display: flex; gap: 4px; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav.site a { display: inline-block; padding: 8px 12px; border-radius: 999px; font-size: 14px; color: var(--text-2); text-decoration: none; }
+  nav.site a:hover { background: var(--hover); color: var(--text); }
+  nav.site a[aria-current="page"] { background: var(--field); color: var(--text); font-weight: 600; }
+
+  main.doc {
+    margin: 8px auto 56px; padding: 40px; border-radius: var(--r-panel);
+    background: var(--g-fill); border: 1px solid var(--g-edge);
+    box-shadow: 0 28px 60px -28px var(--g-shadow);
+    -webkit-backdrop-filter: blur(40px) saturate(200%); backdrop-filter: blur(40px) saturate(200%);
+  }
+  main.doc > :first-child { margin-top: 0; }
+  h1 { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -0.015em; margin: 0 0 8px; }
+  h2 { font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: 40px 0 10px; scroll-margin-top: 24px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .lede { font-size: 17px; color: var(--text-2); margin-bottom: 24px; }
+  code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; }
+  kbd { display: inline-block; padding: 1px 7px; border: 1px solid var(--hair); border-bottom-width: 2px; border-radius: 6px; background: var(--field); line-height: 1.5; }
+  code { background: var(--field); padding: 1px 6px; border-radius: 6px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 0 0 8px; padding: 0; list-style: none; }
+  .cards li { margin: 0; }
+  .cards a { display: block; height: 100%; padding: 16px; border-radius: var(--r-md); border: 1px solid var(--hair); background: var(--grouped); text-decoration: none; font-weight: 600; font-size: 15px; }
+  .cards a span { display: block; font-weight: 400; font-size: 13px; color: var(--text-2); margin-top: 4px; }
+  .cards a:hover { border-color: var(--text-3); }
+
+  details { border-top: 1px solid var(--hair); padding: 14px 0; }
+  details:last-of-type { border-bottom: 1px solid var(--hair); }
+  summary { cursor: pointer; font-weight: 600; font-size: 16px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-radius: 6px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg) translate(-2px, -2px); transition: transform 0.2s ease; }
+  details[open] summary::after { transform: rotate(225deg) translate(-2px, -2px); }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  details > :not(summary) { margin-top: 10px; }
+  details > :last-child { margin-bottom: 0; }
+
+  ol.steps { counter-reset: step; list-style: none; padding-left: 0; }
+  ol.steps li { counter-increment: step; position: relative; padding-left: 36px; margin: 10px 0; }
+  ol.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); color: var(--text); font-size: 13px; font-weight: 600; display: grid; place-items: center; }
+
+  footer.foot { max-width: 760px; margin: 0 auto; padding: 0 16px 40px; font-size: 13px; color: var(--text-2); display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+  footer.foot a { color: var(--text-2); }
+
+  @media (max-width: 600px) {
+    main.doc { padding: 28px 20px; border-radius: 24px; margin-top: 4px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; margin-top: 32px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } summary::after { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html">Cove</a>
+    <nav class="site" aria-label="Site">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="support.html" aria-current="page">Support</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="doc">
+    <h1>Support</h1>
+    <p class="lede">Answers to the questions people ask most, and how to report a problem.</p>
+
+    <ul class="cards" aria-label="Jump to a topic">
+      <li><a href="#opening">Opening Cove<span>Dock, hotkey, and first launch</span></a></li>
+      <li><a href="#hotkeys">Hotkey problems<span>Conflicts and shortcuts that don't respond</span></a></li>
+      <li><a href="#permissions">Permissions<span>What Cove asks for, and what it doesn't</span></a></li>
+      <li><a href="#erase">Erasing data<span>Launch history, crash reports, and removal</span></a></li>
+      <li><a href="#report">Report a bug<span>What to include, and where to send it</span></a></li>
+    </ul>
+
+    <h2 id="opening">Opening Cove</h2>
+    <details open>
+      <summary>How do I open Cove?</summary>
+      <p>Click Cove's icon in the Dock to open the quick panel. It shows your recent apps and files, plus a Show All Apps button. Press <kbd>⌥</kbd> <kbd>Space</kbd> to open the full grid of apps from anywhere. If you turn on the menu bar icon in Settings, you can open Cove from there too.</p>
+    </details>
+    <details>
+      <summary>What does Cove replace?</summary>
+      <p>Launchpad. Apple removed it in macOS 26 Tahoe, so Cove brings back a full-screen grid of your apps, with search for apps and files on top.</p>
+    </details>
+    <details>
+      <summary>Which Mac does Cove need?</summary>
+      <p>Cove needs macOS 26 or later.</p>
+    </details>
+    <details>
+      <summary>Do I need an internet connection?</summary>
+      <p>No. Cove works offline. Its only outside connection is the update check, which you can turn off in Settings, Updates.</p>
+    </details>
+    <details id="gatekeeper">
+      <summary>macOS says it can't verify Cove, so it won't open</summary>
+      <p>Early builds of Cove aren't signed with an Apple Developer ID yet, so macOS may block the first launch. Only do this for a copy you downloaded from Cove's official GitHub releases page. Then follow these steps on macOS 15 and later:</p>
+      <ol class="steps">
+        <li>Open Cove from your Applications folder. When macOS shows the warning, click <strong>Done</strong>.</li>
+        <li>Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>.</li>
+        <li>Scroll down to the <strong>Security</strong> section. You'll see a message that Cove was blocked. Click <strong>Open Anyway</strong> and enter your password if asked.</li>
+        <li>Click <strong>Open</strong> in the confirmation dialog. Cove will open, and macOS won't ask again.</li>
+      </ol>
+    </details>
+
+    <h2 id="hotkeys">Hotkey problems</h2>
+    <details open>
+      <summary>⌥ Space types a strange space in other apps</summary>
+      <p>Cove's default grid shortcut is <kbd>⌥</kbd> <kbd>Space</kbd>. macOS normally uses that combination to type a non-breaking space, so while Cove is running, that key goes to Cove first. If you'd rather keep the character, change the grid shortcut in Settings, Keyboard. The quick panel's default, <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd>, is separate and can be changed too.</p>
+    </details>
+    <details>
+      <summary>The shortcut doesn't open Cove</summary>
+      <p>Another app or a macOS shortcut may already use the same keys. Cove shows a message when a shortcut is already taken. Pick a different combination in Settings, Keyboard. Cove doesn't use <kbd>⌘</kbd> <kbd>Space</kbd>, because that opens Spotlight.</p>
+      <p>Some apps block global shortcuts, and password fields do too. macOS does this on purpose to protect what you type. Click outside the field or switch to another app, then try again.</p>
+    </details>
+    <details>
+      <summary>Arrow keys or Tab don't move through results the way I expect</summary>
+      <p>Full Keyboard Access changes how Tab and the arrow keys move focus in macOS apps. Check it in System Settings, Accessibility, Keyboard. Turn it off and try again. If the problem stays, <a href="#report">report it</a> with your macOS version.</p>
+    </details>
+
+    <h2 id="permissions">Permissions</h2>
+    <details open>
+      <summary>Does Cove ask for Accessibility or Screen Recording access?</summary>
+      <p>No, not in version 1. You won't see those prompts.</p>
+    </details>
+    <details>
+      <summary>How do I turn off launch at login?</summary>
+      <p>Open System Settings, General, Login Items, and switch off Cove.</p>
+    </details>
+    <details>
+      <summary>Why doesn't a file show up in search?</summary>
+      <p>Cove's file results come from Spotlight, which only finds what it has indexed. If a folder is excluded from Spotlight in System Settings, Siri &amp; Spotlight, files in it won't appear in Cove either. Cove doesn't keep its own index.</p>
+    </details>
+
+    <h2 id="erase">Erasing data</h2>
+    <details open>
+      <summary>How do I clear my recent apps?</summary>
+      <p>Open Settings, Privacy and choose Erase Launch History. This clears the recent apps Cove shows in its quick panel. Recent files come from Spotlight, so Cove can't clear those. Clear them from Spotlight's own settings if you need to.</p>
+    </details>
+    <details>
+      <summary>How do I erase saved crash reports?</summary>
+      <p>Open Settings, Privacy and use the Erase button. Cove keeps crash reports only if you turned on crash reporting, and it keeps up to 20 of them on your Mac. Nothing is sent anywhere unless you choose to share a report.</p>
+    </details>
+    <details>
+      <summary>How do I remove Cove completely?</summary>
+      <p>Quit Cove. Move it from your Applications folder to the Trash, then empty the Trash. To delete your settings, launch history, and saved crash reports too, open Finder, choose Go, Go to Folder, and enter <code>~/Library/Application Support/Cove</code>. Move that folder to the Trash as well.</p>
+    </details>
+
+    <h2 id="report">Report a bug</h2>
+    <p>Open a new issue on <a href="https://github.com/FreezingShock/Cove/issues/new">Cove's GitHub issues page</a>. A good report includes:</p>
+    <ul>
+      <li>Your macOS version, from the Apple menu, About This Mac.</li>
+      <li>Your Cove version, from Settings, About.</li>
+      <li>What you did, step by step, and what happened instead.</li>
+      <li>A screenshot or screen recording, if it helps.</li>
+    </ul>
+    <p>GitHub issues are public, so remove personal details before you post. That includes file names and folder paths you don't want shared. If you turned on crash reporting, Send Feedback in the Help menu lets you preview a report before you share it.</p>
+    <p>If Cove crashed and you want to look at macOS's own crash log, open the Console app and choose Crash Reports in the sidebar. Those logs include file paths and your user name, so check them before you share one.</p>
+    <p>Read the <a href="privacy.html">privacy policy</a> for what Cove stores and what it sends.</p>
+  </main>
+</div>
+
+<footer class="foot">
+  <span>Cove is an independent project by FreezingShock.</span>
+  <span><a href="index.html">Home</a> · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></span>
+</footer>
+</body>
+</html>
