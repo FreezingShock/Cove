@@ -26,6 +26,7 @@
   <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/motion.css">
 </head>
 <body>
 <header class="nav">
@@ -91,19 +92,31 @@
 
   <!-- Demo video: the grid opens, search narrows to Photos, Return opens it. Loads only when on screen. -->
   <section class="wrap showcase" id="demo" aria-labelledby="demo-title">
-    <div class="showcase-head">
-      <p class="eyebrow">See it run</p>
-      <h2 class="h-section" id="demo-title">Open, search, launch.</h2>
-    </div>
-    <figure class="demo-figure">
-      <div class="demo-frame">
-        <video id="demoVideo" class="demo-video" width="1040" height="966" muted loop playsinline preload="none" poster="assets/launch/inlet-demo-poster.webp" aria-label="Looping demo: the grid opens, typing pho narrows the list to Photos, and Return opens it.">
-          <source src="assets/launch/inlet-demo.mp4" type="video/mp4">
-        </video>
-        <button class="capsule-btn glass capsule demo-toggle" type="button" id="demoToggle">Play</button>
+    <div class="scrub" data-scrub>
+      <div class="scrub-sticky">
+        <div class="scrub-inner">
+          <div class="showcase-head">
+            <p class="eyebrow">See it run</p>
+            <h2 class="h-section" id="demo-title">Open, search, launch.</h2>
+          </div>
+          <figure class="demo-figure">
+            <div class="demo-frame">
+              <video id="demoVideo" class="demo-video" width="1040" height="966" muted loop playsinline preload="none" poster="assets/launch/inlet-demo-poster.webp" aria-label="Looping demo: the grid opens, typing pho narrows the list to Photos, and Return opens it.">
+                <source src="assets/launch/inlet-demo.mp4" type="video/mp4">
+              </video>
+              <button class="capsule-btn glass capsule demo-toggle" type="button" id="demoToggle">Play</button>
+            </div>
+            <figcaption class="demo-caption">A short recording of the grid, search, and launch from the demo on this page. The Mac app is still in development.</figcaption>
+          </figure>
+          <ol class="scrub-steps" aria-label="Demo steps">
+            <li class="is-active"><span aria-hidden="true">1</span>Open the grid</li>
+            <li><span aria-hidden="true">2</span>Type to filter</li>
+            <li><span aria-hidden="true">3</span>Press Return</li>
+          </ol>
+          <div class="scrub-bar" aria-hidden="true"><i></i></div>
+        </div>
       </div>
-      <figcaption class="demo-caption">A short recording of the grid, search, and launch from the demo on this page. The Mac app is still in development.</figcaption>
-    </figure>
+    </div>
   </section>
 
   <!-- Feature: search -->
@@ -321,5 +334,6 @@
 </footer>
 
 <script src="js/site.js" defer></script>
+<script src="js/scroll.js" defer></script>
 </body>
 </html>
