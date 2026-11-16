@@ -20,14 +20,6 @@ A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26
 
 To stop Cove, press **Command-.** in Xcode or quit Cove normally.
 
-### App icon files
-
-The Crescent icon's PNG files aren't stored in git, because binary files can't be committed through the GitHub connector. Copy these 12 files from the Crescent icon set (the `AppIcon.appiconset` folder in the design project) into `Cove/Assets.xcassets/AppIcon.appiconset/`. The asset catalog's `Contents.json` already lists their names:
-
-`light-16x16@1x.png`, `light-16x16@2x.png`, `light-32x32@1x.png`, `light-32x32@2x.png`, `light-128x128@1x.png`, `light-128x128@2x.png`, `light-256x256@1x.png`, `light-256x256@2x.png`, `light-512x512@1x.png`, `light-512x512@2x.png`, `dark-1024.png`, `tinted-1024.png`
-
-Until they're copied in, Xcode shows a generic icon.
-
 ### If something goes wrong
 
 - **"Signing for Cove requires a development team."** Click the blue Cove project in the left sidebar, choose the **Cove** target, open **Signing & Capabilities**, and either pick your Personal Team (sign in with your Apple ID under Xcode > Settings > Accounts) or set Signing Certificate to **Sign to Run Locally**.
@@ -43,7 +35,8 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | File | What it does |
 |---|---|
 | `Cove/CoveApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
-| `Cove/Models/AppItem.swift` | One installed app: name, location, bundle ID. |
+| `Cove/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
+| `Cove/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
 | `Cove/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
 | `Cove/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
 | `Cove/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
@@ -54,6 +47,7 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | `Cove/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
 | `Cove/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
 | `Cove/CoveTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
+| `Cove/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
 
 New files you add inside the `Cove` folder appear in Xcode automatically.
 
@@ -66,8 +60,6 @@ Each was checked against Apple's current documentation.
 - [`NSWorkspace.icon(forFile:)`](https://developer.apple.com/documentation/appkit/nsworkspace/icon(forfile:)) for the real app icon
 - [`NSWorkspace.openApplication(at:configuration:completionHandler:)`](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) to launch
 - [`LazyVGrid`](https://developer.apple.com/documentation/swiftui/lazyvgrid) for the grid
-- [`Spring`](https://developer.apple.com/documentation/swiftui/spring) and [`Animation.spring(_:blendDuration:)`](https://developer.apple.com/documentation/swiftui/animation/spring(_:blenddurations:)) for the motion tokens (macOS 14+)
-- [`glassEffect(_:in:)`](https://developer.apple.com/documentation/swiftui/view/glasseffect(_:in:)) for panel and capsule glass (macOS 26+)
 
 ## Decisions made in 0.1
 
@@ -77,8 +69,7 @@ Each was checked against Apple's current documentation.
 - **Duplicates removed by bundle ID.** If the same app sits in two folders, the copy in `/Applications` wins, then `~/Applications`, then `/System/Applications`.
 - **Background-only helpers are hidden** (apps marked `LSBackgroundOnly`), since opening them would look like nothing happened. Menu bar apps still show.
 - **Rescan on focus** instead of watching the folders. Simpler for now, and fast because it runs in the background and only redraws when the list changed. Folder watching can replace it in 0.2 when Cove stays resident.
-- **Design tokens follow `theme-spec.md` v1.1.** Light and dark values are both defined. The app is forced to dark for now, so the light values aren't visible until the Appearance setting lands in 0.5.
-- **Grid side padding is 40 pt.** That value isn't in the spec. It stays until the 0.5 polish pass.
+- **No Cove app icon yet.** The logo lands in 0.5 with the design pass, so Xcode will show a generic icon for now.
 
 ## Roadmap
 

@@ -17,6 +17,11 @@ struct CoveApp: App {
     /// Handles Dock clicks (reopen) and opens the quick panel. See AppDelegate.swift.
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
+    init() {
+        // Starts crash collection only if the user has opted in. Off by default.
+        DiagnosticsCollector.shared.startIfEnabled()
+    }
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
@@ -59,6 +64,14 @@ struct CoveCommands: Commands {
                 library.reload()
             }
             .keyboardShortcut("r", modifiers: .command)
+        }
+
+        // Replaces the default Help menu contents with one item that opens
+        // the in-app feedback form. The form only opens GitHub in the browser.
+        CommandGroup(replacing: .help) {
+            Button("Send Feedback…") {
+                FeedbackWindow.shared.show()
+            }
         }
     }
 }
