@@ -32,15 +32,48 @@ button, input { font: inherit; color: inherit; }
   color: var(--text-2);
   margin-bottom: 16px;
 }
-/* Type scale for the page, all SF Pro. Each level is clearly one step below the one above it:
-   display 68 > section 44 > feature 32 > lede 20 > body 17 > small 15 > caption 13 > label 12. */
-:root { --sec-y: 96px; }
-.h-display { font-size: clamp(44px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; }
-.h-section { font-size: clamp(32px, 4.2vw, 44px); line-height: 1.08; letter-spacing: -0.03em; }
-.h-feature { font-size: clamp(26px, 2.8vw, 32px); line-height: 1.12; letter-spacing: -0.025em; }
-.lede { font-size: 20px; line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
-.body-2 { color: var(--text-2); text-wrap: pretty; }
-.caption { font-size: 12px; color: var(--text-3); }
+/* Web type scale (SF Pro system stack only). Each step is one clear level below the one above:
+   display 72 > section 44 > feature 32 > lede 20 > body 17 > small 15 > caption 13 > label 12.
+   Web-only tokens live here, not in tokens.css, which is a synced copy of the design system. */
+:root {
+  --sec-y: 96px;
+  --fs-display: clamp(44px, 7.2vw, 72px);
+  --fs-section: clamp(32px, 4.4vw, 44px);
+  --fs-feature: clamp(26px, 3vw, 32px);
+  --fs-lede: 20px;
+  --fs-body: 17px;
+  --fs-small: 15px;
+  --fs-caption: 13px;
+  --fs-label: 12px;
+  --ls-display: -0.045em;
+  --ls-section: -0.032em;
+  --ls-feature: -0.026em;
+}
+.h-display {
+  font-size: var(--fs-display);
+  font-weight: 650;
+  line-height: 1.0;
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
+}
+.h-display .soft { color: var(--text-3); }
+.h-section {
+  font-size: var(--fs-section);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: var(--ls-section);
+  text-wrap: balance;
+}
+.h-feature {
+  font-size: var(--fs-feature);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: var(--ls-feature);
+  text-wrap: balance;
+}
+.lede { font-size: var(--fs-lede); line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
+.body-2 { font-size: var(--fs-body); line-height: 1.55; color: var(--text-2); text-wrap: pretty; }
+.caption { font-size: var(--fs-caption); color: var(--text-3); }
 
 /* ---------- Glass ---------- */
 .glass {
@@ -346,14 +379,28 @@ kbd {
 }
 
 /* ---------- Hero ---------- */
-.hero { padding: 48px 0 var(--sec-y); }
+.hero { padding: 56px 0 var(--sec-y); }
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -40px 0 auto 0;
+  height: 720px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(45% 60% at 22% 30%, var(--glow-a), transparent 70%),
+    radial-gradient(40% 55% at 80% 10%, var(--glow-b), transparent 72%);
+  opacity: 0.55;
+  filter: blur(40px);
+}
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
   gap: 56px;
   align-items: center;
 }
-.hero h1 { margin: 22px 0 22px; }
+.hero h1 { margin: 22px 0 24px; }
+.hero .h-display { font-size: clamp(44px, 3.9vw, 56px); }
 .hero .lede { max-width: 34ch; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .cta .btn { min-height: 52px; padding: 0 28px; font-size: 17px; }
@@ -367,8 +414,8 @@ kbd {
   font-size: 14px;
   color: var(--text-3);
 }
-.hero .grid { --cols: 8; --tile: 64px; gap: 22px 4px; }
-.hero .cell .name { padding: 1px 2px; }
+.hero .grid { --cols: 7; --tile: 56px; gap: 22px 2px; }
+.hero .cell .name { padding: 1px 2px; font-size: 11px; }
 .hero .stage { min-height: 560px; }
 .hero .scrim { display: flex; flex-direction: column; gap: 26px; }
 .stage-foot {
