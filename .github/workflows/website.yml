@@ -5,7 +5,7 @@ name: Website
 #
 # Previews: GitHub Pages hosts one site per repository, so a PR cannot get a
 # live preview URL here. Instead, each run uploads the built site as a
-# downloadable artifact named "cove-website". Unzip it and open index.html.
+# downloadable artifact named "inlet-website". Unzip it and open index.html.
 
 on:
   pull_request:
@@ -62,7 +62,7 @@ jobs:
         if: steps.guard.outputs.present == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: cove-website
+          name: inlet-website
           path: website
           if-no-files-found: error
           retention-days: 14

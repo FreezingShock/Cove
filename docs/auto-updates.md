@@ -1,19 +1,19 @@
 # Auto-updates (Sparkle)
 
-Cove updates itself with [Sparkle 2](https://sparkle-project.org/documentation/). This page covers the one-time setup, the release contract, and how to test.
+Inlet updates itself with [Sparkle 2](https://sparkle-project.org/documentation/). This page covers the one-time setup, the release contract, and how to test.
 
 ## How it fits together
 
 | Piece | Where | What it does |
 | --- | --- | --- |
-| Sparkle package | `Cove.xcodeproj` (SPM, `2.10.1` or newer in 2.x) | The framework |
-| `AppUpdater` | `Cove/Updates/AppUpdater.swift` | Starts the updater and exposes "check now" and the auto-check setting |
-| Menu item | `Cove/CoveApp.swift` (Cove menu, after About) | "Check for Updates…" |
-| Settings block | `Cove/Updates/UpdatesSettingsSection.swift` | Toggle, version, last checked, check button. Drop into a `Form` |
+| Sparkle package | `Inlet.xcodeproj` (SPM, `2.10.1` or newer in 2.x) | The framework |
+| `AppUpdater` | `Inlet/Updates/AppUpdater.swift` | Starts the updater and exposes "check now" and the auto-check setting |
+| Menu item | `Inlet/InletApp.swift` (Inlet menu, after About) | "Check for Updates…" |
+| Settings block | `Inlet/Updates/UpdatesSettingsSection.swift` | Toggle, version, last checked, check button. Drop into a `Form` |
 | Feed settings | `Config/Info.plist` | `SUFeedURL`, `SUPublicEDKey`, automatic-check settings |
 | Feed builder | `scripts/release/update-appcast.sh` | Makes `appcast.xml` for each release, signed with the EdDSA key |
 
-The feed URL is `https://github.com/FreezingShock/Cove/releases/latest/download/appcast.xml`. Each release attaches its own `appcast.xml`, and the download links point at that release's `Cove-<version>.zip`.
+The feed URL is `https://github.com/FreezingShock/Inlet/releases/latest/download/appcast.xml`. Each release attaches its own `appcast.xml`, and the download links point at that release's `Inlet-<version>.zip`.
 
 ## One-time setup (on your Mac)
 
@@ -33,7 +33,7 @@ Do this once. You need Xcode and the Sparkle package, which Xcode downloads when
    ```
    Then store it as the GitHub Actions secret `SPARKLE_PRIVATE_KEY`:
    ```sh
-   gh secret set SPARKLE_PRIVATE_KEY --repo FreezingShock/Cove < ~/Desktop/sparkle_private_key
+   gh secret set SPARKLE_PRIVATE_KEY --repo FreezingShock/Inlet < ~/Desktop/sparkle_private_key
    ```
    Or paste the file's contents under **Settings › Secrets and variables › Actions**. Then delete the local file: `rm ~/Desktop/sparkle_private_key`.
 6. **Back up the private key** in a password manager. If you lose it, existing users can't install updates signed by a new key without a key rotation. See the [Sparkle docs on rotating keys](https://sparkle-project.org/documentation/#rotating-signing-keys).
@@ -44,7 +44,7 @@ Never commit the private key. `.gitignore` blocks the common filenames, but chec
 
 The release workflow (owned by the release-flow thread) does this on every push to `main`:
 
-1. Builds Release and packages `Cove-<version>.zip` and `Cove-<version>.dmg`.
+1. Builds Release and packages `Inlet-<version>.zip` and `Inlet-<version>.dmg`.
 2. Runs `scripts/release/update-appcast.sh <version> <build> <zip-path> <out-dir>`, with `SPARKLE_PRIVATE_KEY` in the environment.
 3. Attaches `appcast.xml` and both archives to the GitHub Release tagged `v<version>`.
 
@@ -56,11 +56,11 @@ To check the feed format by hand, run `generate_appcast -h` from the Sparkle `bi
 
 1. Build an old version, for example `CURRENT_PROJECT_VERSION = 1`, and run it.
 2. Publish a newer build with a higher build number to a test feed, or temporarily lower the old build's number.
-3. Quit and relaunch the old build. Sparkle asks for permission only on the second launch by default, but Cove sets `SUEnableAutomaticChecks` to true, so it checks in the background once a day.
-4. To force a check now, use **Cove › Check for Updates…**. To reset the daily timer, run `defaults delete com.freezingshock.Cove SULastCheckTime` before launching.
+3. Quit and relaunch the old build. Sparkle asks for permission only on the second launch by default, but Inlet sets `SUEnableAutomaticChecks` to true, so it checks in the background once a day.
+4. To force a check now, use **Inlet › Check for Updates…**. To reset the daily timer, run `defaults delete com.freezingshock.Inlet SULastCheckTime` before launching.
 5. Watch **Console.app** and filter for `Sparkle` if something goes wrong.
 
 ## Notes
 
-- Cove is not sandboxed, so Sparkle's XPC helpers run as normal processes. The app is also not hardened-runtime, which is fine for the current ad-hoc signed builds. A Developer ID build needs hardened runtime and notarization, which the signing thread will handle.
+- Inlet is not sandboxed, so Sparkle's XPC helpers run as normal processes. The app is also not hardened-runtime, which is fine for the current ad-hoc signed builds. A Developer ID build needs hardened runtime and notarization, which the signing thread will handle.
 - Keep Sparkle's `.dSYM` files for crash symbolication.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write or extract Cove's release notes.
+"""Write or extract Inlet's release notes.
 
 Usage:
   changelog.py write --version 0.2 --build 2 [--range origin/main..HEAD] [--file CHANGELOG.md]
@@ -25,7 +25,7 @@ import sys
 
 DEFAULT_HEADER = (
     "# Changelog\n\n"
-    "Notable changes to Cove, newest first. The release workflow writes each "
+    "Notable changes to Inlet, newest first. The release workflow writes each "
     "section from merged PR titles, so keep the wording in PR titles clear.\n\n"
 )
 SECTION_START = re.compile(r"^## ", re.MULTILINE)

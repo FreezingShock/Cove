@@ -1,6 +1,6 @@
-# Cove landing page
+# Inlet landing page
 
-A static, one-page site for Cove. It has no build step and no dependencies. Open it locally to preview it before it is published.
+A static, one-page site for Inlet. It has no build step and no dependencies. Open it locally to preview it before it is published.
 
 ## Run it on Windows
 
@@ -19,7 +19,7 @@ You can also double-click `index.html` to open it straight from the folder. It w
 ## Files
 
 - `index.html` is the page and its markup.
-- `css/tokens.css` is a copy of the Cove design tokens (v1.2) from `design-system/cove-tokens.css`. Edit the source, then copy it here again.
+- `css/tokens.css` is a copy of the Inlet design tokens (v1.2) from `design-system/inlet-tokens.css`. Edit the source, then copy it here again.
 - `css/site.css` holds the page styles.
 - `js/site.js` runs the demos: the grid, search, quick panel, settings, and spring motion. It has no dependencies.
 - `assets/` holds the Crescent app icon as SVG and PNG.

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Package a built Cove.app into the release artifacts:
-#   Cove-<version>.zip   the app, for Sparkle and manual download
-#   Cove-<version>.dmg   drag-to-Applications disk image
+# Package a built Inlet.app into the release artifacts:
+#   Inlet-<version>.zip   the app, for Sparkle and manual download
+#   Inlet-<version>.dmg   drag-to-Applications disk image
 #   SHA256SUMS.txt       checksums for both
 #
-# Usage: scripts/release/package.sh <path/to/Cove.app> <version> <out-dir>
+# Usage: scripts/release/package.sh <path/to/Inlet.app> <version> <out-dir>
 #
 # Signing is ad-hoc for now. To add Developer ID signing and notarization,
 # see the SIGNING HOOK section in RELEASING.md.
@@ -12,14 +12,14 @@
 set -euo pipefail
 
 if [ "$#" -ne 3 ]; then
-  echo "usage: $0 <path/to/Cove.app> <version> <out-dir>" >&2
+  echo "usage: $0 <path/to/Inlet.app> <version> <out-dir>" >&2
   exit 2
 fi
 
 APP="$1"
 VERSION="$2"
 OUT="$3"
-NAME="Cove-${VERSION}"
+NAME="Inlet-${VERSION}"
 
 if [ ! -d "$APP" ]; then
   echo "error: app bundle not found at $APP" >&2
@@ -38,22 +38,22 @@ ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT/$NAME.zip"
 # DMG: the app plus an /Applications alias so people can drag it across.
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
-cp -R "$APP" "$STAGE/Cove.app"
+cp -R "$APP" "$STAGE/Inlet.app"
 ln -s /Applications "$STAGE/Applications"
 hdiutil create \
-  -volname "Cove ${VERSION}" \
+  -volname "Inlet ${VERSION}" \
   -srcfolder "$STAGE" \
   -ov \
   -format UDZO \
   "$OUT/$NAME.dmg" >/dev/null
 
-# Stable-named copy so https://github.com/FreezingShock/Cove/releases/latest/download/Cove.dmg
+# Stable-named copy so https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg
 # always points at the newest release. The versioned file stays for archives.
-cp "$OUT/$NAME.dmg" "$OUT/Cove.dmg"
+cp "$OUT/$NAME.dmg" "$OUT/Inlet.dmg"
 
 (
   cd "$OUT"
-  shasum -a 256 "$NAME.zip" "$NAME.dmg" Cove.dmg > SHA256SUMS.txt
+  shasum -a 256 "$NAME.zip" "$NAME.dmg" Inlet.dmg > SHA256SUMS.txt
 )
 
 echo "Packaged:"

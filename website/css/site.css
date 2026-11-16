@@ -543,8 +543,8 @@ kbd {
 .dock-btn .ind { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
 .dock-btn[aria-expanded="true"] .ind { background: var(--accent); }
 .dock-btn .ico { --tile: 44px; }
-.ico.cove { background: none; }
-.ico.cove img { display: block; width: 100%; height: 100%; }
+.ico.inlet { background: none; }
+.ico.inlet img { display: block; width: 100%; height: 100%; }
 .dock-plain { display: flex; gap: 10px; align-items: flex-end; }
 .dock-plain .ico { --tile: 44px; }
 
@@ -636,7 +636,7 @@ kbd {
 .fact h4 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
 .fact p { font-size: 15px; color: var(--text-2); }
 
-/* ---------- Get Cove ---------- */
+/* ---------- Get Inlet ---------- */
 .get { padding: 104px 0; border-top: 1px solid var(--hair); }
 .get-lede { margin-top: 18px; max-width: 52ch; }
 .get-box {
