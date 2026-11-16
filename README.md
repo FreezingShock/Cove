@@ -48,6 +48,7 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | `Cove/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
 | `Cove/CoveTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
 | `Cove/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
+| `Cove/Theme.swift` | Colors and sizes from the design system. |
 
 New files you add inside the `Cove` folder appear in Xcode automatically.
 
