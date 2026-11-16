@@ -1,0 +1,160 @@
+name: Release
+
+# Runs when integration is merged into main. It builds Cove in Release, packages
+# it and publishes a GitHub Release tagged v<version>. It is safe to re-run: a
+# version that already has a release is skipped.
+#
+# Builds are ad-hoc signed for now. See SIGNING HOOK in RELEASING.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and package only. Do not tag or publish.
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DRY_RUN: ${{ inputs.dry_run || false }}
+      # SIGNING HOOK: "-" means ad-hoc signing. Changing it needs a Developer ID.
+      CODE_SIGN_IDENTITY: "-"
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Read version and decide whether to release
+        id: version
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ] && [ "$DRY_RUN" != "true" ]; then
+            echo "::error::Releases publish from main only. Use dry_run to test another branch."
+            exit 1
+          fi
+          if [ ! -f Cove.xcodeproj/project.pbxproj ]; then
+            echo "::error::Cove.xcodeproj is not on this commit. Land PR #1 on integration first."
+            exit 1
+          fi
+
+          OUT="$(python3 scripts/release/version.py current)"
+          read -r VERSION BUILD <<< "$OUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build_number=$BUILD" >> "$GITHUB_OUTPUT"
+
+          BUILD_IT=true
+          PUBLISH=true
+          if [ "$DRY_RUN" = "true" ]; then
+            PUBLISH=false
+          elif gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "::notice::v$VERSION is already released, so there is nothing to do. Run Prepare release to bump the version."
+            BUILD_IT=false
+            PUBLISH=false
+          fi
+          echo "build=$BUILD_IT" >> "$GITHUB_OUTPUT"
+          echo "publish=$PUBLISH" >> "$GITHUB_OUTPUT"
+          echo "Version $VERSION (build $BUILD). Build: $BUILD_IT. Publish: $PUBLISH."
+
+      - name: Select Xcode 26.6
+        if: steps.version.outputs.build == 'true'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          xcodebuild -version
+          xcrun --sdk macosx --show-sdk-version
+
+      - name: Build Release
+        if: steps.version.outputs.build == 'true'
+        run: |
+          SCHEME="$(xcodebuild -list -project Cove.xcodeproj -json | jq -r '.project.schemes[0]')"
+          echo "Using scheme: $SCHEME"
+          xcodebuild build \
+            -project Cove.xcodeproj \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=YES
+
+      - name: Check the built app's version
+        if: steps.version.outputs.build == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
+        run: |
+          APP="$(find build/DerivedData/Build/Products/Release -maxdepth 1 -name '*.app' -print -quit)"
+          if [ -z "$APP" ]; then
+            echo "::error::No .app found in build/DerivedData/Build/Products/Release."
+            exit 1
+          fi
+          SHORT="$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")"
+          BUNDLE="$(plutil -extract CFBundleVersion raw "$APP/Contents/Info.plist")"
+          if [ "$SHORT" != "$VERSION" ] || [ "$BUNDLE" != "$BUILD" ]; then
+            echo "::error::Built app reports $SHORT ($BUNDLE), expected $VERSION ($BUILD)."
+            exit 1
+          fi
+          echo "Built app is $SHORT ($BUNDLE)."
+
+      - name: Package zip and DMG
+        if: steps.version.outputs.build == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          APP="$(find build/DerivedData/Build/Products/Release -maxdepth 1 -name '*.app' -print -quit)"
+          scripts/release/package.sh "$APP" "$VERSION" build/release
+          python3 scripts/release/changelog.py extract --version "$VERSION" > build/release/notes.md
+
+      - name: Update Sparkle appcast (when the script exists)
+        if: steps.version.outputs.build == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if [ -x scripts/release/update-appcast.sh ]; then
+            scripts/release/update-appcast.sh "$VERSION" "$BUILD" "build/release/Cove-$VERSION.zip" build/release
+          else
+            echo "::notice::scripts/release/update-appcast.sh is not on this commit, so no appcast.xml is attached."
+          fi
+
+      - name: Upload dry-run artifacts
+        if: steps.version.outputs.build == 'true' && steps.version.outputs.publish == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cove-dry-run
+          path: build/release/*
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: steps.version.outputs.publish == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          ASSETS=(
+            "build/release/Cove-$VERSION.zip"
+            "build/release/Cove-$VERSION.dmg"
+            "build/release/Cove.dmg"
+            "build/release/SHA256SUMS.txt"
+          )
+          if [ -f build/release/appcast.xml ]; then
+            ASSETS+=("build/release/appcast.xml")
+          fi
+          gh release create "v$VERSION" "${ASSETS[@]}" \
+            --target "$GITHUB_SHA" \
+            --title "Cove $VERSION" \
+            --notes-file build/release/notes.md \
+            --latest
