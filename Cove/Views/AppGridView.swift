@@ -141,6 +141,7 @@ struct AppGridView: View {
                     ForEach(shownApps) { app in
                         AppIconCell(
                             app: app,
+                            onLaunch: launch,
                             isTopHit: app.id == topHit?.id,
                             isKeyboardFocused: focusedApp == app.id
                         )
@@ -162,17 +163,26 @@ struct AppGridView: View {
 
     // MARK: Actions
 
+    /// Launches an app and closes Cove, so the next open starts fresh.
+    /// The window hides first, then the app opens (spec: Launch).
+    private func launch(_ app: AppItem) {
+        query = ""
+        focusedApp = nil
+        dismissWindow(id: "main")
+        AppLauncher.launch(app)
+    }
+
     /// Return in the field, or a tap on the top-hit row: open the top hit.
     private func openTopHit() {
         guard let app = topHit else { return }
-        AppLauncher.launch(app)
+        launch(app)
     }
 
     /// Return while an icon has keyboard focus: open that icon.
     private func openFocusedApp() -> KeyPress.Result {
         guard let id = focusedApp,
               let app = shownApps.first(where: { $0.id == id }) else { return .ignored }
-        AppLauncher.launch(app)
+        launch(app)
         return .handled
     }
 

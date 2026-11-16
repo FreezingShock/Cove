@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AppIconCell: View {
     let app: AppItem
+    /// Called on click. The grid uses it to close the window and launch the app.
+    let onLaunch: (AppItem) -> Void
     /// The best match while searching. Gets the top-hit lozenge; Return opens it.
     var isTopHit = false
     /// True when arrow keys have moved keyboard focus onto this icon.
@@ -19,7 +21,7 @@ struct AppIconCell: View {
 
     var body: some View {
         Button {
-            AppLauncher.launch(app)
+            onLaunch(app)
         } label: {
             VStack(spacing: CoveSpace.s) {
                 Image(nsImage: IconCache.shared.icon(for: app))
