@@ -70,7 +70,8 @@ The release notes are the changelog section for that version.
 
 ## Installing an unsigned build (Gatekeeper)
 
-Releases are ad-hoc signed, not notarized, so macOS blocks the first launch.
+Releases built without the signing secrets are ad-hoc signed, so macOS blocks the first
+launch. Releases built with the secrets are notarized and open without these steps.
 
 - **Finder:** open `Inlet.app`, or the DMG and then the app. macOS says it cannot verify
   the app. Click **Done**. Then open **System Settings → Privacy & Security**, scroll to
@@ -89,24 +90,82 @@ Actions → **Release** → Run workflow, on any branch, with `dry_run` checked.
 and packages the app and uploads the files as the `inlet-dry-run` artifact. It does not
 tag or publish anything.
 
-## SIGNING HOOK
+## Signing and notarization
 
-Developer ID signing and notarization are not turned on. Turning them on needs an
-Apple Developer account ($99/yr) and these changes:
+The release workflow signs Inlet with a Developer ID Application certificate, sends it to
+Apple for notarization, and staples the ticket to the app before the app is zipped and put
+in the DMG. This turns on by itself once the five secrets below exist. Until then, the
+release builds ad-hoc signed and the signing steps skip. If only some of the secrets are
+set, the run fails on purpose, so a half-configured release never looks signed.
 
-1. Store a Developer ID Application certificate as a secret. In `release.yml`, add a
-   step that imports it into a temporary keychain.
-2. Set `CODE_SIGN_IDENTITY` in the job's `env` to `Developer ID Application: <name>
-   (<TEAMID>)`. Pass `CODE_SIGN_STYLE=Manual`, `ENABLE_HARDENED_RUNTIME=YES` and
-   `OTHER_CODE_SIGN_FLAGS=--timestamp` to `xcodebuild`, and drop
-   `CODE_SIGNING_REQUIRED=NO`.
-3. After the build and before packaging, notarize the app. Zip it, then run
-   `xcrun notarytool submit <zip> --apple-id … --team-id … --password … --wait`.
-   Staple the `.app` with `xcrun stapler staple`, so the packaged DMG and zip carry the
-   ticket.
+Secrets go in **Settings → Secrets and variables → Actions → Repository secrets**. The names
+must match exactly.
 
-`scripts/release/package.sh` already verifies the signature with `codesign --verify`,
-so it keeps working once the signing is real.
+| Secret | What goes in it |
+| --- | --- |
+| `MACOS_CERT_P12` | The exported Developer ID Application certificate, base64 encoded (step 5 below). |
+| `MACOS_CERT_PASSWORD` | The password you set when you exported the `.p12`. |
+| `APPLE_ID` | The Apple ID email for the developer account. |
+| `APPLE_TEAM_ID` | The 10-character Team ID. |
+| `APPLE_APP_PASSWORD` | An app-specific password for notarization (step 6 below). This is not your Apple ID password. |
+
+### Step by step: one-time setup
+
+You need the Apple Developer Program ($99/yr). The steps below are the ones to follow.
+
+1. **Enroll.** Go to `developer.apple.com/programs`, choose **Enroll**, and sign in with the
+   Apple ID you want to use. Pick **Individual**, then pay the $99 fee. Apple can take a day
+   or two to approve the account. You can do steps 2 to 4 once it is approved.
+2. **Find your Team ID.** On `developer.apple.com`, open **Account → Membership details**.
+   Copy the 10-character Team ID into `APPLE_TEAM_ID`.
+3. **Create the certificate.** The easiest route is Xcode: **Settings → Accounts**, select
+   your Apple ID, click **Manage Certificates**, then **+** and **Developer ID Application**.
+   Xcode puts the certificate and its private key in your login keychain. Only the account
+   holder can create this certificate type, which is you for an individual account.
+4. **Export it.** Open **Keychain Access**, go to **My Certificates**, and find
+   **Developer ID Application: Your Name (TEAMID)**. Click the arrow beside it so the private
+   key shows under the certificate. Select both rows, right-click, choose **Export 2 items…**,
+   and save it as `DeveloperID.p12`. Set a strong password when asked. That password is
+   `MACOS_CERT_PASSWORD`. If you export only the certificate and leave out the key, signing
+   fails in CI.
+5. **Encode it for GitHub.** In Terminal, run
+   `base64 -i ~/Desktop/DeveloperID.p12 | pbcopy`. Paste the clipboard into `MACOS_CERT_P12`.
+   Then delete `DeveloperID.p12` from the Desktop and empty the Trash. Keep the password in a
+   password manager.
+6. **Make an app-specific password.** Go to `appleid.apple.com`, open **Sign-In and Security
+   → App-Specific Passwords**, click **+**, and name it `Inlet notarization`. Copy the password
+   into `APPLE_APP_PASSWORD`. You can only see it once.
+7. **Set `APPLE_ID`** to the Apple ID email you used in step 1.
+8. **Add all five secrets** under the repository's **Actions** secrets. Repository secrets
+   survive the repo rename from Cove to Inlet, so you do not need to add them again.
+9. **Test it without publishing.** Once the Release workflow is on `main` (after the first
+   deploy), go to **Actions → Release → Run workflow**, pick `main`, and tick `dry_run`. The
+   run signs and notarizes the app and uploads `inlet-dry-run`. Download it, open the DMG, drag
+   Inlet to Applications, and launch it. You should see no Gatekeeper warning. You can also run
+   `spctl --assess --type execute -vv /Applications/Inlet.app`. It should report
+   `source=Notarized Developer ID`.
+
+If notarization fails with a message about an agreement, sign in at `developer.apple.com`
+and accept the updated agreement. Then re-run the workflow.
+
+### Renewing
+
+A Developer ID certificate lasts five years. When it expires, create and export a new one,
+then replace `MACOS_CERT_P12` and `MACOS_CERT_PASSWORD`. Nothing else changes.
+
+### What the workflow does with the secrets
+
+1. Imports the `.p12` into a temporary keychain on the runner and deletes the `.p12` file.
+2. Builds with `CODE_SIGN_STYLE=Manual`, the Developer ID identity, hardened runtime and a
+   secure timestamp.
+3. Checks that the app is signed with a Developer ID Application certificate.
+4. Zips the app and submits it to Apple with `notarytool --wait`. If Apple does not return
+   `Accepted`, the run fails and prints the notarization log.
+5. Staples the ticket to the `.app` and checks it with `stapler validate` and `spctl`.
+6. Packages the stapled app into the zip and DMG, as before.
+7. Deletes the temporary keychain, even when an earlier step failed.
+
+Notarizing the DMG itself is not needed. The app inside is stapled, so Gatekeeper accepts it.
 
 ## Sparkle updates
 
