@@ -23,6 +23,11 @@ Cove uses a two-branch flow:
 - If a feature is bigger, split it into stacked PRs. Each PR must build on its own.
 - For a stacked PR, base it on the previous PR's branch. Once the previous PR lands, change this PR's base to `integration` **before** deleting the old branch. Deleting a base branch closes the PR.
 
+## Versions and changelog
+
+- Don't bump `MARKETING_VERSION` or `CURRENT_PROJECT_VERSION`, and don't edit `CHANGELOG.md`, in a feature PR. The **Prepare release** workflow does both in its own PR. See [RELEASING.md](RELEASING.md).
+- Write PR titles as you want them to read in the changelog. The title becomes the changelog entry.
+
 ## Conflicts
 
 - Keep your branch current by merging `integration` into it (`git merge origin/integration`).
