@@ -52,9 +52,14 @@ final class CoveAppDelegate: NSObject, NSApplicationDelegate {
         // Scan once at launch. The overlay never scans on open (spec).
         library.reload()
 
-        // The grid hotkey toggles the overlay: the first press opens it, the
-        // second closes it. (The quick panel hotkey is wired in 0.4.)
+        // Grid hotkey (Option+Space): the first press opens the overlay, the
+        // second closes it.
         HotkeyManager.shared.onGridHotkey = {
+            MainActor.assumeIsolated { OverlayController.shared.toggle() }
+        }
+        // Quick panel hotkey (Control+Option+Space). The quick panel itself
+        // comes in 0.4; until then it opens the same overlay.
+        HotkeyManager.shared.onQuickPanelHotkey = {
             MainActor.assumeIsolated { OverlayController.shared.toggle() }
         }
 
