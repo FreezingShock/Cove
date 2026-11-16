@@ -1,0 +1,223 @@
+/* Cove design tokens, v1.2 (2026-11-16)
+   Single source of truth. Every mockup and the design-system hub get their token block from this file
+   (design-system/build.py). Edit values here, then rebuild. Do not hand-edit the copies in mockups/.
+
+   Rules behind the values:
+   - Accent is a fill, never text. Text that used to be aqua is `--text`.
+   - Paths and file locations use `--text-2`, not `--text-3`.
+   - Radii nest: inner radius = outer radius - padding (see the radius table in theme-spec.md section 5).
+   - Spacing uses one 4 pt based scale. Nothing sits on 14 or 10 any more.
+*/
+
+/* ---------- Light ---------- */
+:root {
+  --base: #E6ECF2;
+  --base-2: #F6F8FB;
+  --glow-a: rgba(70,230,214,0.42);
+  --glow-b: rgba(122,138,255,0.34);
+  --glow-c: rgba(255,255,255,0.85);
+  --window: #F4F6F9;
+  --grouped: #FFFFFF;
+  --text: #0B111C;
+  --text-2: rgba(16,24,40,0.66);
+  --text-3: rgba(16,24,40,0.62);
+  --hair: rgba(12,22,44,0.10);
+  --accent: #0A7F74;
+  --accent-soft: rgba(10,127,116,0.14);
+  --accent-ink: #FFFFFF;
+  --logo-aqua: #46E6D6;
+  --g-fill: rgba(250,252,255,0.50);
+  --g-solid: #FFFFFF;
+  --g-sheen-top: rgba(255,255,255,0.62);
+  --g-sheen-bot: rgba(255,255,255,0.18);
+  --g-hl: rgba(255,255,255,0.95);
+  --g-low: rgba(255,255,255,0.35);
+  --g-spec: rgba(255,255,255,0.55);
+  --g-rim-a: rgba(255,255,255,0.95);
+  --g-rim-b: rgba(255,255,255,0.35);
+  --g-rim-c: rgba(12,22,44,0.06);
+  --g-rim-d: rgba(255,255,255,0.70);
+  --g-edge: rgba(12,22,44,0.10);
+  --g-shadow: rgba(28,44,80,0.16);
+  --c-fill: rgba(250,252,255,0.38);
+  --sel-top: rgba(255,255,255,0.92);
+  --sel-bot: rgba(255,255,255,0.62);
+  --sel-hl: rgba(255,255,255,1.00);
+  --sel-ring: rgba(12,22,44,0.08);
+  --sel-shadow: rgba(28,44,80,0.14);
+  --hover: rgba(12,22,44,0.05);
+  --scrim: rgba(236,241,246,0.42);
+  --track: rgba(12,22,44,0.46);
+  --knob: #FFFFFF;
+  --field: rgba(12,22,44,0.05);
+  --icon-shadow: rgba(28,44,80,0.22);
+  --label-shadow: 0 1px 2px rgba(255,255,255,0.55);
+
+  /* Radius: outer shapes, then the inner shapes they nest */
+  --r-xs: 6px;        /* keycaps, symbol tiles */
+  --r-sm: 10px;       /* small tiles, sidebar rows, theme thumbnails */
+  --r-md: 16px;       /* rows and groups inside a 32 pt panel with 16 pt padding */
+  --r-row: 24px;      /* selected row inside a results panel (32 - 8) */
+  --r-sidebar: 18px;  /* Settings sidebar inside a 26 pt window with 8 pt inset */
+  --r-window: 26px;   /* Settings window */
+  --r-panel: 32px;    /* every glass panel: results, quick panel, folder overlay */
+
+  /* Spacing: 4 pt based. Use these names, never raw numbers. */
+  --s-2: 2px;  --s-4: 4px;  --s-8: 8px;  --s-12: 12px;
+  --s-16: 16px; --s-20: 20px; --s-24: 24px; --s-32: 32px;
+  --s-40: 40px; --s-48: 48px; --s-64: 64px; --s-84: 84px;
+
+  /* Type sizes (pt). Weights and tracking live in the type scale in theme-spec.md section 7a. */
+  --fs-display: 28px;
+  --fs-title: 20px;
+  --fs-headline: 15px;
+  --fs-body: 13px;
+  --fs-subhead: 15px;
+  --fs-caption: 12px;
+  --fs-label: 11px;
+
+  --blur-panel: 40px;
+  --blur-capsule: 36px;
+  --blur-scrim: 30px;
+  --sat: 200%;
+}
+
+/* ---------- Dark (system) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --base: #05070C;
+    --base-2: #0B0F18;
+    --glow-a: rgba(48,196,186,0.36);
+    --glow-b: rgba(70,90,200,0.34);
+    --glow-c: rgba(120,90,220,0.16);
+    --window: #161A22;
+    --grouped: rgba(255,255,255,0.055);
+    --text: #FFFFFF;
+    --text-2: rgba(235,240,255,0.78);
+    --text-3: rgba(235,240,255,0.56);
+    --hair: rgba(255,255,255,0.12);
+    --accent: #3FD9C9;
+    --accent-soft: rgba(63,217,201,0.16);
+    --accent-ink: #022522;
+    --logo-aqua: #46E6D6;
+    --g-fill: rgba(12,16,26,0.55);
+    --g-solid: #242A35;
+    --g-sheen-top: rgba(255,255,255,0.13);
+    --g-sheen-bot: rgba(255,255,255,0.04);
+    --g-hl: rgba(255,255,255,0.42);
+    --g-low: rgba(255,255,255,0.08);
+    --g-spec: rgba(255,255,255,0.16);
+    --g-rim-a: rgba(255,255,255,0.50);
+    --g-rim-b: rgba(255,255,255,0.14);
+    --g-rim-c: rgba(255,255,255,0.06);
+    --g-rim-d: rgba(255,255,255,0.22);
+    --g-edge: rgba(0,0,0,0.40);
+    --g-shadow: rgba(0,0,0,0.55);
+    --c-fill: rgba(12,16,26,0.35);
+    --sel-top: rgba(255,255,255,0.24);
+    --sel-bot: rgba(255,255,255,0.10);
+    --sel-hl: rgba(255,255,255,0.55);
+    --sel-ring: rgba(255,255,255,0.16);
+    --sel-shadow: rgba(0,0,0,0.30);
+    --hover: rgba(255,255,255,0.07);
+    --scrim: rgba(4,6,10,0.44);
+    --track: rgba(255,255,255,0.40);
+    --knob: #F4F6FA;
+    --field: rgba(255,255,255,0.07);
+    --icon-shadow: rgba(0,0,0,0.45);
+    --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Dark (forced) ---------- */
+:root[data-theme="dark"], .t-dark {
+    --base: #05070C;
+    --base-2: #0B0F18;
+    --glow-a: rgba(48,196,186,0.36);
+    --glow-b: rgba(70,90,200,0.34);
+    --glow-c: rgba(120,90,220,0.16);
+    --window: #161A22;
+    --grouped: rgba(255,255,255,0.055);
+    --text: #FFFFFF;
+    --text-2: rgba(235,240,255,0.78);
+    --text-3: rgba(235,240,255,0.56);
+    --hair: rgba(255,255,255,0.12);
+    --accent: #3FD9C9;
+    --accent-soft: rgba(63,217,201,0.16);
+    --accent-ink: #022522;
+    --logo-aqua: #46E6D6;
+    --g-fill: rgba(12,16,26,0.55);
+    --g-solid: #242A35;
+    --g-sheen-top: rgba(255,255,255,0.13);
+    --g-sheen-bot: rgba(255,255,255,0.04);
+    --g-hl: rgba(255,255,255,0.42);
+    --g-low: rgba(255,255,255,0.08);
+    --g-spec: rgba(255,255,255,0.16);
+    --g-rim-a: rgba(255,255,255,0.50);
+    --g-rim-b: rgba(255,255,255,0.14);
+    --g-rim-c: rgba(255,255,255,0.06);
+    --g-rim-d: rgba(255,255,255,0.22);
+    --g-edge: rgba(0,0,0,0.40);
+    --g-shadow: rgba(0,0,0,0.55);
+    --c-fill: rgba(12,16,26,0.35);
+    --sel-top: rgba(255,255,255,0.24);
+    --sel-bot: rgba(255,255,255,0.10);
+    --sel-hl: rgba(255,255,255,0.55);
+    --sel-ring: rgba(255,255,255,0.16);
+    --sel-shadow: rgba(0,0,0,0.30);
+    --hover: rgba(255,255,255,0.07);
+    --scrim: rgba(4,6,10,0.44);
+    --track: rgba(255,255,255,0.40);
+    --knob: #F4F6FA;
+    --field: rgba(255,255,255,0.07);
+    --icon-shadow: rgba(0,0,0,0.45);
+    --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    color-scheme: dark;
+}
+
+/* ---------- Light (forced, for side-by-side sheets) ---------- */
+.t-light {
+    --base: #E6ECF2;
+    --base-2: #F6F8FB;
+    --glow-a: rgba(70,230,214,0.42);
+    --glow-b: rgba(122,138,255,0.34);
+    --glow-c: rgba(255,255,255,0.85);
+    --window: #F4F6F9;
+    --grouped: #FFFFFF;
+    --text: #0B111C;
+    --text-2: rgba(16,24,40,0.66);
+    --text-3: rgba(16,24,40,0.62);
+    --hair: rgba(12,22,44,0.10);
+    --accent: #0A7F74;
+    --accent-soft: rgba(10,127,116,0.14);
+    --accent-ink: #FFFFFF;
+    --logo-aqua: #46E6D6;
+    --g-fill: rgba(250,252,255,0.50);
+    --g-solid: #FFFFFF;
+    --g-sheen-top: rgba(255,255,255,0.62);
+    --g-sheen-bot: rgba(255,255,255,0.18);
+    --g-hl: rgba(255,255,255,0.95);
+    --g-low: rgba(255,255,255,0.35);
+    --g-spec: rgba(255,255,255,0.55);
+    --g-rim-a: rgba(255,255,255,0.95);
+    --g-rim-b: rgba(255,255,255,0.35);
+    --g-rim-c: rgba(12,22,44,0.06);
+    --g-rim-d: rgba(255,255,255,0.70);
+    --g-edge: rgba(12,22,44,0.10);
+    --g-shadow: rgba(28,44,80,0.16);
+    --c-fill: rgba(250,252,255,0.38);
+    --sel-top: rgba(255,255,255,0.92);
+    --sel-bot: rgba(255,255,255,0.62);
+    --sel-hl: rgba(255,255,255,1.00);
+    --sel-ring: rgba(12,22,44,0.08);
+    --sel-shadow: rgba(28,44,80,0.14);
+    --hover: rgba(12,22,44,0.05);
+    --scrim: rgba(236,241,246,0.42);
+    --track: rgba(12,22,44,0.46);
+    --knob: #FFFFFF;
+    --field: rgba(12,22,44,0.05);
+    --icon-shadow: rgba(28,44,80,0.22);
+    --label-shadow: 0 1px 2px rgba(255,255,255,0.55);
+    color-scheme: light;
+}
