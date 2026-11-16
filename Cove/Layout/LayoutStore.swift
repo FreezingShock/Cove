@@ -33,7 +33,9 @@ final class LayoutStore {
     }
 
     /// `~/Library/Application Support/Cove/layout.json`.
-    static func defaultFileURL() -> URL {
+    /// Nonisolated because it only reads FileManager, so the init default
+    /// argument can call it outside the main actor.
+    nonisolated static func defaultFileURL() -> URL {
         let support = (try? FileManager.default.url(
             for: .applicationSupportDirectory,
             in: .userDomainMask,
