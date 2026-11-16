@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
-# Builds Cove's Sparkle feed (appcast.xml) for one release.
+# Builds Inlet's Sparkle feed (appcast.xml) for one release.
 #
 # Called by the release workflow after it packages the app:
 #   scripts/release/update-appcast.sh <version> <build> <zip-path> <out-dir>
 #
 #   <version>   marketing version, e.g. 0.2       (matches tag v0.2)
 #   <build>     CFBundleVersion, e.g. 2           (Sparkle compares this number)
-#   <zip-path>  the Cove-<version>.zip the workflow built
+#   <zip-path>  the Inlet-<version>.zip the workflow built
 #   <out-dir>   where appcast.xml is written; the workflow attaches it to the release
 #
 # Needs the environment variable SPARKLE_PRIVATE_KEY (the EdDSA private key,
@@ -18,8 +18,8 @@
 
 set -euo pipefail
 
-SPARKLE_VERSION="2.10.1"   # keep in sync with the package version in Cove.xcodeproj
-REPO="FreezingShock/Cove"
+SPARKLE_VERSION="2.10.1"   # keep in sync with the package version in Inlet.xcodeproj
+REPO="FreezingShock/Inlet"
 
 if [[ $# -ne 4 ]]; then
   echo "usage: $0 <version> <build> <zip-path> <out-dir>" >&2
@@ -38,7 +38,7 @@ trap 'rm -rf "$work"' EXIT
 
 # 1. Check that the archive really holds this build number. A mismatch means the
 #    feed would advertise the wrong version, so stop here.
-archive_build="$(unzip -p "$zip_path" 'Cove.app/Contents/Info.plist' \
+archive_build="$(unzip -p "$zip_path" 'Inlet.app/Contents/Info.plist' \
   | plutil -extract CFBundleVersion raw -o - -)"
 if [[ "$archive_build" != "$build" ]]; then
   echo "build mismatch: archive has CFBundleVersion $archive_build, expected $build" >&2
@@ -78,4 +78,4 @@ key_file="$work/ed25519_private_key"
   "$stage"
 
 cp "$stage/appcast.xml" "$out_dir/appcast.xml"
-echo "Wrote $out_dir/appcast.xml for Cove $version (build $build)"
+echo "Wrote $out_dir/appcast.xml for Inlet $version (build $build)"

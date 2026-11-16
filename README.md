@@ -1,8 +1,8 @@
-# Cove
+# Inlet
 
 A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no network calls, tracking or accounts.
 
-**Current version: 0.1 (Skeleton).** Cove scans your app folders and shows every installed app in a plain grid of real icons. Click an icon to open the app. The glass overlay, hotkey, search and Dock panel come in later versions (see the roadmap below).
+**Current version: 0.1 (Skeleton).** Inlet scans your app folders and shows every installed app in a plain grid of real icons. Click an icon to open the app. The glass overlay, hotkey, search and Dock panel come in later versions (see the roadmap below).
 
 ## Requirements
 
@@ -13,44 +13,44 @@ A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26
 ## Open and run it in Xcode
 
 1. Clone the repo, or in GitHub click **Code > Download ZIP** and unzip it.
-2. Double-click `Cove.xcodeproj`. Xcode opens the project.
-3. At the top of the window, make sure the scheme says **Cove** and the destination says **My Mac**.
+2. Double-click `Inlet.xcodeproj`. Xcode opens the project.
+3. At the top of the window, make sure the scheme says **Inlet** and the destination says **My Mac**.
 4. Press **Command-R** (or click the triangle Play button). Xcode builds the app and launches it.
-5. The Cove window shows every app. Click one to open it.
+5. The Inlet window shows every app. Click one to open it.
 
-To stop Cove, press **Command-.** in Xcode or quit Cove normally.
+To stop Inlet, press **Command-.** in Xcode or quit Inlet normally.
 
 ### If something goes wrong
 
-- **"Signing for Cove requires a development team."** Click the blue Cove project in the left sidebar, choose the **Cove** target, open **Signing & Capabilities**, and either pick your Personal Team (sign in with your Apple ID under Xcode > Settings > Accounts) or set Signing Certificate to **Sign to Run Locally**.
-- **Build fails with "Cannot find type ... in scope".** Make sure you opened `Cove.xcodeproj`, not a single Swift file, and that Xcode is version 26 or newer.
-- **An app is missing.** Cove looks in `/Applications`, `~/Applications` and `/System/Applications`, including subfolders like Utilities. Apps stored elsewhere won't show yet. Press **Command-R inside Cove** (File > Reload Apps) to rescan; it also rescans every time you switch back to Cove.
+- **"Signing for Inlet requires a development team."** Click the blue Inlet project in the left sidebar, choose the **Inlet** target, open **Signing & Capabilities**, and either pick your Personal Team (sign in with your Apple ID under Xcode > Settings > Accounts) or set Signing Certificate to **Sign to Run Locally**.
+- **Build fails with "Cannot find type ... in scope".** Make sure you opened `Inlet.xcodeproj`, not a single Swift file, and that Xcode is version 26 or newer.
+- **An app is missing.** Inlet looks in `/Applications`, `~/Applications` and `/System/Applications`, including subfolders like Utilities. Apps stored elsewhere won't show yet. Press **Command-R inside Inlet** (File > Reload Apps) to rescan; it also rescans every time you switch back to Inlet.
 
 ### Running it without Xcode
 
-After one successful run, choose **Product > Show Build Folder in Finder** in Xcode, open `Products/Debug`, and drag `Cove.app` into your Applications folder. You can then open it like any other app and keep it in the Dock.
+After one successful run, choose **Product > Show Build Folder in Finder** in Xcode, open `Products/Debug`, and drag `Inlet.app` into your Applications folder. You can then open it like any other app and keep it in the Dock.
 
 ## How the code is organized
 
 | File | What it does |
 |---|---|
-| `Cove/CoveApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
-| `Cove/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
-| `Cove/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
-| `Cove/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
-| `Cove/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
-| `Cove/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
-| `Cove/Services/AppLauncher.swift` | Opens an app through macOS and shows an alert if it fails. |
-| `Cove/Views/AppGridView.swift` | The window: header and 7-column grid. |
-| `Cove/Views/AppIconCell.swift` | One grid cell: icon, name, hover and press effects. |
-| `Cove/AppDelegate.swift` | Handles Dock clicks (reopen) and opens the quick panel or grid. |
-| `Cove/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
-| `Cove/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
-| `Cove/CoveTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
-| `Cove/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
-| `Cove/Theme.swift` | Colors and sizes from the design system. |
+| `Inlet/InletApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
+| `Inlet/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
+| `Inlet/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
+| `Inlet/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
+| `Inlet/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
+| `Inlet/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
+| `Inlet/Services/AppLauncher.swift` | Opens an app through macOS and shows an alert if it fails. |
+| `Inlet/Views/AppGridView.swift` | The window: header and 7-column grid. |
+| `Inlet/Views/AppIconCell.swift` | One grid cell: icon, name, hover and press effects. |
+| `Inlet/AppDelegate.swift` | Handles Dock clicks (reopen) and opens the quick panel or grid. |
+| `Inlet/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
+| `Inlet/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
+| `Inlet/InletTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
+| `Inlet/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
+| `Inlet/Theme.swift` | Colors and sizes from the design system. |
 
-New files you add inside the `Cove` folder appear in Xcode automatically.
+New files you add inside the `Inlet` folder appear in Xcode automatically.
 
 ### Apple APIs used
 
@@ -69,8 +69,8 @@ Each was checked against Apple's current documentation.
 - **Deployment target macOS 26.0.** Matches "macOS 26 or later". Can be raised to 27 if that open question lands there.
 - **Duplicates removed by bundle ID.** If the same app sits in two folders, the copy in `/Applications` wins, then `~/Applications`, then `/System/Applications`.
 - **Background-only helpers are hidden** (apps marked `LSBackgroundOnly`), since opening them would look like nothing happened. Menu bar apps still show.
-- **Rescan on focus** instead of watching the folders. Simpler for now, and fast because it runs in the background and only redraws when the list changed. Folder watching can replace it in 0.2 when Cove stays resident.
-- **No Cove app icon yet.** The logo lands in 0.5 with the design pass, so Xcode will show a generic icon for now.
+- **Rescan on focus** instead of watching the folders. Simpler for now, and fast because it runs in the background and only redraws when the list changed. Folder watching can replace it in 0.2 when Inlet stays resident.
+- **No Inlet app icon yet.** The logo lands in 0.5 with the design pass, so Xcode will show a generic icon for now.
 
 ## Roadmap
 

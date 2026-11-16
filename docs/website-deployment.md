@@ -1,4 +1,4 @@
-# Deploying the Cove website
+# Deploying the Inlet website
 
 The landing page in `website/` is plain static HTML, CSS and JavaScript. It is hosted on **GitHub Pages**, published by the workflow in `.github/workflows/website.yml`.
 
@@ -14,12 +14,12 @@ Vercel was the alternative. It gives a live preview for every branch, but it nee
 
 | Event | What runs |
 | --- | --- |
-| PR into `integration` that touches `website/` | `check` job: checks links, anchors and the privacy rule, and uploads the site as the `cove-website` artifact |
+| PR into `integration` that touches `website/` | `check` job: checks links, anchors and the privacy rule, and uploads the site as the `inlet-website` artifact |
 | Push to `integration` that touches `website/` | Same `check` job |
 | Push to `main` that touches `website/` (nate's release merge) | `check`, then `deploy` publishes `website/` to Pages |
 | Manual run from `main` (Actions tab, Run workflow) | Same as the push to `main`, even with no site change |
 
-To preview a PR's site, open the run in the Actions tab, download the `cove-website` artifact, unzip it, and open `index.html`.
+To preview a PR's site, open the run in the Actions tab, download the `inlet-website` artifact, unzip it, and open `index.html`.
 
 `scripts/check-website.py` fails the build on:
 
@@ -34,18 +34,18 @@ To preview a PR's site, open the run in the Actions tab, download the `cove-webs
 
 Nothing else is needed. The first deploy happens the next time `website/` changes on `main`, or when you run the workflow by hand.
 
-## Pointing "Get Cove" at the release
+## Pointing "Get Inlet" at the release
 
 The download button should go to the newest release's DMG using GitHub's stable URL:
 
 ```
-https://github.com/FreezingShock/Cove/releases/latest/download/Cove.dmg
+https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg
 ```
 
 This works only when:
 
 - the release is published (not a draft or pre-release), and
-- its DMG asset is named exactly `Cove.dmg`.
+- its DMG asset is named exactly `Inlet.dmg`.
 
 Until the first signed release exists, that URL returns a 404. Keep the site's current "no signed download yet" note until then, and switch the button over once a release is out.
 

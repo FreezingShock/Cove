@@ -1,6 +1,6 @@
-# Releasing Cove
+# Releasing Inlet
 
-Cove ships from `integration` to `main`. Feature PRs land on `integration`. A release
+Inlet ships from `integration` to `main`. Feature PRs land on `integration`. A release
 is one bump-and-changelog PR into `integration`, then one merge from `integration`
 into `main`. The `main` push builds the app and publishes a GitHub Release.
 
@@ -26,7 +26,7 @@ feature PRs ──▶ integration ──[Prepare release]──▶ "Release X" P
    secret, the release PR still opens, and nate merges it by hand after checking it.
 4. **The release workflows appear after the first deploy.** GitHub only offers
    `workflow_dispatch` for workflows on the default branch (`main`). The first
-   integration → main merge ships whatever version `Cove.xcodeproj` holds at that
+   integration → main merge ships whatever version `Inlet.xcodeproj` holds at that
    point (0.1 build 1, from PR #1). That release is created automatically.
 
 ## Each release
@@ -35,7 +35,7 @@ feature PRs ──▶ integration ──[Prepare release]──▶ "Release X" P
    default, so 0.1 → 0.2), `patch`, or `major`. Type an exact version in `version` to
    override the bump. The workflow:
    - bumps `MARKETING_VERSION` and increments `CURRENT_PROJECT_VERSION` in
-     `Cove.xcodeproj/project.pbxproj`;
+     `Inlet.xcodeproj/project.pbxproj`;
    - adds a `## [X.Y] - date` section to `CHANGELOG.md`, built from PR titles of commits
      on `integration` that are not on `main`;
    - opens **Release X.Y** into `integration` and turns on auto-merge.
@@ -52,9 +52,9 @@ feature PRs ──▶ integration ──[Prepare release]──▶ "Release X" P
 
 | Asset | Use |
 | --- | --- |
-| `Cove-<version>.dmg` | Drag-to-Applications disk image, versioned. |
-| `Cove.dmg` | Same DMG under a fixed name. The website's download link uses it: `https://github.com/FreezingShock/Cove/releases/latest/download/Cove.dmg`. |
-| `Cove-<version>.zip` | The app bundle, for Sparkle updates and manual downloads. |
+| `Inlet-<version>.dmg` | Drag-to-Applications disk image, versioned. |
+| `Inlet.dmg` | Same DMG under a fixed name. The website's download link uses it: `https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg`. |
+| `Inlet-<version>.zip` | The app bundle, for Sparkle updates and manual downloads. |
 | `SHA256SUMS.txt` | Checksums for the files above. |
 | `appcast.xml` | Sparkle feed, when `scripts/release/update-appcast.sh` exists. |
 
@@ -72,12 +72,12 @@ The release notes are the changelog section for that version.
 
 Releases are ad-hoc signed, not notarized, so macOS blocks the first launch.
 
-- **Finder:** open `Cove.app`, or the DMG and then the app. macOS says it cannot verify
+- **Finder:** open `Inlet.app`, or the DMG and then the app. macOS says it cannot verify
   the app. Click **Done**. Then open **System Settings → Privacy & Security**, scroll to
-  the Security section, and click **Open Anyway** for Cove. Confirm with your password.
+  the Security section, and click **Open Anyway** for Inlet. Confirm with your password.
   The button stays available only for a short time after the first attempt, so retry
   if it is gone.
-- **Terminal:** `xattr -dr com.apple.quarantine /Applications/Cove.app`, then open it
+- **Terminal:** `xattr -dr com.apple.quarantine /Applications/Inlet.app`, then open it
   normally.
 
 Right-click → Open no longer bypasses this on recent macOS releases, so use one of the
@@ -86,7 +86,7 @@ two steps above.
 ## Checking a build without publishing
 
 Actions → **Release** → Run workflow, on any branch, with `dry_run` checked. It builds
-and packages the app and uploads the files as the `cove-dry-run` artifact. It does not
+and packages the app and uploads the files as the `inlet-dry-run` artifact. It does not
 tag or publish anything.
 
 ## SIGNING HOOK
@@ -113,7 +113,7 @@ so it keeps working once the signing is real.
 Owned by the Sparkle thread. `release.yml` calls `scripts/release/update-appcast.sh
 <version> <build> <zip> <out-dir>` if the script exists and is executable. It expects
 `<out-dir>/appcast.xml` and reads the EdDSA key from the `SPARKLE_PRIVATE_KEY` secret.
-The feed URL is `https://github.com/FreezingShock/Cove/releases/latest/download/appcast.xml`.
+The feed URL is `https://github.com/FreezingShock/Inlet/releases/latest/download/appcast.xml`.
 
 ## Troubleshooting
 

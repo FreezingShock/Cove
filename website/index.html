@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Cove for Mac</title>
-  <meta name="description" content="Cove is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
+  <title>Inlet for Mac</title>
+  <meta name="description" content="Inlet is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="assets/cove-icon-light.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/cove-icon-256.png">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
 <header class="nav">
   <div class="wrap nav-inner">
-    <a class="brand" href="#top" aria-label="Cove, back to top">
+    <a class="brand" href="#top" aria-label="Inlet, back to top">
       <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
         <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
         <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
       </svg>
-      <span>Cove</span>
+      <span>Inlet</span>
     </a>
     <nav class="links" aria-label="Page sections">
       <a href="#features">Features</a>
@@ -34,7 +34,7 @@
         <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
         <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
       </div>
-      <a class="btn btn-primary btn-sm" href="#get">Get Cove</a>
+      <a class="btn btn-primary btn-sm" href="#get">Get Inlet</a>
     </div>
   </div>
 </header>
@@ -46,15 +46,15 @@
       <div>
         <p class="pill"><span class="dot" aria-hidden="true"></span>In development · Requires macOS 26 or later</p>
         <h1 class="h-display">Every app, one keystroke away.</h1>
-        <p class="lede">Cove is a full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.</p>
+        <p class="lede">Inlet is a full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.</p>
         <div class="cta">
-          <a class="btn btn-primary" href="#get">Get Cove</a>
+          <a class="btn btn-primary" href="#get">Get Inlet</a>
           <a class="btn btn-ghost" href="#features">See how it works</a>
         </div>
         <p class="keys"><kbd>⌥</kbd><kbd>Space</kbd><span>opens the grid by default. You can change the shortcut.</span></p>
       </div>
 
-      <div class="stage" id="heroStage" aria-label="Cove grid, animated sample">
+      <div class="stage" id="heroStage" aria-label="Inlet grid, animated sample">
         <div class="scrim">
           <div class="grid-top">
             <div class="glass capsule searchbar bloom" aria-hidden="true">
@@ -67,7 +67,7 @@
           </div>
           <div class="grid" id="heroGrid"></div>
           <div class="stage-foot">
-            <span class="caption-line">Sample apps. Cove shows the icons already on your Mac.</span>
+            <span class="caption-line">Sample apps. Inlet shows the icons already on your Mac.</span>
             <button class="capsule-btn glass capsule" type="button" id="replayBtn">Replay</button>
           </div>
         </div>
@@ -80,7 +80,7 @@
     <div class="copy">
       <p class="eyebrow">Search</p>
       <h2 class="h-feature">Search finds apps and files together.</h2>
-      <p class="body-2">Type once and the grid filters as you go. The best match gets a highlight, and matching files appear underneath. Search uses Spotlight, so anything Spotlight can find, Cove can find.</p>
+      <p class="body-2">Type once and the grid filters as you go. The best match gets a highlight, and matching files appear underneath. Search uses Spotlight, so anything Spotlight can find, Inlet can find.</p>
       <ul class="specs">
         <li>Return opens the top hit</li>
         <li>Apps and files in one list</li>
@@ -113,7 +113,7 @@
     <div class="copy">
       <p class="eyebrow">Quick panel</p>
       <h2 class="h-feature">A quick panel from your Dock.</h2>
-      <p class="body-2">Click the Cove icon in the Dock for a compact panel with recent apps, recent files, and a button to open the full grid. It rises out of the icon when it opens, and it closes fast with no bounce.</p>
+      <p class="body-2">Click the Inlet icon in the Dock for a compact panel with recent apps, recent files, and a button to open the full grid. It rises out of the icon when it opens, and it closes fast with no bounce.</p>
       <ul class="specs">
         <li>Eight recent apps in a 4 by 2 grid</li>
         <li>Three recent files</li>
@@ -136,8 +136,8 @@
         </div>
         <div class="glass capsule dock" role="group" aria-label="Dock sample">
           <div class="dock-plain" id="dockApps"></div>
-          <button class="dock-btn" type="button" id="dockCove" aria-label="Cove" aria-expanded="true">
-            <span class="ico cove"><img src="assets/cove-icon-dark.svg" alt="" width="44" height="44"></span>
+          <button class="dock-btn" type="button" id="dockCove" aria-label="Inlet" aria-expanded="true">
+            <span class="ico inlet"><img src="assets/inlet-icon-dark.svg" alt="" width="44" height="44"></span>
             <span class="ind" aria-hidden="true"></span>
           </button>
         </div>
@@ -150,7 +150,7 @@
     <div class="copy">
       <p class="eyebrow">Settings</p>
       <h2 class="h-feature">Set it up your way.</h2>
-      <p class="body-2">Choose how many columns the grid shows, whether the category bar appears, and whether Cove uses light, dark, or your Mac's setting. Changes apply right away, as they do in the demo here.</p>
+      <p class="body-2">Choose how many columns the grid shows, whether the category bar appears, and whether Inlet uses light, dark, or your Mac's setting. Changes apply right away, as they do in the demo here.</p>
       <ul class="specs">
         <li>5 to 9 columns</li>
         <li>Category bar on or off</li>
@@ -225,12 +225,12 @@
         <p class="eyebrow">Privacy</p>
         <h2 class="h-section">Your data stays on your Mac.</h2>
       </div>
-      <p class="lede">Cove has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
+      <p class="lede">Inlet has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
     </div>
     <div class="facts">
       <div class="fact">
         <h4>One update check</h4>
-        <p>Cove checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
+        <p>Inlet checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
       </div>
       <div class="fact">
         <h4>No accounts</h4>
@@ -238,11 +238,11 @@
       </div>
       <div class="fact">
         <h4>No tracking</h4>
-        <p>No analytics and no usage counts. Nothing about how you use Cove is reported.</p>
+        <p>No analytics and no usage counts. Nothing about how you use Inlet is reported.</p>
       </div>
       <div class="fact">
         <h4>Your own search</h4>
-        <p>File search uses Spotlight, which already runs on your Mac. Cove does not build a second index.</p>
+        <p>File search uses Spotlight, which already runs on your Mac. Inlet does not build a second index.</p>
       </div>
       <div class="fact">
         <h4>Reports only when you send them</h4>
@@ -256,10 +256,10 @@
     <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
   </section>
 
-  <!-- Get Cove -->
+  <!-- Get Inlet -->
   <section class="wrap get" id="get">
-    <p class="eyebrow">Get Cove</p>
-    <h2 class="h-section">Get Cove for Mac.</h2>
+    <p class="eyebrow">Get Inlet</p>
+    <h2 class="h-section">Get Inlet for Mac.</h2>
     <p class="lede get-lede">Download the latest release for macOS 26 or later. Release notes and source live on GitHub.</p>
     <div class="get-box">
       <div>
@@ -271,21 +271,21 @@
         </div>
       </div>
       <div class="get-actions">
-        <a class="btn btn-primary" href="https://github.com/FreezingShock/Cove/releases/latest/download/Cove.dmg" rel="noopener">Download Cove</a>
-        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-primary" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" rel="noopener">Download Inlet</a>
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">View on GitHub</a>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="wrap foot">
-  <span>Cove is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
+  <span>Inlet is an independent project. It is not made by, endorsed by, or affiliated with Apple Inc.</span>
   <nav aria-label="Footer">
     <a href="#features">Features</a>
     <a href="#settings">Settings</a>
     <a href="#privacy">Privacy</a>
     <a href="support.html">Support</a>
-    <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
   </nav>
 </footer>
 

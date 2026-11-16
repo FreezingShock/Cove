@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check the static Cove website before it is published.
+"""Check the static Inlet website before it is published.
 
 Checks, in order:
   1. index.html exists.

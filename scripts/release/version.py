@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read or bump Cove's version in Cove.xcodeproj/project.pbxproj.
+"""Read or bump Inlet's version in Inlet.xcodeproj/project.pbxproj.
 
 Usage:
   version.py current
@@ -18,7 +18,7 @@ import pathlib
 import re
 import sys
 
-PBXPROJ = pathlib.Path("Cove.xcodeproj/project.pbxproj")
+PBXPROJ = pathlib.Path("Inlet.xcodeproj/project.pbxproj")
 MARKETING = re.compile(r'(\bMARKETING_VERSION = )"?([^";\n]+)"?;')
 BUILD = re.compile(r'(\bCURRENT_PROJECT_VERSION = )"?([^";\n]+)"?;')
 VERSION_RE = re.compile(r"\d+(\.\d+){0,2}")
@@ -68,7 +68,7 @@ def next_version(current: str, kind: str) -> str:
 
 def main(argv: list[str]) -> None:
     if not PBXPROJ.exists():
-        die(f"{PBXPROJ} not found. Cove.xcodeproj lands with PR #1 on integration.")
+        die(f"{PBXPROJ} not found. Inlet.xcodeproj lands with PR #1 on integration.")
     text = PBXPROJ.read_text(encoding="utf-8")
     version, build = read_values(text)
 

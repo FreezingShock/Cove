@@ -1,6 +1,6 @@
 name: Release
 
-# Runs when integration is merged into main. It builds Cove in Release, packages
+# Runs when integration is merged into main. It builds Inlet in Release, packages
 # it and publishes a GitHub Release tagged v<version>. It is safe to re-run: a
 # version that already has a release is skipped.
 #
@@ -45,8 +45,8 @@ jobs:
             echo "::error::Releases publish from main only. Use dry_run to test another branch."
             exit 1
           fi
-          if [ ! -f Cove.xcodeproj/project.pbxproj ]; then
-            echo "::error::Cove.xcodeproj is not on this commit. Land PR #1 on integration first."
+          if [ ! -f Inlet.xcodeproj/project.pbxproj ]; then
+            echo "::error::Inlet.xcodeproj is not on this commit. Land PR #1 on integration first."
             exit 1
           fi
 
@@ -78,10 +78,10 @@ jobs:
       - name: Build Release
         if: steps.version.outputs.build == 'true'
         run: |
-          SCHEME="$(xcodebuild -list -project Cove.xcodeproj -json | jq -r '.project.schemes[0]')"
+          SCHEME="$(xcodebuild -list -project Inlet.xcodeproj -json | jq -r '.project.schemes[0]')"
           echo "Using scheme: $SCHEME"
           xcodebuild build \
-            -project Cove.xcodeproj \
+            -project Inlet.xcodeproj \
             -scheme "$SCHEME" \
             -configuration Release \
             -destination 'platform=macOS' \
@@ -126,7 +126,7 @@ jobs:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           if [ -x scripts/release/update-appcast.sh ]; then
-            scripts/release/update-appcast.sh "$VERSION" "$BUILD" "build/release/Cove-$VERSION.zip" build/release
+            scripts/release/update-appcast.sh "$VERSION" "$BUILD" "build/release/Inlet-$VERSION.zip" build/release
           else
             echo "::notice::scripts/release/update-appcast.sh is not on this commit, so no appcast.xml is attached."
           fi
@@ -135,7 +135,7 @@ jobs:
         if: steps.version.outputs.build == 'true' && steps.version.outputs.publish == 'false'
         uses: actions/upload-artifact@v4
         with:
-          name: cove-dry-run
+          name: inlet-dry-run
           path: build/release/*
           if-no-files-found: error
 
@@ -145,9 +145,9 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           ASSETS=(
-            "build/release/Cove-$VERSION.zip"
-            "build/release/Cove-$VERSION.dmg"
-            "build/release/Cove.dmg"
+            "build/release/Inlet-$VERSION.zip"
+            "build/release/Inlet-$VERSION.dmg"
+            "build/release/Inlet.dmg"
             "build/release/SHA256SUMS.txt"
           )
           if [ -f build/release/appcast.xml ]; then
@@ -155,6 +155,6 @@ jobs:
           fi
           gh release create "v$VERSION" "${ASSETS[@]}" \
             --target "$GITHUB_SHA" \
-            --title "Cove $VERSION" \
+            --title "Inlet $VERSION" \
             --notes-file build/release/notes.md \
             --latest

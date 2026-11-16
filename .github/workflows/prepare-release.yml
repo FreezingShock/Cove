@@ -1,6 +1,6 @@
 name: Prepare release
 
-# Bumps Cove's version, writes the CHANGELOG section from merged PR titles and
+# Bumps Inlet's version, writes the CHANGELOG section from merged PR titles and
 # opens a PR into integration. Run it from the Actions tab when integration is
 # ready to ship. When that PR merges, nate deploys integration to main himself.
 # See RELEASING.md.
@@ -93,15 +93,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
-          git add Cove.xcodeproj/project.pbxproj CHANGELOG.md
+          git add Inlet.xcodeproj/project.pbxproj CHANGELOG.md
           git commit \
             -m "Release $VERSION" \
-            -m "Bump Cove to $VERSION (build $BUILD) and add the changelog section. Prepared by the Prepare release workflow."
+            -m "Bump Inlet to $VERSION (build $BUILD) and add the changelog section. Prepared by the Prepare release workflow."
           git push -u origin "$BRANCH"
 
           NOTES="$(python3 scripts/release/changelog.py extract --version "$VERSION")"
           BODY="$(printf '%s\n\n%s\n\n%s\n' \
-            "Bumps Cove to $VERSION (build $BUILD) and adds the CHANGELOG section." \
+            "Bumps Inlet to $VERSION (build $BUILD) and adds the CHANGELOG section." \
             "$NOTES" \
             "Merge this into integration. Then nate deploys integration to main, which builds and publishes the release.")"
           URL="$(gh pr create --base integration --head "$BRANCH" --title "Release $VERSION" --body "$BODY")"

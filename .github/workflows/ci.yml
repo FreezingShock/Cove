@@ -43,7 +43,7 @@ jobs:
             app=false
             while IFS= read -r f; do
               case "$f" in
-                Cove/*|Cove.xcodeproj/*|.github/*|scripts/*) app=true; break ;;
+                Inlet/*|Inlet.xcodeproj/*|.github/*|scripts/*) app=true; break ;;
               esac
             done <<< "$files"
           fi
@@ -58,7 +58,7 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 30
     env:
-      SCHEME: Cove
+      SCHEME: Inlet
     steps:
       - uses: actions/checkout@v4
 
@@ -73,7 +73,7 @@ jobs:
       - name: Build
         run: |
           xcodebuild build \
-            -project Cove.xcodeproj \
+            -project Inlet.xcodeproj \
             -scheme "$SCHEME" \
             -configuration Debug \
             -destination 'platform=macOS' \
@@ -82,9 +82,9 @@ jobs:
 
       - name: Test
         run: |
-          if grep -q 'com.apple.product-type.bundle.unit-test' Cove.xcodeproj/project.pbxproj; then
+          if grep -q 'com.apple.product-type.bundle.unit-test' Inlet.xcodeproj/project.pbxproj; then
             xcodebuild test \
-              -project Cove.xcodeproj \
+              -project Inlet.xcodeproj \
               -scheme "$SCHEME" \
               -destination 'platform=macOS' \
               CODE_SIGNING_ALLOWED=NO

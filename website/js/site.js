@@ -297,7 +297,7 @@
   });
 
   /* ---------- Appearance: Auto follows the system, Light and Dark set the page ---------- */
-  var KEY = "cove-page-theme";
+  var KEY = "inlet-page-theme";
   function setTheme(choice) {
     if (choice === "auto") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", choice);
