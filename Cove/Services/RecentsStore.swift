@@ -48,6 +48,18 @@ final class RecentsStore {
     private init() {
         self.fileURL = RecentsStore.defaultFileURL()
         self.apps = loadFromDisk()
+
+        // Settings > Privacy > Erase Launch History posts this notification.
+        // Listening here keeps Settings from depending on the recents store.
+        NotificationCenter.default.addObserver(
+            forName: .coveEraseLaunchHistory,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.clear()
+            }
+        }
     }
 
     /// ~/Library/Application Support/Cove/recents.json
