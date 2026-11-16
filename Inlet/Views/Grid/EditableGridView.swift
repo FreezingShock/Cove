@@ -25,6 +25,8 @@ struct EditableGridView: View {
     let onLaunch: (AppItem) -> Void
     /// Hides an app. The caller shows the Undo toast.
     let onHide: (AppItem) -> Void
+    /// Moves an app by a number of slots in the layout. Keyboard and VoiceOver reorder.
+    let onMove: (AppItem, Int) -> Void
 
     @Environment(LayoutStore.self) private var layoutStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -138,7 +140,8 @@ struct EditableGridView: View {
                     isKeyboardFocused: app.id == focusedID,
                     isHovered: drag == nil && hoveredID == app.id,
                     onOpen: { onLaunch(app) },
-                    onHide: { if app.isHideable { onHide(app) } }
+                    onHide: { if app.isHideable { onHide(app) } },
+                    onMove: { onMove(app, $0) }
                 )
                 .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
                 .position(tilePosition(for: app, index: index, geo: geo, track: track))
@@ -190,7 +193,7 @@ struct EditableGridView: View {
                     Capsule()
                         .fill(index == current ? InletColor.accent : InletColor.track)
                         .frame(width: index == current ? 16 : 7, height: 7)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

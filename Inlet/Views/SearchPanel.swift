@@ -80,6 +80,7 @@ struct SearchPanel: View {
     private var field: some View {
         HStack(spacing: InletSpace.s) {
             Image(systemName: "magnifyingglass")
+                .accessibilityHidden(true)
                 .font(InletFont.search)
                 .foregroundStyle(InletText.tertiary(contrast))
 

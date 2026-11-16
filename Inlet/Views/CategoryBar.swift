@@ -5,6 +5,8 @@
 //  The capsule above the grid: All, then the six category buckets. Tap a
 //  bucket to filter the grid to it; tap the selected bucket again, or All,
 //  to show every app.
+//  Colors and glass come from InletTheme, so Light, Dark, Increase Contrast
+//  and Reduce Transparency all apply here too.
 //
 
 import SwiftUI
@@ -17,12 +19,15 @@ struct CategoryBar: View {
     /// so the results can take its place. The search view owns this flag.
     var isFaded = false
 
+    /// Secondary text switches to full text under Increase Contrast.
+    @Environment(\.colorSchemeContrast) private var contrast
+
     /// Segment height. The bar is this plus 3 pt of padding on each side,
     /// so 36 pt tall in total.
     private let segmentHeight: CGFloat = 30
 
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: InletSpace.xxs) {
             segment(title: "All", isSelected: selection == nil) {
                 selection = nil
             }
@@ -34,28 +39,34 @@ struct CategoryBar: View {
             }
         }
         .padding(3)
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .inletCapsuleGlass(interactive: true)
         .opacity(isFaded ? 0 : 1)
         .allowsHitTesting(!isFaded)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Categories")
         .accessibilityHidden(isFaded)
-        .animation(.easeInOut(duration: 0.2), value: isFaded)
-        .animation(.spring(duration: 0.24, bounce: 0), value: selection)
+        .inletAnimation(.easeInOut(duration: 0.2), value: isFaded)
+        .inletAnimation(.inletSnap, value: selection)
     }
 
     private func segment(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 11, weight: .semibold))
+                .font(InletFont.label)
                 .textCase(.uppercase)
-                .tracking(0.66) // 0.06em at 11 pt
-                .foregroundStyle(isSelected ? Theme.text : Theme.textSecondary)
-                .padding(.horizontal, 14)
+                .tracking(InletTracking.label)
+                .foregroundStyle(isSelected ? InletColor.text : InletText.secondary(contrast))
+                .padding(.horizontal, InletSpace.l - InletSpace.xxs)
                 .frame(height: segmentHeight)
                 .background {
                     if isSelected {
                         Capsule()
-                            .fill(.white.opacity(0.14))
-                            .overlay(Capsule().strokeBorder(.white.opacity(0.10), lineWidth: 1))
+                            .fill(LinearGradient(
+                                colors: [InletColor.selTop, InletColor.selBot],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ))
+                            .overlay(Capsule().strokeBorder(InletColor.selRing, lineWidth: 1))
                     }
                 }
                 .contentShape(Capsule())
@@ -70,5 +81,5 @@ struct CategoryBar: View {
     @Previewable @State var selection: AppCategory? = .create
     return CategoryBar(selection: $selection)
         .padding(40)
-        .background(Theme.base)
+        .background(InletColor.base)
 }

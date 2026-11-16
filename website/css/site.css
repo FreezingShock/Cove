@@ -633,7 +633,7 @@ kbd {
   background: var(--field);
   border: 1px solid var(--hair);
 }
-.fact h4 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+.fact h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
 .fact p { font-size: 15px; color: var(--text-2); }
 
 /* ---------- Get Inlet ---------- */
@@ -709,3 +709,12 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+/* Skip link: hidden until it takes keyboard focus. */
+.skip-link {
+  position: absolute; left: 16px; top: -64px; z-index: 100;
+  padding: 10px 16px; border-radius: 12px;
+  background: var(--accent); color: var(--accent-ink);
+  font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.skip-link:focus { top: 16px; }
