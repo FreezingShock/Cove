@@ -14,7 +14,6 @@ import SwiftUI
 
 struct GeneralPane: View {
     @AppStorage(CoveSettings.Key.showMenuBarIcon.rawValue) private var showMenuBarIcon = true
-    @AppStorage(CoveSettings.Key.keepInDock.rawValue) private var keepInDock = true
     @AppStorage(CoveSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(CoveSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
     @AppStorage(CoveSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
@@ -39,7 +38,6 @@ struct GeneralPane: View {
 
             Section {
                 Toggle("Show menu bar icon", isOn: $showMenuBarIcon)
-                Toggle("Keep in Dock", isOn: $keepInDock)
             }
 
             Section {

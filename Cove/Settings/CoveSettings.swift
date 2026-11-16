@@ -25,7 +25,6 @@ enum CoveSettings {
     enum Key: String, CaseIterable {
         // General
         case showMenuBarIcon          = "cove.general.showMenuBarIcon"          // Bool, true
-        case keepInDock               = "cove.general.keepInDock"               // Bool, true
         case closeAfterLaunch         = "cove.general.closeAfterLaunch"         // Bool, true
         case escapeClearsSearchFirst  = "cove.general.escapeClearsSearchFirst"  // Bool, true
         case rememberLastCategory     = "cove.general.rememberLastCategory"     // Bool, true
@@ -60,7 +59,6 @@ enum CoveSettings {
     static func registerDefaults() {
         UserDefaults.standard.register(defaults: [
             Key.showMenuBarIcon.rawValue: true,
-            Key.keepInDock.rawValue: true,
             Key.closeAfterLaunch.rawValue: true,
             Key.escapeClearsSearchFirst.rawValue: true,
             Key.rememberLastCategory.rawValue: true,
