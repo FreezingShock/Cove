@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="website/assets/inlet-wordmark-dark.svg">
+    <img src="website/assets/inlet-wordmark-light.svg" alt="Inlet" height="48">
+  </picture>
+</p>
+
 # Inlet
 
 A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no network calls, tracking or accounts.
@@ -70,7 +77,7 @@ Each was checked against Apple's current documentation.
 - **Duplicates removed by bundle ID.** If the same app sits in two folders, the copy in `/Applications` wins, then `~/Applications`, then `/System/Applications`.
 - **Background-only helpers are hidden** (apps marked `LSBackgroundOnly`), since opening them would look like nothing happened. Menu bar apps still show.
 - **Rescan on focus** instead of watching the folders. Simpler for now, and fast because it runs in the background and only redraws when the list changed. Folder watching can replace it in 0.2 when Inlet stays resident.
-- **No Inlet app icon yet.** The logo lands in 0.5 with the design pass, so Xcode will show a generic icon for now.
+- **App icon is in the asset catalog but not checked on a Mac yet.** The Crescent set is in `Inlet/Assets.xcassets/AppIcon.appiconset`. Check it in Xcode 26 and at 16 and 32 pt in the Dock.
 
 ## Roadmap
 
