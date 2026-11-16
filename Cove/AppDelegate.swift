@@ -39,6 +39,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             MainActor.assumeIsolated { QuickPanelController.shared.toggle() }
         }
 
+        // Menu bar icon, shown or hidden by Settings > General.
+        MenuBarController.shared.start()
+
         OverlayController.shared.show()
     }
 

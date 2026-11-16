@@ -22,10 +22,6 @@ struct CoveApp: App {
     /// class that publishes changes, which the menu item watches.
     @StateObject private var updater = AppUpdater()
 
-    /// Settings > General. Drives the menu bar icon, live: turning it off
-    /// removes the icon without a relaunch.
-    @AppStorage(CoveSettings.Key.showMenuBarIcon.rawValue) private var showMenuBarIcon = true
-
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
     /// Also starts crash collection, which only runs if the user opted in.
     @MainActor
@@ -48,46 +44,8 @@ struct CoveApp: App {
             CoveCommands(library: appDelegate.library, updater: updater)
         }
 
-        // Menu bar icon, on by default. `isInserted` adds or removes it as
-        // the Settings toggle changes.
-        // EXPERIMENT: scene removed to test whether MenuBarExtra stalls the test host.
-    }
-
-    /// Whether the menu bar icon is shown. Off inside unit tests: with the icon
-    /// in the test host, CI stalled before the test runner connected.
-    private var menuBarInserted: Binding<Bool> {
-        Binding(
-            get: { showMenuBarIcon && !CoveApp.isRunningUnitTests },
-            set: { showMenuBarIcon = $0 }
-        )
-    }
-
-    /// True inside the unit-test host. Xcode sets XCTestConfigurationFilePath.
-    static var isRunningUnitTests: Bool {
-        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
-    }
-}
-
-/// The menu under the menu bar icon: open the grid, open Settings, quit.
-struct MenuBarMenu: View {
-    var body: some View {
-        Button("Show Cove") {
-            // The grid is the overlay now, not a window. AppDelegate brings it forward.
-            (NSApp.delegate as? AppDelegate)?.showGrid()
-        }
-
-        // SettingsLink opens the same Settings scene as Cmd+, does.
-        SettingsLink {
-            Text("Settings…")
-        }
-        .keyboardShortcut(",", modifiers: .command)
-
-        Divider()
-
-        Button("Quit Cove") {
-            NSApp.terminate(nil)
-        }
-        .keyboardShortcut("q", modifiers: .command)
+        // The menu bar icon is an NSStatusItem, started by AppDelegate.
+        // See MenuBarController for why it is not a MenuBarExtra scene.
     }
 }
 
