@@ -15,6 +15,12 @@ struct CoveApp: App {
     /// `@State` keeps this object alive for as long as the app runs.
     @State private var library = AppLibrary()
 
+    /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
+    @MainActor
+    init() {
+        HotkeyManager.shared.start()
+    }
+
     var body: some Scene {
         // `Window` (instead of `WindowGroup`) gives exactly one main window,
         // which is what a launcher wants. Clicking the Dock icon reopens it.
