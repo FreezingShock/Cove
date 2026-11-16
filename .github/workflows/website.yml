@@ -1,0 +1,107 @@
+name: Website
+
+# Checks the landing page in website/ on every PR into integration, and
+# publishes it to GitHub Pages when website/ changes on main.
+#
+# Previews: GitHub Pages hosts one site per repository, so a PR cannot get a
+# live preview URL here. Instead, each run uploads the built site as a
+# downloadable artifact named "cove-website". Unzip it and open index.html.
+
+on:
+  pull_request:
+    branches: [integration]
+    paths:
+      - "website/**"
+      - "scripts/check-website.py"
+      - ".github/workflows/website.yml"
+  push:
+    branches: [integration, main]
+    paths:
+      - "website/**"
+      - "scripts/check-website.py"
+      - ".github/workflows/website.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check website
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      present: ${{ steps.guard.outputs.present }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Bootstrap guard: the site lands on integration through its own PR.
+      # Until website/index.html is there, there is nothing to check or deploy.
+      - name: Check for the website
+        id: guard
+        run: |
+          if [ -f website/index.html ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No website/index.html on this branch yet, nothing to check."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.present == 'true'
+        with:
+          python-version: "3.12"
+
+      # Fails on broken local links, missing #anchors, or any resource that
+      # loads from another site (the page promises no external requests).
+      - name: Check links, anchors and privacy
+        if: steps.guard.outputs.present == 'true'
+        run: python3 scripts/check-website.py website
+
+      - name: Upload preview artifact
+        if: steps.guard.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cove-website
+          path: website
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: check
+    # Only a push to main (nate's integration-to-main merge) or a manual run
+    # from main publishes the site.
+    if: >-
+      needs.check.outputs.present == 'true' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Never cancel a half-finished deploy; let it complete, then run the next.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      # enablement turns Pages on with the Actions source the first time.
+      # If this step is refused, enable it once by hand:
+      # Settings > Pages > Build and deployment > Source: GitHub Actions.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
