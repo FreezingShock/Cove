@@ -22,7 +22,8 @@ You can also double-click `index.html` to open it straight from the folder. It w
 - `css/tokens.css` is a copy of the Inlet design tokens (v1.2) from `design-system/inlet-tokens.css`. Edit the source, then copy it here again.
 - `css/site.css` holds the page styles.
 - `js/site.js` runs the demos: the grid, search, quick panel, settings, and spring motion. It has no dependencies.
-- `assets/` holds the Crescent app icon as SVG and PNG.
+- `assets/` holds the Inlet app icon as SVG and PNG.
+- `assets/launch/` holds the launch images: the demo video and its poster, stills of the grid, search and quick panel, and the 1200 x 630 link-preview card. They are rendered from this page's demo UI by `scripts/launch-assets/capture.cjs`, not captured from the Mac app.
 
 ## Notes
 

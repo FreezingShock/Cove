@@ -8,6 +8,20 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Inlet for Mac">
+  <meta property="og:description" content="A full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Inlet for Mac">
+  <meta name="twitter:description" content="A full-screen grid and search for your Mac. Your apps and files stay on your Mac.">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
   <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/inlet-icon-256.png">
   <link rel="stylesheet" href="css/tokens.css">
@@ -73,6 +87,23 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Demo video: the grid opens, search narrows to Photos, Return opens it. Loads only when on screen. -->
+  <section class="wrap showcase" id="demo" aria-labelledby="demo-title">
+    <div class="showcase-head">
+      <p class="eyebrow">See it run</p>
+      <h2 class="h-section" id="demo-title">Open, search, launch.</h2>
+    </div>
+    <figure class="demo-figure">
+      <div class="demo-frame">
+        <video id="demoVideo" class="demo-video" width="1040" height="966" muted loop playsinline preload="none" poster="assets/launch/inlet-demo-poster.webp" aria-label="Looping demo: the grid opens, typing pho narrows the list to Photos, and Return opens it.">
+          <source src="assets/launch/inlet-demo.mp4" type="video/mp4">
+        </video>
+        <button class="capsule-btn glass capsule demo-toggle" type="button" id="demoToggle">Play</button>
+      </div>
+      <figcaption class="demo-caption">A short recording of the grid, search, and launch from the demo on this page. The Mac app is still in development.</figcaption>
+    </figure>
   </section>
 
   <!-- Feature: search -->

@@ -328,4 +328,36 @@
       animate(card, "play", from, to, name, place);
     });
   });
+
+  /* ---------- Demo video: plays while on screen, pauses off screen, starts paused for Reduce Motion ---------- */
+  var demo = $("#demoVideo"), demoBtn = $("#demoToggle");
+  if (demo && demoBtn) {
+    var userPaused = reduceQuery.matches;
+    function showDemoState() {
+      var playing = !demo.paused;
+      demoBtn.textContent = playing ? "Pause" : "Play";
+      demoBtn.setAttribute("aria-label", playing ? "Pause demo" : "Play demo");
+    }
+    function playDemo() {
+      if (userPaused) return;
+      var p = demo.play();
+      if (p && p.catch) p.catch(function () { /* autoplay blocked: the poster stays and Play still works */ });
+    }
+    demoBtn.addEventListener("click", function () {
+      if (demo.paused) { userPaused = false; playDemo(); }
+      else { userPaused = true; demo.pause(); }
+      showDemoState();
+    });
+    demo.addEventListener("play", showDemoState);
+    demo.addEventListener("pause", showDemoState);
+    showDemoState();
+    if ("IntersectionObserver" in window) {
+      var demoIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) playDemo(); else demo.pause();
+        });
+      }, { threshold: 0.4 });
+      demoIO.observe(demo);
+    }
+  }
 })();
