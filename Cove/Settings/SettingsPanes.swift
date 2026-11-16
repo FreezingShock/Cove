@@ -214,7 +214,9 @@ struct PrivacyPane: View {
             titleVisibility: .visible
         ) {
             Button("Erase", role: .destructive) {
-                RecentsStore.shared.eraseAll()
+                // The recents store listens for this and clears itself. Keeping it
+                // a notification means this PR doesn't depend on the quick panel PR.
+                NotificationCenter.default.post(name: .coveEraseLaunchHistory, object: nil)
             }
             Button("Cancel", role: .cancel) {}
         } message: {

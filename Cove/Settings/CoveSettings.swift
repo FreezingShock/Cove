@@ -122,3 +122,10 @@ enum CoveSettings {
         return min(max(value, range.lowerBound), range.upperBound)
     }
 }
+
+extension Notification.Name {
+    /// Posted when the user confirms Settings > Privacy > Erase Launch History.
+    /// Any store that keeps launch history (recent apps, recent files) should
+    /// observe this and clear itself.
+    static let coveEraseLaunchHistory = Notification.Name("cove.eraseLaunchHistory")
+}
