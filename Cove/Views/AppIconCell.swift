@@ -9,9 +9,14 @@ import SwiftUI
 
 struct AppIconCell: View {
     let app: AppItem
+    /// Where this cell starts and when it begins its open animation.
+    let placement: OpenPlacement
+    /// True once the overlay is open.
+    let isOpen: Bool
 
     /// `@State` is private memory that belongs to this one cell.
     @State private var isHovered = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button {
@@ -44,6 +49,19 @@ struct AppIconCell: View {
         .onHover { isHovered = $0 }
         .help(app.name) // tooltip with the full name if it's cut off
         .accessibilityLabel("Open \(app.name)")
+        // Open choreography (theme spec, "Grid opens"). Before opening, each
+        // cell sits 22% toward the center at 0.78 scale. Opening springs it
+        // into place with `open`, delayed by distance so the grid ripples.
+        // Reduce Motion: no movement, just a 0.2 s crossfade.
+        .scaleEffect(isOpen || reduceMotion ? 1 : 0.78)
+        .offset(isOpen || reduceMotion ? .zero : placement.offset)
+        .opacity(reduceMotion && !isOpen ? 0 : 1)
+        .animation(
+            reduceMotion
+                ? .easeInOut(duration: 0.2)
+                : .spring(CoveMotion.open).delay(placement.delay),
+            value: isOpen
+        )
     }
 }
 

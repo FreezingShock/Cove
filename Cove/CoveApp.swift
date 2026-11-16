@@ -11,23 +11,45 @@ import SwiftUI
 
 @main
 struct CoveApp: App {
-    /// One shared list of installed apps for the whole program.
-    /// `@State` keeps this object alive for as long as the app runs.
-    @State private var library = AppLibrary()
+    /// Owns the app list and the overlay. Stays alive for the whole run.
+    @NSApplicationDelegateAdaptor(CoveAppDelegate.self) private var appDelegate
 
     var body: some Scene {
-        // `Window` (instead of `WindowGroup`) gives exactly one main window,
-        // which is what a launcher wants. Clicking the Dock icon reopens it.
-        Window("Cove", id: "main") {
-            AppGridView()
-                .environment(library)        // hand the library to every view inside
-                .preferredColorScheme(.dark) // Cove is always dark for now; Appearance settings come in 0.5
+        // Cove's UI is the full-screen overlay, which the delegate owns.
+        // This placeholder scene is here only because an App needs a scene.
+        // The Settings window replaces it in 0.5.
+        Settings {
+            EmptyView()
         }
-        .defaultSize(width: CoveSize.gridWindowWidth, height: 760)
-        .windowResizability(.contentMinSize)
         .commands {
-            CoveCommands(library: library)
+            CoveCommands(library: appDelegate.library)
         }
+    }
+}
+
+/// Starts the overlay at launch, and reopens it on a Dock click. Cove
+/// stays resident after the overlay closes, so the next open is instant.
+@MainActor
+final class CoveAppDelegate: NSObject, NSApplicationDelegate {
+    /// One shared list of installed apps for the whole program.
+    let library = AppLibrary()
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        OverlayController.shared.configure(library: library)
+        // Scan once at launch. The overlay never scans on open (spec).
+        library.reload()
+        OverlayController.shared.show()
+    }
+
+    /// A Dock click reopens the overlay. (0.4 changes this to the quick panel.)
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        OverlayController.shared.show()
+        return false
+    }
+
+    /// Keep running with the overlay hidden.
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
     }
 }
 
