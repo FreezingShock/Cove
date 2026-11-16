@@ -14,6 +14,7 @@
 <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/pages.css">
 <link rel="stylesheet" href="css/nav.css">
 <style>
   /* Document layout only. Colors, type, and buttons come from tokens.css and site.css. */
@@ -150,7 +151,7 @@
     <h2 id="network">4. Network connections</h2>
     <p>Inlet's core features don't use the network. It makes two kinds of connection:</p>
     <ul>
-      <li><strong>Update checks.</strong> Inlet uses the Sparkle framework to look for new versions. It checks once every 24 hours by default, and you can turn automatic checks off in Settings, About. You can also check by hand from the Inlet menu, Check for Updates. The check contacts <code>github.com</code>, which hosts Inlet's update feed and release downloads. GitHub sends downloads through its file storage host, <code>objects.githubusercontent.com</code>. Inlet doesn't contact any other server for updates. Each request includes the standard information a web request carries, such as your IP address, plus a user agent that names the Inlet version. Inlet won't install an update unless its digital signature checks out.</li>
+      <li><strong>Update checks.</strong> Inlet uses the Sparkle framework to look for new versions. It checks once every 24 hours by default, and you can turn automatic checks off in Settings. You can also check by hand from the Inlet menu, Check for Updates. The check contacts <code>github.com</code>, which hosts Inlet's update feed and release downloads. GitHub sends downloads through its file storage host, <code>objects.githubusercontent.com</code>. Inlet doesn't contact any other server for updates. Each request includes the standard information a web request carries, such as your IP address, plus a user agent that names the Inlet version. Inlet won't install an update unless its digital signature checks out.</li>
       <li><strong>Crash reports and feedback.</strong> These only happen when you choose them. See section 5.</li>
     </ul>
     <p>Visiting this website sends your browser's standard request to the web host. The host may keep standard server logs, such as IP address and browser type, under its own privacy policy.</p>
@@ -176,7 +177,7 @@
     <h2 id="choices">7. Your choices</h2>
     <ul>
       <li>Erase launch history at any time from Settings, Privacy.</li>
-      <li>Turn automatic update checks off in Settings, About. You can still check by hand from the Inlet menu.</li>
+      <li>Turn automatic update checks off in Settings. You can still check by hand from the Inlet menu.</li>
       <li>Keep crash reporting off, which is the default, or turn it on and off in Settings, Privacy. Erase saved reports from the same pane.</li>
       <li>Turn off launch at login in System Settings, General, Login Items.</li>
       <li>Delete Inlet and its data (section 8).</li>
