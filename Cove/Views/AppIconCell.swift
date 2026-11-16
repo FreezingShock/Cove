@@ -9,13 +9,19 @@ import SwiftUI
 
 struct AppIconCell: View {
     let app: AppItem
+    /// Called on click. The grid uses it to close the window and launch the app.
+    let onLaunch: (AppItem) -> Void
+    /// The best match while searching. Gets the top-hit lozenge; Return opens it.
+    var isTopHit = false
+    /// True when arrow keys have moved keyboard focus onto this icon.
+    var isKeyboardFocused = false
 
     /// `@State` is private memory that belongs to this one cell.
     @State private var isHovered = false
 
     var body: some View {
         Button {
-            AppLauncher.launch(app)
+            onLaunch(app)
         } label: {
             VStack(spacing: CoveSpace.s) {
                 Image(nsImage: IconCache.shared.icon(for: app))
@@ -32,11 +38,27 @@ struct AppIconCell: View {
             }
             .padding(.vertical, CoveSpace.s + CoveSpace.xxs)
             .frame(width: CoveSize.gridCell.width - CoveSpace.s)
-            .background(
-                RoundedRectangle(cornerRadius: CoveRadius.row, style: .continuous)
-                    .fill(isHovered ? CoveColor.hover : Color.clear)
-            )
+            .background {
+                ZStack {
+                    RoundedRectangle(cornerRadius: CoveRadius.row, style: .continuous)
+                        .fill(isHovered ? CoveColor.hover : Color.clear)
+                    // The top-hit lozenge. It fades rather than slides,
+                    // because each cell draws its own.
+                    Color.clear
+                        .coveLozenge(cornerRadius: CoveRadius.row)
+                        .opacity(isTopHit ? 1 : 0)
+                }
+            }
+            // Keyboard focus ring (T3.5). Accent is a fill or control state, never text.
+            .overlay {
+                if isKeyboardFocused {
+                    RoundedRectangle(cornerRadius: CoveRadius.row, style: .continuous)
+                        .strokeBorder(CoveColor.accent, lineWidth: 2)
+                }
+            }
             .coveAnimation(.coveSnap, value: isHovered)
+            .coveAnimation(.coveSnap, value: isTopHit)
+            .coveAnimation(.coveSnap, value: isKeyboardFocused)
             // Make the whole cell clickable, not just the visible pixels.
             .contentShape(RoundedRectangle(cornerRadius: CoveRadius.row, style: .continuous))
         }
