@@ -17,10 +17,17 @@ struct RecentApp: Codable, Hashable, Sendable {
     let name: String
     let path: String
     let bundleIdentifier: String?
+    /// e.g. "public.app-category.productivity". Optional, so files from before this field still load.
+    let categoryType: String?
     let launchedAt: Date
 
     var appItem: AppItem {
-        AppItem(name: name, url: URL(fileURLWithPath: path), bundleIdentifier: bundleIdentifier)
+        AppItem(
+            name: name,
+            url: URL(fileURLWithPath: path),
+            bundleIdentifier: bundleIdentifier,
+            categoryType: categoryType
+        )
     }
 }
 
@@ -84,6 +91,7 @@ final class RecentsStore {
                 name: app.name,
                 path: app.url.path,
                 bundleIdentifier: app.bundleIdentifier,
+                categoryType: app.categoryType,
                 launchedAt: date
             ),
             at: 0
