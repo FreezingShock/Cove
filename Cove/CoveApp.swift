@@ -49,13 +49,19 @@ struct CoveApp: App {
         }
 
         // Menu bar icon, on by default. `isInserted` adds or removes it as
-        // the Settings toggle changes. Left out inside unit tests: with it in
-        // the test host, CI stalled before the test runner connected.
-        if !CoveApp.isRunningUnitTests {
-            MenuBarExtra("Cove", systemImage: "square.grid.3x3.fill", isInserted: $showMenuBarIcon) {
-                MenuBarMenu()
-            }
+        // the Settings toggle changes.
+        MenuBarExtra("Cove", systemImage: "square.grid.3x3.fill", isInserted: menuBarInserted) {
+            MenuBarMenu()
         }
+    }
+
+    /// Whether the menu bar icon is shown. Off inside unit tests: with the icon
+    /// in the test host, CI stalled before the test runner connected.
+    private var menuBarInserted: Binding<Bool> {
+        Binding(
+            get: { showMenuBarIcon && !CoveApp.isRunningUnitTests },
+            set: { showMenuBarIcon = $0 }
+        )
     }
 
     /// True inside the unit-test host. Xcode sets XCTestConfigurationFilePath.
