@@ -7,15 +7,19 @@
 //  macOS handles the rest (Dock icon, menu bar, window management).
 //
 //  The grid is not a window. It is the full-screen overlay that
-//  `OverlayController` owns, and `CoveAppDelegate` starts it.
+//  `OverlayController` owns, and `AppDelegate` starts it.
 //
 
 import SwiftUI
 
 @main
 struct CoveApp: App {
-    /// Owns the app list and the overlay. Stays alive for the whole run.
-    @NSApplicationDelegateAdaptor(CoveAppDelegate.self) private var appDelegate
+    /// Owns the app list, the overlay and Dock clicks. Stays alive for the whole run.
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
+    /// The Sparkle updater. `@StateObject` (not `@State`) because it is a
+    /// class that publishes changes, which the menu item watches.
+    @StateObject private var updater = AppUpdater()
 
     /// Runs once at launch. Registers the global hotkeys (see HotkeyManager).
     /// Also starts crash collection, which only runs if the user opted in.
@@ -33,48 +37,11 @@ struct CoveApp: App {
         Settings {
             SettingsView()
                 .environment(appDelegate.library)
+                .environmentObject(updater)
         }
         .commands {
-            CoveCommands(library: appDelegate.library)
+            CoveCommands(library: appDelegate.library, updater: updater)
         }
-    }
-}
-
-/// Starts the overlay at launch, and reopens it on a Dock click. Cove
-/// stays resident after the overlay closes, so the next open is instant.
-@MainActor
-final class CoveAppDelegate: NSObject, NSApplicationDelegate {
-    /// One shared list of installed apps for the whole program.
-    let library = AppLibrary()
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        OverlayController.shared.configure(library: library)
-        // Scan once at launch. The overlay never scans on open (spec).
-        library.reload()
-
-        // Grid hotkey (Option+Space): the first press opens the overlay, the
-        // second closes it.
-        HotkeyManager.shared.onGridHotkey = {
-            MainActor.assumeIsolated { OverlayController.shared.toggle() }
-        }
-        // Quick panel hotkey (Control+Option+Space). The quick panel itself
-        // comes in 0.4; until then it opens the same overlay.
-        HotkeyManager.shared.onQuickPanelHotkey = {
-            MainActor.assumeIsolated { OverlayController.shared.toggle() }
-        }
-
-        OverlayController.shared.show()
-    }
-
-    /// A Dock click reopens the overlay. (0.4 changes this to the quick panel.)
-    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        OverlayController.shared.show()
-        return false
-    }
-
-    /// Keep running with the overlay hidden.
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        false
     }
 }
 
@@ -82,6 +49,7 @@ final class CoveAppDelegate: NSObject, NSApplicationDelegate {
 /// single-window app) with File > Reload Apps (Command-R).
 struct CoveCommands: Commands {
     let library: AppLibrary
+    let updater: AppUpdater
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -91,6 +59,11 @@ struct CoveCommands: Commands {
             .keyboardShortcut("r", modifiers: .command)
         }
 
+        // Adds "Check for Updates…" right after "About Cove" in the Cove menu.
+        CommandGroup(after: .appInfo) {
+            CheckForUpdatesButton(updater: updater)
+        }
+
         // Replaces the default Help menu contents with one item that opens
         // the in-app feedback form. The form only opens GitHub in the browser.
         CommandGroup(replacing: .help) {
@@ -98,5 +71,18 @@ struct CoveCommands: Commands {
                 FeedbackWindow.shared.show()
             }
         }
+    }
+}
+
+/// Its own View so SwiftUI redraws the disabled state when Sparkle's
+/// `canCheckForUpdates` changes. Menu items are not redrawn by themselves.
+struct CheckForUpdatesButton: View {
+    @ObservedObject var updater: AppUpdater
+
+    var body: some View {
+        Button("Check for Updates…") {
+            updater.checkForUpdates()
+        }
+        .disabled(!updater.canCheckForUpdates)
     }
 }

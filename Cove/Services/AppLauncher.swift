@@ -2,7 +2,7 @@
 //  AppLauncher.swift
 //  Cove
 //
-//  Opens apps through macOS.
+//  Opens apps through macOS. Every successful launch is recorded in recents.
 //
 
 import AppKit
@@ -20,9 +20,15 @@ enum AppLauncher {
         configuration.activates = true // bring the app to the front
 
         NSWorkspace.shared.openApplication(at: app.url, configuration: configuration) { _, error in
-            guard let error else { return }
-            // The completion handler runs on a background thread;
-            // alerts must be shown on the main thread.
+            // The completion handler runs on a background thread. Recents and
+            // alerts both need the main thread.
+            guard let error else {
+                // Only launches that worked count as recents.
+                Task { @MainActor in
+                    RecentsStore.shared.recordLaunch(of: app)
+                }
+                return
+            }
             DispatchQueue.main.async {
                 let alert = NSAlert(error: error)
                 alert.messageText = "Couldn't open \(app.name)"
