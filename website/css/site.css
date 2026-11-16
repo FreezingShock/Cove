@@ -655,6 +655,7 @@ kbd {
 }
 .get-box h3 { font-size: 26px; line-height: 1.15; letter-spacing: -0.02em; }
 .get-box p { margin-top: 8px; color: var(--text-2); max-width: 52ch; }
+.get-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .reqs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .reqs span {
   font-size: 13px;
