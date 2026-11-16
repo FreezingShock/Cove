@@ -47,6 +47,8 @@
     { n: "Trip photos, May.pdf", p: "Downloads" }
   ];
   var DOC_GLYPH = '<path d="M7 3.5h7l4.5 4.5v12.5H7z"/><path d="M14 3.5V8h4.5"/>';
+  /* Shared with home.js (folders and edit mode demo). */
+  window.InletSamples = { APPS: APPS, GLYPH: GLYPH };
 
   /* ---------- Springs: the spec's tokens, stiffness = (2π/d)², damping = 4π(1−bounce)/d ---------- */
   var SPR = {
