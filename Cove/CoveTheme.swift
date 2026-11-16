@@ -2,7 +2,8 @@
 //  CoveTheme.swift
 //  Cove
 //
-//  Design tokens from theme-spec.md (v1.1): colors, shape, spacing, type,
+//  Design tokens from the Cove design system, v1.2 (theme-spec.md section 12;
+//  values from design-system/cove-tokens.css). Colors, shape, spacing, type,
 //  spring motion, glass, and the accessibility fallbacks.
 //  Target: macOS 26. Written against Apple's docs (checked 2026-11-16) but
 //  not compiled yet: build in Xcode 26 and fix anything the compiler flags.
@@ -35,16 +36,17 @@ extension Color {
 
 // MARK: - Color tokens
 
-/// Each token's comment gives the spec's light value / dark value.
+/// Each token's comment gives the light value / dark value.
+/// Accent is a fill, never text: use `text` for any text that was aqua.
 enum CoveColor {
     /// #E6ECF2 / #05070C
     static let base = Color.cove(light: .init(r: 0.902, g: 0.925, b: 0.949), dark: .init(r: 0.020, g: 0.027, b: 0.047))
     /// #F6F8FB / #0B0F18
     static let base2 = Color.cove(light: .init(r: 0.965, g: 0.973, b: 0.984), dark: .init(r: 0.043, g: 0.059, b: 0.094))
-    /// rgba(70,230,214,0.42) / rgba(40,200,196,0.42)
-    static let glowA = Color.cove(light: .init(r: 0.275, g: 0.902, b: 0.839, a: 0.42), dark: .init(r: 0.157, g: 0.784, b: 0.769, a: 0.42))
-    /// rgba(122,138,255,0.34) / rgba(64,84,210,0.40)
-    static let glowB = Color.cove(light: .init(r: 0.478, g: 0.541, b: 1.000, a: 0.34), dark: .init(r: 0.251, g: 0.329, b: 0.824, a: 0.40))
+    /// rgba(70,230,214,0.42) / rgba(48,196,186,0.36)
+    static let glowA = Color.cove(light: .init(r: 0.275, g: 0.902, b: 0.839, a: 0.42), dark: .init(r: 0.188, g: 0.769, b: 0.729, a: 0.36))
+    /// rgba(122,138,255,0.34) / rgba(70,90,200,0.34)
+    static let glowB = Color.cove(light: .init(r: 0.478, g: 0.541, b: 1.000, a: 0.34), dark: .init(r: 0.275, g: 0.353, b: 0.784, a: 0.34))
     /// rgba(255,255,255,0.85) / rgba(120,90,220,0.16)
     static let glowC = Color.cove(light: .init(r: 1, g: 1, b: 1, a: 0.85), dark: .init(r: 0.471, g: 0.353, b: 0.863, a: 0.16))
     /// #F4F6F9 / #161A22
@@ -53,21 +55,19 @@ enum CoveColor {
     static let grouped = Color.cove(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 1, g: 1, b: 1, a: 0.055))
     /// #0B111C / #FFFFFF
     static let text = Color.cove(light: .init(r: 0.043, g: 0.067, b: 0.110), dark: .init(r: 1, g: 1, b: 1))
-    /// rgba(16,24,40,0.66) / rgba(235,240,255,0.72)
-    static let text2 = Color.cove(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.66), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.72))
-    /// rgba(16,24,40,0.62) / rgba(235,240,255,0.54). v1.1 value, meets 4.5:1 for text.
-    static let text3 = Color.cove(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.62), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.54))
+    /// rgba(16,24,40,0.66) / rgba(235,240,255,0.78)
+    static let text2 = Color.cove(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.66), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.78))
+    /// rgba(16,24,40,0.62) / rgba(235,240,255,0.56). Hints, counts and placeholders only.
+    static let text3 = Color.cove(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.62), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.56))
     /// rgba(12,22,44,0.10) / rgba(255,255,255,0.12)
     static let hair = Color.cove(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.10), dark: .init(r: 1, g: 1, b: 1, a: 0.12))
-    /// #0E968A / #46E6D6. Controls and icons only, never body text on light.
-    static let accent = Color.cove(light: .init(r: 0.055, g: 0.588, b: 0.541), dark: .init(r: 0.275, g: 0.902, b: 0.839))
-    /// #066F67 / #46E6D6. v1.1 value, meets 4.5:1 for text.
-    static let accentText = Color.cove(light: .init(r: 0.024, g: 0.435, b: 0.404), dark: .init(r: 0.275, g: 0.902, b: 0.839))
+    /// #0A7F74 / #3FD9C9. Fills and controls: cursor, Dock dot, switches, sliders, selected segment.
+    static let accent = Color.cove(light: .init(r: 0.039, g: 0.498, b: 0.455), dark: .init(r: 0.247, g: 0.851, b: 0.788))
     /// #FFFFFF / #022522
     static let accentInk = Color.cove(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.008, g: 0.145, b: 0.133))
-    /// rgba(14,150,138,0.14) / rgba(70,230,214,0.16)
-    static let accentSoft = Color.cove(light: .init(r: 0.055, g: 0.588, b: 0.541, a: 0.14), dark: .init(r: 0.275, g: 0.902, b: 0.839, a: 0.16))
-    /// #46E6D6 in both appearances
+    /// rgba(10,127,116,0.14) / rgba(63,217,201,0.16)
+    static let accentSoft = Color.cove(light: .init(r: 0.039, g: 0.498, b: 0.455, a: 0.14), dark: .init(r: 0.247, g: 0.851, b: 0.788, a: 0.16))
+    /// #46E6D6 in both appearances. The logo keeps the brighter aqua.
     static let logoAqua = Color(red: 0.275, green: 0.902, blue: 0.839)
     /// rgba(250,252,255,0.50) / rgba(12,16,26,0.55)
     static let gFill = Color.cove(light: .init(r: 0.980, g: 0.988, b: 1.000, a: 0.50), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.55))
@@ -111,7 +111,7 @@ enum CoveColor {
     static let hover = Color.cove(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.05), dark: .init(r: 1, g: 1, b: 1, a: 0.07))
     /// rgba(236,241,246,0.42) / rgba(4,6,10,0.44)
     static let scrim = Color.cove(light: .init(r: 0.925, g: 0.945, b: 0.965, a: 0.42), dark: .init(r: 0.016, g: 0.024, b: 0.039, a: 0.44))
-    /// rgba(12,22,44,0.46) / rgba(255,255,255,0.40). v1.1 value, meets 3:1 for control state.
+    /// rgba(12,22,44,0.46) / rgba(255,255,255,0.40). Meets 3:1 for control state.
     static let track = Color.cove(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.46), dark: .init(r: 1, g: 1, b: 1, a: 0.40))
     /// #FFFFFF / #F4F6FA
     static let knob = Color.cove(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.957, g: 0.965, b: 0.980))
@@ -138,34 +138,34 @@ enum CoveText {
     }
 }
 
-// MARK: - Shape tokens (points)
+// MARK: - Shape tokens (points). Radii nest: inner = outer - padding (spec section 5)
 
 enum CoveRadius {
-    static let xs: CGFloat = 6        // keycaps
-    static let sm: CGFloat = 10       // small tiles, theme thumbnails
-    static let md: CGFloat = 14       // settings groups, quick panel rows
-    static let row: CGFloat = 20      // search rows, top-hit lozenge, grid cell hover
-    static let window: CGFloat = 26   // settings window
-    static let panel: CGFloat = 28    // results panel, quick panel
-    static let overlay: CGFloat = 32  // full-width panels
+    static let xs: CGFloat = 6        // keycaps, symbol tiles
+    static let sm: CGFloat = 10       // small tiles, sidebar rows, theme thumbnails
+    static let md: CGFloat = 16       // rows and groups inside a 32 pt panel with 16 pt padding
+    static let row: CGFloat = 24      // selected row inside a results panel (32 - 8)
+    static let sidebar: CGFloat = 18  // Settings sidebar inside a 26 pt window with 8 pt inset
+    static let window: CGFloat = 26  // Settings window
+    static let panel: CGFloat = 32    // every glass panel: results, quick panel, folder overlay
 
     /// App icons use 22.4% of their width as the corner radius.
     static func icon(_ size: CGFloat) -> CGFloat { size * 0.224 }
 }
 
-// MARK: - Spacing (points). Scale: 2, 4, 8, 12, 14, 16, 20, 24, 32, 44, 84
+// MARK: - Spacing (points). One 4 pt based scale: 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 84
 
 enum CoveSpace {
     static let xxs: CGFloat = 2
     static let xs: CGFloat = 4
     static let s: CGFloat = 8
     static let m: CGFloat = 12
-    static let panelPad: CGFloat = 14
+    static let panelPad: CGFloat = 16  // panel inner padding
     static let l: CGFloat = 16
     static let xl: CGFloat = 20
     static let xxl: CGFloat = 24
     static let section: CGFloat = 32
-    static let xxxl: CGFloat = 44
+    static let xxxl: CGFloat = 48
     static let gridTop: CGFloat = 84
 }
 
@@ -176,7 +176,7 @@ enum CoveSize {
     static let gridCell = CGSize(width: 144, height: 108)
     static let gridColumns = 7
     static let gridRowGap: CGFloat = 26
-    /// Side padding around the grid. Not in the spec; kept from v0.1 until the 0.5 polish pass.
+    /// Side padding around the grid (40 pt, on the spacing scale).
     static let gridSidePadding: CGFloat = 40
     /// Window width that fits every column plus side padding.
     static var gridWindowWidth: CGFloat {
@@ -201,10 +201,10 @@ enum CoveSize {
 /// SwiftUI has no 650 weight, so the spec's 650 becomes .semibold (600).
 /// Hierarchy comes from size and weight, not color.
 enum CoveFont {
-    static let wordmark = Font.system(size: 26, weight: .semibold)  // Display
+    static let wordmark = Font.system(size: 28, weight: .semibold)  // Display (v1.2: 28)
     static let title = Font.system(size: 20, weight: .semibold)     // Title
     static let headline = Font.system(size: 15, weight: .semibold)  // Headline: top hit and row titles
-    static let subhead = Font.system(size: 14)                      // Subhead: page intros
+    static let subhead = Font.system(size: 15)                      // Subhead (v1.2: 15)
     static let body = Font.system(size: 13)                         // Body
     static let section = Font.system(size: 13, weight: .semibold)  // Section label on the launcher
     static let caption = Font.system(size: 12)                      // Caption: paths, footers
@@ -215,7 +215,7 @@ enum CoveFont {
 
 /// Tracking values from the spec, converted from em to points.
 enum CoveTracking {
-    static let display: CGFloat = -0.78  // -0.03em at 26 pt
+    static let display: CGFloat = -0.84  // -0.03em at 28 pt
     static let title: CGFloat = -0.4     // -0.02em at 20 pt
     static let label: CGFloat = 0.66     // 0.06em at 11 pt
 }
