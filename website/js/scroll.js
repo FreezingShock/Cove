@@ -17,7 +17,7 @@
     });
   }
   window.addEventListener("scroll", requestFrame, { passive: true });
-  window.addEventListener("resize", function () { measureScroll(); layoutScrub(); requestFrame(); });
+  window.addEventListener("resize", function () { layoutScrub(); requestFrame(); });
 
   /* ---------- Sticky header: a hairline and blur once the page has moved ---------- */
   frameHooks.push(function () {

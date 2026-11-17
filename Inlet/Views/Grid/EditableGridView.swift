@@ -70,6 +70,8 @@ struct EditableGridView: View {
     @State private var holdTask: Task<Void, Never>?
     /// Counts down the pause that flips the page at a window edge.
     @State private var edgeTask: Task<Void, Never>?
+    /// The window edge a drag is resting on: -1 left, 1 right, 0 neither.
+    @State private var edgeDirection = 0
     /// Watches trackpad scrolls, so a two-finger swipe turns the page.
     @State private var trackpad = TrackpadPaging()
     /// Horizontal total of the trackpad swipe in progress.
@@ -565,19 +567,16 @@ struct EditableGridView: View {
         if mergeTarget != mergeID { mergeTarget = mergeID }
         if liquid != link { liquid = link }
 
-        // Resting near a window edge flips the page after a short pause.
-        let direction: Int
-        if location.x < GridMetrics.edgeZone {
-            direction = -1
-        } else if location.x > geo.pageWidth - GridMetrics.edgeZone {
-            direction = 1
-        } else {
-            direction = 0
-        }
+        // Resting near a window edge turns the page after a short pause, then
+        // keeps turning one page per pause while the pointer stays there.
+        let direction = GridMetrics.edgeDirection(x: location.x, pageWidth: geo.pageWidth)
         let target = currentPage(geo) + direction
         let pages = geo.pageCount(itemCount: order.count)
         if direction != 0, target >= 0, target < pages {
-            scheduleEdgeFlip(to: target)
+            // A new edge starts a new pause. Staying on the same edge keeps the running one.
+            if direction != edgeDirection || edgeTask == nil {
+                scheduleEdgeFlip(direction: direction, geo: geo)
+            }
         } else {
             cancelEdge()
         }
@@ -585,19 +584,26 @@ struct EditableGridView: View {
         drag = active
     }
 
-    private func scheduleEdgeFlip(to target: Int) {
-        guard edgeTask == nil else { return }
+    /// Starts the pause for `direction`. The task turns one page each time the
+    /// pause ends, and stops as soon as the pointer leaves that edge or the drag ends.
+    private func scheduleEdgeFlip(direction: Int, geo: GridGeometry) {
+        edgeTask?.cancel()
+        edgeDirection = direction
         edgeTask = Task { @MainActor in
-            try? await Task.sleep(for: Self.edgeDwell)
-            guard !Task.isCancelled, drag != nil else { return }
-            withAnimation(motion(.inletSettle)) { page = target }
-            edgeTask = nil
+            while !Task.isCancelled {
+                try? await Task.sleep(for: Self.edgeDwell)
+                guard !Task.isCancelled, drag != nil, edgeDirection == direction else { return }
+                let next = currentPage(geo) + direction
+                guard next >= 0, next < geo.pageCount(itemCount: displaySlots.count) else { return }
+                withAnimation(motion(.inletSettle)) { page = next }
+            }
         }
     }
 
     private func cancelEdge() {
         edgeTask?.cancel()
         edgeTask = nil
+        edgeDirection = 0
     }
 
     /// Drops the dragged entry. A merge target combines the two into one folder.

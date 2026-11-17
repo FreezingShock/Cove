@@ -312,6 +312,60 @@ struct GridLayout: Codable, Equatable, Sendable {
         groups[target].appIDs.append(contentsOf: removed.appIDs)
     }
 
+    /// Turns the preset groups on or off, for the setup window. Custom groups
+    /// are never touched.
+    ///
+    /// - A preset that is turned off leaves the bar. Its apps go to the group
+    ///   their category suggests if that one is on, otherwise to Other.
+    /// - A preset that is turned on comes back at the end of the bar. Apps that
+    ///   sit in Other and belong to it move back into it.
+    /// - Does nothing when the change would leave no groups at all.
+    mutating func setPresetGroups(_ kept: Set<AppCategory>, apps: [AppItem]) {
+        let keptIDs = Set(kept.map(\.rawValue))
+        let presetIDs = Set(AppCategory.allCases.map(\.rawValue))
+        var result = groups.isEmpty ? AppGroup.presets : groups
+        // Apps that need a new home. Each one is in exactly one group, and
+        // stays that way: it is only moved, never copied.
+        var loose: [String] = []
+
+        result.removeAll { group in
+            guard presetIDs.contains(group.id), !keptIDs.contains(group.id) else { return false }
+            loose.append(contentsOf: group.appIDs)
+            return true
+        }
+
+        for preset in AppGroup.presets where keptIDs.contains(preset.id) {
+            if !result.contains(where: { $0.id == preset.id }) {
+                result.append(preset)
+            }
+        }
+
+        guard !result.isEmpty else { return }
+
+        // Apps parked in Other follow their category again when its group is on.
+        let fallback = result.firstIndex(where: { $0.suggestedCategory == .other }) ?? 0
+        if let other = result.firstIndex(where: { $0.suggestedCategory == .other }) {
+            let homeless = result[other].appIDs.filter { appID in
+                guard let category = apps.first(where: { $0.id == appID })?.category,
+                      category != .other else { return false }
+                return result.contains(where: { $0.suggestedCategory == category })
+            }
+            result[other].appIDs.removeAll { homeless.contains($0) }
+            loose.append(contentsOf: homeless)
+        }
+
+        for appID in loose {
+            let category = apps.first(where: { $0.id == appID })?.category
+            var index = fallback
+            if let category, let match = result.firstIndex(where: { $0.suggestedCategory == category }) {
+                index = match
+            }
+            result[index].appIDs.append(appID)
+        }
+
+        groups = result
+    }
+
     /// The first color no group uses yet, so a new group looks different from
     /// its neighbours. Falls back to blue when all nine are taken.
     var unusedColor: GroupColor {

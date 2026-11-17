@@ -1,0 +1,133 @@
+/* ---------- Micro-feedback ----------
+   Pressed states for buttons and links, the Copy button on command blocks, and the toast
+   from js/feedback.js. Scale and slide are full-tier motion only. Reduce Motion keeps the
+   colour, filter and opacity changes, so every press still shows. No sound. */
+
+/* ---------- Pressed states ---------- */
+/* Glass and ghost controls dim slightly while held. A filter works on any background. */
+.capsule-btn:active,
+.search-btn:active,
+.menu-btn:active,
+.btn-ghost:active,
+.foot-card:active,
+.cmd-copy:active { filter: brightness(0.94); }
+
+/* Text links fade a little while held. Buttons and use-case cards keep their own press. */
+a:not(.btn):not(.uc-card):active { opacity: 0.7; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Only controls with no transition of their own get one here, so nothing already tuned is overridden. */
+  .cmd-copy, .capsule-btn {
+    transition:
+      transform var(--dur-fast) var(--ease-standard),
+      filter var(--dur-fast) var(--ease-fade),
+      background-color var(--dur-medium) var(--ease-fade);
+  }
+  .capsule-btn:active,
+  .search-btn:active,
+  .menu-btn:active,
+  .foot-card:active,
+  .cmd-copy:active { transform: scale(0.97); }
+}
+
+/* ---------- Command blocks ---------- */
+.cmd-wrap { position: relative; }
+.cmd-wrap .cmd { padding-right: 96px; }
+.cmd-copy {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  min-width: 68px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--g-edge);
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cmd-copy:hover { background: var(--sel-bot); }
+.cmd-copy.is-done {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--accent-ink);
+}
+
+/* ---------- Toast ---------- */
+.site-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 6px 6px 6px 18px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--text);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(-50%, 12px, 0);
+  transition:
+    opacity var(--dur-base) var(--ease-fade),
+    transform var(--dur-base) var(--ease-exit),
+    visibility 0s linear var(--dur-base);
+}
+.site-toast.is-on {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(-50%, 0, 0);
+  transition:
+    opacity var(--dur-base) var(--ease-fade),
+    transform var(--dur-medium) var(--ease-standard),
+    visibility 0s;
+}
+.site-toast-msg { min-width: 0; overflow-wrap: anywhere; }
+.site-toast-act {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-toast-act[hidden] { display: none; }
+.site-toast-act:hover { filter: brightness(1.04); }
+.site-toast-act:active { filter: brightness(0.94); opacity: 1; }
+
+/* Reduce Motion: the toast fades in place, without the slide. */
+@media (prefers-reduced-motion: reduce) {
+  .site-toast,
+  .site-toast.is-on { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Phones: the toast sits above the bottom edge and wraps long text. */
+@media (max-width: 560px) {
+  .site-toast { left: 16px; right: 16px; width: auto; max-width: none; transform: translate3d(0, 12px, 0); }
+  .site-toast.is-on { transform: translate3d(0, 0, 0); }
+  @media (prefers-reduced-motion: reduce) {
+    .site-toast, .site-toast.is-on { transform: none; }
+  }
+}
+
+/* ---------- Form feedback: the FAQ search count ---------- */
+.faq-count {
+  margin: 12px 0 0 4px;
+  font-size: 14px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.faq-count[hidden] { display: none; }
