@@ -295,25 +295,6 @@
   border: 0;
 }
 
-/* Header stays on screen while reading long pages, with a hairline once the page has moved */
-.nav { position: sticky; top: 0; z-index: 20; transition: background var(--dur-medium) var(--ease-fade), box-shadow var(--dur-medium) var(--ease-fade); }
-.nav::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  opacity: 0;
-  background: var(--scrim);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  backdrop-filter: blur(24px) saturate(160%);
-  box-shadow: inset 0 -1px 0 var(--hair);
-  transition: opacity var(--dur-medium) var(--ease-fade);
-}
-.nav.is-scrolled::before { opacity: 1; }
-@media (prefers-reduced-transparency: reduce) {
-  .nav::before { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--g-solid); }
-}
-
 /* Page hero: a little more air above the headline */
 .page-hero .eyebrow { margin-bottom: 0; }
 

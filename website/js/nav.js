@@ -21,6 +21,7 @@
   var linksEl = document.getElementById("siteLinks");
 
   function setMenu(open) {
+    if (open) showHeader();
     nav.classList.toggle("menu-open", open);
     if (menuBtn) {
       menuBtn.setAttribute("aria-expanded", String(open));
@@ -318,6 +319,82 @@
     if (e.target.closest && e.target.closest("[data-theme-choice]")) setTimeout(syncCycle, 0);
   });
   syncCycle();
+
+  /* ---------- Header states: out of the way while reading down, back on scroll up, always on screen while a menu or the palette is open ---------- */
+  var lastY = window.scrollY || 0;
+  var headerQueued = false;
+  var MOVE = 6;   // px of scroll before the header reacts, so small jitters do nothing
+  var TOP = 120;  // above this the header is always shown
+
+  function showHeader() { nav.classList.remove("is-hidden"); }
+  function hideHeader() {
+    if (menuOpen() || (palette && palette.open())) return;
+    if (document.querySelector("[data-scrub].is-pinned")) return; // the pinned demo sits right under the header
+    nav.classList.add("is-hidden");
+  }
+  function onHeaderScroll() {
+    headerQueued = false;
+    var y = window.scrollY || 0;
+    var dy = y - lastY;
+    if (y <= TOP) { showHeader(); lastY = y; return; }
+    if (Math.abs(dy) < MOVE) return;
+    if (dy > 0) hideHeader(); else showHeader();
+    lastY = y;
+  }
+  window.addEventListener("scroll", function () {
+    if (headerQueued) return;
+    headerQueued = true;
+    requestAnimationFrame(onHeaderScroll);
+  }, { passive: true });
+  // Keyboard focus anywhere in the header brings it back, so nothing tabs into a hidden bar.
+  nav.addEventListener("focusin", showHeader);
+  onHeaderScroll();
+
+  /* ---------- Desktop links: one pill slides to the link under the pointer or focus, and rests on the current page ---------- */
+  if (linksEl) {
+    var pill = document.createElement("span");
+    pill.className = "links-ind no-anim";
+    pill.setAttribute("aria-hidden", "true");
+    linksEl.insertBefore(pill, linksEl.firstChild);
+
+    var linkEls = Array.prototype.slice.call(linksEl.children).filter(function (el) { return el.tagName === "A"; });
+    linkEls.forEach(function (a, i) { a.style.setProperty("--i", String(i)); });
+    var menuGet = linksEl.querySelector(".menu-get");
+    if (menuGet) menuGet.style.setProperty("--i", String(linkEls.length));
+
+    function currentLink() {
+      return linksEl.querySelector(":scope > a[aria-current='page'], :scope > a[aria-current='true']");
+    }
+    function linkOf(target) {
+      var a = target && target.closest ? target.closest("a") : null;
+      return a && a.parentNode === linksEl ? a : null;
+    }
+    function placePill(a) {
+      if (!a || mobileQuery.matches) { pill.classList.remove("is-on"); return; }
+      pill.style.width = a.offsetWidth + "px";
+      pill.style.transform = "translate3d(" + a.offsetLeft + "px, 0, 0)";
+      pill.classList.add("is-on");
+    }
+    function restPill() { placePill(currentLink()); }
+
+    linksEl.addEventListener("pointerover", function (e) {
+      if (!fineQuery.matches) return;
+      var a = linkOf(e.target);
+      if (a) placePill(a);
+    });
+    linksEl.addEventListener("pointerleave", restPill);
+    linksEl.addEventListener("focusin", function (e) {
+      var a = linkOf(e.target);
+      if (a) placePill(a);
+    });
+    linksEl.addEventListener("focusout", restPill);
+    window.addEventListener("resize", restPill);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(restPill);
+
+    restPill();
+    // Place the pill before the first paint, then let it animate on later moves.
+    requestAnimationFrame(function () { pill.classList.remove("no-anim"); });
+  }
 
   /* ---------- Magnetic primary buttons: a few pixels toward the pointer, fine pointers only ---------- */
   if (fineQuery.matches && !reduceQuery.matches) {

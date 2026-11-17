@@ -12,30 +12,6 @@
 html { scroll-padding-top: 88px; }
 section[id] { scroll-margin-top: 0; }
 
-/* ---------- Sticky header ---------- */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  transition: background-color var(--dur-medium) var(--ease-fade), box-shadow var(--dur-medium) var(--ease-fade);
-}
-.nav.is-scrolled {
-  background: color-mix(in srgb, var(--base) 78%, transparent);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: inset 0 -1px 0 var(--hair);
-}
-@media (prefers-reduced-transparency: reduce) {
-  .nav.is-scrolled {
-    background: var(--base);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
-/* Current section, set by scroll.js from an IntersectionObserver. */
-.links a { transition: color var(--dur-medium) var(--ease-fade), background-color var(--dur-medium) var(--ease-fade); }
-.links a[aria-current="true"] { color: var(--text); background: var(--hover); }
-
 /* ---------- Reveal on scroll ----------
    scroll.js adds .reveal to a few blocks, then .is-in when they enter. Content is
    only hidden when motion is allowed, so Reduce Motion never hides anything. */
