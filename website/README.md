@@ -28,13 +28,13 @@ You can also double-click `index.html` to open it straight from the folder. It w
 - `robots.txt`, `sitemap.xml` and `site.webmanifest` sit at the site root. The sitemap lists every indexable page. Keep it in step when you add a page.
 - `favicon.ico` and `apple-touch-icon.png` are at the root. `assets/icons/` holds the 16, 32, 192 and 512 px PNGs for the browser tab and the web app manifest.
 - `assets/` holds the Inlet app icon as SVG and PNG.
-- `assets/launch/` holds the launch images: the demo video and its poster, stills of the grid, search and quick panel, and the 1200 x 630 link-preview card. They are rendered from this page's demo UI by `scripts/launch-assets/capture.cjs`, not captured from the Mac app.
+- `assets/launch/` holds the launch images: the demo video and its poster, stills of the grid, search and quick panel, and the 1200 x 630 link-preview card. They are drawn by `scripts/launch-assets/capture.cjs` from a macOS-style desktop scene (`scripts/launch-assets/mac-scene.html`): an original wallpaper, menu bar, Dock, glass panels and a cursor. They are not captured from the Mac app, and the scene uses no Apple wallpapers or app icons.
 
 ## Images and video
 
 - The three app screenshots on `features.html` are `<picture>` elements. Each one offers AVIF, then WebP, then the original WebP, at several widths. The browser picks the smallest good file.
 - Run `node scripts/build-website-assets.mjs` after you change a source image or the app icon. It rebuilds the variants, the favicon set and the icons. It needs `sharp` (see the comment at the top of the script).
-- The demo video is H.264 with a keyframe every 10 frames, so the scroll-scrubbed demo can seek smoothly. It is 0.68 MB. It is encoded with `ffmpeg -c:v libx264 -preset slow -crf 31 -g 10 -keyint_min 10 -sc_threshold 0 -pix_fmt yuv420p -movflags +faststart -an`. Keep the keyframe interval when you re-encode, or scrubbing will stutter.
+- The demo video is H.264 with a keyframe every 10 frames, so the scroll-scrubbed demo can seek smoothly. It is 0.70 MB, 1280 x 800, 8.2 s at 30 fps. It is encoded with `ffmpeg -c:v libx264 -preset slow -crf 26 -tune animation -g 10 -keyint_min 10 -pix_fmt yuv420p -movflags +faststart -an`, run by `capture.cjs`. Keep the keyframe interval when you re-encode, or scrubbing will stutter.
 - The video loads when the demo section gets close to the screen, not on page load.
 
 ## Checks
