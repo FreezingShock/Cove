@@ -19,6 +19,11 @@ struct GroupBar: View {
     /// True while the search field has text. The bar fades out so the results
     /// can take its place. The search view owns this flag.
     var isFaded = false
+    /// Called when icons are dropped on a group segment.
+    var onDrop: (String, [String]) -> Void = { _, _ in }
+
+    /// The group segment a drag is currently over, if any. Drawn with a ring.
+    @State private var dropTargetID: String?
 
     /// Secondary text switches to full text under Increase Contrast.
     @Environment(\.colorSchemeContrast) private var contrast
@@ -55,11 +60,19 @@ struct GroupBar: View {
                     title: group.name,
                     symbol: group.symbol,
                     color: group.color.color,
-                    isSelected: selection == group.id
+                    isSelected: selection == group.id,
+                    isDropTarget: dropTargetID == group.id
                 ) {
                     // Tapping the selected group clears the filter, same as All.
                     selection = selection == group.id ? nil : group.id
                 }
+                .dropDestination(for: String.self, action: { appIDs, _ in
+                    guard !appIDs.isEmpty else { return false }
+                    onDrop(group.id, appIDs)
+                    return true
+                }, isTargeted: { targeted in
+                    dropTargetID = targeted ? group.id : (dropTargetID == group.id ? nil : dropTargetID)
+                })
             }
         }
     }
@@ -69,6 +82,7 @@ struct GroupBar: View {
         symbol: String?,
         color: Color?,
         isSelected: Bool,
+        isDropTarget: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -96,6 +110,11 @@ struct GroupBar: View {
                             endPoint: .bottom
                         ))
                         .overlay(Capsule().strokeBorder(InletColor.selRing, lineWidth: 1))
+                }
+            }
+            .overlay {
+                if isDropTarget {
+                    Capsule().strokeBorder(InletColor.accent, lineWidth: 2)
                 }
             }
             .contentShape(Capsule())

@@ -32,6 +32,10 @@ struct AppGroup: Codable, Hashable, Identifiable, Sendable {
     var suggestedCategory: AppCategory?
     /// Apps in the group, in display order.
     var appIDs: [String]
+    /// The zone this group belongs to. Nil means the group sits outside any zone.
+    /// Reserved for custom zones: zones will hold groups, so every group already
+    /// carries the link. Nothing reads it yet.
+    var zoneID: String? = nil
 
     /// The longest name a group can have.
     static let maxNameLength = 40

@@ -199,8 +199,13 @@ struct AppGridView: View {
                 // Fades out while typing, so the search results take its place.
                 // It keeps its space, so the grid below does not jump.
                 if !layoutStore.layout.groups.isEmpty {
-                    GroupBar(groups: layoutStore.layout.groups, selection: $groupID, isFaded: isSearching)
-                        .padding(.bottom, InletSpace.l)
+                    GroupBar(
+                        groups: layoutStore.layout.groups,
+                        selection: $groupID,
+                        isFaded: isSearching,
+                        onDrop: dropApps
+                    )
+                    .padding(.bottom, InletSpace.l)
                 }
 
                 content
@@ -337,6 +342,14 @@ struct AppGridView: View {
                 .font(InletFont.subhead)
                 .foregroundStyle(InletText.secondary(contrast))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !isPaged && shownApps.isEmpty {
+            // A group with nothing in it yet. Say how to fill it.
+            Text("No apps in \(selectedGroupName) yet. Drag an icon onto its name in the bar, or right-click an icon to move it here.")
+                .font(InletFont.subhead)
+                .foregroundStyle(InletText.secondary(contrast))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, InletSize.gridSidePadding)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if isPaged {
             // Paged and editable, in the saved layout order.
             // Arrow keys still move the focus ring here.
@@ -384,6 +397,8 @@ struct AppGridView: View {
                             onSelect: { moveToGroup(app, $0) }
                         )
                     }
+                    // Drag an icon onto a group segment on the bar to move it there.
+                    .draggable(app.id)
                 }
             }
             .padding(.horizontal, InletSize.gridSidePadding)
@@ -598,7 +613,24 @@ struct AppGridView: View {
 
     /// Adds a group named "New Group" at the end of the bar. Rename it in the panel.
     private func addGroup() {
-        layoutStore.update { _ = $0.addGroup(name: "New Group", color: .blue, symbol: "star") }
+        layoutStore.update { layout in
+            _ = layout.addGroup(name: "New Group", color: layout.unusedColor, symbol: "star")
+        }
+    }
+
+    /// Moves dropped icons into a group. One change, so the group bar's
+    /// selection and the saved file update together.
+    private func dropApps(_ targetGroupID: String, _ appIDs: [String]) {
+        layoutStore.update { layout in
+            for appID in appIDs {
+                layout.moveApp(appID, toGroup: targetGroupID)
+            }
+        }
+    }
+
+    /// The name of the selected group, for empty-group messages.
+    private var selectedGroupName: String {
+        layoutStore.layout.groups.first(where: { $0.id == groupID })?.name ?? "this group"
     }
 
     /// Moves an app into another group. Works from every view, so the group bar

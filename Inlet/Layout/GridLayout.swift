@@ -251,6 +251,13 @@ struct GridLayout: Codable, Equatable, Sendable {
         groups[target].appIDs.append(contentsOf: removed.appIDs)
     }
 
+    /// The first color no group uses yet, so a new group looks different from
+    /// its neighbours. Falls back to blue when all nine are taken.
+    var unusedColor: GroupColor {
+        let used = Set(groups.map(\.color))
+        return GroupColor.allCases.first { !used.contains($0) } ?? .blue
+    }
+
     /// Moves an app to the end of a group, taking it out of whichever group it
     /// was in. Does nothing for an unknown group.
     mutating func moveApp(_ appID: String, toGroup groupID: String) {

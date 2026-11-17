@@ -43,7 +43,8 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 |---|---|
 | `Inlet/InletApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
 | `Inlet/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
-| `Inlet/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
+| `Inlet/Models/AppCategory.swift` | Maps each app's category to a preset: Create, Build, School, Everyday, Games, Other. |
+| `Inlet/Models/AppGroup.swift` | A group on the group bar: name, color, icon, apps. Presets come from the categories. |
 | `Inlet/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
 | `Inlet/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
 | `Inlet/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
@@ -54,7 +55,9 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | `Inlet/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
 | `Inlet/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
 | `Inlet/InletTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
-| `Inlet/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
+| `Inlet/Views/Groups/GroupBar.swift` | The All-plus-groups bar above the grid. Tap to filter. Fades out while search has text. |
+| `Inlet/Views/Groups/GroupsPanel.swift` | The Groups panel: add, rename, recolor, re-icon, reorder and delete groups. |
+| `Inlet/Views/Groups/GroupStyle.swift` | Group colors and the Move to Group context menu. |
 | `Inlet/Theme.swift` | Colors and sizes from the design system. |
 
 New files you add inside the `Inlet` folder appear in Xcode automatically.
