@@ -102,7 +102,7 @@
     { group: "Actions", label: "Appearance: Auto", hint: "Theme", icon: ICON.theme, action: themeAction("auto"), keys: "theme appearance auto system" },
     { group: "Actions", label: "Appearance: Light", hint: "Theme", icon: ICON.theme, action: themeAction("light"), keys: "theme appearance light" },
     { group: "Actions", label: "Appearance: Dark", hint: "Theme", icon: ICON.theme, action: themeAction("dark"), keys: "theme appearance dark" },
-    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Cove", keys: "github source code repository" }
+    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Inlet", keys: "github source code repository" }
   ];
   if (onHome) {
     ITEMS.splice(7, 0, {
