@@ -137,7 +137,7 @@
     </div>
 
     <div class="wrap hero-stage-wrap">
-      <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, animated sample">
+      <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, interactive sample">
         <div class="win" id="heroWin">
           <div class="win-bar">
             <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -151,10 +151,20 @@
               <kbd class="win-enter" aria-hidden="true">↩</kbd>
             </label>
             <div class="win-tape" id="heroTape" aria-hidden="true"></div>
-            <div class="seg win-seg" aria-hidden="true">
-              <span class="on">All</span><span>Create</span><span>Everyday</span><span>Build</span>
+            <div class="win-view" id="heroView">
+              <div class="win-track" id="heroTrack"></div>
+              <div class="folder-sheet" id="heroSheet" hidden>
+                <div class="sheet-scrim" id="heroSheetScrim"></div>
+                <div class="sheet-panel" id="heroSheetPanel" role="dialog" aria-labelledby="heroSheetTitle">
+                  <div class="sheet-head">
+                    <span class="sheet-title" id="heroSheetTitle">Create</span>
+                    <button class="sheet-close" type="button" id="heroSheetClose" aria-label="Close folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+                  </div>
+                  <div class="grid sheet-grid" id="heroSheetGrid"></div>
+                </div>
+              </div>
             </div>
-            <div class="grid" id="heroGrid"></div>
+            <div class="pager" id="heroPager"></div>
           </div>
           <div class="win-foot">
             <span class="win-status" id="heroStatus" aria-live="polite">16 apps</span>
@@ -162,7 +172,7 @@
           </div>
           <span class="glint" aria-hidden="true"></span>
         </div>
-        <p class="win-caption">Sample apps. Inlet shows the icons already on your Mac.</p>
+        <p class="win-caption">Try it: type to search, open Create, or swipe between pages. Sample apps only.</p>
       </div>
     </div>
   </section>
