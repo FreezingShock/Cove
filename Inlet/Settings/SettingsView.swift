@@ -99,7 +99,7 @@ struct SettingsTile: View {
     let tint: Color
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 5.5, style: .continuous)
+        RoundedRectangle(cornerRadius: InletRadius.icon(20), style: .continuous)
             .fill(tint.gradient)
             .frame(width: 20, height: 20)
             .overlay {

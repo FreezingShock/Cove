@@ -45,7 +45,7 @@ struct CategoryBar: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Categories")
         .accessibilityHidden(isFaded)
-        .inletAnimation(.easeInOut(duration: 0.2), value: isFaded)
+        .inletAnimation(.inletFade, value: isFaded)
         .inletAnimation(.inletSnap, value: selection)
     }
 

@@ -24,16 +24,16 @@
   .doc-main strong { color: var(--text); font-weight: 600; }
   .doc-main a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .doc-main a:hover { text-decoration-color: var(--text); }
-  .doc-main code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; background: var(--field); color: var(--text); padding: 1px 6px; border-radius: 6px; }
-  .note { padding: 20px 22px; border-radius: 24px; background: var(--accent-soft); margin: 0 0 32px; }
+  .doc-main code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; background: var(--field); color: var(--text); padding: 1px 6px; border-radius: var(--r-xs); }
+  .note { padding: 20px 22px; border-radius: var(--r-row); background: var(--accent-soft); margin: 0 0 32px; }
   .note p { color: var(--text); margin: 0; }
-  .toc { padding: 20px 22px; border-radius: 24px; border: 1px solid var(--hair); background: var(--field); margin: 0 0 8px; }
+  .toc { padding: 20px 22px; border-radius: var(--r-row); border: 1px solid var(--hair); background: var(--field); margin: 0 0 8px; }
   .toc h2 { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
   .toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 28px; }
   .toc li { margin: 3px 0; break-inside: avoid; font-size: 14px; }
   .toc a { text-decoration: none; color: var(--text-2); }
   .toc a:hover { color: var(--text); text-decoration: underline; }
-  .table-wrap { border: 1px solid var(--hair); border-radius: 24px; overflow: hidden; margin: 8px 0 20px; background: var(--grouped); }
+  .table-wrap { border: 1px solid var(--hair); border-radius: var(--r-row); overflow: hidden; margin: 8px 0 20px; background: var(--grouped); }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th, td { text-align: left; vertical-align: top; padding: 14px 16px; border-bottom: 1px solid var(--hair); }
   th { font-weight: 600; color: var(--text-3); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
@@ -46,7 +46,7 @@
   .table-wrap { border: 0; background: none; overflow: visible; }
   table, thead, tbody, tr, th, td { display: block; width: 100%; }
   thead { display: none; }
-  tr { border: 1px solid var(--hair); background: var(--grouped); border-radius: 20px; padding: 6px 0; margin-bottom: 12px; }
+  tr { border: 1px solid var(--hair); background: var(--grouped); border-radius: var(--r-lg); padding: 6px 0; margin-bottom: 12px; }
   td { border: 0; padding: 4px 16px; white-space: normal; }
   td:first-child { padding-top: 10px; }
   td::before { content: attr(data-label); display: block; font-size: 12px; color: var(--text-3); font-weight: 600; margin-bottom: 2px; }

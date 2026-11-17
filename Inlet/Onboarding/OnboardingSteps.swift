@@ -138,7 +138,7 @@ struct OnboardingAppTile: View {
             .frame(width: size, height: size)
             .background(
                 LinearGradient(colors: [app.top, app.bottom], startPoint: .topLeading, endPoint: .bottomTrailing),
-                in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
+                in: RoundedRectangle(cornerRadius: InletRadius.icon(size), style: .continuous)
             )
             .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
             .accessibilityHidden(true)
@@ -379,7 +379,7 @@ struct DoneStep: View {
         .padding(.horizontal, InletSpace.xxxl)
         .padding(.top, InletSpace.xxl)
         .onAppear {
-            withAnimation(reduceMotion ? .easeOut(duration: 0.2) : .inletOpen) {
+            withAnimation(reduceMotion ? .inletFade : .inletOpen) {
                 appeared = true
             }
         }

@@ -12,6 +12,9 @@ on:
     branches: [integration]
     paths:
       - "website/**"
+      - "design/**"
+      - "scripts/build-tokens.py"
+      - "Inlet/InletTheme.swift"
       - "scripts/check-website.py"
       - "lighthouserc.json"
       - ".github/workflows/website.yml"
@@ -19,6 +22,9 @@ on:
     branches: [integration, main]
     paths:
       - "website/**"
+      - "design/**"
+      - "scripts/build-tokens.py"
+      - "Inlet/InletTheme.swift"
       - "scripts/check-website.py"
       - "lighthouserc.json"
       - ".github/workflows/website.yml"
@@ -59,6 +65,11 @@ jobs:
       - name: Check links, anchors and privacy
         if: steps.guard.outputs.present == 'true'
         run: python3 scripts/check-website.py website
+
+      # The radius and motion blocks in tokens.css and InletTheme.swift are generated
+      # from design/tokens.json. Fails if someone edited a block by hand or skipped the script.
+      - name: Check generated radius and motion tokens
+        run: python3 scripts/build-tokens.py --check
 
       - name: Upload preview artifact
         if: steps.guard.outputs.present == 'true'

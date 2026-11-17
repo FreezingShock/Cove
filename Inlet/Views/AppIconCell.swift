@@ -80,7 +80,7 @@ struct AppIconCell: View {
         .opacity(reduceMotion && !isOpen ? 0 : 1)
         .animation(
             reduceMotion
-                ? .easeInOut(duration: 0.2)
+                ? .inletFade
                 : .spring(InletMotion.open).delay(placement.delay),
             value: isOpen
         )

@@ -20,18 +20,18 @@
   .doc-main strong { color: var(--text); font-weight: 600; }
   .doc-main a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
   .doc-main a:hover { text-decoration-color: var(--text); }
-  .doc-main code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; background: var(--field); color: var(--text); padding: 1px 6px; border-radius: 6px; }
+  .doc-main code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; background: var(--field); color: var(--text); padding: 1px 6px; border-radius: var(--r-xs); }
   .lede { font-size: 19px; line-height: 1.5; color: var(--text-2); margin: 0 0 32px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 0 0 16px; padding: 0; list-style: none; }
   .cards li { margin: 0; }
-  .cards a { display: block; height: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--hair); background: var(--grouped); text-decoration: none; font-weight: 600; font-size: 15px; color: var(--text); }
+  .cards a { display: block; height: 100%; padding: 18px; border-radius: var(--r-lg); border: 1px solid var(--hair); background: var(--grouped); text-decoration: none; font-weight: 600; font-size: 15px; color: var(--text); }
   .cards a span { display: block; font-weight: 400; font-size: 13px; color: var(--text-2); margin-top: 4px; }
   .cards a:hover { border-color: var(--text-3); }
   details { border-top: 1px solid var(--hair); padding: 16px 0; }
   details:last-of-type { border-bottom: 1px solid var(--hair); }
-  summary { cursor: pointer; font-weight: 600; font-size: 16px; color: var(--text); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-radius: 6px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 16px; color: var(--text); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-radius: var(--r-xs); }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg) translate(-2px, -2px); transition: transform 0.2s ease; }
+  summary::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--text-2); border-bottom: 2px solid var(--text-2); transform: rotate(45deg) translate(-2px, -2px); transition: transform var(--dur-fast) var(--ease-fade); }
   details[open] summary::after { transform: rotate(225deg) translate(-2px, -2px); }
   summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
   details > :not(summary) { margin-top: 12px; }

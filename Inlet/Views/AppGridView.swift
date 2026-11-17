@@ -466,7 +466,7 @@ struct AppGridView: View {
 
     /// Spring when Reduce Motion is off, a 0.2 s crossfade when it is on.
     private func motion(_ animation: Animation) -> Animation {
-        reduceMotion ? .easeInOut(duration: 0.2) : animation
+        reduceMotion ? .inletFade : animation
     }
 
     /// Left, right, up and down. Option + arrow in Edit mode moves the focused

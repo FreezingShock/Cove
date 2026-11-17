@@ -15,13 +15,13 @@
 /* ---------- Buttons ---------- */
 .btn {
   transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.35s ease,
-    filter 0.25s ease,
-    color 0.25s ease,
-    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-    translate 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background-color var(--dur-base) var(--ease-fade),
+    border-color var(--dur-base) var(--ease-fade),
+    box-shadow var(--dur-medium) var(--ease-fade),
+    filter var(--dur-base) var(--ease-fade),
+    color var(--dur-base) var(--ease-fade),
+    transform var(--dur-base) var(--ease-standard),
+    translate var(--dur-slow) var(--ease-standard);
 }
 /* Magnetic pull: scripts/nav.js sets --mx and --my on fine pointers only.
    `translate` is a separate property from `transform`, so the press scale still works. */
@@ -48,7 +48,7 @@ main p a,
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
-  transition: text-decoration-thickness 0.2s ease, color 0.2s ease;
+  transition: text-decoration-thickness var(--dur-fast) var(--ease-fade), color var(--dur-fast) var(--ease-fade);
 }
 main p a:hover,
 .doc-main a:hover,
@@ -61,7 +61,7 @@ main p a:hover,
   background-repeat: no-repeat;
   background-position: 0 100%;
   background-size: 0% 1px;
-  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.2s ease;
+  transition: background-size var(--dur-medium) var(--ease-standard), color var(--dur-fast) var(--ease-fade);
 }
 .foot-col a:hover,
 .foot-col a:focus-visible,
@@ -78,13 +78,13 @@ main p a:hover,
   margin: 12px auto 0;
   padding-left: 20px;
   padding-right: 10px;
-  border-radius: 24px;
+  border-radius: var(--r-row);
   border: 1px solid var(--g-edge);
   background: linear-gradient(180deg, var(--g-sheen-top), var(--g-sheen-bot)), var(--g-fill);
   box-shadow: inset 0 1px 0 var(--g-rim-a), 0 14px 36px -22px var(--g-shadow);
   -webkit-backdrop-filter: blur(30px) saturate(170%);
   backdrop-filter: blur(30px) saturate(170%);
-  transition: box-shadow 0.35s ease, background-color 0.35s ease;
+  transition: box-shadow var(--dur-medium) var(--ease-fade), background-color var(--dur-medium) var(--ease-fade);
 }
 .nav.is-scrolled .nav-inner {
   box-shadow: inset 0 1px 0 var(--g-rim-a), 0 20px 44px -20px var(--g-shadow);
@@ -93,7 +93,7 @@ main p a:hover,
 @media (prefers-reduced-transparency: reduce) {
   .nav-inner { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--g-solid); }
 }
-.links a { transition: color 0.25s ease, background-color 0.25s ease, transform 0.2s ease; }
+.links a { transition: color var(--dur-base) var(--ease-fade), background-color var(--dur-base) var(--ease-fade), transform var(--dur-fast) var(--ease-fade); }
 .links a:active { transform: scale(0.97); }
 .nav-right { flex: none; }
 
@@ -103,7 +103,7 @@ main p a:hover,
   gap: 8px;
   height: 36px;
   padding: 0 8px 0 12px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--hair);
   background: var(--field);
   color: var(--text-2);
@@ -111,7 +111,7 @@ main p a:hover,
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--dur-fast) var(--ease-fade), color var(--dur-fast) var(--ease-fade), border-color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
 }
 .search-btn:hover { color: var(--text); background: var(--hover); border-color: var(--g-edge); }
 .search-btn:active { transform: scale(0.96); }
@@ -134,11 +134,11 @@ main p a:hover,
   height: 40px;
   padding: 0;
   border: 1px solid var(--hair);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--field);
   color: var(--text);
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
 }
 .menu-btn:active { transform: scale(0.94); }
 .menu-btn i {
@@ -148,9 +148,9 @@ main p a:hover,
   width: 16px;
   height: 1.75px;
   margin-left: -8px;
-  border-radius: 2px;
+  border-radius: var(--r-hair);
   background: currentColor;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform var(--dur-medium) var(--ease-standard);
 }
 .menu-btn i:nth-child(1) { translate: 0 -5px; }
 .menu-btn i:nth-child(2) { translate: 0 5px; }
@@ -175,7 +175,7 @@ main p a:hover,
     right: 0;
     margin: 0;
     padding: 8px;
-    border-radius: 28px;
+    border-radius: var(--r-window);
     border: 1px solid var(--g-edge);
     background: linear-gradient(180deg, var(--g-sheen-top), var(--g-sheen-bot)), var(--base-2);
     box-shadow: inset 0 1px 0 var(--g-rim-a), 0 24px 60px -18px var(--g-shadow);
@@ -186,17 +186,17 @@ main p a:hover,
     opacity: 0;
     transform: translate3d(0, -8px, 0) scale(0.98);
     transition:
-      opacity 0.2s ease,
-      transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-      visibility 0s linear 0.3s;
+      opacity var(--dur-fast) var(--ease-fade),
+      transform var(--dur-medium) var(--ease-standard),
+      visibility 0s linear var(--dur-medium);
   }
   .nav.menu-open .links {
     visibility: visible;
     opacity: 1;
     transform: none;
     transition:
-      opacity 0.25s ease,
-      transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity var(--dur-base) var(--ease-fade),
+      transform var(--dur-slow) var(--ease-standard),
       visibility 0s;
   }
   .links a {
@@ -204,7 +204,7 @@ main p a:hover,
     align-items: center;
     min-height: 48px;
     padding: 0 16px;
-    border-radius: 18px;
+    border-radius: var(--r-sidebar);
     font-size: 17px;
     font-weight: 500;
     color: var(--text);
@@ -261,7 +261,7 @@ main p a:hover,
   flex-direction: column;
   max-height: min(540px, 74vh);
   padding: 8px;
-  border-radius: 32px;
+  border-radius: var(--r-panel);
   overflow: hidden;
   box-shadow: inset 0 1px 0 var(--g-rim-a), 0 40px 90px -24px var(--g-shadow);
 }
@@ -321,13 +321,13 @@ main p a:hover,
   gap: 12px;
   min-height: 48px;
   padding: 6px 12px 6px 8px;
-  border-radius: 20px;
+  border-radius: var(--r-lg);
   font-size: 15px;
   font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
 }
-.cmdk-opt .fi { width: 32px; height: 32px; border-radius: 10px; }
+.cmdk-opt .fi { width: 32px; height: 32px; border-radius: var(--r-sm); }
 .cmdk-opt[aria-selected="true"] {
   color: var(--text);
   background: linear-gradient(180deg, var(--sel-top), var(--sel-bot));
@@ -356,8 +356,8 @@ main p a:hover,
 .cmdk-foot kbd { height: 20px; min-width: 20px; font-size: 11px; box-shadow: none; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .cmdk[open] .cmdk-panel { animation: cmdk-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-  .cmdk[open]::backdrop { animation: cmdk-fade 0.25s ease both; }
+  .cmdk[open] .cmdk-panel { animation: cmdk-in var(--dur-medium) var(--ease-standard) both; }
+  .cmdk[open]::backdrop { animation: cmdk-fade var(--dur-base) var(--ease-fade) both; }
 }
 @keyframes cmdk-in {
   from { opacity: 0; transform: translate3d(0, -10px, 0) scale(0.98); }
@@ -424,14 +424,14 @@ main p a:hover,
   gap: 8px;
   min-height: 36px;
   padding: 0 14px 0 12px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 1px solid var(--hair);
   background-color: var(--field);
   color: var(--text);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
-  transition: background-color 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: background-color var(--dur-fast) var(--ease-fade), transform var(--dur-base) var(--ease-standard);
 }
 .foot-top:hover { background-color: var(--hover); transform: translate3d(0, -2px, 0); }
 .foot-top:active { transform: scale(0.97); }
@@ -468,7 +468,7 @@ main p a:hover,
   background: radial-gradient(closest-side, var(--glow-a), transparent);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease;
+  transition: opacity var(--dur-slow) var(--ease-fade);
   will-change: transform;
 }
 .cursor-glow.is-on { opacity: 0.5; }
@@ -478,14 +478,14 @@ main p a:hover,
    a short fade-in on load does the same job. Both are off under Reduce Motion. */
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) { animation: vt-out 0.18s cubic-bezier(0.4, 0, 1, 1) both; }
-  ::view-transition-new(root) { animation: vt-in 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  ::view-transition-old(root) { animation: vt-out var(--dur-fast) var(--ease-exit) both; }
+  ::view-transition-new(root) { animation: vt-in 0.36s var(--ease-standard) both; }
 }
 @keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-in { from { opacity: 0; } }
 @supports not (view-transition-name: none) {
   @media (prefers-reduced-motion: no-preference) {
-    body { animation: page-in 0.4s ease both; }
+    body { animation: page-in var(--dur-slow) var(--ease-fade) both; }
   }
 }
 @keyframes page-in { from { opacity: 0; } }
