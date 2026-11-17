@@ -54,6 +54,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // First-run setup opens once, until the user finishes it. It is also
         // reachable from Help > Inlet Setup…
+        OnboardingWindowController.shared.configure(library: library, layoutStore: layoutStore)
         OnboardingWindowController.showOnFirstLaunch()
     }
 
