@@ -25,10 +25,18 @@ final class AppLibrary {
     /// When the last scan finished. Shown in Settings > About.
     private(set) var lastScanned: Date?
 
+    /// True when a reload was asked for during a scan. The scan that is
+    /// running may have read the folders before the change, so one more runs after it.
+    private var reloadQueued = false
+
     /// Rescans the app folders in the background.
-    /// Safe to call often: if a scan is already running, this does nothing.
+    /// Safe to call often: a request during a scan is queued, not dropped,
+    /// so an app installed mid-scan still shows up.
     func reload() {
-        guard !isScanning else { return }
+        guard !isScanning else {
+            reloadQueued = true
+            return
+        }
         isScanning = true
 
         Task {
@@ -46,6 +54,11 @@ final class AppLibrary {
             isScanning = false
             hasScanned = true
             lastScanned = Date()
+
+            if reloadQueued {
+                reloadQueued = false
+                reload()
+            }
         }
     }
 }
