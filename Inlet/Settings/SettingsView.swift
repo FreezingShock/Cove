@@ -63,13 +63,27 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(SettingsPane.allCases, selection: $selection) { pane in
-                Label {
-                    Text(pane.title)
-                } icon: {
-                    SettingsTile(symbol: pane.symbol, tint: pane.tint)
+            // Custom rows, not List(selection:): the system selection puts a white
+            // label on the system accent, which is aqua in Dark (1.6:1). The selected
+            // row uses the ink-on-glass lozenge instead.
+            List {
+                ForEach(SettingsPane.allCases) { pane in
+                    Button {
+                        selection = pane
+                    } label: {
+                        Label {
+                            Text(pane.title)
+                        } icon: {
+                            SettingsTile(symbol: pane.symbol, tint: pane.tint)
+                        }
+                        .foregroundStyle(InletColor.text)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(selection == pane ? .isSelected : [])
+                    .listRowBackground(sidebarRowBackground(for: pane))
                 }
-                .tag(pane)
             }
             .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 200)
         } detail: {
@@ -79,6 +93,18 @@ struct SettingsView: View {
         .frame(width: InletSize.settingsWindow.width, height: InletSize.settingsWindow.height)
         // Appearance changes apply to this window too.
         .inletAppearance()
+    }
+
+    @ViewBuilder
+    private func sidebarRowBackground(for pane: SettingsPane) -> some View {
+        if selection == pane {
+            RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous)
+                .fill(LinearGradient(colors: [InletColor.selTop, InletColor.selBot], startPoint: .top, endPoint: .bottom))
+                .overlay(RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous).strokeBorder(InletColor.selRing, lineWidth: 1))
+                .padding(.horizontal, InletSpace.xs)
+        } else {
+            Color.clear
+        }
     }
 
     @ViewBuilder

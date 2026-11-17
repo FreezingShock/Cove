@@ -39,7 +39,7 @@ struct OnboardingView: View {
         HStack(spacing: InletSpace.xs) {
             ForEach(0..<OnboardingStep.barCount, id: \.self) { index in
                 Capsule()
-                    .fill(index <= model.step.rawValue ? InletColor.accent : InletColor.track)
+                    .fill(index <= model.step.rawValue ? InletColor.focus : InletColor.track)
                     .frame(height: 4)
             }
         }

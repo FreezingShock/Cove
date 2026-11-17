@@ -150,7 +150,7 @@ struct SearchPanel: View {
         HStack(spacing: InletSpace.m) {
             Text("=")
                 .font(InletFont.headline)
-                .foregroundStyle(InletColor.accent)
+                .foregroundStyle(InletColor.text)
                 .frame(width: InletSize.rowIcon, height: InletSize.rowIcon)
                 .background(Circle().fill(InletColor.accentSoft))
                 .accessibilityHidden(true)

@@ -86,10 +86,10 @@ struct GridTile: View {
                 .fill(isHovered ? InletColor.hover : Color.clear)
         }
         .overlay {
-            // Keyboard focus ring (T3.5). Accent is a fill or control state, never text.
+            // Keyboard focus ring (T3.5). Ink in Light, aqua in Dark: aqua on cream is 1.35:1.
             if isKeyboardFocused {
                 RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous)
-                    .strokeBorder(InletColor.accent, lineWidth: 2)
+                    .strokeBorder(InletColor.focus, lineWidth: 2)
             }
         }
         .scaleEffect(scale)

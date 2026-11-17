@@ -248,7 +248,7 @@ struct EditableGridView: View {
                     withAnimation(motion(.inletSettle)) { page = index }
                 } label: {
                     Capsule()
-                        .fill(index == current ? InletColor.accent : InletColor.track)
+                        .fill(index == current ? InletColor.focus : InletColor.track)
                         .frame(width: index == current ? 16 : 7, height: 7)
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())

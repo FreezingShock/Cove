@@ -114,7 +114,7 @@ struct GroupBar: View {
             }
             .overlay {
                 if isDropTarget {
-                    Capsule().strokeBorder(InletColor.accent, lineWidth: 2)
+                    Capsule().strokeBorder(InletColor.focus, lineWidth: 2)
                 }
             }
             .contentShape(Capsule())

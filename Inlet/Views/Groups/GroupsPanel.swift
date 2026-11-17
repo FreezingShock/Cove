@@ -107,7 +107,7 @@ struct GroupsPanel: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, InletSpace.s)
                     .padding(.vertical, InletSpace.xs)
-                    .background(Capsule().fill(Color.red))
+                    .background(Capsule().fill(Color(nsColor: .systemRed)))
                     .contentShape(Capsule())
                 } else {
                     iconButton("trash", label: "Delete \(group.name)", enabled: groups.count > 1) {

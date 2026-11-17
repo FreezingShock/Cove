@@ -32,7 +32,7 @@ struct FeedbackView: View {
         }
         .padding(24)
         .frame(width: 520, height: 640, alignment: .topLeading)
-        .preferredColorScheme(.dark)
+        .inletAppearance()  // Same Light, Dark or Auto setting as the rest of the app
         .onAppear(perform: reload)
     }
 
@@ -118,7 +118,7 @@ struct FeedbackView: View {
             Button("Open GitHub Issue") {
                 openIssue()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(InletAccentButtonStyle())  // ink label on aqua, 12:1 in Dark
             .keyboardShortcut(.defaultAction)
         }
     }

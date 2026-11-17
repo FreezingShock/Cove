@@ -281,7 +281,7 @@ APP_COLOR_NAMES = [
     "hair", "accent", "accentInk", "accentSoft", "logoAqua", "gFill", "gSolid", "gSheenTop",
     "gSheenBot", "gHl", "gLow", "gRimA", "gRimB", "gRimC", "gRimD", "gEdge", "gShadow", "gSpec",
     "cFill", "selTop", "selBot", "selHl", "selRing", "selShadow", "hover", "scrim", "track",
-    "knob", "field", "iconShadow", "accentHover", "accentPressed", "pressed",
+    "knob", "field", "iconShadow", "accentHover", "accentPressed", "pressed", "focus",
 ]
 
 

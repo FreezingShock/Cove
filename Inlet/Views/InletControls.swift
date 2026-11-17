@@ -115,13 +115,13 @@ private struct InletRowButtonBody: View {
 // MARK: - Keyboard focus
 
 extension View {
-    /// The 2 pt accent ring for keyboard focus (T3.5). Accent is a control
-    /// state here, never text.
+    /// The 2 pt focus ring for keyboard focus (T3.5). It uses `focus`, not the
+    /// accent, so it stays visible on cream.
     func inletFocusRing(_ isFocused: Bool, cornerRadius: CGFloat = InletRadius.row) -> some View {
         overlay {
             if isFocused {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(InletColor.accent, lineWidth: 2)
+                    .strokeBorder(InletColor.focus, lineWidth: 2)
             }
         }
     }
