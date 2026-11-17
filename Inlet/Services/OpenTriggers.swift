@@ -123,7 +123,7 @@ final class OpenTriggers {
         } else if pinchTotal > Self.pinchThreshold, overlay.isVisible {
             // Spread out with the grid open: close it.
             pinchFired = true
-            overlay.hide()
+            overlay.dismiss()
         }
     }
 

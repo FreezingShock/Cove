@@ -384,9 +384,10 @@ struct AppGridView: View {
                     .foregroundStyle(InletText.secondary(contrast))
             }
 
+            // Opening springs with `open`; closing uses `dismiss`, which never bounces.
             if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
-                    withAnimation(motion(.inletOpen)) {
+                    withAnimation(motion(showsHidden ? .inletDismiss : .inletOpen)) {
                         showsGroups = false
                         showsHidden.toggle()
                     }
@@ -395,7 +396,7 @@ struct AppGridView: View {
 
             if library.hasScanned, !library.apps.isEmpty {
                 headerButton("Groups") {
-                    withAnimation(motion(.inletOpen)) {
+                    withAnimation(motion(showsGroups ? .inletDismiss : .inletOpen)) {
                         showsHidden = false
                         showsGroups.toggle()
                     }
@@ -410,7 +411,7 @@ struct AppGridView: View {
             }
             if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
-                    withAnimation(motion(.inletOpen)) { isEditing.toggle() }
+                    withAnimation(motion(isEditing ? .inletDismiss : .inletOpen)) { isEditing.toggle() }
                 }
             }
         }

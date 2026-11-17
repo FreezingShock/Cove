@@ -100,8 +100,10 @@ struct SearchPanel: View {
                 interactive: !isExpanded
             ))
             .glassEffectID("search", in: glassNamespace)
-            .inletAnimation(.inletMorph, value: isExpanded)
-            .inletAnimation(.inletMorph, value: width)
+            // Growing (results appear, or focus) springs with `morph`. Shrinking
+            // uses `dismiss`, so the panel never bounces on the way closed.
+            .inletAnimation(isExpanded ? .inletMorph : .inletDismiss, value: isExpanded)
+            .inletAnimation(isFocused.wrappedValue ? .inletMorph : .inletDismiss, value: width)
         }
     }
 
