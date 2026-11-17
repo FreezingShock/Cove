@@ -1,0 +1,167 @@
+/* Ledger Tiles: the site-wide theme layer (style E, 2026-11-17).
+   Loads after every other stylesheet. Square cells, ink rules, one aqua accent used as a fill,
+   and tiles that react. It does not touch the header (.nav, .links, .menu-*, .search-btn); nav.css owns that.
+   Rules: aqua is a fill only. Text stays on --text / --text-2 / --text-3. Rules use --rule. */
+
+:root {
+  --rule: var(--text);
+  --rule-soft: var(--hair);
+  --ink: #17150F;
+  --ink-text: #F4EFE6;
+  --ink-text-2: rgba(244, 239, 230, 0.78);
+  --cell: var(--grouped);
+  --lift: 6px;
+  --ease-l: cubic-bezier(0.22, 0.9, 0.24, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --rule: rgba(244, 239, 230, 0.52);
+    --ink: #0A0C0B;
+    --cell: rgba(244, 239, 230, 0.045);
+  }
+}
+:root[data-theme="dark"] { --rule: rgba(244, 239, 230, 0.52); --ink: #0A0C0B; --cell: rgba(244, 239, 230, 0.045); }
+
+/* ---------- Type: heavier, tighter, structured ---------- */
+h1, h2, .h-display, .h-section, .h-feature { letter-spacing: -0.045em; font-weight: 700; text-wrap: balance; }
+.h-display, .page-hero h1 { line-height: 0.98; }
+.soft { color: var(--text-3); }
+.lede, .body-2 { color: var(--text-2); }
+
+/* Figure label: replaces the old eyebrow. Uppercase, a rule runs out to the edge. No numbers. */
+.eyebrow { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+.eyebrow::before { width: 10px; height: 10px; border-radius: 0; margin: 0; background: var(--accent); box-shadow: 0 0 0 1px var(--rule); flex: none; }
+.eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--rule-soft); }
+
+/* ---------- Sections: ruled, square ---------- */
+.band { border-top: 1px solid var(--rule); }
+.band.faq-section { border-top: 0; }
+.page-hero { border-bottom: 1px solid var(--rule); position: relative; }
+
+/* ---------- Buttons: square, ink, aqua on hover ---------- */
+.btn { border-radius: 0; font-weight: 600; letter-spacing: -0.005em; border: 1px solid var(--rule); box-shadow: none; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); box-shadow: none; }
+.btn-primary:hover { filter: none; background: var(--ink); color: var(--accent); box-shadow: none; }
+.btn-ghost, .btn:not(.btn-primary) { background: transparent; color: var(--text); }
+.btn-ghost:hover, .btn:not(.btn-primary):hover { background: var(--ink); color: var(--ink-text); border-color: var(--ink); }
+.hero-cta .btn-primary, .hero-cta .btn-primary:hover { background: var(--accent); color: var(--accent-ink); }
+.hero-cta .btn-primary:hover { background: var(--ink); color: var(--accent); }
+.hero-cta .btn-primary:hover { background: var(--ink); color: var(--accent); }
+.get .btn-primary { background: var(--ink); color: var(--ink-text); border-color: var(--ink); }
+.get .btn-primary:hover { background: var(--accent); color: var(--accent-ink); }
+.btn:active { transform: translate(1px, 1px); }
+:root[data-theme="dark"] .btn-primary:hover, :root:not([data-theme="light"]) .btn-primary:hover { }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn-primary { border-color: var(--accent); } :root:not([data-theme="light"]) .btn-primary:hover { background: var(--base); color: var(--accent); border-color: var(--accent); } }
+:root[data-theme="dark"] .btn-primary { border-color: var(--accent); }
+:root[data-theme="dark"] .btn-primary:hover { background: var(--base); color: var(--accent); }
+
+/* ---------- Highlight: a lit tile behind the word, drawn in when it scrolls into view ---------- */
+.hl { background: linear-gradient(var(--accent), var(--accent)) 0 90% / 0% 0.38em no-repeat; transition: background-size 0.9s var(--ease-l) 0.15s; }
+.hl.is-drawn, .no-js .hl { background-size: 100% 0.38em; }
+.h-display .hl, .page-hero h1 .hl { background-size: 100% 0.38em; }
+.hl { color: var(--text); }
+
+/* ---------- Cards and rows: ruled cells that light up ---------- */
+.card { position: relative; padding: 28px 0; border-bottom: 1px solid var(--rule-soft); transition: padding-left 0.4s var(--ease-l), background-color 0.3s; }
+.card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.35s var(--ease-l); }
+.cards { border-top: 1px solid var(--rule); }
+@media (hover: hover) {
+  .card:hover { padding-left: 22px; background: linear-gradient(90deg, var(--accent-soft), transparent 70%); }
+  .card:hover::before { transform: scaleX(1); }
+}
+.card:focus-within::before { transform: scaleX(1); }
+
+/* Tile glyph markers on rows, if a page uses .ico */
+.ico, .aud-ico, .sm-ico { border-radius: 0; }
+
+/* Keys: square keycaps */
+kbd { border-radius: 0; border: 1px solid var(--rule); background: var(--grouped); box-shadow: 2px 2px 0 var(--rule); font-weight: 600; }
+.win kbd, .win-enter { box-shadow: none; }
+
+/* Glass surfaces on content pages become paper cards with a hard offset shadow that grows on hover */
+.glass:not(.nav):not(.win) { border-radius: 0; }
+.get .get-box { border-radius: 0; border: 1px solid var(--ink); box-shadow: var(--lift) var(--lift) 0 var(--ink); }
+.shot, .table-wrap, .recipe, .zone, .stage { border-radius: 0; }
+.table-wrap { border: 1px solid var(--rule); }
+.shot, .hero-window, .demo-frame, .recipe { border: 1px solid var(--rule); box-shadow: 10px 10px 0 var(--ink); transition: box-shadow 0.4s var(--ease-l), translate 0.4s var(--ease-l); }
+@media (hover: hover) { .shot:hover, .hero-window:hover, .demo-frame:hover { translate: -3px -3px; box-shadow: 14px 14px 0 var(--ink); } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .shot, :root:not([data-theme="light"]) .hero-window, :root:not([data-theme="light"]) .demo-frame, :root:not([data-theme="light"]) .recipe { box-shadow: 10px 10px 0 var(--accent-soft); } }
+:root[data-theme="dark"] .shot, :root[data-theme="dark"] .hero-window, :root[data-theme="dark"] .demo-frame, :root[data-theme="dark"] .recipe { box-shadow: 10px 10px 0 var(--accent-soft); }
+
+/* ---------- Ticker band: aqua, ink type, outlined words, speeds up with scroll ---------- */
+.lit-band { background: var(--accent); color: #17150F; border-block: 1px solid var(--ink); -webkit-mask-image: none; mask-image: none; padding-block: 14px; }
+.lit-band li { color: #17150F; font-weight: 700; letter-spacing: -0.04em; }
+.lit-band li:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px #17150F; }
+.lit-band li::after { background: #17150F; border-radius: 0; box-shadow: none; }
+.lit-band li:nth-child(3n)::after { background: transparent; box-shadow: inset 0 0 0 0.09em #17150F; }
+
+/* ---------- Tile field: the decorative cell strip that sits in page heroes (ledger.js adds it) ---------- */
+.tile-field { display: grid; grid-template-columns: repeat(var(--cols, 16), 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 40px; }
+.tile-field i { aspect-ratio: 1; background: var(--base); transition: background-color 0.7s var(--ease-l); }
+.tile-field i.dim { background: color-mix(in srgb, var(--text) 7%, var(--base)); }
+.tile-field i.lit { background: var(--accent); transition-duration: 0.12s; }
+.tile-field i.ink { background: var(--ink); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tile-field i.ink { background: color-mix(in srgb, var(--text) 18%, var(--base)); } }
+:root[data-theme="dark"] .tile-field i.ink { background: color-mix(in srgb, var(--text) 18%, var(--base)); }
+.tile-field:hover i:hover { background: var(--accent); transition-duration: 0s; }
+@media (max-width: 700px) { .tile-field { --cols: 8; } }
+
+/* ---------- Footer: ruled, square cards ---------- */
+.foot { border-top: 1px solid var(--rule); }
+.foot-card, .foot-tile, .foot-top { border-radius: 0; }
+.foot-card { border: 1px solid var(--rule); transition: transform 0.3s var(--ease-l), box-shadow 0.3s var(--ease-l), background-color 0.3s; }
+.foot-card:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--accent); background: var(--grouped); }
+.foot-tile { background: var(--ink); color: var(--accent); }
+.foot-h { text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px; font-weight: 700; color: var(--text-2); }
+
+/* ---------- FAQ and details: ruled rows ---------- */
+.faq { border-top: 1px solid var(--rule); }
+.faq details, .faq > div { border-bottom: 1px solid var(--rule-soft); }
+.faq summary { transition: padding-left 0.35s var(--ease-l), background-color 0.3s; }
+@media (hover: hover) { .faq summary:hover { padding-left: 14px; background: linear-gradient(90deg, var(--accent-soft), transparent 60%); } }
+
+/* ---------- Reveal: rows and cards rise in, staggered ---------- */
+.lg-rv { opacity: 0; transform: translateY(18px); transition: opacity 0.8s var(--ease-l), transform 0.8s var(--ease-l); transition-delay: calc(var(--i, 0) * 60ms); }
+.lg-rv.on { opacity: 1; transform: none; }
+
+/* ---------- Tile wipe between pages (ledger.js) ---------- */
+#lg-wipe { position: fixed; inset: 0; z-index: 200; display: none; pointer-events: none; grid-template-columns: repeat(var(--tc, 20), 1fr); }
+#lg-wipe i { background: var(--ink); transform: scale(0); transition: transform 0.28s var(--ease-l); }
+#lg-wipe i.on { transform: scale(1); }
+#lg-wipe i.lit { background: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-rv { opacity: 1; transform: none; transition: none; }
+  .hl { background-size: 100% 0.38em; transition: none; }
+  .card, .card::before, .foot-card, .shot, .tile-field i { transition: none; }
+  #lg-wipe { display: none !important; }
+}
+
+/* Inputs and pills become square cells */
+.faq-search input, .faq-search label, .win-search, input[type="search"], input[type="text"], input[type="email"], select, textarea { border-radius: 0; }
+.faq-search > *, .faq-search label { border-radius: 0; }
+.seg, .seg button, .capsule, .capsule-btn, .chip, .badge, .rm-status { border-radius: 0; }
+
+/* ---------- Home: spec ledger under the hero CTA ---------- */
+.spec { display: grid; grid-template-columns: repeat(3, 1fr); margin: 44px auto 0; max-width: 640px; border-top: 1px solid var(--rule); text-align: left; }
+.spec > div { padding: 16px 16px 0 14px; border-right: 1px solid var(--rule-soft); transition: background-color 0.3s, padding-top 0.3s var(--ease-l); }
+.spec > div:last-child { border-right: 0; }
+.spec dt { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 4px; }
+.spec dd { margin: 0; font-size: 14px; color: var(--text-2); }
+@media (hover: hover) { .spec > div:hover { background: var(--accent-soft); } }
+@media (max-width: 480px) { .spec dt { font-size: 18px; } .spec dd { font-size: 13px; } .spec > div { padding-right: 8px; } }
+
+/* ---------- Home: ruled proof list, ink privacy band with big aqua figures ---------- */
+.proof-list { border-top: 1px solid var(--rule); }
+.proof-item { border-bottom: 1px solid var(--rule-soft); transition: padding-left 0.4s var(--ease-l), background-color 0.3s; }
+@media (hover: hover) { .proof-item:hover { padding-left: 14px; background: linear-gradient(90deg, var(--accent-soft), transparent 70%); } }
+.privacy { position: relative; isolation: isolate; color: var(--ink-text); padding-block: 96px; margin-block: 80px; --text: #F4EFE6; --text-2: rgba(244,239,230,0.78); --text-3: rgba(244,239,230,0.6); --hair: rgba(244,239,230,0.16); --rule-soft: rgba(244,239,230,0.16); }
+.privacy::before { content: ""; position: absolute; inset: 0 calc(50% - 50vw); background: var(--ink); z-index: -1; border-block: 1px solid var(--rule); }
+.privacy .privacy-link a { color: var(--ink-text); }
+.privacy .facts { border-top: 1px solid rgba(244,239,230,0.4); }
+.privacy .fact { border-bottom: 1px solid var(--rule-soft); transition: padding-left 0.4s var(--ease-l), background-color 0.3s; }
+.privacy .fact h3 { color: var(--accent); }
+@media (hover: hover) { .privacy .fact:hover { padding-left: 14px; background: linear-gradient(90deg, rgba(70,230,214,0.16), transparent 70%); } }
+
+/* Divider tile rule: square cells on a hairline, one aqua */
+.tile-rule i { border-radius: 0; }
