@@ -315,3 +315,4 @@
 @media (prefers-reduced-motion: reduce) {
   .faq summary::after { transition: none; }
 }
+

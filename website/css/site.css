@@ -680,7 +680,8 @@ kbd {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 36px 0 56px;
+  padding-top: 36px;
+  padding-bottom: 56px;
   border-top: 1px solid var(--hair);
   font-size: 13px;
   color: var(--text-3);

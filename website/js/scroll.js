@@ -92,14 +92,32 @@
   var pinned = false;
   var activeStep = -1;
 
+  // The video is 0.7 MB, so it loads only when the demo section gets close to the
+  // screen, not on page load. Scrubbing starts once it has loaded.
+  var videoArmed = false;
+  function loadDemoWhenNear() {
+    if (videoArmed) return;
+    videoArmed = true;
+    function load() {
+      demo.preload = "auto";
+      if (demo.readyState === 0) demo.load();
+    }
+    if (!hasIO) { load(); return; }
+    var near = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (en) { return en.isIntersecting; })) return;
+      near.disconnect();
+      load();
+    }, { rootMargin: "400px 0px" });
+    near.observe(track);
+  }
+
   function setPinned(on) {
     if (on === pinned) return;
     pinned = on;
     if (on) {
       demo.dataset.scrub = "on";            // site.js reads this and skips autoplay
       demo.pause();
-      demo.preload = "auto";
-      if (demo.readyState === 0) demo.load();
+      loadDemoWhenNear();
     } else {
       delete demo.dataset.scrub;
       activeStep = -1;

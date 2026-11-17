@@ -13,12 +13,14 @@ on:
     paths:
       - "website/**"
       - "scripts/check-website.py"
+      - "lighthouserc.json"
       - ".github/workflows/website.yml"
   push:
     branches: [integration, main]
     paths:
       - "website/**"
       - "scripts/check-website.py"
+      - "lighthouserc.json"
       - ".github/workflows/website.yml"
   workflow_dispatch:
 
@@ -65,6 +67,33 @@ jobs:
           name: inlet-website
           path: website
           if-no-files-found: error
+          retention-days: 14
+
+  # Lighthouse on every page, desktop preset, median of three runs. The
+  # assertions live in lighthouserc.json. Reports are uploaded as an artifact.
+  lighthouse:
+    name: Lighthouse
+    needs: check
+    if: needs.check.outputs.present == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.14.0 autorun --config=lighthouserc.json
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lighthouse-reports
+          if-no-files-found: ignore
           retention-days: 14
 
   deploy:
