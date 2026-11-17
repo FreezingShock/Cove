@@ -38,11 +38,11 @@ Inlet uses a two-branch flow:
 
 ## CI
 
-The `build` check runs on every PR into `integration`, every push to it, and every merge queue run. It must pass before a PR merges.
+The `build` check runs on every PR into `integration`, on every push to it, and on every merge queue run. It runs `xcodebuild build` with Xcode 26.6 on the `macos-26` runner, plus tests once a unit-test target exists. It must pass before a PR merges.
 
-- **App changes** (anything under `Inlet/`, `Inlet.xcodeproj/`, `.github/` or `scripts/`) run the full build: `xcodebuild build` with Xcode 26.6 on the `macos-26` runner. Tests run once a unit-test target exists.
-- **Docs and website changes** (`website/`, `docs/`, Markdown files, anything else outside those paths) skip the macOS build. A small `changes` job decides this in about ten seconds. The `build` check still reports as skipped, which counts as passing, so these PRs can auto-merge without waiting for a Mac.
-- **Superseded runs are cancelled.** Pushing a new commit to a PR cancels the run still in progress for that PR.
+- **Every PR runs the full build,** including docs and website PRs. Don't rely on a skipped check to pass. A job-level skip did not let docs PRs merge, so the build now runs on every PR.
+- **Superseded runs are cancelled.** A new push to a PR cancels that PR's run in progress. A newer push to `integration` cancels the older one.
+- **The `changes` job is informational.** It reports which paths changed, and it doesn't gate the build.
 
 Before you push app changes, build locally. Use the same flags CI uses so the local run matches:
 
