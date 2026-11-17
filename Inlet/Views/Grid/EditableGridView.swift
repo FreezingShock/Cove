@@ -148,9 +148,6 @@ struct EditableGridView: View {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, app in
                 // Each value is named on its own line, so the type-checker
                 // handles every expression separately.
-                let isDragged: Bool = drag?.id == app.id
-                let isHoveredTile: Bool = drag == nil && hoveredID == app.id
-                let showsBadge: Bool = isEditing && app.isHideable
                 let placement: OpenPlacement = openPlacement(forIndex: index, total: items.count, geo: geo)
                 let center: CGPoint = tilePosition(for: app, index: index, geo: geo, track: track)
 
@@ -159,11 +156,11 @@ struct EditableGridView: View {
                     placement: placement,
                     isOpen: isOpen,
                     isEditing: isEditing,
-                    showsBadge: showsBadge,
-                    isLifted: isDragged,
+                    showsBadge: showsBadge(for: app),
+                    isLifted: isDragging(app),
                     isPressed: isPressed(app),
                     isKeyboardFocused: app.id == focusedID,
-                    isHovered: isHoveredTile,
+                    isHovered: isHoverTarget(app),
                     onOpen: { onLaunch(app) },
                     onHide: { if app.isHideable { onHide(app) } },
                     onMove: { onMove(app, $0) }
@@ -172,7 +169,7 @@ struct EditableGridView: View {
                 .position(center)
                 // The dragged icon follows the pointer exactly, so it doesn't animate.
                 .transaction { transaction in
-                    if isDragged { transaction.animation = nil }
+                    if isDragging(app) { transaction.animation = nil }
                 }
             }
         }
@@ -192,6 +189,24 @@ struct EditableGridView: View {
         }
         // Reorders and page changes animate. Ids only, so a swipe doesn't re-animate.
         .animation(motion(.inletSettle), value: items.map(\.id))
+    }
+
+    /// True while this icon is the one being dragged.
+    private func isDragging(_ app: AppItem) -> Bool {
+        guard let drag else { return false }
+        return drag.id == app.id
+    }
+
+    /// True in Edit mode for an icon that can be hidden. Shows its minus badge.
+    private func showsBadge(for app: AppItem) -> Bool {
+        guard isEditing else { return false }
+        return app.isHideable
+    }
+
+    /// True when the pointer is over this icon and no drag is running.
+    private func isHoverTarget(_ app: AppItem) -> Bool {
+        guard drag == nil else { return false }
+        return hoveredID == app.id
     }
 
     /// True while the press is on this icon and hasn't turned into a swipe or drag.
