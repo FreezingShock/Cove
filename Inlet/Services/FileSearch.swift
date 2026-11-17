@@ -73,7 +73,7 @@ final class FileSearch {
     /// File rows for the current query, best match first. Empty when the query is empty.
     private(set) var results: [FileItem] = []
 
-    /// True while a Spotlight query for the current text is still gathering.
+    /// True while a Spotlight query for the current text is pending or still gathering.
     private(set) var isSearching = false
 
     /// Wait this long after the last keystroke before querying (spec T3.2 proposes 150 ms).
@@ -111,6 +111,9 @@ final class FileSearch {
             return
         }
 
+        // Pending counts as searching too, so the "Searching files" line does not
+        // flicker off during the debounce between keystrokes.
+        isSearching = true
         debounceTask = Task { [weak self] in
             try? await Task.sleep(for: self?.debounceInterval ?? .milliseconds(150))
             guard !Task.isCancelled, let self else { return }
