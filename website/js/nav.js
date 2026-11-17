@@ -75,10 +75,7 @@
   var onHome = file === "index.html";
   function toHome(hash) { return onHome ? hash : "index.html" + hash; }
   function themeAction(choice) {
-    return function () {
-      var b = nav.querySelector('.seg [data-theme-choice="' + choice + '"]');
-      if (b) b.click();
-    };
+    return function () { setChoice(choice); };
   }
 
   var ITEMS = [
@@ -287,6 +284,40 @@
   });
   var trigger = nav.querySelector(".search-btn");
   if (trigger) trigger.addEventListener("click", open);
+
+  /* ---------- Appearance: one icon in the footer cycles Auto, Light and Dark. Auto follows the system. ---------- */
+  var THEME_KEY = "inlet-page-theme"; // same key as site.js and pages.js
+  var THEME_ORDER = ["auto", "light", "dark"];
+  var THEME_NAME = { auto: "Auto", light: "Light", dark: "Dark" };
+  var cycleBtn = document.querySelector("[data-theme-cycle]");
+
+  function savedChoice() {
+    var c = "auto";
+    try { c = localStorage.getItem(THEME_KEY) || "auto"; } catch (err) { c = "auto"; }
+    return THEME_ORDER.indexOf(c) === -1 ? "auto" : c;
+  }
+  function nextChoice(c) {
+    return THEME_ORDER[(THEME_ORDER.indexOf(c) + 1) % THEME_ORDER.length];
+  }
+  function syncCycle() {
+    if (!cycleBtn) return;
+    var c = savedChoice();
+    cycleBtn.dataset.mode = c;
+    cycleBtn.setAttribute("aria-label", "Appearance: " + THEME_NAME[c] + ". Switch to " + THEME_NAME[nextChoice(c)]);
+    cycleBtn.title = "Appearance: " + THEME_NAME[c];
+  }
+  function setChoice(choice) {
+    if (choice === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", choice);
+    try { localStorage.setItem(THEME_KEY, choice); } catch (err) { /* private window or blocked storage */ }
+    syncCycle();
+  }
+  if (cycleBtn) cycleBtn.addEventListener("click", function () { setChoice(nextChoice(savedChoice())); });
+  // The home page's Settings demo sets the same key through site.js; keep the icon in step with it.
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-theme-choice]")) setTimeout(syncCycle, 0);
+  });
+  syncCycle();
 
   /* ---------- Magnetic primary buttons: a few pixels toward the pointer, fine pointers only ---------- */
   if (fineQuery.matches && !reduceQuery.matches) {

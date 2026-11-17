@@ -216,27 +216,16 @@ main p a:hover,
 @media (max-width: 560px) {
   .menu-extra {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
     margin-top: 6px;
-    padding: 12px 8px 6px;
+    padding: 10px 8px 0;
     border-top: 1px solid var(--hair);
   }
-  .menu-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    padding: 0 8px;
-  }
-  .menu-extra .seg { display: flex; }
-  .menu-extra .seg button { flex: 1; justify-content: center; min-height: 40px; font-size: 14px; }
-  .links .menu-get { display: flex; justify-content: center; min-height: 48px; font-size: 16px; color: var(--accent-ink); }
-  .links .menu-get:hover { background: var(--accent); filter: brightness(1.07); }
+  .links .menu-get { display: flex; flex: 1; justify-content: center; min-height: 48px; font-size: 16px; color: var(--accent-ink); box-shadow: none; }
+  .links .menu-get:hover { background: var(--accent); filter: brightness(1.07); box-shadow: none; }
   .nav-right .search-btn { width: 36px; padding: 0; justify-content: center; }
   .nav-right .search-btn span,
-  .nav-right .search-btn kbd { display: none; }
+  .nav-right .search-btn kbd,
+  .nav-right .dl-mac { display: none; }
 }
 
 /* ---------- Command palette (⌘K) ---------- */
@@ -480,3 +469,42 @@ main p a:hover,
   .foot .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
   .foot .foot-cols .foot-col:last-child { grid-column: 1 / -1; }
 }
+
+/* ---------- Appearance icon (footer) ----------
+   One quiet icon. A click cycles Auto, Light, Dark; data-mode on the button picks which glyph shows.
+   Auto follows the system, so most visitors never need to touch it. */
+.foot-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.theme-cycle {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hair);
+  background: var(--field);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-fade), color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
+}
+.theme-cycle:hover { color: var(--text); background: var(--hover); }
+.theme-cycle:active { transform: scale(0.94); }
+.theme-cycle svg {
+  grid-area: 1 / 1;
+  display: none;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-cycle[data-mode="auto"] .ic-auto,
+.theme-cycle[data-mode="light"] .ic-light,
+.theme-cycle[data-mode="dark"] .ic-dark { display: block; }
