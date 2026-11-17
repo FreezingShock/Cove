@@ -20,6 +20,8 @@ Vercel was the alternative. It gives a live preview for every branch, but it nee
 | Manual run from `main` (Actions tab, Run workflow) | Same as the push to `main`, even with no site change |
 | A release is published, edited, unpublished or deleted | Redeploys the site, so the release notes stay current |
 
+On a deploy, the workflow copies `website/` to `_site/`, adds the release info, and then minifies the CSS and JS in that copy with esbuild (pinned in the workflow). `website/` stays readable. A minify failure stops the deploy. The published copy is checked again with `scripts/check-website.py` before upload.
+
 To preview a PR's site, open the run in the Actions tab, download the `inlet-website` artifact, unzip it, and open `index.html`.
 
 `scripts/check-website.py` fails the build on:

@@ -32,6 +32,10 @@ You can also double-click `index.html` to open it straight from the folder. It w
 - `assets/` holds the Inlet app icon as SVG and PNG.
 - `assets/launch/` holds the launch images: the demo video and its poster, stills of the grid, search and quick panel, and the 1200 x 630 link-preview card. They are drawn by `scripts/launch-assets/capture.cjs` from a macOS-style desktop scene (`scripts/launch-assets/mac-scene.html`): an original wallpaper, menu bar, Dock, glass panels and a cursor. They are not captured from the Mac app, and the scene uses no Apple wallpapers or app icons.
 
+## Minification
+
+The source CSS and JS are readable. The Pages deploy minifies them in its own copy (`_site/`), so `website/` never changes. Keep the source readable, and don't commit minified files.
+
 ## Images and video
 
 - The three app screenshots on `features.html` are `<picture>` elements. Each one offers AVIF, then WebP, then the original WebP, at several widths. The browser picks the smallest good file.
