@@ -43,7 +43,6 @@
       act.hidden = false;
     } else {
       act.hidden = true;
-      act.removeAttribute("href");
       act.textContent = "";
     }
     toast.classList.add("is-on");
@@ -59,6 +58,7 @@
     msg.className = "site-toast-msg";
     act = document.createElement("a");
     act.className = "site-toast-act";
+    act.href = "download.html#install"; // always a real link, so it stays crawlable and works without script
     act.hidden = true;
     toast.appendChild(msg);
     toast.appendChild(act);
@@ -102,10 +102,12 @@
           }
           show("Copied. Paste it into Terminal or Finder.");
           btn.textContent = "Copied";
+          btn.setAttribute("aria-label", "Copied command");
           btn.classList.add("is-done");
           clearTimeout(timerBtn);
           timerBtn = setTimeout(function () {
             btn.textContent = "Copy";
+            btn.setAttribute("aria-label", "Copy command");
             btn.classList.remove("is-done");
           }, DONE_MS);
         });
