@@ -18,7 +18,7 @@ final class AppFolderWatcher {
     static let latency: CFTimeInterval = 1.0
 
     private let paths: [String]
-    private let onChange: @MainActor () -> Void
+    let onChange: @MainActor () -> Void
     private var stream: FSEventStreamRef?
 
     /// - Parameters:
