@@ -320,11 +320,66 @@
   });
   syncCycle();
 
-  /* ---------- Header states: out of the way while reading down, back on scroll up, always on screen while a menu or the palette is open ---------- */
+  /* ---------- Header states ----------
+     top: the full pill, with Download outlined.
+     mid: scrolled. The pill compacts, a hairline band fades in, a progress line fills as you read,
+          and the label names the section you are in (or the page, off the home page).
+     end: within 96 px of the bottom. The header is always on screen, Download turns solid,
+          and the progress line is full.
+     Scrolling down past the first screen hides the header in the middle of a page. Scrolling up brings it back.
+     An open menu, the ⌘K palette and the pinned demo keep it on screen. */
   var lastY = window.scrollY || 0;
   var headerQueued = false;
   var MOVE = 6;   // px of scroll before the header reacts, so small jitters do nothing
   var TOP = 120;  // above this the header is always shown
+  var END = 96;   // within this many px of the bottom the header is in its end state
+
+  var innerEl = nav.querySelector(".nav-inner");
+  var progressEl = document.createElement("span");
+  progressEl.className = "nav-progress";
+  progressEl.setAttribute("aria-hidden", "true");
+  var hereEl = document.createElement("span");
+  hereEl.className = "nav-here";
+  hereEl.setAttribute("aria-hidden", "true");
+  // Phones get a "Get Inlet" button at the end of the page, since they cannot install the disk image.
+  var ctaEl = document.createElement("a");
+  ctaEl.className = "btn btn-primary btn-sm nav-cta";
+  ctaEl.href = onHome ? "#get" : "index.html#get";
+  ctaEl.textContent = "Get Inlet";
+  if (innerEl) {
+    innerEl.insertBefore(progressEl, innerEl.firstChild);
+    var brandEl = innerEl.querySelector(".brand");
+    if (brandEl) brandEl.insertAdjacentElement("afterend", hereEl);
+    var rightEl = innerEl.querySelector(".nav-right");
+    var menuBtnEl = innerEl.querySelector(".menu-btn");
+    if (rightEl) rightEl.insertBefore(ctaEl, menuBtnEl || null);
+  }
+
+  // Home page sections, by id. Other pages show their own page name instead.
+  var SECTION_LABEL = {
+    demo: "Demo", features: "Search", quick: "Quick panel", organize: "Organize", settings: "Settings",
+    uses: "Uses", privacy: "Privacy", "for": "Who it's for", get: "Get Inlet"
+  };
+  var sectionEls = Array.prototype.filter.call(document.querySelectorAll("main section[id]"), function (s) {
+    return SECTION_LABEL.hasOwnProperty(s.id);
+  });
+  var pageLabel = "";
+  var activeLink = linksEl ? linksEl.querySelector(":scope > a[aria-current='page'], :scope > a[aria-current='true']") : null;
+  if (activeLink) pageLabel = activeLink.textContent.trim();
+
+  function sectionLabelAt(line) {
+    var label = "";
+    for (var i = 0; i < sectionEls.length; i++) {
+      if (sectionEls[i].getBoundingClientRect().top <= line) label = SECTION_LABEL[sectionEls[i].id];
+    }
+    return label;
+  }
+  function setHere(text) {
+    if (hereEl.textContent !== text) hereEl.textContent = text;
+  }
+  function setPhase(phase) {
+    if (nav.getAttribute("data-phase") !== phase) nav.setAttribute("data-phase", phase);
+  }
 
   function showHeader() { nav.classList.remove("is-hidden"); }
   function hideHeader() {
@@ -335,17 +390,27 @@
   function onHeaderScroll() {
     headerQueued = false;
     var y = window.scrollY || 0;
-    var dy = y - lastY;
-    if (y <= TOP) { showHeader(); lastY = y; return; }
-    if (Math.abs(dy) < MOVE) return;
-    if (dy > 0) hideHeader(); else showHeader();
+    var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    var atEnd = max > 0 && y >= max - END;
+    var phase = atEnd ? "end" : (y < 8 ? "top" : "mid");
+    setPhase(phase);
+    progressEl.style.transform = "scaleX(" + (max > 0 ? Math.min(1, y / max) : 1).toFixed(4) + ")";
+    if (phase === "top") setHere("");
+    else if (sectionEls.length) setHere(sectionLabelAt(window.innerHeight * 0.4));
+    else setHere(pageLabel);
+
+    if (atEnd || y <= TOP) { showHeader(); lastY = y; return; }
+    if (Math.abs(y - lastY) < MOVE) return;
+    if (y > lastY) hideHeader(); else showHeader();
     lastY = y;
   }
-  window.addEventListener("scroll", function () {
+  function queueHeader() {
     if (headerQueued) return;
     headerQueued = true;
     requestAnimationFrame(onHeaderScroll);
-  }, { passive: true });
+  }
+  window.addEventListener("scroll", queueHeader, { passive: true });
+  window.addEventListener("resize", queueHeader);
   // Keyboard focus anywhere in the header brings it back, so nothing tabs into a hidden bar.
   nav.addEventListener("focusin", showHeader);
   onHeaderScroll();
