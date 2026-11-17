@@ -26,8 +26,8 @@ struct GridZone: Codable, Equatable, Identifiable, Sendable {
     var width: Int
     /// Height in grid rows.
     var height: Int
-    /// The groups this zone holds. These are AppCategory raw values for now,
-    /// and group IDs once the groups model lands.
+    /// The IDs of the groups this zone holds (`AppGroup.id`). Presets use
+    /// their category's raw value as the ID, so older zones still match.
     var groupIDs: [String]
 
     /// A new zone, two columns wide, placed at `row`.

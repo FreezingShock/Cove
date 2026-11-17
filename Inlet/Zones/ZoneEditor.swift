@@ -23,6 +23,8 @@ struct ZoneEditor: View {
     let isNew: Bool
     /// Columns in the grid. Caps the width and the column position.
     let columns: Int
+    /// The groups on the bar. A zone can hold any of them.
+    let groups: [AppGroup]
     /// Every other zone, so the editor can say when this one overlaps.
     let others: [GridZone]
     /// Saves the zone. Returns false if it doesn't fit.
@@ -36,12 +38,14 @@ struct ZoneEditor: View {
         zone: GridZone,
         isNew: Bool,
         columns: Int,
+        groups: [AppGroup],
         others: [GridZone],
         onSave: @escaping (GridZone) -> Bool,
         onDelete: @escaping () -> Void
     ) {
         self.isNew = isNew
         self.columns = columns
+        self.groups = groups
         self.others = others
         self.onSave = onSave
         self.onDelete = onDelete
@@ -63,8 +67,12 @@ struct ZoneEditor: View {
             }
 
             Section {
-                ForEach(AppCategory.allCases) { category in
-                    Toggle(category.title, isOn: holds(category))
+                if groups.isEmpty {
+                    Text("No groups yet. Add one from the group bar.")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(groups) { group in
+                    Toggle(group.name, isOn: holds(group.id))
                 }
             } header: {
                 Text("Holds these groups")
@@ -117,12 +125,12 @@ struct ZoneEditor: View {
         }
     }
 
-    private func holds(_ category: AppCategory) -> Binding<Bool> {
+    private func holds(_ groupID: String) -> Binding<Bool> {
         Binding(
-            get: { draft.groupIDs.contains(category.rawValue) },
+            get: { draft.groupIDs.contains(groupID) },
             set: { isOn in
-                draft.groupIDs.removeAll { $0 == category.rawValue }
-                if isOn { draft.groupIDs.append(category.rawValue) }
+                draft.groupIDs.removeAll { $0 == groupID }
+                if isOn { draft.groupIDs.append(groupID) }
             }
         )
     }

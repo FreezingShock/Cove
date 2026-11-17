@@ -27,14 +27,14 @@ enum InletSettings {
         case showMenuBarIcon          = "inlet.general.showMenuBarIcon"          // Bool, true
         case closeAfterLaunch         = "inlet.general.closeAfterLaunch"         // Bool, true
         case escapeClearsSearchFirst  = "inlet.general.escapeClearsSearchFirst"  // Bool, true
-        case rememberLastCategory     = "inlet.general.rememberLastCategory"     // Bool, true
+        case rememberLastGroup        = "inlet.general.rememberLastCategory"     // Bool, true (key kept from v1)
 
         // Appearance: "auto", "light" or "dark"
         case appearance               = "inlet.appearance.mode"                  // String, "auto"
 
         // Grid
         case gridColumns              = "inlet.grid.columns"                     // Int, 5...9, 7
-        case lastCategory             = "inlet.grid.lastCategory"                // String, an AppCategory raw value, "" for All
+        case lastGroup                = "inlet.grid.lastCategory"                // String, a group id, "" for All (key kept from v1)
 
         // Search
         case searchIncludesFiles      = "inlet.search.includeFiles"              // Bool, true
@@ -68,10 +68,10 @@ enum InletSettings {
             Key.showMenuBarIcon.rawValue: true,
             Key.closeAfterLaunch.rawValue: true,
             Key.escapeClearsSearchFirst.rawValue: true,
-            Key.rememberLastCategory.rawValue: true,
+            Key.rememberLastGroup.rawValue: true,
             Key.appearance.rawValue: AppearanceMode.auto.rawValue,
             Key.gridColumns.rawValue: 7,
-            Key.lastCategory.rawValue: "",
+            Key.lastGroup.rawValue: "",
             Key.searchIncludesFiles.rawValue: true,
             Key.searchFileResultCount.rawValue: 5,
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
@@ -91,17 +91,18 @@ enum InletSettings {
         clamp(UserDefaults.standard.integer(forKey: Key.gridColumns.rawValue), 5...9, fallback: 7)
     }
 
-    /// The bucket to open the grid on: the last one the user picked, when
-    /// "Remember last category" is on. Nil means All.
-    static var startingCategory: AppCategory? {
-        guard UserDefaults.standard.bool(forKey: Key.rememberLastCategory.rawValue) else { return nil }
-        let raw = UserDefaults.standard.string(forKey: Key.lastCategory.rawValue) ?? ""
-        return AppCategory(rawValue: raw)
+    /// The group to open the grid on: the last one the user picked, when
+    /// "Remember the last group" is on. Nil means All. The grid checks that
+    /// the group still exists.
+    static var startingGroupID: String? {
+        guard UserDefaults.standard.bool(forKey: Key.rememberLastGroup.rawValue) else { return nil }
+        let raw = UserDefaults.standard.string(forKey: Key.lastGroup.rawValue) ?? ""
+        return raw.isEmpty ? nil : raw
     }
 
-    /// Saves the bucket the user picked. Nil (All) is stored as an empty string.
-    static func saveLastCategory(_ category: AppCategory?) {
-        UserDefaults.standard.set(category?.rawValue ?? "", forKey: Key.lastCategory.rawValue)
+    /// Saves the group the user picked. Nil (All) is stored as an empty string.
+    static func saveLastGroup(_ groupID: String?) {
+        UserDefaults.standard.set(groupID ?? "", forKey: Key.lastGroup.rawValue)
     }
 
     static var searchIncludesFiles: Bool {

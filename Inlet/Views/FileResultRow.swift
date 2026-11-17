@@ -29,7 +29,7 @@ struct FileResultRow: View {
                     .truncationMode(.middle)
 
                 Text(item.displayPath)
-                    .font(.system(size: 12))
+                    .font(InletFont.caption)
                     .foregroundStyle(InletColor.text2)
                     .lineLimit(1)
                     .truncationMode(.head)

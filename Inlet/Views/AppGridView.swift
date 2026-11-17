@@ -3,8 +3,8 @@
 //  Inlet
 //
 //  The full grid, shown on the overlay: a header, the search panel, the
-//  category bar, then the grid. Typing filters the grid. Arrow keys move
-//  through it. With no search and no category, the grid is paged and can be
+//  group bar, then the grid. Typing filters the grid. Arrow keys move
+//  through it. With no search and no group, the grid is paged and can be
 //  edited: reorder, hide an app, and Undo. It sits on the overlay's scrim, so
 //  it has no background of its own.
 //
@@ -77,17 +77,19 @@ struct AppGridView: View {
     /// The icon that has keyboard focus, if any. Arrow keys move it.
     @FocusState private var focusedApp: AppItem.ID?
 
-    /// The bucket the grid is filtered to. Nil shows every app.
-    /// Starts on the last bucket used when "Remember last category" is on.
-    @State private var category: AppCategory? = InletSettings.startingCategory
+    /// The group the grid is filtered to, by group id. Nil shows every app.
+    /// Starts on the last group used when "Remember the last group" is on.
+    @State private var groupID: String? = InletSettings.startingGroupID
     /// Spotlight file matches for the query, shown under the search field.
     @State private var fileSearch = FileSearch()
 
     /// Edit mode: icons wobble, drag to reorder, minus badges hide apps.
-    /// Only the paged grid has it (no search, no category).
+    /// Only the paged grid has it (no search, no group).
     @State private var isEditing = false
     /// Whether the Hidden apps panel is open.
     @State private var showsHidden = false
+    /// Whether the Groups panel is open.
+    @State private var showsGroups = false
     /// The last hidden app, for the Undo toast.
     @State private var undo: HideUndo?
     /// Clears the Undo toast after a few seconds.
@@ -102,7 +104,7 @@ struct AppGridView: View {
     /// Column count from Settings > Grid (5 to 9, default 7).
     @AppStorage(InletSettings.Key.gridColumns.rawValue) private var gridColumns = 7
     /// Settings > General and Search. Read here so each change applies at once.
-    @AppStorage(InletSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
+    @AppStorage(InletSettings.Key.rememberLastGroup.rawValue) private var rememberLastGroup = true
     @AppStorage(InletSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
     @AppStorage(InletSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(InletSettings.Key.searchIncludesFiles.rawValue) private var searchIncludesFiles = true
@@ -130,15 +132,26 @@ struct AppGridView: View {
     /// True when the query has something other than spaces in it.
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
 
-    /// The paged, editable grid: no search and no category filter.
-    private var isPaged: Bool { !isSearching && category == nil }
+    /// The paged, editable grid: no search and no group filter.
+    private var isPaged: Bool { !isSearching && groupID == nil }
 
-    /// The apps to show. Searching looks through every app, since the category
-    /// bar is hidden then. Otherwise the grid shows the selected bucket.
+    /// The apps to show. Searching looks through every app, since the group
+    /// bar is faded then. Otherwise the grid shows the selected group.
     /// Matches come back best-first.
     private var shownApps: [AppItem] {
-        let pool = isSearching ? library.apps : AppCategory.filter(library.apps, by: category)
+        let pool = isSearching ? library.apps : groupApps
         return AppSearch.results(for: query, in: pool)
+    }
+
+    /// The apps in the selected group, in the group's order. Hidden apps are
+    /// left out, as they are everywhere except the Hidden list.
+    private var groupApps: [AppItem] {
+        guard let groupID, let group = layoutStore.layout.groups.first(where: { $0.id == groupID }) else {
+            return library.apps
+        }
+        let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let hiddenIDs = Set(layoutStore.layout.hidden.map(\.appID))
+        return group.appIDs.compactMap { byID[$0] }.filter { !hiddenIDs.contains($0.id) }
     }
 
     /// The apps in the order the grid draws them, which arrow keys follow.
@@ -153,6 +166,15 @@ struct AppGridView: View {
         return zoneStore.zones.map { $0.fitted(columns: gridColumns) }
     }
 
+    /// The group each app belongs to, from the saved groups. Zones pick apps by group.
+    private var groupIDByApp: [String: String] {
+        var result: [String: String] = [:]
+        for group in layoutStore.layout.groups {
+            for appID in group.appIDs { result[appID] = group.id }
+        }
+        return result
+    }
+
     /// The apps each zone holds. Hidden apps are left out.
     private var zoneContents: [String: [AppItem]] {
         let hidden = Set(layoutStore.layout.hidden.map(\.appID))
@@ -160,7 +182,7 @@ struct AppGridView: View {
             of: visibleZones,
             apps: library.apps,
             hidden: hidden,
-            groupOf: { $0.category.rawValue }
+            groupOf: { groupIDByApp[$0.id] ?? "" }
         )
     }
 
@@ -216,8 +238,15 @@ struct AppGridView: View {
 
                 // Fades out while typing, so the search results take its place.
                 // It keeps its space, so the grid below does not jump.
-                CategoryBar(selection: $category, isFaded: isSearching)
+                if !layoutStore.layout.groups.isEmpty {
+                    GroupBar(
+                        groups: layoutStore.layout.groups,
+                        selection: $groupID,
+                        isFaded: isSearching,
+                        onDrop: dropApps
+                    )
                     .padding(.bottom, InletSpace.l)
+                }
 
                 content
             }
@@ -229,12 +258,14 @@ struct AppGridView: View {
         }
         .frame(minWidth: minimumGridWidth, maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .topTrailing) { hiddenPanel }
+        .overlay(alignment: .topTrailing) { groupsPanel }
         .overlay(alignment: .bottom) { undoToast }
         .sheet(item: $zoneDraft) { draft in
             ZoneEditor(
                 zone: draft.zone,
                 isNew: draft.isNew,
                 columns: gridColumns,
+                groups: layoutStore.layout.groups,
                 others: zoneStore.zones.filter { $0.id != draft.zone.id },
                 onSave: { zoneStore.save($0, columns: gridColumns) },
                 onDelete: { zoneStore.remove(draft.zone.id) }
@@ -253,12 +284,24 @@ struct AppGridView: View {
                 resultCount: searchIncludesFiles ? fileResultCount : 0
             )
         }
-        .onChange(of: category) { _, newCategory in
-            // A category filter is not paged, so leave Edit mode with it.
-            if newCategory != nil { isEditing = false }
-            if rememberLastCategory {
-                InletSettings.saveLastCategory(newCategory)
+        .onChange(of: groupID) { _, newGroupID in
+            // A group filter is not paged, so leave Edit mode with it.
+            if newGroupID != nil { isEditing = false }
+            if rememberLastGroup {
+                InletSettings.saveLastGroup(newGroupID)
             }
+        }
+        // A deleted group can't stay selected.
+        .onChange(of: layoutStore.layout.groups.map(\.id)) { _, ids in
+            if let groupID, !ids.contains(groupID) { self.groupID = nil }
+        }
+        // Every open starts clean: no leftover search text, no half-finished
+        // Edit mode. The group filter is kept on purpose (see Remember the last group).
+        .onChange(of: isOpen) { _, open in
+            guard open else { return }
+            query = ""
+            isEditing = false
+            focusedApp = nil
         }
         // Keep the saved layout in step with what is installed.
         .onChange(of: library.apps) { _, apps in reconcileLayout(apps) }
@@ -299,7 +342,19 @@ struct AppGridView: View {
 
             if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
-                    withAnimation(motion(.inletOpen)) { showsHidden.toggle() }
+                    withAnimation(motion(.inletOpen)) {
+                        showsGroups = false
+                        showsHidden.toggle()
+                    }
+                }
+            }
+
+            if library.hasScanned, !library.apps.isEmpty {
+                headerButton("Groups") {
+                    withAnimation(motion(.inletOpen)) {
+                        showsHidden = false
+                        showsGroups.toggle()
+                    }
                 }
             }
 
@@ -352,6 +407,14 @@ struct AppGridView: View {
                 .font(InletFont.subhead)
                 .foregroundStyle(InletText.secondary(contrast))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !isPaged && shownApps.isEmpty {
+            // A group with nothing in it yet. Say how to fill it.
+            Text("No apps in \(selectedGroupName) yet. Drag an icon onto its name in the bar, or right-click an icon to move it here.")
+                .font(InletFont.subhead)
+                .foregroundStyle(InletText.secondary(contrast))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, InletSize.gridSidePadding)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if isPaged {
             // Paged and editable, in the saved layout order.
             // Arrow keys still move the focus ring here.
@@ -374,7 +437,8 @@ struct AppGridView: View {
                     isEditing: $isEditing,
                     onLaunch: launch,
                     onHide: hide,
-                    onMove: move
+                    onMove: move,
+                    onMoveToGroup: moveToGroup
                 )
                 .frame(maxHeight: .infinity)
             }
@@ -384,7 +448,7 @@ struct AppGridView: View {
         }
     }
 
-    /// The search results and category views: one scrolling grid, keyboard-navigable.
+    /// The search results and group views: one scrolling grid, keyboard-navigable.
     private var scrollGrid: some View {
         let placements = openPlacements
         return ScrollView {
@@ -406,6 +470,15 @@ struct AppGridView: View {
                     .transition(reduceMotion
                                 ? .opacity
                                 : .scale(scale: 0.6).combined(with: .opacity))
+                    .contextMenu {
+                        MoveToGroupMenu(
+                            groups: layoutStore.layout.groups,
+                            currentGroupID: layoutStore.layout.groupID(containing: app.id),
+                            onSelect: { moveToGroup(app, $0) }
+                        )
+                    }
+                    // Drag an icon onto a group segment on the bar to move it there.
+                    .draggable(app.id)
                 }
             }
             .padding(.horizontal, InletSize.gridSidePadding)
@@ -423,6 +496,39 @@ struct AppGridView: View {
                 .padding(.top, 64)
                 .padding(.trailing, InletSize.gridSidePadding)
                 .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
+        }
+    }
+
+    /// The Groups panel, opened from the header.
+    @ViewBuilder
+    private var groupsPanel: some View {
+        if showsGroups {
+            GroupsPanel(
+                groups: layoutStore.layout.groups,
+                onAdd: addGroup,
+                onRename: { id, name in
+                    layoutStore.update { $0.editGroup(withID: id, name: name) }
+                },
+                onRecolor: { id, color in
+                    layoutStore.update { $0.editGroup(withID: id, color: color) }
+                },
+                onSetSymbol: { id, symbol in
+                    layoutStore.update { $0.editGroup(withID: id, symbol: symbol) }
+                },
+                onMove: { id, index in
+                    withAnimation(motion(.inletSettle)) {
+                        layoutStore.update { $0.moveGroup(withID: id, to: index) }
+                    }
+                },
+                onDelete: { id in
+                    withAnimation(motion(.inletSettle)) {
+                        layoutStore.update { $0.deleteGroup(withID: id) }
+                    }
+                }
+            )
+            .padding(.top, 64)
+            .padding(.trailing, InletSize.gridSidePadding)
+            .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
         }
     }
 
@@ -571,7 +677,9 @@ struct AppGridView: View {
     /// Escape leaves Edit mode first. Then it clears the field when the setting
     /// is on. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
-        if isEditing {
+        if showsGroups {
+            withAnimation(motion(.inletDismiss)) { showsGroups = false }
+        } else if isEditing {
             withAnimation(motion(.inletDismiss)) { isEditing = false }
         } else if isSearching && escapeClearsSearchFirst {
             query = ""
@@ -581,6 +689,34 @@ struct AppGridView: View {
             dismissOverlay()
         }
         return .handled
+    }
+
+    /// Adds a group named "New Group" at the end of the bar. Rename it in the panel.
+    private func addGroup() {
+        layoutStore.update { layout in
+            _ = layout.addGroup(name: "New Group", color: layout.unusedColor, symbol: "star")
+        }
+    }
+
+    /// Moves dropped icons into a group. One change, so the group bar's
+    /// selection and the saved file update together.
+    private func dropApps(_ targetGroupID: String, _ appIDs: [String]) {
+        layoutStore.update { layout in
+            for appID in appIDs {
+                layout.moveApp(appID, toGroup: targetGroupID)
+            }
+        }
+    }
+
+    /// The name of the selected group, for empty-group messages.
+    private var selectedGroupName: String {
+        layoutStore.layout.groups.first(where: { $0.id == groupID })?.name ?? "this group"
+    }
+
+    /// Moves an app into another group. Works from every view, so the group bar
+    /// and the grid stay in step.
+    private func moveToGroup(_ app: AppItem, _ targetGroupID: String) {
+        layoutStore.update { $0.moveApp(app.id, toGroup: targetGroupID) }
     }
 
     /// Hides an app and shows the Undo toast.
