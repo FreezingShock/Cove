@@ -60,7 +60,7 @@
     </nav>
     <div class="nav-right">
       <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
         <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
       </button>
       <div class="seg" role="group" aria-label="Appearance">
@@ -76,17 +76,11 @@
 
 <main>
   <section class="wrap page-hero">
-    <p class="eyebrow">Changelog</p>
-    <h1>Every release, written from what shipped.</h1>
-    <p class="lede">Inlet is still in development, so there is no public release to list yet. Each version gets its own entry here when it ships, newest first. Until then, this page shows the plan.</p>
-    <ul class="on-page" aria-label="On this page">
-      <li><a href="#plan">Version plan</a></li>
-      <li><a href="#notes">How notes are written</a></li>
-    </ul>
+    <h1>Release notes and the plan.</h1>
+    <p class="lede">Inlet is still in development, so no release is out yet. Each version gets an entry here when it ships, newest first. Until then, the plan is below.</p>
   </section>
 
   <section class="wrap band" id="plan">
-    <p class="eyebrow">Version plan</p>
     <h2 class="h-section">From a plain grid to a daily driver.</h2>
     <ol class="timeline">
       <li>
@@ -128,27 +122,15 @@
         <div class="ver">1.0<small>Daily driver</small><span class="status status-next">Planned</span></div>
         <div>
           <h3>Ready for everyday use</h3>
-          <p>Fixes from a week of daily use with no crashes. Edit mode, folders, pages and hidden apps are part of this release. Each release lists what it leaves out, so the notes never promise more than the build does.</p>
+          <p>Fixes from a week of daily use with no crashes. Edit mode, folders, pages and hidden apps are part of this release. Each release lists what it leaves out.</p>
         </div>
       </li>
     </ol>
   </section>
 
   <section class="wrap band" id="notes">
-    <p class="eyebrow">How notes are written</p>
-    <h2 class="h-section">Written from the changes, checked before release.</h2>
-    <div class="how-notes">
-      <article class="card">
-        <h3>From merged changes</h3>
-        <p>Each entry comes from the titles of the changes that went into the release. Titles are written to be read by people, and any title that reads badly is fixed before the release goes out.</p>
-      </article>
-      <article class="card">
-        <h3>Known limits</h3>
-        <p>Every release states what is not in it yet. Features on the plan but not shipped are listed as not included, not as done.</p>
-      </article>
-    </div>
-    <p class="lede lede-gap">Want the full history? Every change is in the <a href="https://github.com/FreezingShock/Cove/commits/main" target="_blank" rel="noopener">commit history on GitHub</a>. Releases are on the <a href="https://github.com/FreezingShock/Cove/releases" target="_blank" rel="noopener">releases page</a>.</p>
-  </section>
+<p class="lede">Full history is in the <a href="https://github.com/FreezingShock/Cove/commits/main" target="_blank" rel="noopener">commit log</a>, and each release is on the <a href="https://github.com/FreezingShock/Cove/releases" target="_blank" rel="noopener">releases page</a>.</p>
+</section>
 </main>
 
 <footer class="wrap foot">
@@ -181,8 +163,7 @@
     </div>
   </nav>
   <div class="foot-bar">
-    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>Back to top</a>
-    <p class="foot-hint">Press <kbd data-mod>⌘</kbd><kbd>K</kbd> to jump to any page or section.</p>
+    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
   </div>
 </footer>
 

@@ -390,7 +390,7 @@ struct TryStep: View {
     @ViewBuilder
     private var statusLine: some View {
         if model.tried {
-            Text("**That’s it.** The shortcut opened Inlet. \(model.tryNote)")
+            Text("The shortcut opened Inlet. \(model.tryNote)")
                 .font(InletFont.subhead)
                 .foregroundStyle(InletColor.text2)
         } else {

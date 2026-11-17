@@ -96,7 +96,7 @@
   height: 62%;
   fill: none;
   stroke: #FFFFFF;
-  stroke-width: 2;
+  stroke-width: var(--icon-stroke);
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -185,7 +185,7 @@
   cursor: pointer;
 }
 .org-restore .ico { --tile: 24px; border-radius: 6px; }
-.org-restore .ico svg { stroke-width: 2.2; }
+.org-restore .ico svg { stroke-width: calc(var(--icon-stroke) * 1.2); } /* 24 pt tile: small glyph, one step heavier */
 .org-restore span { font-weight: 500; color: var(--text-2); }
 
 /* Undo toast. */
@@ -402,4 +402,6 @@
 .recipe-hit .ico { width: 36px; height: 36px; border-radius: 9px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 14px -8px var(--icon-shadow); }
 .recipe-dock { gap: 10px; justify-content: center; padding: 10px 14px; border-radius: 22px; }
 .recipe-dock .ico { width: 36px; height: 36px; border-radius: 9px; }
-.recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: 1.8; }
+.recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
+
+.hero-status { margin: 0 0 20px; font-size: var(--fs-caption); color: var(--text-2); }
