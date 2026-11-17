@@ -11,7 +11,7 @@ import Foundation
 
 /// The preset groups a new install starts with. Each app's category decides
 /// which preset it joins when it is first installed.
-enum AppCategory: String, CaseIterable, Identifiable, Sendable {
+enum AppCategory: String, Codable, CaseIterable, Identifiable, Sendable {
     case create
     case build
     case school
