@@ -4,7 +4,7 @@
 Outputs (all generated, do not hand-edit):
   website/assets/icon-kit/<id>.svg   standalone icons (adapt to light/dark)
   website/assets/icon-kit/sprite.svg all icons as <symbol>s
-  website/icon-kit.html              the kit preview sheet
+  docs/icon-kit.html                 the kit preview sheet (open from the repo)
 Use `--check` in CI to confirm the outputs are current.
 
 Kit rules: 24px grid, 1.5 stroke, square caps, miter joins, no curves
@@ -34,7 +34,7 @@ def build():
             syms.append(f'<symbol id="k-{k}" viewBox="0 0 24 24">{body}</symbol>')
     files["website/assets/icon-kit/sprite.svg"] = (
         '<svg xmlns="http://www.w3.org/2000/svg" style="display:none">' + "".join(syms) + '</svg>\n')
-    files["website/icon-kit.html"] = sheet()
+    files["docs/icon-kit.html"] = sheet()
     return files
 
 def inline(k, body, cls="kit"):
@@ -62,11 +62,11 @@ def sheet():
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>Inlet icon kit</title>
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/type.css">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/icons.css">
+<link rel="icon" href="../website/favicon.ico" sizes="any">
+<link rel="stylesheet" href="../website/css/tokens.css">
+<link rel="stylesheet" href="../website/css/type.css">
+<link rel="stylesheet" href="../website/css/site.css">
+<link rel="stylesheet" href="../website/css/icons.css">
 <style>
 .kit-page{{max-width:1120px;margin:0 auto;padding:56px 16px 96px}}
 .kit-page h1{{font-size:clamp(40px,6vw,72px);line-height:.98;letter-spacing:-.045em;margin:0 0 16px}}
