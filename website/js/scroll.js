@@ -113,7 +113,8 @@
   }
 
   // The sticky block pins just below the header. Its height is the viewport minus the header.
-  var navH = 0, stickyH = 0;
+  var navH = 0, stickyH = 0, blockH = 0, stickTop = 0;
+  var PIN_PAD = 32; // breathing room above and below the demo while it is pinned
 
   function layoutScrub() {
     if (!track || !demo) return;
@@ -122,6 +123,7 @@
     track.style.setProperty("--nav-h", navH + "px");
     track.classList.remove("is-pinned");
     track.style.height = "";
+    if (sticky) { sticky.style.height = ""; sticky.style.top = ""; }
     // Lite and static tiers play the demo as a plain video: no pin, no per-frame seeks.
     if (reduceQuery.matches || document.documentElement.getAttribute("data-motion") === "lite") { track.classList.remove("is-pinned"); setPinned(false); return; }
     // Pin only when the whole sticky block fits below the header, so nothing gets cut off.
@@ -132,15 +134,21 @@
       setPinned(false);
       return;
     }
-    track.style.height = (stickyH + window.innerHeight * 2) + "px"; // sticky block + 2 viewports of scroll
+    // The block is only as tall as its content plus PIN_PAD, centred under the header. The track ends
+    // with the block, so no empty band is left between the caption and the next section.
+    blockH = Math.min(stickyH, inner.offsetHeight + 2 * PIN_PAD);
+    stickTop = navH + Math.max(0, (stickyH - blockH) / 2);
+    sticky.style.height = blockH + "px";
+    sticky.style.top = stickTop + "px";
+    track.style.height = (blockH + window.innerHeight * 2) + "px"; // block + 2 viewports of scroll
     setPinned(true);
     requestFrame();
   }
 
   function updateScrub() {
     var r = track.getBoundingClientRect();
-    var span = track.offsetHeight - stickyH;
-    var p = span > 0 ? Math.min(1, Math.max(0, (navH - r.top) / span)) : 0;
+    var span = track.offsetHeight - blockH;
+    var p = span > 0 ? Math.min(1, Math.max(0, (stickTop - r.top) / span)) : 0;
 
     if (bar) bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
 
