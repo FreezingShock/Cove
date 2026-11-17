@@ -21,12 +21,16 @@ struct EditableGridView: View {
     let focusedID: String?
     /// Edit mode. AppGridView owns it, so the header can show Done.
     @Binding var isEditing: Bool
+    /// True once the overlay is open. Drives the icons' open ripple.
+    let isOpen: Bool
     /// Opens an app.
     let onLaunch: (AppItem) -> Void
     /// Hides an app. The caller shows the Undo toast.
     let onHide: (AppItem) -> Void
     /// Moves an app by a number of slots in the layout. Keyboard and VoiceOver reorder.
     let onMove: (AppItem, Int) -> Void
+    /// A tap on empty space outside Edit mode. Closes the overlay.
+    let onBlankTap: () -> Void
 
     @Environment(LayoutStore.self) private var layoutStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -47,6 +51,13 @@ struct EditableGridView: View {
     @State private var holdTask: Task<Void, Never>?
     /// Counts down the pause that flips the page at a window edge.
     @State private var edgeTask: Task<Void, Never>?
+    /// Watches trackpad scrolls, so a two-finger swipe turns the page.
+    @State private var trackpad = TrackpadPaging()
+    /// Horizontal total of the trackpad swipe in progress.
+    @State private var trackpadTotal: CGFloat = 0
+    /// Geometry and page count from the latest layout. The trackpad handler reads them.
+    @State private var pagingGeo: GridGeometry?
+    @State private var pagingCount = 0
 
     /// What a press has done so far.
     private struct Press {
@@ -117,11 +128,15 @@ struct EditableGridView: View {
                 pageDots(current: current, pages: pages)
                     .frame(height: GridMetrics.dotsHeight)
             }
+            .onChange(of: geo, initial: true) { _, newGeo in pagingGeo = newGeo }
+            .onChange(of: items.count, initial: true) { _, count in pagingCount = count }
         }
         // Leaving Edit mode cancels any drag still in progress.
         .onChange(of: isEditing) { _, editing in
             if !editing { cancelDrag() }
         }
+        .onAppear { startTrackpadPaging() }
+        .onDisappear { trackpad.stop() }
     }
 
     // MARK: - Drawing
@@ -133,6 +148,8 @@ struct EditableGridView: View {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, app in
                 GridTile(
                     app: app,
+                    placement: openPlacement(forIndex: index, total: items.count, geo: geo),
+                    isOpen: isOpen,
                     isEditing: isEditing,
                     showsBadge: isEditing && app.isHideable,
                     isLifted: drag?.id == app.id,
@@ -245,7 +262,7 @@ struct EditableGridView: View {
 
         // Anything else that moves sideways swipes the pages.
         if abs(dx) > abs(dy) {
-            swipeOffset = rubberBand(dx, geo: geo)
+            swipeOffset = rubberBand(dx, geo: geo, count: displayItems.count)
         }
     }
 
@@ -263,21 +280,7 @@ struct EditableGridView: View {
         }
 
         if state.moved {
-            // A swipe settles on the next or previous page when it is long or quick enough.
-            let current = currentPage(geo)
-            let last = geo.pageCount(itemCount: displayItems.count) - 1
-            let width = geo.pageWidth
-            let predicted = value.predictedEndTranslation.width
-            var target = current
-            if swipeOffset < -width * 0.2 || predicted < -width / 2 {
-                target = current + 1
-            } else if swipeOffset > width * 0.2 || predicted > width / 2 {
-                target = current - 1
-            }
-            withAnimation(motion(.inletSettle)) {
-                page = min(max(target, 0), last)
-                swipeOffset = 0
-            }
+            settleSwipe(predicted: value.predictedEndTranslation.width, geo: geo, count: displayItems.count)
             return
         }
 
@@ -296,9 +299,12 @@ struct EditableGridView: View {
             return
         }
 
-        if let hitID = state.hitID, let app = displayItems.first(where: { $0.id == hitID }) {
-            onLaunch(app)
+        guard let hitID = state.hitID, let app = displayItems.first(where: { $0.id == hitID }) else {
+            // A tap on empty space closes the overlay, as classic Launchpad did.
+            onBlankTap()
+            return
         }
+        onLaunch(app)
     }
 
     // MARK: - Hit testing
@@ -483,10 +489,53 @@ struct EditableGridView: View {
     }
 
     /// Past the first or last page the swipe is pulled back, like a rubber band.
-    private func rubberBand(_ raw: CGFloat, geo: GridGeometry) -> CGFloat {
-        let current = currentPage(geo)
-        let last = geo.pageCount(itemCount: displayItems.count) - 1
+    private func rubberBand(_ raw: CGFloat, geo: GridGeometry, count: Int) -> CGFloat {
+        let last = geo.pageCount(itemCount: count) - 1
+        let current = min(page, last)
         let pastEnd = (current == 0 && raw > 0) || (current == last && raw < 0)
         return pastEnd ? raw * 0.3 : raw
+    }
+
+    /// Settles a swipe on the next or previous page when it is long or quick
+    /// enough. `predicted` is where the swipe would end, with its momentum.
+    private func settleSwipe(predicted: CGFloat, geo: GridGeometry, count: Int) {
+        let last = geo.pageCount(itemCount: count) - 1
+        let current = min(page, last)
+        let width = geo.pageWidth
+        var target = current
+        if swipeOffset < -width * 0.2 || predicted < -width / 2 {
+            target = current + 1
+        } else if swipeOffset > width * 0.2 || predicted > width / 2 {
+            target = current - 1
+        }
+        withAnimation(motion(.inletSettle)) {
+            page = min(max(target, 0), last)
+            swipeOffset = 0
+        }
+    }
+
+    /// Starts the trackpad handler. Each scroll moves the pages with the fingers,
+    /// and lifting them settles the page. A mouse drag already in progress wins.
+    private func startTrackpadPaging() {
+        trackpad.onScroll = { dx in
+            guard let geo = pagingGeo, pagingCount > 1, drag == nil else { return }
+            trackpadTotal += dx
+            swipeOffset = rubberBand(trackpadTotal, geo: geo, count: pagingCount)
+        }
+        trackpad.onEnd = {
+            let total = trackpadTotal
+            trackpadTotal = 0
+            guard let geo = pagingGeo, pagingCount > 1 else { return }
+            settleSwipe(predicted: total, geo: geo, count: pagingCount)
+        }
+        trackpad.start()
+    }
+
+    /// Open-animation placement for an icon. It is measured within its own
+    /// page, so the ripple starts from that page's center.
+    private func openPlacement(forIndex index: Int, total: Int, geo: GridGeometry) -> OpenPlacement {
+        let pageStart = (index / geo.perPage) * geo.perPage
+        let pageTotal = min(geo.perPage, total - pageStart)
+        return OpenPlacement.forCell(at: index - pageStart, total: pageTotal, columns: geo.columns)
     }
 }

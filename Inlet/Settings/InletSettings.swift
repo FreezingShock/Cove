@@ -35,6 +35,9 @@ enum InletSettings {
         // Grid
         case gridColumns              = "inlet.grid.columns"                     // Int, 5...9, 7
         case lastCategory             = "inlet.grid.lastCategory"                // String, an AppCategory raw value, "" for All
+        case pinchToOpen              = "inlet.grid.pinchToOpen"                 // Bool, true
+        case hotCorner                = "inlet.grid.hotCorner"                   // String, a HotCorner raw value, "off"
+        case f4Opens                  = "inlet.grid.f4Opens"                     // Bool, true
 
         // Search
         case searchIncludesFiles      = "inlet.search.includeFiles"              // Bool, true
@@ -66,6 +69,9 @@ enum InletSettings {
             Key.appearance.rawValue: AppearanceMode.auto.rawValue,
             Key.gridColumns.rawValue: 7,
             Key.lastCategory.rawValue: "",
+            Key.pinchToOpen.rawValue: true,
+            Key.hotCorner.rawValue: HotCorner.off.rawValue,
+            Key.f4Opens.rawValue: true,
             Key.searchIncludesFiles.rawValue: true,
             Key.searchFileResultCount.rawValue: 5,
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
@@ -113,6 +119,19 @@ enum InletSettings {
 
     static var quickPanelRecentFiles: Int {
         clamp(UserDefaults.standard.integer(forKey: Key.quickPanelRecentFiles.rawValue), 0...5, fallback: 3)
+    }
+
+    static var pinchToOpen: Bool {
+        UserDefaults.standard.bool(forKey: Key.pinchToOpen.rawValue)
+    }
+
+    static var hotCorner: HotCorner {
+        let raw = UserDefaults.standard.string(forKey: Key.hotCorner.rawValue) ?? ""
+        return HotCorner(rawValue: raw) ?? .off
+    }
+
+    static var f4Opens: Bool {
+        UserDefaults.standard.bool(forKey: Key.f4Opens.rawValue)
     }
 
     static var closeAfterLaunch: Bool {

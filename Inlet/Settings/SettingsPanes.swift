@@ -17,6 +17,9 @@ struct GeneralPane: View {
     @AppStorage(InletSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(InletSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
     @AppStorage(InletSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
+    @AppStorage(InletSettings.Key.pinchToOpen.rawValue) private var pinchToOpen = true
+    @AppStorage(InletSettings.Key.f4Opens.rawValue) private var f4Opens = true
+    @AppStorage(InletSettings.Key.hotCorner.rawValue) private var hotCornerRaw = HotCorner.off.rawValue
 
     /// The login item state comes from the system, so it is read live and never stored.
     @State private var loginStatus: SMAppService.Status = SMAppService.mainApp.status
@@ -44,6 +47,23 @@ struct GeneralPane: View {
                 Toggle("Close after launching an app", isOn: $closeAfterLaunch)
                 Toggle("Escape clears the search first", isOn: $escapeClearsSearchFirst)
                 Toggle("Remember the last category", isOn: $rememberLastCategory)
+            }
+
+            Section {
+                Toggle("Pinch in on the desktop to open", isOn: $pinchToOpen)
+                Toggle("F4 opens the grid", isOn: $f4Opens)
+                    .onChange(of: f4Opens) { _, enabled in
+                        HotkeyManager.shared.setF4Enabled(enabled)
+                    }
+                Picker("Hot corner", selection: $hotCornerRaw) {
+                    ForEach(HotCorner.allCases, id: \.rawValue) { corner in
+                        Text(corner.title).tag(corner.rawValue)
+                    }
+                }
+            } header: {
+                Text("Opening the grid")
+            } footer: {
+                Text("Pinch in works while Finder is the front app, so a pinch in Safari never opens Inlet. Spread out closes the grid. A hot corner opens it when the pointer rests in that corner.")
             }
         }
         .formStyle(.grouped)
