@@ -22,7 +22,11 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 
-	<!-- Background check interval in seconds: 86400 = once a day. -->
+	<!-- Download and install updates without asking. AppUpdater also checks on every launch. -->
+	<key>SUAutomaticallyUpdate</key>
+	<true/>
+
+	<!-- Fallback background check interval in seconds for long sessions: 86400 = once a day. -->
 	<key>SUScheduledCheckInterval</key>
 	<integer>86400</integer>
 </dict>

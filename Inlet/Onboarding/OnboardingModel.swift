@@ -8,7 +8,7 @@
 //
 //  Where each answer goes:
 //  - Habit: only suggests a starting shortcut. Nothing is stored.
-//  - Files and Folders: InletSettings.Key.searchIncludesFiles, written at once.
+//  - Files in search: InletSettings.Key.searchIncludesFiles, written at once.
 //  - Open at Login: SMAppService.mainApp, changed at once.
 //  - Shortcut: the KeyboardShortcuts name of the chosen surface. Saved when the
 //    user moves forward from the shortcut step, because the try step needs it.
@@ -481,7 +481,7 @@ final class OnboardingModel {
             OnboardingSummaryRow(label: "Shortcut", value: hotkeyLabel),
             OnboardingSummaryRow(label: "What opens", value: surface.label),
             OnboardingSummaryRow(label: "Press", value: press == .tap ? "Tap to toggle" : "Hold to peek"),
-            OnboardingSummaryRow(label: "Files and Folders", value: includeFiles ? "On" : "Off"),
+            OnboardingSummaryRow(label: "Files in search", value: includeFiles ? "On" : "Off"),
             OnboardingSummaryRow(label: "Open at Login", value: openAtLogin ? "On" : "Off"),
             OnboardingSummaryRow(label: "Network access", value: "None"),
         ]

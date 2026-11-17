@@ -248,16 +248,16 @@ struct AccessStep: View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(
                 eyebrow: "Step 2 of 4",
-                title: "Two optional permissions",
-                lead: "Inlet works without either one. Each makes it more useful, and you can change both later in System Settings."
+                title: "Two choices, no permissions",
+                lead: "Inlet doesn't ask macOS for any permission, so there are no prompts to approve. These two settings only change what Inlet does, and you can change both later."
             )
 
             VStack(spacing: InletSpace.m) {
                 AccessRow(
                     symbol: "folder",
                     tint: OnboardingTint.coral,
-                    title: "Files and Folders",
-                    detail: "Find documents in Desktop, Documents and Downloads. Spotlight does the search, and Inlet only reads the results.",
+                    title: "Files in search",
+                    detail: "Include files from Spotlight, the same index Finder uses, in search results. Inlet only reads the names and paths it gets back.",
                     isOn: Binding(get: { model.includeFiles }, set: { model.setIncludeFiles($0) })
                 )
                 AccessRow(

@@ -56,11 +56,12 @@ To check the feed format by hand, run `generate_appcast -h` from the Sparkle `bi
 
 1. Build an old version, for example `CURRENT_PROJECT_VERSION = 1`, and run it.
 2. Publish a newer build with a higher build number to a test feed, or temporarily lower the old build's number.
-3. Quit and relaunch the old build. Sparkle asks for permission only on the second launch by default, but Inlet sets `SUEnableAutomaticChecks` to true, so it checks in the background once a day.
+3. Quit and relaunch the old build. Inlet checks on every launch (`AppUpdater` calls `checkForUpdatesInBackground()`), downloads the update, and installs it the next time Inlet quits (`SUAutomaticallyUpdate` is on).
 4. To force a check now, use **Inlet › Check for Updates…**. To reset the daily timer, run `defaults delete com.freezingshock.Inlet SULastCheckTime` before launching.
 5. Watch **Console.app** and filter for `Sparkle` if something goes wrong.
 
 ## Notes
 
-- Inlet is not sandboxed, so Sparkle's XPC helpers run as normal processes. The app is also not hardened-runtime, which is fine for the current ad-hoc signed builds. A Developer ID build needs hardened runtime and notarization, which the signing thread will handle.
+- Inlet is not sandboxed, so Sparkle's XPC helpers run as normal processes. Releases are signed with the self-signed certificate in `CODE_SIGN_P12` and are not notarized. See the Signing section of `RELEASING.md`.
+- Sparkle refuses an update whose signing identity differs from the installed app. That is why the certificate must be kept: a new one breaks updates for existing installs.
 - Keep Sparkle's `.dSYM` files for crash symbolication.
