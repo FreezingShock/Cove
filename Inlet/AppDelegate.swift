@@ -34,7 +34,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Grid hotkey (Option+Space) toggles the full grid overlay: the first
         // press opens it, the second closes it.
         HotkeyManager.shared.onGridHotkey = {
-            MainActor.assumeIsolated { OverlayController.shared.toggle() }
+            MainActor.assumeIsolated {
+                InletSignpost.beginHotkeyToVisible()
+                OverlayController.shared.toggle()
+            }
         }
         // Quick panel hotkey (Control+Option+Space) toggles the quick panel.
         HotkeyManager.shared.onQuickPanelHotkey = {
@@ -43,6 +46,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Menu bar icon, shown or hidden by Settings > General.
         MenuBarController.shared.start()
+
+        // Pinch in on the desktop, and a hot corner, also open the grid.
+        OpenTriggers.shared.start()
 
         OverlayController.shared.show()
 

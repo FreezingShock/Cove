@@ -38,12 +38,13 @@ struct OverlayView: View {
                 .opacity(motion.isOpen ? 1 : 0)
                 .contentShape(Rectangle())
                 .onTapGesture { onDismiss() }
-                .animation(reduceMotion ? .easeInOut(duration: 0.2) : .inletSnap, value: motion.isOpen)
+                .animation(reduceMotion ? .inletFade : .inletSnap, value: motion.isOpen)
 
             AppGridView(isOpen: motion.isOpen)
         }
         .ignoresSafeArea()
         .environment(\.dismissOverlay, onDismiss)
         .inletAppearance()  // Light, Dark or Auto, from Settings > Appearance
+        .inletThemeRefresh()  // Redraws when the Supporter theme changes
     }
 }

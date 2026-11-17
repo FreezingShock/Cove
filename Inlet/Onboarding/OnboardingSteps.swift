@@ -132,13 +132,13 @@ struct OnboardingAppTile: View {
     var size: CGFloat = 46
 
     var body: some View {
-        Text(app.glyph)
-            .font(.system(size: size * 0.36, weight: .bold))
+        Image(systemName: app.symbol)
+            .font(.system(size: size * 0.44, weight: .semibold))
             .foregroundStyle(.white)
             .frame(width: size, height: size)
             .background(
                 LinearGradient(colors: [app.top, app.bottom], startPoint: .topLeading, endPoint: .bottomTrailing),
-                in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous)
+                in: RoundedRectangle(cornerRadius: InletRadius.icon(size), style: .continuous)
             )
             .shadow(color: .black.opacity(0.3), radius: 8, y: 4)
             .accessibilityHidden(true)
@@ -286,7 +286,7 @@ struct AccessStep: View {
 
             HStack(spacing: InletSpace.s) {
                 OnboardingIconTile(systemName: "lock.fill", tint: OnboardingTint.green, size: 24)
-                Text("Inlet never connects to the internet.")
+                Text("The only network call Inlet makes is an optional update check.")
                     .font(InletFont.body)
                     .foregroundStyle(InletColor.text)
             }
@@ -347,7 +347,7 @@ struct DoneStep: View {
             ZStack {
                 Circle().fill(InletColor.accent)
                 Image(systemName: "checkmark")
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.system(size: 30, weight: .semibold))
                     .foregroundStyle(InletColor.accentInk)
             }
             .frame(width: 74, height: 74)
@@ -379,7 +379,7 @@ struct DoneStep: View {
         .padding(.horizontal, InletSpace.xxxl)
         .padding(.top, InletSpace.xxl)
         .onAppear {
-            withAnimation(reduceMotion ? .easeOut(duration: 0.2) : .inletOpen) {
+            withAnimation(reduceMotion ? .inletFade : .inletOpen) {
                 appeared = true
             }
         }

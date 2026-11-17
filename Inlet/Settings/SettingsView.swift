@@ -11,7 +11,7 @@ import SwiftUI
 
 /// The panes in the sidebar, in the order the mockup shows them.
 enum SettingsPane: String, CaseIterable, Identifiable {
-    case general, keyboard, appearance, grid, search, quickPanel, privacy, about
+    case general, keyboard, appearance, grid, search, quickPanel, privacy, pro, about
 
     var id: String { rawValue }
 
@@ -24,6 +24,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .search:     return "Search"
         case .quickPanel: return "Quick Panel"
         case .privacy:    return "Privacy"
+        case .pro:        return "Inlet Pro"
         case .about:      return "About"
         }
     }
@@ -38,6 +39,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .search:     return "magnifyingglass"
         case .quickPanel: return "dock.rectangle"
         case .privacy:    return "hand.raised.fill"
+        case .pro:        return "star.circle.fill"
         case .about:      return "info.circle.fill"
         }
     }
@@ -50,6 +52,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .search:             return .orange
         case .quickPanel:         return .teal
         case .privacy:            return .pink
+        case .pro:                return .purple
         case .about:              return .gray
         }
     }
@@ -88,6 +91,7 @@ struct SettingsView: View {
         case .search:     SearchPane()
         case .quickPanel: QuickPanelPane()
         case .privacy:    PrivacyPane()
+        case .pro:        ProPane()
         case .about:      AboutPane()
         }
     }
@@ -99,7 +103,7 @@ struct SettingsTile: View {
     let tint: Color
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 5.5, style: .continuous)
+        RoundedRectangle(cornerRadius: InletRadius.icon(20), style: .continuous)
             .fill(tint.gradient)
             .frame(width: 20, height: 20)
             .overlay {
@@ -112,7 +116,7 @@ struct SettingsTile: View {
 
 /// Applies the Appearance setting (Auto, Light or Dark) to a window's content.
 /// Auto passes `nil`, which means "follow the system".
-struct FollowsCoveAppearance: ViewModifier {
+struct FollowsInletAppearance: ViewModifier {
     @AppStorage(InletSettings.Key.appearance.rawValue)
     private var mode = InletSettings.AppearanceMode.auto.rawValue
 
@@ -132,6 +136,6 @@ struct FollowsCoveAppearance: ViewModifier {
 extension View {
     /// Use on the root view of every Inlet window.
     func inletAppearance() -> some View {
-        modifier(FollowsCoveAppearance())
+        modifier(FollowsInletAppearance())
     }
 }

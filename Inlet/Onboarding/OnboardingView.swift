@@ -147,7 +147,7 @@ struct OnboardingButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 15, weight: .semibold))
+            .font(InletFont.headline)
             .foregroundStyle(kind == .primary ? OnboardingInk.onInk : InletColor.text2)
             .padding(.horizontal, kind == .primary ? 24 : 16)
             .frame(height: InletSize.hitTarget)

@@ -1,0 +1,302 @@
+/* ---------- Scroll and motion ----------
+   Everything here is about how the page moves as you scroll. Type and layout
+   stay in site.css. Each rule either works without JavaScript or is gated so
+   that Reduce Motion gets a static page with the same content. */
+
+/* Smooth in-page jumps, with room for the sticky header. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+/* One offset does the work: scroll-padding clears the sticky header (12px top margin
+   plus the 60px bar) and leaves a 16px gap. Section scroll-margin is zeroed so the two don't stack.
+   scroll.js reads this same value for its eased jump. */
+html { scroll-padding-top: 88px; }
+section[id] { scroll-margin-top: 0; }
+
+/* ---------- Reveal on scroll ----------
+   scroll.js adds .reveal to a few blocks, then .is-in when they enter. Content is
+   only hidden when motion is allowed, so Reduce Motion never hides anything. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    transition:
+      opacity var(--dur-slower) var(--ease-standard) var(--d, 0ms),
+      transform var(--dur-slower) var(--ease-standard) var(--d, 0ms);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Parallax on stages ----------
+   A scroll-linked drift on the stage's own `translate` property, so it doesn't
+   fight the reveal's `transform`. It runs on the compositor. Browsers without
+   scroll-driven animations simply show the stage still. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stage {
+      animation: stage-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+@keyframes stage-drift {
+  from { translate: 0 -18px; }
+  to   { translate: 0 18px; }
+}
+
+/* ---------- Pinned, scrubbed demo ----------
+   With motion allowed and a viewport tall enough, the demo section pins and the
+   video's timeline follows scroll position. scroll.js sets the track height and
+   the .is-pinned class. Otherwise the section keeps its normal flow and the
+   video plays on its own, as before. */
+.scrub-steps,
+.scrub-bar { display: none; }
+
+/* --nav-h is the sticky header's height, set by scroll.js. The pinned block sits below it. */
+.scrub.is-pinned .scrub-sticky {
+  position: sticky;
+  top: var(--nav-h, 64px);
+  height: calc(100vh - var(--nav-h, 64px));
+  height: calc(100svh - var(--nav-h, 64px));
+  display: flex;
+  align-items: center;
+}
+.scrub.is-pinned .scrub-inner { width: 100%; }
+.scrub.is-pinned .showcase-head { margin-bottom: 28px; }
+.scrub.is-pinned .demo-frame {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+.scrub.is-pinned .demo-video {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(52vh, 600px);
+  max-height: min(52svh, 600px);
+}
+.scrub.is-pinned .demo-toggle { display: none; }
+.scrub.is-pinned .demo-caption { margin-top: 12px; }
+.scrub.is-pinned .scrub-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+/* Wide screens: heading and steps on the left, the video on the right. */
+@media (min-width: 900px) {
+  .scrub.is-pinned .scrub-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+    grid-template-rows: auto auto;
+    column-gap: 56px;
+    align-items: center;
+  }
+  .scrub.is-pinned .showcase-head { grid-column: 1; grid-row: 1; align-self: end; margin-bottom: 0; }
+  .scrub.is-pinned .demo-figure { grid-column: 2; grid-row: 1 / span 2; }
+  .scrub.is-pinned .demo-video { max-height: min(62vh, 640px); max-height: min(62svh, 640px); }
+  .scrub.is-pinned .demo-caption { margin-top: 14px; }
+  .scrub.is-pinned .scrub-steps {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: start;
+    margin: 28px 0 0;
+    gap: 6px;
+  }
+  .scrub.is-pinned .scrub-steps li { font-size: 16px; padding: 10px 18px 10px 10px; }
+  .scrub.is-pinned .scrub-steps li > span { width: 26px; height: 26px; }
+  .scrub.is-pinned .scrub-bar { grid-column: 1 / -1; grid-row: 3; }
+}
+.scrub-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  border-radius: var(--r-pill);
+  font-size: 14px;
+  color: var(--text-3);
+  transition: color var(--dur-slow) var(--ease-fade), background-color var(--dur-slow) var(--ease-fade);
+}
+.scrub-steps li > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--field);
+  color: var(--text-2);
+  transition: background-color var(--dur-slow) var(--ease-fade), color var(--dur-slow) var(--ease-fade);
+}
+.scrub-steps li.is-active { color: var(--text); background: var(--field); }
+.scrub-steps li.is-active > span { background: var(--accent); color: var(--accent-ink); }
+.scrub.is-pinned .scrub-bar {
+  display: block;
+  height: 2px;
+  margin-top: 20px;
+  border-radius: var(--r-hair);
+  background: var(--hair);
+  overflow: hidden;
+}
+.scrub-bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+@media (max-width: 560px) {
+  .scrub.is-pinned .scrub-steps li { font-size: 13px; padding-right: 10px; }
+}
+
+/* ==========================================================================
+   Motion system (js/motion.js). html[data-motion] is full, lite or static.
+   full: everything. lite: no pointer feel, no pinned video, no parallax, quicker
+   transitions. static: no motion at all, same content. Animated properties
+   are opacity, translate, scale and rotate, so nothing reflows.
+   ========================================================================== */
+
+/* ---------- Intro: the home hero starts hidden only while the head script's class is set ---------- */
+html.intro-pending .nav,
+html.intro-pending .hero-icon,
+html.intro-pending .hero-lede,
+html.intro-pending .hero-cta,
+html.intro-pending .hero-note,
+html.intro-pending .hero-stage-wrap { opacity: 0; }
+/* Word-split headline: each word is its own box so it can rise on its own. */
+.hero-title .w { display: inline-block; will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-title .w { will-change: auto; }
+}
+
+/* ---------- Page changes ----------
+   Same-site links use cross-document View Transitions (Chrome, Edge, Safari 18.2+).
+   The header stays put, the page slides under it, and the page title morphs into
+   its place on the next page. Browsers without the API get the fade classes that
+   motion.js adds. Reduce Motion gets a plain short crossfade, no movement. */
+@view-transition { navigation: auto; }
+.nav { view-transition-name: site-nav; }
+::view-transition-group(site-nav) { animation-duration: 0s; }
+/* Shared elements: the same name on every page, so the browser morphs position and size between them. */
+main h1 { view-transition-name: page-title; }
+.nav .brand .mark { view-transition-name: brand-mark; }
+::view-transition-group(page-title) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-standard, cubic-bezier(0.2, 0.8, 0.2, 1));
+}
+::view-transition-group(brand-mark) { animation-duration: 0s; }
+html[data-motion="lite"]::view-transition-group(page-title) { animation-duration: 260ms; }
+::view-transition-old(root) {
+  animation: 240ms var(--ease-exit, cubic-bezier(0.4, 0, 1, 1)) both vt-out;
+}
+::view-transition-new(root) {
+  animation: 420ms var(--ease-standard, cubic-bezier(0.2, 0.8, 0.2, 1)) both vt-in;
+}
+@keyframes vt-out { to { opacity: 0; translate: 0 -10px; } }
+@keyframes vt-in { from { opacity: 0; translate: 0 18px; } }
+html[data-motion="lite"]::view-transition-old(root) { animation-duration: 140ms; }
+html[data-motion="lite"]::view-transition-new(root) { animation-duration: 200ms; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root) { animation: 160ms linear both vt-fade-out; }
+  ::view-transition-new(root) { animation: 160ms linear both vt-fade-in; }
+  main h1, .nav .brand .mark { view-transition-name: none; }
+}
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
+
+/* Fallback for browsers without View Transitions (motion.js adds these classes). */
+@media (prefers-reduced-motion: no-preference) {
+  html.is-leaving main {
+    opacity: 0;
+    translate: 0 -8px;
+    transition: opacity 180ms var(--ease-exit, cubic-bezier(0.4, 0, 1, 1)), translate 180ms var(--ease-exit, cubic-bezier(0.4, 0, 1, 1));
+  }
+  html.page-enter main { animation: page-in 380ms var(--ease-standard, cubic-bezier(0.2, 0.8, 0.2, 1)) both; }
+}
+@keyframes page-in { from { opacity: 0; translate: 0 12px; } }
+
+/* ---------- Press and hover feel (full tier only) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion="full"] .btn {
+    transition:
+      transform var(--spring-press-dur, 0.5s) var(--spring-press, ease-out),
+      translate var(--dur-base) var(--ease-standard),
+      background-color var(--dur-medium) var(--ease-fade),
+      color var(--dur-medium) var(--ease-fade);
+  }
+  html[data-motion="full"] .magnet {
+    transition: translate var(--dur-base) var(--ease-standard);
+  }
+}
+html[data-motion="lite"] .magnet,
+html[data-motion="static"] .magnet { translate: none !important; }
+
+/* Spotlight: a soft light follows the pointer across a panel. Painted on a layer under the content. */
+.spot { position: relative; isolation: isolate; }
+html[data-motion="full"] .spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    420px circle at var(--sx, 50%) var(--sy, 50%),
+    color-mix(in srgb, var(--accent) 11%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-medium) var(--ease-fade);
+}
+html[data-motion="full"] .spot:hover::after { opacity: 1; }
+
+/* ---------- Reading progress: a 2px bar across the top edge. scroll.js sets its scaleX on each frame,
+   so it works in every browser, not only those with scroll-driven animations. ---------- */
+.progress {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* ---------- Scroll-linked steps: each recipe's numeral comes up as it reaches the middle of the screen ---------- */
+@supports (animation-timeline: view()) {
+  html[data-motion="full"] .recipe-n {
+    animation: numeral-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+@keyframes numeral-in {
+  from { opacity: 0.15; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* ---------- Lite: turn off the costliest motion ---------- */
+html[data-motion="lite"] .stage { animation: none; }
+html[data-motion="lite"] .progress { display: none; }
+html[data-motion="lite"] .spot::after { display: none; }
+
+/* Static: nothing animates on purpose. Intro, page-change and press motion are off, content is unchanged. */
+html[data-motion="static"] .progress { display: none; }
+html[data-motion="static"] main,
+html[data-motion="static"] .hero-icon,
+html[data-motion="static"] .hero-title .w { animation: none; }

@@ -1,0 +1,405 @@
+/* ---------- Homepage sections below the hero ----------
+   Styles for the blocks this file owns: folders and edit mode, the three
+   everyday recipes, the "built on" strip, and the closing call to action.
+   Shared tokens and glass come from tokens.css and site.css. Everything here
+   is scoped by a class name that only these blocks use. */
+
+/* ---------- Folders and edit mode demo ---------- */
+.org-stage { min-height: 600px; }
+.org-stage .scrim {
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 20px;
+}
+.org-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.org-title { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.org-bar .capsule-btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 76px;
+  transition: background-color var(--dur-medium) var(--ease-fade), color var(--dur-medium) var(--ease-fade);
+}
+.org-bar .capsule-btn.is-on {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+}
+.org-hint {
+  min-height: 42px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.org-grid { --cols: 6; --tile: 56px; gap: 18px 6px; align-content: start; }
+.org-item { position: relative; display: grid; justify-items: center; width: 100%; min-width: 0; }
+.org-item .cell { width: 100%; }
+.org-grid .cell .name,
+.fold .name {
+  max-width: 100%;
+  padding: 1px 6px;
+  border-radius: var(--r-lg);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* A folder is a rounded well holding up to four mini icons, as in the Mac grid. */
+.fold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--r-md);
+  -webkit-tap-highlight-color: transparent;
+}
+.fold-ico {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: var(--tile, 56px);
+  height: var(--tile, 56px);
+  padding: 7px;
+  box-sizing: border-box;
+  border-radius: calc(var(--tile, 56px) * var(--r-icon));
+  background: var(--field);
+  border: 1px solid var(--hair);
+  box-shadow: inset 0 1px 0 var(--g-rim-a);
+}
+.fold-ico i {
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--r-icon) * 100%);
+  background: linear-gradient(180deg, var(--a), var(--b));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.fold-ico svg {
+  width: 62%;
+  height: 62%;
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Minus badge, shown in Edit mode only. */
+.org-badge {
+  position: absolute;
+  top: -2px;
+  left: calc(50% + 12px);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid var(--base);
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--base);
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px -4px var(--sel-shadow);
+}
+.org-badge:hover { transform: scale(1.06); }
+.org-badge:active { transform: scale(0.92); }
+
+/* Folder panel, drawn over the grid. */
+.org-folder {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 96px;
+  bottom: 84px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  border-radius: var(--r-panel);
+  overflow: hidden;
+}
+.org-folder[hidden] { display: none; }
+.org-folder-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.org-folder-head b { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.org-folder-grid {
+  --cols: 3;
+  --tile: 60px;
+  gap: 18px 8px;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+  overflow: auto;
+  padding: 6px 4px 4px;
+}
+
+/* Hidden apps row, under the grid. */
+.org-hidden {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+.org-hidden[hidden] { display: none; }
+.org-hidden-label { font-size: 13px; color: var(--text-2); margin-right: 4px; }
+.org-hidden-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.org-restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px 0 6px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hair);
+  background: var(--field);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.org-restore .ico { --tile: 24px; border-radius: var(--r-xs); }
+.org-restore .ico svg { stroke-width: calc(var(--icon-stroke) * 1.2); } /* 24 pt tile: small glyph, one step heavier */
+.org-restore span { font-weight: 500; color: var(--text-2); }
+
+/* Undo toast. */
+.org-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 4;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: calc(100% - 32px);
+  padding: 6px 6px 6px 18px;
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.org-toast[hidden] { display: none; }
+.org-toast span { overflow: hidden; text-overflow: ellipsis; }
+.org-toast button {
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: none;
+}
+
+/* Edit mode jiggle. Only with motion allowed; Reduce Motion keeps the badges, not the wobble. */
+@media (prefers-reduced-motion: no-preference) {
+  .org-grid.is-editing .org-item { animation: org-jiggle var(--dur-jiggle) var(--ease-inOut) infinite alternate; }
+  .org-grid.is-editing .org-item:nth-child(3n + 2) { animation-delay: -0.11s; }
+  .org-grid.is-editing .org-item:nth-child(3n + 3) { animation-delay: -0.22s; }
+}
+@keyframes org-jiggle {
+  from { transform: rotate(-1.1deg); }
+  to   { transform: rotate(1.1deg); }
+}
+
+/* ---------- Everyday recipes ---------- */
+.uses { padding: var(--sec-y) 0; border-top: 1px solid var(--hair); }
+.uses-head { max-width: 640px; margin-bottom: 48px; }
+/* Three recipes as a ruled list: number, what you do, and the live UI, one row each. */
+.recipes { border-top: 1px solid var(--hair); }
+.recipe {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-areas:
+    "n h ui"
+    "n p ui"
+    "n k ui";
+  column-gap: 24px;
+  align-items: start;
+  min-width: 0;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.recipe-n { grid-area: n; padding-top: 4px; }
+.recipe h3 { grid-area: h; }
+.recipe > p { grid-area: p; margin-top: 10px; }
+.recipe .keyline { grid-area: k; margin-top: 20px; }
+.recipe-ui { grid-area: ui; align-self: center; }
+.recipe-n {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.recipe h3 {
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.018em;
+  font-weight: 650;
+  text-wrap: balance;
+}
+.recipe p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+/* A keystroke line: keys, then what you type, then the result. */
+.keyline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 14px;
+  border-radius: var(--r-lg);
+  background: var(--grouped);
+  border: 1px solid var(--hair);
+  box-shadow: inset 0 1px 0 var(--g-rim-a);
+}
+.keyline .arr { font-style: normal; font-size: 14px; color: var(--text-3); padding: 0 2px; }
+.keyline .typed {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  background: var(--field);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.keyline .typed::after {
+  content: "";
+  width: 2px;
+  height: 16px;
+  margin-left: 3px;
+  border-radius: var(--r-hair);
+  background: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .keyline .typed::after { animation: org-caret var(--dur-blink) steps(1) infinite; }
+}
+@keyframes org-caret { 50% { opacity: 0; } }
+.keyline .pill { font-size: 13px; background: var(--field); }
+.keyline-lg { padding: 16px; gap: 8px; }
+.keyline-lg kbd { height: 32px; min-width: 40px; font-size: 14px; padding: 0 10px; }
+.keyline-lg .typed { min-height: 34px; font-size: 17px; }
+
+/* ---------- Built on the Mac ---------- */
+.proof {
+  margin-top: 96px;
+  display: grid;
+  gap: 40px;
+}
+.proof-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.proof-item {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--hair);
+}
+.proof-item b { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.proof-item span { font-size: 15px; line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
+
+/* ---------- Closing call to action ---------- */
+.get-box .get-copy { display: grid; justify-items: start; min-width: 0; }
+.get-box .get-copy .eyebrow { margin-bottom: 14px; }
+.get-box .get-copy h2 { font-size: clamp(32px, 4.2vw, 44px); line-height: 1.08; letter-spacing: -0.03em; }
+.get-box .keyline { margin-top: 26px; }
+.get-box .get-lede { margin-top: 18px; max-width: 46ch; font-size: 18px; }
+.get-box .reqs { margin-top: 22px; }
+.get-box .get-actions { flex-direction: column; align-items: stretch; min-width: 220px; }
+.get-box .get-actions .btn { width: 100%; min-height: 52px; font-size: 17px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .recipe { grid-template-columns: minmax(0, 1fr); grid-template-areas: "h" "p" "k" "ui"; row-gap: 0; }
+  .recipe-n { display: none; }
+  .recipe-ui { margin-top: 24px; }
+  .proof-list { grid-template-columns: 1fr; gap: 0; }
+  .proof-item { padding: 20px 0; }
+  .org-stage, .org-stage .scrim { min-height: 560px; }
+  .get-box .get-actions { min-width: 0; width: 100%; }
+}
+@media (max-width: 560px) {
+  .org-stage .scrim { padding: 20px 16px; }
+  .org-grid { --cols: 4; --tile: 52px; gap: 16px 4px; }
+  .org-folder { left: 12px; right: 12px; top: 92px; bottom: 74px; padding: 14px; border-radius: var(--r-window); }
+  .org-folder-grid { --tile: 52px; gap: 16px 6px; }
+  .org-toast { bottom: 14px; padding-left: 14px; gap: 10px; }
+  .recipe { padding: 32px 0; }
+  .uses { padding: 64px 0; }
+  .keyline { padding: 12px; }
+  .get-box .keyline { width: 100%; }
+}
+
+/* ---------- Recipe previews: a small piece of the real UI in each card ---------- */
+.recipe-ui { display: grid; gap: 10px; }
+.recipe-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 16px;
+  font-size: 16px;
+  color: var(--text);
+  min-width: 0;
+}
+.recipe-search span { min-width: 0; overflow: hidden; white-space: nowrap; }
+.recipe-search .sm-ico { color: var(--text-3); }
+.recipe-hit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--sel-top), var(--sel-bot));
+  box-shadow: inset 0 0 0 1px var(--sel-ring), 0 4px 9px -4px var(--sel-shadow);
+}
+.recipe-hit > span:last-child { min-width: 0; display: grid; }
+.recipe-hit b { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recipe-hit small { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recipe-hit .fi { width: 36px; height: 36px; }
+.recipe-hit .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 14px -8px var(--icon-shadow); }
+.recipe-dock { gap: 10px; justify-content: center; padding: 10px 14px; border-radius: var(--r-lg); }
+.recipe-dock .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); }
+.recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
+

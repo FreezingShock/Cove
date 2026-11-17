@@ -1,0 +1,33 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./website",
+      "url": [
+        "http://localhost/index.html",
+        "http://localhost/features.html",
+        "http://localhost/download.html",
+        "http://localhost/changelog.html",
+        "http://localhost/faq.html",
+        "http://localhost/privacy.html",
+        "http://localhost/support.html"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --headless=new"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.97 }],
+        "categories:accessibility": ["error", { "minScore": 1 }],
+        "categories:best-practices": ["error", { "minScore": 1 }],
+        "categories:seo": ["error", { "minScore": 1 }]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "lighthouse-reports"
+    }
+  }
+}

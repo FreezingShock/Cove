@@ -6,8 +6,8 @@
 #
 # Usage: scripts/release/package.sh <path/to/Inlet.app> <version> <out-dir>
 #
-# Signing is ad-hoc for now. To add Developer ID signing and notarization,
-# see the SIGNING HOOK section in RELEASING.md.
+# Signing happens in the release workflow before this script runs: Developer ID when the
+# signing secrets are set, ad-hoc otherwise. See "Signing and notarization" in RELEASING.md.
 
 set -euo pipefail
 

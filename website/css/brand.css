@@ -1,0 +1,292 @@
+/* Inlet brand layer: the motifs from the Grid icon (one lit tile among ink tiles),
+   the inlet band, the highlight mark and the aqua call to action.
+   Colors come only from tokens.css (cream, ink, aqua). See docs/brand.md. */
+
+:root {
+  /* An ink tile on cream: the Grid icon's unlit tiles, at a quiet strength. */
+  --tile: rgba(23, 21, 15, 0.10);
+  --tile-lit: var(--accent);
+  --band-speed: 46s;
+}
+:root[data-theme="dark"], .t-dark { --tile: rgba(244, 239, 230, 0.12); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --tile: rgba(244, 239, 230, 0.12); }
+}
+
+/* ---- Call to action: aqua fill, ink label. The one accent carries the action. ---- */
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:active { background: var(--accent-pressed); }
+
+/* Hero: the primary action is aqua now, not ink. */
+.hero-cta .btn-primary,
+.hero-cta .btn-primary:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.hero-cta .btn-primary:hover { opacity: 1; background: var(--accent-hover); }
+
+/* ---- Highlight mark: one aqua word per headline, like a lit tile behind the type. ---- */
+.hl {
+  color: inherit;
+  background: linear-gradient(var(--accent), var(--accent)) 0 88% / 100% 0.34em no-repeat;
+  padding: 0 0.04em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ---- Tile rule: a row of ink tiles with one lit tile, used as a section divider. ---- */
+.tile-rule {
+  --n: 12;
+  --cell: 10px;
+  --gap: 10px;
+  position: relative;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: clamp(56px, 8vw, 96px) auto;
+  height: var(--cell);
+  display: grid;
+  grid-template-columns: repeat(var(--n), var(--cell));
+  gap: var(--gap);
+  pointer-events: none;
+}
+.tile-rule i {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 3px;
+  background: var(--tile);
+}
+.tile-rule .lit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--tile-lit);
+  transform: translateX(calc(var(--lit) * (var(--cell) + var(--gap))));
+}
+/* The lit tile slides into its place as the rule scrolls into view. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tile-rule .lit {
+      animation: tile-travel linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+@keyframes tile-travel {
+  from { transform: translateX(0); }
+}
+.tile-rule.is-wide { --cell: 8px; --gap: 8px; }
+
+/* ---- Inlet band: a full-bleed ink strip with words moving across it. ---- */
+.lit-band {
+  position: relative;
+  overflow: hidden;
+  background: var(--text);
+  color: var(--base);
+  margin: clamp(48px, 7vw, 88px) 0;
+  padding: 18px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.lit-band .lit-band-track {
+  display: flex;
+  width: max-content;
+  animation: band-run var(--band-speed) linear infinite;
+}
+.lit-band:hover .lit-band-track { animation-play-state: paused; }
+.lit-band ul {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lit-band li {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  font-size: clamp(22px, 3.2vw, 36px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.lit-band li::after {
+  content: "";
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 0.09em;
+  background: var(--accent);
+  flex: none;
+}
+.lit-band li:nth-child(3n)::after { background: transparent; box-shadow: inset 0 0 0 0.09em var(--base); }
+@keyframes band-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+/* Reduced motion: no movement. The band keeps one line, readable from the start. */
+@media (prefers-reduced-motion: reduce) {
+  .lit-band .lit-band-track { animation: none; }
+  .lit-band ul[aria-hidden="true"] { display: none; }
+  .lit-band { -webkit-mask-image: none; mask-image: none; }
+}
+
+/* ---- Eyebrow: a small lit tile before the label. ---- */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+  margin-right: 10px;
+  vertical-align: 1px;
+}
+
+/* ---- Closing call to action: the one full aqua panel on the site. ---- */
+.get .get-box {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+  box-shadow: none;
+}
+.get .get-box h2,
+.get .get-box .lede,
+.get .get-box .get-lede,
+.get .get-box .dl-meta,
+.get .get-box .dl-gk { color: var(--accent-ink); }
+.get .get-box .btn-primary { background: var(--accent-ink); color: var(--accent); }
+.get .get-box .btn-primary:hover { background: #000; color: var(--accent); }
+.get .get-box .btn-ghost { color: var(--accent-ink); border-color: var(--accent-ink); background: transparent; }
+.get .get-box .btn-ghost:hover { background: var(--accent-ink); color: var(--accent); }
+.get .get-box kbd {
+  background: rgba(23, 21, 15, 0.10);
+  border-color: rgba(23, 21, 15, 0.22);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+.get .get-box .reqs span {
+  color: var(--accent-ink);
+  background: rgba(23, 21, 15, 0.10);
+  border-color: transparent;
+}
+.get .get-box .dl-gk a { color: var(--accent-ink); }
+
+/* ---- Section backgrounds: the rhythm of the page. ----
+   Four treatments sit on top of the cream ground (no class):
+   - .bg-ink    a deep ink band, text inverted. In dark mode it is a lifted panel instead.
+   - .bg-tiles  the lit-tile pattern: faint ink tiles, fading out at the top and bottom.
+   - .bg-grain  paper grain: a noise texture, a few percent in strength.
+   - .bg-aqua   the one full aqua moment. Ink type only.
+   Each fill is a ::before layer, full bleed (100vw, centred), under the content.
+   main has overflow-x: clip so the 100vw layers never add a horizontal scroll bar.
+   Textures are inline SVG data URIs. No images are loaded. See docs/brand.md. */
+
+:root {
+  --band-ink: #17150F;
+  --band-ink-text: #F4EFE6;
+  --band-ink-2: rgba(244, 239, 230, 0.80);
+  --band-ink-3: rgba(244, 239, 230, 0.68);
+  --band-ink-hair: rgba(244, 239, 230, 0.16);
+  --band-ink-field: rgba(244, 239, 230, 0.08);
+  --band-ink-tile: rgba(244, 239, 230, 0.12);
+}
+:root[data-theme="dark"] {
+  --band-ink: #1B1F1D;
+  --band-ink-text: #F4EFE6;
+  --band-ink-2: rgba(244, 239, 230, 0.80);
+  --band-ink-3: rgba(244, 239, 230, 0.68);
+  --band-ink-hair: rgba(244, 239, 230, 0.14);
+  --band-ink-field: rgba(244, 239, 230, 0.07);
+  --band-ink-tile: rgba(244, 239, 230, 0.12);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --band-ink: #1B1F1D;
+    --band-ink-text: #F4EFE6;
+    --band-ink-2: rgba(244, 239, 230, 0.80);
+    --band-ink-3: rgba(244, 239, 230, 0.68);
+    --band-ink-hair: rgba(244, 239, 230, 0.14);
+    --band-ink-field: rgba(244, 239, 230, 0.07);
+    --band-ink-tile: rgba(244, 239, 230, 0.12);
+  }
+}
+
+main { overflow-x: clip; }
+
+.bg-ink, .bg-aqua, .bg-tiles, .bg-grain { position: relative; isolation: isolate; }
+.bg-ink::before, .bg-aqua::before, .bg-tiles::before, .bg-grain::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Ink band: light mode is a dark block with cream type. The tokens below the band
+   take the inverted values, so every child (buttons, hairlines, tiles, fields) follows. */
+.bg-ink {
+  color: var(--band-ink-text);
+  --text: var(--band-ink-text);
+  --text-2: var(--band-ink-2);
+  --text-3: var(--band-ink-3);
+  --hair: var(--band-ink-hair);
+  --field: var(--band-ink-field);
+  --hover: var(--band-ink-field);
+  --tile: var(--band-ink-tile);
+}
+.bg-ink::before { background: var(--band-ink); }
+
+/* Aqua moment: the one full aqua section on a page. Ink type on aqua, about 12:1. */
+.bg-aqua {
+  color: var(--accent-ink);
+  --text: var(--accent-ink);
+  --text-2: color-mix(in srgb, var(--accent-ink) 80%, transparent);
+  --text-3: color-mix(in srgb, var(--accent-ink) 70%, transparent);
+  --hair: color-mix(in srgb, var(--accent-ink) 24%, transparent);
+  --tile: color-mix(in srgb, var(--accent-ink) 16%, transparent);
+}
+.bg-aqua::before { background: var(--accent); }
+/* The closing box keeps its type and buttons but loses its own fill: the section is the moment. */
+.get.bg-aqua .get-box {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Lit-tile pattern: a sparse field of ink tiles, faded out at the top and bottom edges. */
+.bg-tiles::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='8' y='8' width='8' height='8' rx='2' fill='%2317150F' fill-opacity='.09'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 24%, #000 76%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 24%, #000 76%, transparent);
+}
+:root[data-theme="dark"] .bg-tiles::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='8' y='8' width='8' height='8' rx='2' fill='%23F4EFE6' fill-opacity='.10'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bg-tiles::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='8' y='8' width='8' height='8' rx='2' fill='%23F4EFE6' fill-opacity='.10'/%3E%3C/svg%3E");
+  }
+}
+
+/* Paper grain: fractal noise at a few percent. Ink specks on cream, cream specks on dark. */
+.bg-grain::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .09 0 0 0 0 .08 0 0 0 0 .06 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+:root[data-theme="dark"] .bg-grain::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .96 0 0 0 0 .94 0 0 0 0 .90 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bg-grain::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .96 0 0 0 0 .94 0 0 0 0 .90 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}

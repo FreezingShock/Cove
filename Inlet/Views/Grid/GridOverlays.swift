@@ -36,13 +36,7 @@ struct HiddenAppsPanel: View {
                         .lineLimit(1)
                     Spacer(minLength: InletSpace.s)
                     Button("Restore") { onRestore(row.id) }
-                        .buttonStyle(.plain)
-                        .font(InletFont.section)
-                        .foregroundStyle(InletColor.accentInk)
-                        .padding(.horizontal, InletSpace.l)
-                        .padding(.vertical, InletSpace.s)
-                        .background(Capsule().fill(InletColor.accent))
-                        .contentShape(Capsule())
+                        .buttonStyle(InletAccentButtonStyle())
                 }
                 .padding(.horizontal, InletSpace.s)
                 .padding(.vertical, InletSpace.xs)
@@ -68,13 +62,7 @@ struct UndoToast: View {
                 .lineLimit(1)
 
             Button("Undo", action: onUndo)
-                .buttonStyle(.plain)
-                .font(InletFont.section)
-                .foregroundStyle(InletColor.accentInk)
-                .padding(.horizontal, InletSpace.l)
-                .padding(.vertical, InletSpace.s)
-                .background(Capsule().fill(InletColor.accent))
-                .contentShape(Capsule())
+                .buttonStyle(InletAccentButtonStyle())
         }
         .padding(.leading, InletSpace.l)
         .padding(.trailing, InletSpace.s)

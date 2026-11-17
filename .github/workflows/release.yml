@@ -4,7 +4,9 @@ name: Release
 # it and publishes a GitHub Release tagged v<version>. It is safe to re-run: a
 # version that already has a release is skipped.
 #
-# Builds are ad-hoc signed for now. See SIGNING HOOK in RELEASING.md.
+# Builds are signed with Developer ID and notarized when the signing secrets are set
+# (see "Signing and notarization" in RELEASING.md). With no secrets, the build stays
+# ad-hoc signed and the signing and notarization steps skip.
 
 on:
   push:
@@ -32,8 +34,6 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       DRY_RUN: ${{ inputs.dry_run || false }}
-      # SIGNING HOOK: "-" means ad-hoc signing. Changing it needs a Developer ID.
-      CODE_SIGN_IDENTITY: "-"
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -75,20 +75,98 @@ jobs:
           xcodebuild -version
           xcrun --sdk macosx --show-sdk-version
 
+      - name: Set up Developer ID signing (when secrets are set)
+        if: steps.version.outputs.build == 'true'
+        env:
+          MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+          MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          # No signing secrets at all: stay ad-hoc signed and skip notarization.
+          if [ -z "$MACOS_CERT_P12" ] && [ -z "$APPLE_ID" ] && [ -z "$APPLE_APP_PASSWORD" ]; then
+            echo "::notice::No signing secrets are set. Building ad-hoc signed, not notarized."
+            echo "SIGN_IDENTITY=-" >> "$GITHUB_ENV"
+            echo "SIGNED=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          # Some but not all secrets set: fail loudly. A half-configured release
+          # should never look signed when it is not.
+          MISSING=""
+          for name in MACOS_CERT_P12 MACOS_CERT_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_PASSWORD; do
+            if [ -z "${!name}" ]; then MISSING="$MISSING $name"; fi
+          done
+          if [ -n "$MISSING" ]; then
+            echo "::error::Signing is partly set up. Add these secrets:$MISSING"
+            exit 1
+          fi
+
+          KEYCHAIN="$RUNNER_TEMP/inlet-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
+          P12="$RUNNER_TEMP/developer-id.p12"
+          printf '%s' "$MACOS_CERT_P12" | base64 -d > "$P12"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$P12" -k "$KEYCHAIN" -P "$MACOS_CERT_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          rm -f "$P12"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
+          security list-keychains -d user -s "$KEYCHAIN" \
+            $(security list-keychains -d user | sed -e 's/^[[:space:]]*"//' -e 's/"$//')
+
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" \
+            | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -n 1)"
+          if [ -z "$IDENTITY" ]; then
+            echo "::error::MACOS_CERT_P12 has no Developer ID Application certificate with its private key."
+            exit 1
+          fi
+          echo "Signing with: $IDENTITY"
+
+          # Store the notary credentials in the temporary keychain. This keeps the
+          # Apple ID password out of later commands.
+          xcrun notarytool store-credentials inlet-notary \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --keychain "$KEYCHAIN" >/dev/null
+
+          echo "SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+          echo "SIGNED=true" >> "$GITHUB_ENV"
+          echo "KEYCHAIN=$KEYCHAIN" >> "$GITHUB_ENV"
+
       - name: Build Release
         if: steps.version.outputs.build == 'true'
         run: |
           SCHEME="$(xcodebuild -list -project Inlet.xcodeproj -json | jq -r '.project.schemes[0]')"
           echo "Using scheme: $SCHEME"
+          if [ "${SIGNED:-false}" = "true" ]; then
+            # Hardened runtime and a secure timestamp are both required for notarization.
+            SIGNING_ARGS=(
+              CODE_SIGN_STYLE=Manual
+              CODE_SIGN_IDENTITY="$SIGN_IDENTITY"
+              ENABLE_HARDENED_RUNTIME=YES
+              OTHER_CODE_SIGN_FLAGS=--timestamp
+              CODE_SIGNING_ALLOWED=YES
+            )
+          else
+            SIGNING_ARGS=(
+              CODE_SIGN_IDENTITY="${SIGN_IDENTITY:--}"
+              CODE_SIGNING_REQUIRED=NO
+              CODE_SIGNING_ALLOWED=YES
+            )
+          fi
           xcodebuild build \
             -project Inlet.xcodeproj \
             -scheme "$SCHEME" \
             -configuration Release \
             -destination 'platform=macOS' \
             -derivedDataPath build/DerivedData \
-            CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=YES
+            "${SIGNING_ARGS[@]}"
 
       - name: Check the built app's version
         if: steps.version.outputs.build == 'true'
@@ -109,6 +187,46 @@ jobs:
           fi
           echo "Built app is $SHORT ($BUNDLE)."
 
+      - name: Notarize and staple (when signed)
+        if: steps.version.outputs.build == 'true'
+        run: |
+          if [ "${SIGNED:-false}" != "true" ]; then
+            echo "::notice::Not signed with Developer ID, so there is nothing to notarize."
+            exit 0
+          fi
+          APP="$(find build/DerivedData/Build/Products/Release -maxdepth 1 -name '*.app' -print -quit)"
+
+          INFO="$(codesign -dv --verbose=4 "$APP" 2>&1)"
+          if ! grep -q '^Authority=Developer ID Application' <<< "$INFO"; then
+            echo "::error::$APP is not signed with a Developer ID Application certificate."
+            exit 1
+          fi
+
+          # Notarization takes a zip. The stapled app is what package.sh zips next.
+          SUBMIT_ZIP="$RUNNER_TEMP/Inlet-notary.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "$SUBMIT_ZIP"
+
+          echo "Submitting to Apple's notary service. This usually takes a few minutes."
+          RESULT="$(xcrun notarytool submit "$SUBMIT_ZIP" \
+            --keychain-profile inlet-notary --keychain "$KEYCHAIN" \
+            --wait --output-format json)" || true
+          echo "$RESULT"
+          STATUS="$(jq -r '.status // "unknown"' <<< "$RESULT" 2>/dev/null || echo unknown)"
+          SUBMISSION_ID="$(jq -r '.id // empty' <<< "$RESULT" 2>/dev/null || true)"
+          if [ "$STATUS" != "Accepted" ]; then
+            echo "::error::Notarization finished with status $STATUS."
+            if [ -n "$SUBMISSION_ID" ]; then
+              xcrun notarytool log "$SUBMISSION_ID" \
+                --keychain-profile inlet-notary --keychain "$KEYCHAIN" || true
+            fi
+            exit 1
+          fi
+
+          xcrun stapler staple "$APP"
+          xcrun stapler validate "$APP"
+          spctl --assess --type execute --verbose=4 "$APP"
+          echo "Notarized and stapled $(basename "$APP")."
+
       - name: Package zip and DMG
         if: steps.version.outputs.build == 'true'
         env:
@@ -117,6 +235,26 @@ jobs:
           APP="$(find build/DerivedData/Build/Products/Release -maxdepth 1 -name '*.app' -print -quit)"
           scripts/release/package.sh "$APP" "$VERSION" build/release
           python3 scripts/release/changelog.py extract --version "$VERSION" > build/release/notes.md
+
+      # The site reads this file (website/js/download.js) to show the version and size.
+      # The Website workflow picks it up from the latest release when it redeploys.
+      - name: Write release info for the site
+        if: steps.version.outputs.build == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
+        run: |
+          DMG="build/release/Inlet.dmg"
+          BYTES="$(stat -f%z "$DMG")"
+          SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
+          jq -n \
+            --arg version "$VERSION" \
+            --arg build "$BUILD" \
+            --argjson bytes "$BYTES" \
+            --arg sha "$SHA" \
+            '{version: $version, build: $build, dmg_bytes: $bytes, dmg_sha256: $sha}' \
+            > build/release/release.json
+          cat build/release/release.json
 
       - name: Update Sparkle appcast (when the script exists)
         if: steps.version.outputs.build == 'true'
@@ -149,6 +287,7 @@ jobs:
             "build/release/Inlet-$VERSION.dmg"
             "build/release/Inlet.dmg"
             "build/release/SHA256SUMS.txt"
+            "build/release/release.json"
           )
           if [ -f build/release/appcast.xml ]; then
             ASSETS+=("build/release/appcast.xml")
@@ -158,3 +297,10 @@ jobs:
             --title "Inlet $VERSION" \
             --notes-file build/release/notes.md \
             --latest
+
+      - name: Remove the signing keychain
+        if: always()
+        run: |
+          if [ -n "${KEYCHAIN:-}" ] && [ -f "$KEYCHAIN" ]; then
+            security delete-keychain "$KEYCHAIN" || true
+          fi

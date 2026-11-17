@@ -1,67 +1,225 @@
-/* Inlet design tokens, v1.2 (2026-11-16)
-   Single source of truth. Every mockup and the design-system hub get their token block from this file
-   (design-system/build.py). Edit values here, then rebuild. Do not hand-edit the copies in mockups/.
-
+/* Inlet website tokens.
+   Colors come from design/tokens.json (color), and radius and motion come from the same file.
+   scripts/build-tokens.py writes the GENERATED blocks below. Edit the JSON, then rerun the script.
    Rules behind the values:
-   - Accent is a fill, never text. Text that used to be aqua is `--text`.
-   - Paths and file locations use `--text-2`, not `--text-3`.
-   - Radii nest: inner radius = outer radius - padding (see the radius table in theme-spec.md section 5).
-   - Spacing uses one 4 pt based scale. Nothing sits on 14 or 10 any more.
+   - Accent is a fill, never text. Body text and links use --text.
+   - Paths and file locations use --text-2, not --text-3.
+   - Radii nest: inner radius = outer radius - padding.
+   - Spacing uses one 4 pt based scale.
 */
 
-/* ---------- Light ---------- */
+/* ---------- Icons ----------
+   One stroke weight in the 24-unit grid (Lucide style, close to SF Symbols Regular), so rendered
+   weight scales with size. Three sizes only: sm 16, md 18, lg 20. Tiles size their glyph as a share of the tile. */
 :root {
-  --base: #E6ECF2;
-  --base-2: #F6F8FB;
-  --glow-a: rgba(70,230,214,0.42);
-  --glow-b: rgba(122,138,255,0.34);
-  --glow-c: rgba(255,255,255,0.85);
-  --window: #F4F6F9;
-  --grouped: #FFFFFF;
-  --text: #0B111C;
-  --text-2: rgba(16,24,40,0.66);
-  --text-3: rgba(16,24,40,0.62);
-  --hair: rgba(12,22,44,0.10);
-  --accent: #0A7F74;
-  --accent-soft: rgba(10,127,116,0.14);
-  --accent-ink: #FFFFFF;
+  --icon-stroke: 1.75;
+  --icon-sm: 16px;
+  --icon-md: 18px;
+  --icon-lg: 20px;
+}
+
+/* Color markers. scripts/build-tokens.py writes every color set here from design/tokens.json.
+   Do not hand-edit between the markers. */
+/* BEGIN GENERATED: color. Source: design/tokens.json, built by scripts/build-tokens.py.
+   Edit the JSON and rerun the script; do not hand-edit this block. */
+/* Light */
+:root {
+  --base: #F4EFE6;
+  --base-2: #F4EFE6;
+  --glow-a: rgba(70,230,214,0.46);
+  --glow-b: rgba(70,230,214,0.22);
+  --glow-c: rgba(70,230,214,0.12);
+  --window: #F4EFE6;
+  --grouped: #FBF8F2;
+  --text: #17150F;
+  --text-2: rgba(23,21,15,0.76);
+  --text-3: rgba(23,21,15,0.64);
+  --hair: rgba(60,45,20,0.13);
+  --accent: #46E6D6;
+  --accent-soft: rgba(70,230,214,0.22);
+  --accent-ink: #17150F;
   --logo-aqua: #46E6D6;
-  --g-fill: rgba(250,252,255,0.50);
-  --g-solid: #FFFFFF;
-  --g-sheen-top: rgba(255,255,255,0.62);
-  --g-sheen-bot: rgba(255,255,255,0.18);
+  --g-fill: rgba(255,252,245,0.58);
+  --g-solid: #FFFDF8;
+  --g-sheen-top: rgba(255,255,255,0.70);
+  --g-sheen-bot: rgba(255,255,255,0.22);
   --g-hl: rgba(255,255,255,0.95);
   --g-low: rgba(255,255,255,0.35);
   --g-spec: rgba(255,255,255,0.55);
   --g-rim-a: rgba(255,255,255,0.95);
   --g-rim-b: rgba(255,255,255,0.35);
-  --g-rim-c: rgba(12,22,44,0.06);
+  --g-rim-c: rgba(60,45,20,0.07);
   --g-rim-d: rgba(255,255,255,0.70);
-  --g-edge: rgba(12,22,44,0.10);
-  --g-shadow: rgba(28,44,80,0.16);
-  --c-fill: rgba(250,252,255,0.38);
+  --g-edge: rgba(60,45,20,0.12);
+  --g-shadow: rgba(70,50,20,0.16);
+  --c-fill: rgba(255,252,245,0.44);
   --sel-top: rgba(255,255,255,0.92);
   --sel-bot: rgba(255,255,255,0.62);
-  --sel-hl: rgba(255,255,255,1.00);
-  --sel-ring: rgba(12,22,44,0.08);
-  --sel-shadow: rgba(28,44,80,0.14);
-  --hover: rgba(12,22,44,0.05);
-  --scrim: rgba(236,241,246,0.42);
-  --track: rgba(12,22,44,0.46);
+  --sel-hl: #FFFFFF;
+  --sel-ring: rgba(60,45,20,0.10);
+  --sel-shadow: rgba(70,50,20,0.14);
+  --hover: rgba(60,45,20,0.06);
+  --scrim: rgba(244,239,230,0.46);
+  --track: rgba(23,21,15,0.45);
   --knob: #FFFFFF;
-  --field: rgba(12,22,44,0.05);
-  --icon-shadow: rgba(28,44,80,0.22);
+  --field: rgba(60,45,20,0.06);
+  --icon-shadow: rgba(70,50,20,0.22);
   --label-shadow: 0 1px 2px rgba(255,255,255,0.55);
+  --accent-hover: #3FDCCB;
+  --accent-pressed: #2CC9B8;
+  --pressed: rgba(60,45,20,0.10);
+  color-scheme: light;
+}
+/* Dark (system) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --base: #101211;
+    --base-2: #101211;
+    --glow-a: rgba(70,230,214,0.22);
+    --glow-b: rgba(70,230,214,0.10);
+    --glow-c: rgba(70,230,214,0.05);
+    --window: #101211;
+    --grouped: rgba(244,239,230,0.05);
+    --text: #F4EFE6;
+    --text-2: rgba(244,239,230,0.78);
+    --text-3: rgba(244,239,230,0.60);
+    --hair: rgba(244,239,230,0.12);
+    --accent: #46E6D6;
+    --accent-soft: rgba(70,230,214,0.16);
+    --accent-ink: #101211;
+    --logo-aqua: #46E6D6;
+    --g-fill: rgba(16,24,21,0.56);
+    --g-solid: #1A2622;
+    --g-sheen-top: rgba(255,250,240,0.12);
+    --g-sheen-bot: rgba(255,250,240,0.03);
+    --g-hl: rgba(255,250,240,0.40);
+    --g-low: rgba(255,250,240,0.08);
+    --g-spec: rgba(255,250,240,0.16);
+    --g-rim-a: rgba(255,250,240,0.46);
+    --g-rim-b: rgba(255,250,240,0.14);
+    --g-rim-c: rgba(255,250,240,0.06);
+    --g-rim-d: rgba(255,250,240,0.22);
+    --g-edge: rgba(0,0,0,0.40);
+    --g-shadow: rgba(0,0,0,0.55);
+    --c-fill: rgba(16,24,21,0.36);
+    --sel-top: rgba(255,250,240,0.22);
+    --sel-bot: rgba(255,250,240,0.09);
+    --sel-hl: rgba(255,250,240,0.50);
+    --sel-ring: rgba(255,250,240,0.16);
+    --sel-shadow: rgba(0,0,0,0.30);
+    --hover: rgba(255,250,240,0.07);
+    --scrim: rgba(5,9,8,0.46);
+    --track: rgba(244,239,230,0.40);
+    --knob: #F4EFE6;
+    --field: rgba(255,250,240,0.07);
+    --icon-shadow: rgba(0,0,0,0.45);
+    --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    --accent-hover: #6BEADB;
+    --accent-pressed: #34C7B6;
+    --pressed: rgba(255,250,240,0.12);
+    color-scheme: dark;
+  }
+}
+/* Dark (forced) */
+:root[data-theme="dark"], .t-dark {
+  --base: #101211;
+  --base-2: #101211;
+  --glow-a: rgba(70,230,214,0.22);
+  --glow-b: rgba(70,230,214,0.10);
+  --glow-c: rgba(70,230,214,0.05);
+  --window: #101211;
+  --grouped: rgba(244,239,230,0.05);
+  --text: #F4EFE6;
+  --text-2: rgba(244,239,230,0.78);
+  --text-3: rgba(244,239,230,0.60);
+  --hair: rgba(244,239,230,0.12);
+  --accent: #46E6D6;
+  --accent-soft: rgba(70,230,214,0.16);
+  --accent-ink: #101211;
+  --logo-aqua: #46E6D6;
+  --g-fill: rgba(16,24,21,0.56);
+  --g-solid: #1A2622;
+  --g-sheen-top: rgba(255,250,240,0.12);
+  --g-sheen-bot: rgba(255,250,240,0.03);
+  --g-hl: rgba(255,250,240,0.40);
+  --g-low: rgba(255,250,240,0.08);
+  --g-spec: rgba(255,250,240,0.16);
+  --g-rim-a: rgba(255,250,240,0.46);
+  --g-rim-b: rgba(255,250,240,0.14);
+  --g-rim-c: rgba(255,250,240,0.06);
+  --g-rim-d: rgba(255,250,240,0.22);
+  --g-edge: rgba(0,0,0,0.40);
+  --g-shadow: rgba(0,0,0,0.55);
+  --c-fill: rgba(16,24,21,0.36);
+  --sel-top: rgba(255,250,240,0.22);
+  --sel-bot: rgba(255,250,240,0.09);
+  --sel-hl: rgba(255,250,240,0.50);
+  --sel-ring: rgba(255,250,240,0.16);
+  --sel-shadow: rgba(0,0,0,0.30);
+  --hover: rgba(255,250,240,0.07);
+  --scrim: rgba(5,9,8,0.46);
+  --track: rgba(244,239,230,0.40);
+  --knob: #F4EFE6;
+  --field: rgba(255,250,240,0.07);
+  --icon-shadow: rgba(0,0,0,0.45);
+  --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
+  --accent-hover: #6BEADB;
+  --accent-pressed: #34C7B6;
+  --pressed: rgba(255,250,240,0.12);
+  color-scheme: dark;
+}
+/* Light (forced, for side-by-side sheets) */
+.t-light {
+  --base: #F4EFE6;
+  --base-2: #F4EFE6;
+  --glow-a: rgba(70,230,214,0.46);
+  --glow-b: rgba(70,230,214,0.22);
+  --glow-c: rgba(70,230,214,0.12);
+  --window: #F4EFE6;
+  --grouped: #FBF8F2;
+  --text: #17150F;
+  --text-2: rgba(23,21,15,0.76);
+  --text-3: rgba(23,21,15,0.64);
+  --hair: rgba(60,45,20,0.13);
+  --accent: #46E6D6;
+  --accent-soft: rgba(70,230,214,0.22);
+  --accent-ink: #17150F;
+  --logo-aqua: #46E6D6;
+  --g-fill: rgba(255,252,245,0.58);
+  --g-solid: #FFFDF8;
+  --g-sheen-top: rgba(255,255,255,0.70);
+  --g-sheen-bot: rgba(255,255,255,0.22);
+  --g-hl: rgba(255,255,255,0.95);
+  --g-low: rgba(255,255,255,0.35);
+  --g-spec: rgba(255,255,255,0.55);
+  --g-rim-a: rgba(255,255,255,0.95);
+  --g-rim-b: rgba(255,255,255,0.35);
+  --g-rim-c: rgba(60,45,20,0.07);
+  --g-rim-d: rgba(255,255,255,0.70);
+  --g-edge: rgba(60,45,20,0.12);
+  --g-shadow: rgba(70,50,20,0.16);
+  --c-fill: rgba(255,252,245,0.44);
+  --sel-top: rgba(255,255,255,0.92);
+  --sel-bot: rgba(255,255,255,0.62);
+  --sel-hl: #FFFFFF;
+  --sel-ring: rgba(60,45,20,0.10);
+  --sel-shadow: rgba(70,50,20,0.14);
+  --hover: rgba(60,45,20,0.06);
+  --scrim: rgba(244,239,230,0.46);
+  --track: rgba(23,21,15,0.45);
+  --knob: #FFFFFF;
+  --field: rgba(60,45,20,0.06);
+  --icon-shadow: rgba(70,50,20,0.22);
+  --label-shadow: 0 1px 2px rgba(255,255,255,0.55);
+  --accent-hover: #3FDCCB;
+  --accent-pressed: #2CC9B8;
+  --pressed: rgba(60,45,20,0.10);
+  color-scheme: light;
+}
+/* END GENERATED: color */
 
-  /* Radius: outer shapes, then the inner shapes they nest */
-  --r-xs: 6px;        /* keycaps, symbol tiles */
-  --r-sm: 10px;       /* small tiles, sidebar rows, theme thumbnails */
-  --r-md: 16px;       /* rows and groups inside a 32 pt panel with 16 pt padding */
-  --r-row: 24px;      /* selected row inside a results panel (32 - 8) */
-  --r-sidebar: 18px;  /* Settings sidebar inside a 26 pt window with 8 pt inset */
-  --r-window: 26px;   /* Settings window */
-  --r-panel: 32px;    /* every glass panel: results, quick panel, folder overlay */
-
+/* Spacing, type and blur: one scale for the whole site. Use names, never raw numbers. */
+:root {
   /* Spacing: 4 pt based. Use these names, never raw numbers. */
   --s-2: 2px;  --s-4: 4px;  --s-8: 8px;  --s-12: 12px;
   --s-16: 16px; --s-20: 20px; --s-24: 24px; --s-32: 32px;
@@ -82,142 +240,52 @@
   --sat: 200%;
 }
 
-/* ---------- Dark (system) ---------- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --base: #05070C;
-    --base-2: #0B0F18;
-    --glow-a: rgba(48,196,186,0.36);
-    --glow-b: rgba(70,90,200,0.34);
-    --glow-c: rgba(120,90,220,0.16);
-    --window: #161A22;
-    --grouped: rgba(255,255,255,0.055);
-    --text: #FFFFFF;
-    --text-2: rgba(235,240,255,0.78);
-    --text-3: rgba(235,240,255,0.56);
-    --hair: rgba(255,255,255,0.12);
-    --accent: #3FD9C9;
-    --accent-soft: rgba(63,217,201,0.16);
-    --accent-ink: #022522;
-    --logo-aqua: #46E6D6;
-    --g-fill: rgba(12,16,26,0.55);
-    --g-solid: #242A35;
-    --g-sheen-top: rgba(255,255,255,0.13);
-    --g-sheen-bot: rgba(255,255,255,0.04);
-    --g-hl: rgba(255,255,255,0.42);
-    --g-low: rgba(255,255,255,0.08);
-    --g-spec: rgba(255,255,255,0.16);
-    --g-rim-a: rgba(255,255,255,0.50);
-    --g-rim-b: rgba(255,255,255,0.14);
-    --g-rim-c: rgba(255,255,255,0.06);
-    --g-rim-d: rgba(255,255,255,0.22);
-    --g-edge: rgba(0,0,0,0.40);
-    --g-shadow: rgba(0,0,0,0.55);
-    --c-fill: rgba(12,16,26,0.35);
-    --sel-top: rgba(255,255,255,0.24);
-    --sel-bot: rgba(255,255,255,0.10);
-    --sel-hl: rgba(255,255,255,0.55);
-    --sel-ring: rgba(255,255,255,0.16);
-    --sel-shadow: rgba(0,0,0,0.30);
-    --hover: rgba(255,255,255,0.07);
-    --scrim: rgba(4,6,10,0.44);
-    --track: rgba(255,255,255,0.40);
-    --knob: #F4F6FA;
-    --field: rgba(255,255,255,0.07);
-    --icon-shadow: rgba(0,0,0,0.45);
-    --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
-    color-scheme: dark;
-  }
-}
+/* BEGIN GENERATED: radius and motion. Source: design/tokens.json, built by scripts/build-tokens.py.
+   Edit the JSON and rerun the script; do not hand-edit this block. */
+:root {
+  /* Radius (px). Inner = outer - inset; see the nesting table in design/tokens.json. */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-row: 24px;
+  --r-sidebar: 18px;
+  --r-window: 26px;
+  --r-panel: 32px;
+  --r-pill: 999px;
+  --r-hair: 2px;
+  --r-icon: 0.224;  /* app icon squircle, as a fraction of the icon size */
 
-/* ---------- Dark (forced) ---------- */
-:root[data-theme="dark"], .t-dark {
-    --base: #05070C;
-    --base-2: #0B0F18;
-    --glow-a: rgba(48,196,186,0.36);
-    --glow-b: rgba(70,90,200,0.34);
-    --glow-c: rgba(120,90,220,0.16);
-    --window: #161A22;
-    --grouped: rgba(255,255,255,0.055);
-    --text: #FFFFFF;
-    --text-2: rgba(235,240,255,0.78);
-    --text-3: rgba(235,240,255,0.56);
-    --hair: rgba(255,255,255,0.12);
-    --accent: #3FD9C9;
-    --accent-soft: rgba(63,217,201,0.16);
-    --accent-ink: #022522;
-    --logo-aqua: #46E6D6;
-    --g-fill: rgba(12,16,26,0.55);
-    --g-solid: #242A35;
-    --g-sheen-top: rgba(255,255,255,0.13);
-    --g-sheen-bot: rgba(255,255,255,0.04);
-    --g-hl: rgba(255,255,255,0.42);
-    --g-low: rgba(255,255,255,0.08);
-    --g-spec: rgba(255,255,255,0.16);
-    --g-rim-a: rgba(255,255,255,0.50);
-    --g-rim-b: rgba(255,255,255,0.14);
-    --g-rim-c: rgba(255,255,255,0.06);
-    --g-rim-d: rgba(255,255,255,0.22);
-    --g-edge: rgba(0,0,0,0.40);
-    --g-shadow: rgba(0,0,0,0.55);
-    --c-fill: rgba(12,16,26,0.35);
-    --sel-top: rgba(255,255,255,0.24);
-    --sel-bot: rgba(255,255,255,0.10);
-    --sel-hl: rgba(255,255,255,0.55);
-    --sel-ring: rgba(255,255,255,0.16);
-    --sel-shadow: rgba(0,0,0,0.30);
-    --hover: rgba(255,255,255,0.07);
-    --scrim: rgba(4,6,10,0.44);
-    --track: rgba(255,255,255,0.40);
-    --knob: #F4F6FA;
-    --field: rgba(255,255,255,0.07);
-    --icon-shadow: rgba(0,0,0,0.45);
-    --label-shadow: 0 1px 3px rgba(0,0,0,0.55);
-    color-scheme: dark;
-}
+  /* Motion durations (seconds). */
+  --dur-fast: 0.2s;
+  --dur-base: 0.26s;
+  --dur-medium: 0.36s;
+  --dur-slow: 0.5s;
+  --dur-slower: 0.8s;
+  --dur-jiggle: 0.19s;
+  --dur-blink: 1.0s;
 
-/* ---------- Light (forced, for side-by-side sheets) ---------- */
-.t-light {
-    --base: #E6ECF2;
-    --base-2: #F6F8FB;
-    --glow-a: rgba(70,230,214,0.42);
-    --glow-b: rgba(122,138,255,0.34);
-    --glow-c: rgba(255,255,255,0.85);
-    --window: #F4F6F9;
-    --grouped: #FFFFFF;
-    --text: #0B111C;
-    --text-2: rgba(16,24,40,0.66);
-    --text-3: rgba(16,24,40,0.62);
-    --hair: rgba(12,22,44,0.10);
-    --accent: #0A7F74;
-    --accent-soft: rgba(10,127,116,0.14);
-    --accent-ink: #FFFFFF;
-    --logo-aqua: #46E6D6;
-    --g-fill: rgba(250,252,255,0.50);
-    --g-solid: #FFFFFF;
-    --g-sheen-top: rgba(255,255,255,0.62);
-    --g-sheen-bot: rgba(255,255,255,0.18);
-    --g-hl: rgba(255,255,255,0.95);
-    --g-low: rgba(255,255,255,0.35);
-    --g-spec: rgba(255,255,255,0.55);
-    --g-rim-a: rgba(255,255,255,0.95);
-    --g-rim-b: rgba(255,255,255,0.35);
-    --g-rim-c: rgba(12,22,44,0.06);
-    --g-rim-d: rgba(255,255,255,0.70);
-    --g-edge: rgba(12,22,44,0.10);
-    --g-shadow: rgba(28,44,80,0.16);
-    --c-fill: rgba(250,252,255,0.38);
-    --sel-top: rgba(255,255,255,0.92);
-    --sel-bot: rgba(255,255,255,0.62);
-    --sel-hl: rgba(255,255,255,1.00);
-    --sel-ring: rgba(12,22,44,0.08);
-    --sel-shadow: rgba(28,44,80,0.14);
-    --hover: rgba(12,22,44,0.05);
-    --scrim: rgba(236,241,246,0.42);
-    --track: rgba(12,22,44,0.46);
-    --knob: #FFFFFF;
-    --field: rgba(12,22,44,0.05);
-    --icon-shadow: rgba(28,44,80,0.22);
-    --label-shadow: 0 1px 2px rgba(255,255,255,0.55);
-    color-scheme: light;
+  /* Easing curves. */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-fade: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-inOut: cubic-bezier(0.42, 0, 0.58, 1);
+
+  /* Springs, matched to the app: a linear() curve and the time it takes to settle. Use only
+     where linear() is supported (@supports (transition-timing-function: linear(0, 1))). */
+  --spring-snap: linear(0.0, 0.016, 0.058, 0.114, 0.18, 0.25, 0.321, 0.39, 0.455, 0.516, 0.573, 0.625, 0.671, 0.713, 0.75, 0.783, 0.812, 0.838, 0.86, 0.88, 0.897, 0.911, 0.924, 0.935, 0.945, 0.953, 0.96, 0.966, 0.971, 0.975, 0.979, 0.982, 0.985, 0.987, 0.989, 0.991, 0.992, 0.993, 0.994, 0.995, 0.996, 0.997, 0.997, 0.998, 0.998, 0.998, 0.999, 0.999, 1.0);
+  --spring-snap-dur: 0.353s;
+  --spring-press: linear(0.0, 0.029, 0.106, 0.213, 0.337, 0.466, 0.592, 0.709, 0.812, 0.899, 0.97, 1.024, 1.063, 1.088, 1.102, 1.107, 1.104, 1.096, 1.085, 1.072, 1.058, 1.045, 1.032, 1.021, 1.012, 1.004, 0.998, 0.994, 0.991, 0.989, 0.989, 0.989, 0.99, 0.991, 0.992, 0.994, 0.995, 0.996, 0.998, 0.999, 1, 1, 1.001, 1.001, 1.001, 1.001, 1.001, 1.001, 1.0);
+  --spring-press-dur: 0.507s;
+  --spring-open: linear(0.0, 0.013, 0.048, 0.099, 0.161, 0.23, 0.302, 0.376, 0.449, 0.519, 0.585, 0.647, 0.703, 0.754, 0.8, 0.841, 0.876, 0.906, 0.932, 0.954, 0.972, 0.986, 0.998, 1.007, 1.014, 1.019, 1.022, 1.024, 1.025, 1.025, 1.025, 1.024, 1.022, 1.021, 1.019, 1.017, 1.015, 1.013, 1.012, 1.01, 1.008, 1.007, 1.006, 1.005, 1.004, 1.003, 1.002, 1.002, 1.0);
+  --spring-open-dur: 0.593s;
+  --spring-morph: linear(0.0, 0.021, 0.075, 0.152, 0.242, 0.339, 0.437, 0.531, 0.62, 0.701, 0.773, 0.835, 0.887, 0.931, 0.965, 0.993, 1.013, 1.028, 1.037, 1.043, 1.046, 1.046, 1.044, 1.041, 1.037, 1.033, 1.028, 1.024, 1.02, 1.016, 1.012, 1.009, 1.006, 1.004, 1.002, 1.001, 1, 0.999, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.999, 0.999, 1.0);
+  --spring-morph-dur: 0.851s;
+  --spring-rise: linear(0.0, 0.021, 0.076, 0.155, 0.247, 0.346, 0.446, 0.543, 0.634, 0.716, 0.789, 0.852, 0.905, 0.948, 0.982, 1.008, 1.028, 1.041, 1.049, 1.053, 1.054, 1.053, 1.05, 1.045, 1.04, 1.035, 1.029, 1.024, 1.019, 1.015, 1.011, 1.008, 1.005, 1.003, 1.001, 0.999, 0.998, 0.998, 0.997, 0.997, 0.997, 0.997, 0.997, 0.998, 0.998, 0.998, 0.998, 0.999, 1.0);
+  --spring-rise-dur: 0.825s;
+  --spring-settle: linear(0.0, 0.015, 0.053, 0.108, 0.174, 0.246, 0.321, 0.395, 0.468, 0.536, 0.6, 0.659, 0.713, 0.761, 0.803, 0.84, 0.872, 0.899, 0.922, 0.942, 0.958, 0.971, 0.982, 0.99, 0.997, 1.002, 1.005, 1.008, 1.01, 1.011, 1.011, 1.011, 1.011, 1.01, 1.01, 1.009, 1.008, 1.007, 1.006, 1.006, 1.005, 1.004, 1.004, 1.003, 1.002, 1.002, 1.002, 1.001, 1.0);
+  --spring-settle-dur: 0.823s;
+  --spring-dismiss: linear(0.0, 0.016, 0.058, 0.114, 0.18, 0.25, 0.321, 0.39, 0.455, 0.516, 0.573, 0.625, 0.671, 0.713, 0.75, 0.783, 0.812, 0.838, 0.86, 0.88, 0.897, 0.911, 0.924, 0.935, 0.945, 0.953, 0.96, 0.966, 0.971, 0.975, 0.979, 0.982, 0.985, 0.987, 0.989, 0.991, 0.992, 0.993, 0.994, 0.995, 0.996, 0.997, 0.997, 0.998, 0.998, 0.998, 0.999, 0.999, 1.0);
+  --spring-dismiss-dur: 0.382s;
 }
+/* END GENERATED */
