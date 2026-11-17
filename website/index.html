@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/download.css">
+  <link rel="stylesheet" href="css/ledger.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
@@ -131,8 +132,8 @@
 
 <main id="main">
   <!-- Hero: the app icon, one claim, one button, then the live window (js/hero.js drives it) -->
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap hero-inner">
+  <section class="hero" data-tiles-off aria-labelledby="hero-title">
+    <div class="wrap hero-inner" data-tiles>
       <div class="hero-icon">
         <img class="i-light" src="assets/inlet-icon-light.svg" width="176" height="176" alt="Inlet app icon">
         <img class="i-dark" src="assets/inlet-icon-dark.svg" width="176" height="176" alt="" aria-hidden="true">
@@ -192,12 +193,7 @@
   </section>
 
   <!-- Demo video: the grid opens, search narrows to Photos, Return opens it. Loads only when on screen. -->
-  <div class="lit-band" role="note" aria-label="Open. Search. Arrange. Launch. Keep it on your Mac.">
-    <div class="lit-band-track">
-      <ul><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
-      <ul aria-hidden="true"><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
-    </div>
-  </div>
+  <div class="ticker" data-ticker role="note" aria-label="Open. Search. Arrange. Launch. Keep it on your Mac."><div class="ticker-track" aria-hidden="true"><span>Open</span><span>Search</span><span>Arrange</span><span>Launch</span><span>Peek at a file</span><span>Keep it on your Mac</span><span>Press Option Space</span></div></div>
   <section class="wrap showcase" id="demo" aria-labelledby="demo-title">
     <div class="scrub" data-scrub>
       <div class="scrub-sticky">
@@ -366,6 +362,40 @@
     </div>
   </section>
 
+  <div class="ticker" data-ticker role="note" aria-label="No accounts. No analytics. Nothing leaves your Mac."><div class="ticker-track" aria-hidden="true"><span>No accounts</span><span>No analytics</span><span>No search requests</span><span>Nothing leaves your Mac</span><span>MIT licensed</span></div></div>
+  <!-- Privacy -->
+  <section class="privacy ld-ink ld-full" data-tiles id="privacy" aria-label="Privacy"><div class="ld-inner">
+    <div class="privacy-head">
+      <div>
+        <h2 class="h-section">Your data stays on your Mac.</h2>
+      </div>
+      <p class="lede">Inlet has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <h3>One update check</h3>
+        <p>Inlet checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
+      </div>
+      <div class="fact">
+        <h3>No accounts</h3>
+        <p>There is no sign-in, no profile, and no sync between machines.</p>
+      </div>
+      <div class="fact">
+        <h3>Your own search</h3>
+        <p>File search uses Spotlight, which already runs on your Mac. Inlet does not build a second index.</p>
+      </div>
+      <div class="fact">
+        <h3>Reports only when you send them</h3>
+        <p>Crash reporting is off unless you turn it on. Reports stay on your Mac until you choose to share one.</p>
+      </div>
+      <div class="fact">
+        <h3>Erase history</h3>
+        <p>Clear the list of recent apps in one step, from Settings, Privacy.</p>
+      </div>
+    </div>
+    <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
+  </div></section>
+
   <!-- Everyday recipes and what the page is built on -->
   <section class="wrap uses" id="uses" aria-labelledby="uses-title">
     <div class="uses-head">
@@ -426,39 +456,6 @@
   </section>
 
 
-  <!-- Privacy -->
-  <section class="wrap privacy" id="privacy">
-    <div class="privacy-head">
-      <div>
-        <h2 class="h-section">Your data stays on your Mac.</h2>
-      </div>
-      <p class="lede">Inlet has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
-    </div>
-    <div class="facts">
-      <div class="fact">
-        <h3>One update check</h3>
-        <p>Inlet checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
-      </div>
-      <div class="fact">
-        <h3>No accounts</h3>
-        <p>There is no sign-in, no profile, and no sync between machines.</p>
-      </div>
-      <div class="fact">
-        <h3>Your own search</h3>
-        <p>File search uses Spotlight, which already runs on your Mac. Inlet does not build a second index.</p>
-      </div>
-      <div class="fact">
-        <h3>Reports only when you send them</h3>
-        <p>Crash reporting is off unless you turn it on. Reports stay on your Mac until you choose to share one.</p>
-      </div>
-      <div class="fact">
-        <h3>Erase history</h3>
-        <p>Clear the list of recent apps in one step, from Settings, Privacy.</p>
-      </div>
-    </div>
-    <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
-  </section>
-
   <div class="tile-rule is-wide" aria-hidden="true" style="--lit:17"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <!-- Get Inlet: closing call to action -->
     <!-- Who it's for -->
@@ -491,7 +488,7 @@
   </section>
 
   <section class="wrap get get-quiet" id="get" aria-labelledby="get-title">
-    <div class="get-box">
+    <div class="get-box" data-tiles>
       <div class="get-copy">
         <h2 id="get-title">Start with one keystroke.</h2>
         <div class="keyline keyline-lg" role="img" aria-label="Option Space, then type a few letters, then Return">
@@ -518,8 +515,6 @@
     </div>
   </section>
 </main>
-
-<div class="ticker" data-ticker aria-hidden="true"><div class="ticker-track"><span>Press the hotkey</span><span>Type a few letters</span><span>Press return</span><span>Your files stay on your Mac</span><span>Free and open source</span></div></div>
 
 <footer class="wrap foot">
   <div class="foot-products" role="group" aria-label="Start here">
@@ -594,5 +589,6 @@
 <script src="js/feedback.js" defer></script>
 <script src="js/motion.js" defer></script>
 <script src="js/kit.js" defer></script>
+<script src="js/ledger.js" defer></script>
 </body>
 </html>

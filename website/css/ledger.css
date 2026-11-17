@@ -1,0 +1,206 @@
+/* Ledger Tiles: the site-wide theme layer (style E).
+   Loads last on every page. It owns shape and surface, not the header (nav.css owns that).
+   Rules: square corners, 1px ink rules, hard offset shadows, aqua as a fill only, ink bands
+   with aqua tickers. All colors come from tokens.css; the two ink tokens below follow the theme. */
+
+:root {
+  --ink: #17150F;
+  --ink-text: #F4EFE6;
+  --ink-2: rgba(244, 239, 230, 0.8);
+  --ink-hair: rgba(244, 239, 230, 0.2);
+  --rule: var(--text);
+  --lift: 8px;
+  --snap: cubic-bezier(.22, .9, .24, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --ink: #1A1F1D; --ink-hair: rgba(244, 239, 230, 0.22); --rule: rgba(244, 239, 230, 0.55); }
+}
+:root[data-theme="dark"] { --ink: #1A1F1D; --ink-hair: rgba(244, 239, 230, 0.22); --rule: rgba(244, 239, 230, 0.55); }
+
+/* ---------- Shape: nothing is round except the page's own icons ---------- */
+main .btn, main .card, main .stage, main .get-box, main .glass:not(.capsule), main .chip, main .pill, main .shot,
+main .faq details, main .faq-search input, main .reqs span, main .dl-gk, main .hero-note kbd, main kbd, footer .foot-card,
+main .win, main .screen, main .recipe-hit, main .recipe-search, main .recipe-dock, main .searchbar, main .files, main .sheet-panel, main .win-search, main .win-status, main .keyline, main .keyline .typed, main .fact, main .recipe, main .note, main .plan, main .capsule-btn,
+main .glass.capsule, main .search-stage .searchbar { border-radius: 0; }
+
+/* ---------- Type: heavier, tighter, readable ---------- */
+main { --text-3: var(--text-2); }
+main .page-hero h1 { letter-spacing: -0.05em; line-height: 0.98; font-weight: 700; }
+main .h-section, main .h-feature { letter-spacing: -0.045em; font-weight: 700; }
+main .lede, main .body-2 { color: var(--text-2); }
+main .h-display .soft { color: var(--text-2); }
+main p a, main li a:not(.btn):not(.aud):not(.foot-card), main .answer a {
+  text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) left bottom / 100% 2px no-repeat;
+  color: var(--text); padding-bottom: 1px; transition: background-size .35s var(--snap), color .2s;
+}
+main p a:hover, main li a:not(.btn):not(.aud):not(.foot-card):hover { background-size: 100% 100%; color: var(--accent-ink); }
+.hl, main .h-section .hl, main .h-feature .hl { background: linear-gradient(var(--accent), var(--accent)) left 88% / 100% 0.42em no-repeat; color: inherit; text-decoration: none; padding: 0 .06em; }
+.hl { color: var(--text); }
+
+/* ---------- Buttons: square, ruled, they flip on hover ---------- */
+main .btn { border: 1px solid var(--rule); transition: background .3s var(--snap), color .3s, transform .3s var(--snap), box-shadow .3s var(--snap); }
+main .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--ink); }
+main .btn-primary:hover { background: var(--ink); color: var(--accent); border-color: var(--ink); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--accent); }
+main .btn-ghost { background: transparent; color: var(--text); }
+main .btn-ghost:hover { background: var(--text); color: var(--base); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--accent); }
+main .btn:active { transform: translate(0, 0); box-shadow: none; }
+main kbd { background: var(--grouped, var(--base)); border: 1px solid var(--rule); color: var(--text); }
+
+/* ---------- Sections: ruled, with a margin label on pages ---------- */
+main .band, main .get, main .privacy, main .uses, main .feature { border-top: 1px solid var(--rule); }
+main .band:first-of-type { border-top: 0; }
+main .page-hero { border-bottom: 1px solid var(--rule); padding-block: 88px 64px; position: relative; }
+main .page-hero .eyebrow, main .eyebrow {
+  display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .08em; color: var(--text-2);
+}
+main .eyebrow::after { content: ""; flex: 0 1 120px; height: 1px; background: var(--rule); opacity: .5; }
+.ld-tiles { display: inline-grid; grid-template-columns: repeat(2, 8px); gap: 2px; vertical-align: middle; }
+.ld-tiles i { width: 8px; height: 8px; background: var(--text); display: block; }
+.ld-tiles i:first-child { background: var(--accent); }
+
+/* ---------- Stages and shots: hard-edged panels with an offset shadow ---------- */
+main .stage, main .shot, main .demo-frame { border: 1px solid var(--rule); box-shadow: var(--lift) var(--lift) 0 var(--ink); background: var(--grouped, var(--base-2)); }
+main .demo-frame, main .demo-frame video { border-radius: 0; }
+main .scrim { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+
+/* ---------- Cards and rows: ledger lines that light up ---------- */
+main .cards { border-top: 1px solid var(--rule); }
+main .card { border-bottom: 1px solid var(--hair); transition: padding .4s var(--snap), background .3s; position: relative; }
+main .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--accent); transition: width .35s var(--snap); }
+main .card:hover { padding-left: 22px; background: var(--accent-soft); }
+main .card:hover::before { width: 6px; }
+main .card h3 { letter-spacing: -0.03em; font-size: 22px; }
+main .card p { color: var(--text-2); }
+main .specs li::before { border-radius: 0; background: var(--accent); }
+main .fact { border: 1px solid var(--rule); padding: 22px; background: var(--grouped, transparent); transition: transform .35s var(--snap), box-shadow .35s var(--snap), background .3s; }
+main .fact:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--accent); }
+main .facts { gap: 0; }
+main .plan { border: 1px solid var(--rule); background: var(--grouped, transparent); transition: transform .4s var(--snap), box-shadow .4s var(--snap); }
+main .plan:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 var(--accent); }
+main .plan-supporter { box-shadow: var(--lift) var(--lift) 0 var(--ink); }
+
+/* ---------- FAQ ---------- */
+main .faq details { border: 0; border-top: 1px solid var(--rule); transition: background .3s; }
+main .faq details:hover { background: var(--accent-soft); }
+main .faq summary { font-weight: 650; letter-spacing: -0.02em; }
+main .faq-search input { border: 1px solid var(--rule); background: var(--grouped, var(--base)); }
+
+/* ---------- Audience rows (home) ---------- */
+main .uc-home--rows .aud-list { border-top: 1px solid var(--rule); }
+main .uc-home--rows .aud { border-bottom: 1px solid var(--hair); transition: padding .4s var(--snap), background .3s; position: relative; }
+main .uc-home--rows .aud:hover { padding-left: 24px; background: linear-gradient(90deg, var(--accent) 0 6px, var(--accent-soft) 6px); }
+main .aud-ico { border-radius: 0; }
+
+/* ---------- Ticker bands (markup and speed come from the kit): display type, outlined words ---------- */
+.ticker { padding: 18px 0; border-block: 1px solid var(--ink); font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; --tk: clamp(30px, 4.4vw, 54px); height: calc(var(--tk) * 1.05 + 38px); box-sizing: border-box; display: flex; align-items: center; }
+.ticker-track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); }
+.ticker-track span::after { border-radius: 0; }
+.ld-ink .ticker, .ticker + .ld-ink { border-color: var(--accent); }
+.kit-host > .ld-inner { position: relative; }
+
+/* ---------- Ink bands (privacy, closing): dark tile walls with aqua flicker ---------- */
+.bg-ink, .ld-ink, .get-box { background: var(--ink); color: var(--ink-text); border: 1px solid var(--ink); }
+.ld-ink { --text: var(--ink-text); --text-2: var(--ink-2); --text-3: var(--ink-2); --hair: var(--ink-hair); --rule: var(--ink-hair); --grouped: transparent; --accent-soft: rgba(70, 230, 214, .14); --base: var(--ink); --field: rgba(244, 239, 230, .08); }
+.ld-ink .fact { background: rgba(244, 239, 230, .04); border-color: var(--ink-hair); }
+.ld-ink .btn-primary { border-color: var(--accent); }
+.ld-ink .fact h3 { color: var(--ink-text); }
+.ld-ink .fact p, .ld-ink .lede { color: var(--ink-2); }
+.ld-ink p a { color: var(--ink-text); }
+.ld-ink .privacy-link a { color: var(--ink-text); }
+.ld-ink h2 em, .ld-ink .hl { color: var(--accent); }
+.ld-full { padding: 0; border-top: 1px solid var(--ink-hair); position: relative; isolation: isolate; width: 100%; max-width: none; padding-inline: 0; }
+.ld-full > .ld-inner { width: min(1120px, 100%); margin-inline: auto; padding: var(--sec-y) max(16px, env(safe-area-inset-left, 0px)); }
+.get-box { position: relative; isolation: isolate; overflow: hidden; box-shadow: 12px 12px 0 var(--accent); }
+.get-box .btn-primary { border-color: var(--accent); }
+.get-box .btn-primary:hover { background: var(--ink-text); color: var(--ink); border-color: var(--ink-text); box-shadow: 4px 4px 0 var(--accent); }
+.get-box .btn-ghost { color: var(--ink-text); border-color: var(--ink-hair); }
+.get-box .btn-ghost:hover { background: var(--ink-text); color: var(--ink); }
+.get-box .keyline kbd, .get-box .keyline .typed { border-radius: 0; }
+.get-box .keyline kbd { color: var(--ink); background: var(--ink-text); }
+.get-box .get-copy h2 { color: var(--ink-text); font-size: clamp(36px, 5vw, 60px); letter-spacing: -0.05em; }
+.get-box .lede, .get-box .reqs span { color: var(--ink-2); }
+.get-box .reqs span { background: none; border: 1px solid var(--ink-hair); opacity: 1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .get-box { box-shadow: 12px 12px 0 var(--accent); border-color: var(--ink-hair); }
+}
+
+/* ---------- Tile rule ---------- */
+.tile-rule i { border-radius: 0; }
+
+/* ---------- Footer ---------- */
+footer.foot { border-top: 1px solid var(--rule); }
+footer .foot-card { border: 1px solid var(--hair); background: transparent; transition: transform .35s var(--snap), box-shadow .35s var(--snap), border-color .3s; }
+footer .foot-card:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--accent); border-color: var(--rule); }
+footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accent); }
+
+/* ---------- Home hero: left-aligned ledger, window as the plate ---------- */
+.hero .hero-inner { text-align: left; align-items: flex-start; justify-items: start; }
+.hero .hero-icon img { width: 88px; height: 88px; }
+.hero .hero-title { max-width: none; }
+.hero .hero-lede { max-width: 34ch; font-size: clamp(19px, 2vw, 24px); color: var(--text-2); }
+.hero .hero-cta { justify-content: flex-start; }
+.hero .hero-link { font-weight: 650; border-bottom: 2px solid var(--accent); text-decoration: none; }
+.hero .hero-link:hover { background: var(--accent); color: var(--accent-ink); }
+.hero .hero-note { justify-content: flex-start; }
+.hero .dl-gk { text-align: left; border: 1px solid var(--rule); background: var(--accent-soft); }
+.hero { border-bottom: 1px solid var(--rule); }
+.hero .hero-stage-wrap { padding-top: 40px; }
+
+/* ---------- Home feature sections: ledger layout with a margin rule ---------- */
+.feature .copy { border-top: 1px solid var(--rule); padding-top: 18px; }
+.feature .h-feature { max-width: 14ch; font-size: clamp(36px, 4.6vw, 58px); }
+.scrub-steps li { border-radius: 0; }
+.scrub-steps li.is-active { background: var(--accent); color: var(--accent-ink); }
+.scrub-steps li.is-active span { background: var(--ink); color: var(--accent); }
+
+/* ---------- Reveal on scroll (js adds .ld-rv; without JS everything shows) ---------- */
+.ld-rv { opacity: 0; transform: translateY(22px); transition: opacity .8s var(--snap), transform .8s var(--snap); transition-delay: var(--d, 0ms); }
+.ld-rv.on { opacity: 1; transform: none; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 760px) {
+  main .page-hero { padding-block: 56px 40px; }
+  main .stage, main .shot, main .win, main .demo-frame { box-shadow: 5px 5px 0 var(--ink); }
+  .get-box { box-shadow: 6px 6px 0 var(--accent); padding: 28px 22px; }
+  main .card:hover { padding-left: 14px; }
+  .feature .h-feature { max-width: none; }
+}
+
+/* ---------- Dark: lines are warm off-white, shadows become aqua-tinted ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) main .stage, :root:not([data-theme="light"]) main .shot, :root:not([data-theme="light"]) main .win, :root:not([data-theme="light"]) main .demo-frame { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
+  :root:not([data-theme="light"]) main .plan-supporter { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
+  :root:not([data-theme="light"]) .ticker { border-color: var(--accent); }
+  :root:not([data-theme="light"]) .ld-tiles i { background: var(--text); }
+}
+:root[data-theme="dark"] main .stage, :root[data-theme="dark"] main .shot, :root[data-theme="dark"] main .win, :root[data-theme="dark"] main .demo-frame { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
+:root[data-theme="dark"] main .plan-supporter { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-rv { opacity: 1; transform: none; transition: none; }
+  .hl { animation: none; background-size: 100% 0.42em; }
+  main .stage:hover, main .fact:hover, main .plan:hover, main .btn:hover, footer .foot-card:hover { transform: none; }
+}
+
+/* ---------- Folded in from the parallel pass: inputs, spec ledger, proof rows, dark buttons ---------- */
+.faq-search input, .faq-search label, .win-search, input[type="search"], input[type="text"], input[type="email"], select, textarea,
+.seg, .seg button, .badge, .rm-status, .table-wrap, .zone, .hero-window { border-radius: 0; }
+.table-wrap { border: 1px solid var(--rule); }
+.foot-h { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 700; color: var(--text-2); }
+.spec { display: grid; grid-template-columns: repeat(3, 1fr); margin: 44px 0 0; max-width: 640px; border-top: 1px solid var(--rule); text-align: left; }
+.spec > div { padding: 16px 16px 0 14px; border-right: 1px solid var(--hair); transition: background .3s; }
+.spec > div:first-child { padding-left: 0; }
+.spec > div:last-child { border-right: 0; }
+.spec dt { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin: 0 0 4px; }
+.spec dd { margin: 0; font-size: 14px; color: var(--text-2); }
+@media (hover: hover) { .spec > div:hover { background: var(--accent-soft); } }
+@media (max-width: 480px) { .spec dt { font-size: 18px; } .spec dd { font-size: 13px; } .spec > div { padding-right: 8px; } }
+.proof-list { border-top: 1px solid var(--rule); }
+.proof-item { border-bottom: 1px solid var(--hair); transition: padding-left .4s var(--snap), background .3s; }
+@media (hover: hover) { .proof-item:hover { padding-left: 14px; background: linear-gradient(90deg, var(--accent-soft), transparent 70%); } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) main .btn-primary { border-color: var(--accent); }
+  :root:not([data-theme="light"]) main .btn-primary:hover { background: var(--base); color: var(--accent); }
+}
+:root[data-theme="dark"] main .btn-primary { border-color: var(--accent); }
+:root[data-theme="dark"] main .btn-primary:hover { background: var(--base); color: var(--accent); }
