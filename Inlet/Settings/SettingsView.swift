@@ -27,7 +27,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, shortcuts
     case grid, hiddenApps, search, quickPanel
     case privacy, updates
-    case account, about
+    case about
 
     var id: String { rawValue }
 
@@ -36,7 +36,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         SidebarGroup(title: nil, panes: [.general, .appearance, .shortcuts]),
         SidebarGroup(title: "Launcher", panes: [.grid, .hiddenApps, .search, .quickPanel]),
         SidebarGroup(title: "Privacy & Updates", panes: [.privacy, .updates]),
-        SidebarGroup(title: "Inlet", panes: [.account, .about]),
+        SidebarGroup(title: "Inlet", panes: [.about]),
     ]
 
     var title: String {
@@ -50,7 +50,6 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .quickPanel: return "Quick Panel"
         case .privacy:    return "Privacy & Permissions"
         case .updates:    return "Updates"
-        case .account:    return "Inlet Pro"
         case .about:      return "About"
         }
     }
@@ -67,7 +66,6 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .quickPanel: return "dock.rectangle"
         case .privacy:    return "hand.raised.fill"
         case .updates:    return "arrow.down.circle.fill"
-        case .account:    return "sparkles"
         case .about:      return "info.circle.fill"
         }
     }
@@ -82,7 +80,6 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .quickPanel:                  return .teal
         case .privacy:                     return .pink
         case .updates:                     return .green
-        case .account:                     return .yellow
         }
     }
 }
@@ -136,7 +133,6 @@ struct SettingsView: View {
         case .quickPanel: QuickPanelPane()
         case .privacy:    PrivacyPane()
         case .updates:    UpdatesPane()
-        case .account:    AccountPane()
         case .about:      AboutPane()
         }
     }

@@ -387,30 +387,6 @@ struct UpdatesPane: View {
     }
 }
 
-// MARK: - Inlet Pro (placeholder)
-
-/// A placeholder for the planned paid tier. It has no controls and no price
-/// yet, because the price is not decided.
-struct AccountPane: View {
-    var body: some View {
-        Form {
-            Section {
-                LabeledContent("Account", value: "Not needed")
-            } footer: {
-                Text("Inlet has no accounts. Nothing you do in Inlet is sent anywhere.")
-            }
-
-            Section {
-                LabeledContent("Inlet Pro", value: "Planned")
-            } footer: {
-                Text("A paid tier is planned and isn't available yet. Nothing is charged.")
-            }
-        }
-        .formStyle(.grouped)
-        .navigationTitle("Inlet Pro")
-    }
-}
-
 // MARK: - About
 
 struct AboutPane: View {
