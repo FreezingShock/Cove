@@ -161,7 +161,7 @@
   border-radius: var(--r-md);
   background: var(--field);
   border: 1px solid var(--hair);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.5;
   color: var(--text);
@@ -243,7 +243,7 @@
 .faq .answer a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; }
 .faq .answer a:hover { text-decoration-color: var(--text); }
 .faq .answer code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.86em;
   background: var(--field);
   color: var(--text);
@@ -425,7 +425,7 @@ html { scroll-behavior: smooth; }
 .doc-main a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; }
 .doc-main a:hover { text-decoration-color: var(--text); }
 .doc-main code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.86em;
   background: var(--field);
   color: var(--text);
