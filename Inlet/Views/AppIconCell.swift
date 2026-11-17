@@ -97,16 +97,19 @@ struct AppIconCell: View {
         // Open choreography (theme spec, "Grid opens"). Before opening, each
         // cell sits 22% toward the center at 0.78 scale. Opening springs it
         // into place with `open`, delayed by distance so the grid ripples.
+        // Closing shrinks it back with `dismiss`: no delay, no bounce.
         // Reduce Motion: no movement, just a 0.2 s crossfade.
         .scaleEffect(isOpen || reduceMotion ? 1 : 0.78)
         .offset(isOpen || reduceMotion ? .zero : placement.offset)
-        .opacity(reduceMotion && !isOpen ? 0 : 1)
-        .animation(
-            reduceMotion
-                ? .inletFade
-                : .spring(InletMotion.open).delay(placement.delay),
-            value: isOpen
-        )
+        .opacity(isOpen ? 1 : 0)
+        .animation(openAnimation, value: isOpen)
+    }
+
+    /// The ripple on open, or the plain dismiss on close. Reduce Motion crossfades.
+    private var openAnimation: Animation {
+        if reduceMotion { return Animation.inletFade }
+        if isOpen { return Animation.spring(InletMotion.open).delay(placement.delay) }
+        return Animation.inletDismiss
     }
 
     /// The right-click menu. Quit only appears while the app is running.

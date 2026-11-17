@@ -7,6 +7,7 @@
 //  search and quick panel read the same values.
 //
 
+import AppKit
 import ServiceManagement
 import SwiftUI
 
@@ -29,11 +30,17 @@ struct GeneralPane: View {
         Form {
             Section {
                 Toggle("Open at login", isOn: openAtLogin)
+                // macOS holds the login item until the user allows it. This is the fix-it step.
+                if loginStatus == .requiresApproval {
+                    Button("Open Login Items in System Settings") {
+                        SMAppService.openSystemSettingsLoginItems()
+                    }
+                }
             } footer: {
                 if let loginError {
                     Text(loginError)
                 } else if loginStatus == .requiresApproval {
-                    Text("Allow Inlet in System Settings > General > Login Items.")
+                    Text("Allow Inlet in System Settings > General > Login Items. This pane updates when you come back.")
                 } else {
                     Text("Inlet opens when you log in to your Mac.")
                 }
@@ -69,6 +76,10 @@ struct GeneralPane: View {
         .formStyle(.grouped)
         .navigationTitle("General")
         .onAppear { loginStatus = SMAppService.mainApp.status }
+        // The user may approve the login item in System Settings and come back.
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            loginStatus = SMAppService.mainApp.status
+        }
     }
 
     /// Registers or unregisters Inlet as a login item.

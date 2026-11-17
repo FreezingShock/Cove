@@ -74,6 +74,9 @@ final class QuickPanelController {
     }
 
     func show() {
+        // The grid sits above the quick panel's level, so two surfaces can't
+        // share the screen. Close the grid first.
+        OverlayController.shared.hide()
         let panel = self.panel ?? makePanel()
         refreshContents()
         place(panel)
