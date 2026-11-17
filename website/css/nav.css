@@ -488,9 +488,47 @@ main p a:hover,
 .foot-brand p { color: var(--text-3); }
 .foot .foot-cols {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px 20px;
+  min-width: 0;
 }
+/* Product cards across the top of the footer. */
+.foot-products {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.foot-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--hair);
+  background-color: var(--grouped);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-base) var(--ease-fade),
+    transform var(--dur-base) var(--ease-standard);
+}
+.foot-card:hover { border-color: var(--accent); transform: translate3d(0, -2px, 0); }
+.foot-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.foot-card b { display: block; font-size: 16px; font-weight: 600; color: var(--text); }
+.foot-card small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--text-2); }
+.foot-tile {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+.foot-tile svg { width: var(--icon-md); height: var(--icon-md); }
+.foot-note { font-size: 13px; color: var(--text-3); }
 .foot-h {
   margin-bottom: 14px;
   font-size: 12px;
@@ -573,6 +611,10 @@ main p a:hover,
 /* ---------- Responsive footer ---------- */
 @media (max-width: 900px) {
   .foot { grid-template-columns: minmax(0, 1fr); }
+  .foot .foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .foot-products { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
   .foot { padding-top: 56px; gap: 40px; }
