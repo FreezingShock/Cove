@@ -116,7 +116,7 @@ enum InletSettings {
     }
 
     static var searchFileResultCount: Int {
-        clamp(UserDefaults.standard.integer(forKey: Key.searchFileResultCount.rawValue), 0...8, fallback: 5)
+        normalizedFileResultCount(UserDefaults.standard.integer(forKey: Key.searchFileResultCount.rawValue))
     }
 
     static var dockClickAction: DockClickAction {
@@ -130,7 +130,18 @@ enum InletSettings {
     }
 
     static var quickPanelRecentFiles: Int {
-        clamp(UserDefaults.standard.integer(forKey: Key.quickPanelRecentFiles.rawValue), 0...5, fallback: 3)
+        normalizedRecentFiles(UserDefaults.standard.integer(forKey: Key.quickPanelRecentFiles.rawValue))
+    }
+
+    /// Keeps a recent-files count in 0...5. Zero is a real choice ("no recent
+    /// files"), so it is kept. Defaults are registered, so an unset key already reads 3.
+    static func normalizedRecentFiles(_ value: Int) -> Int {
+        min(max(value, 0), 5)
+    }
+
+    /// Keeps the file-row count in 0...8. Zero hides the Files section.
+    static func normalizedFileResultCount(_ value: Int) -> Int {
+        min(max(value, 0), 8)
     }
 
     static var pinchToOpen: Bool {

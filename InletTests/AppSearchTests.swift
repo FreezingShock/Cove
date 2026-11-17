@@ -54,4 +54,17 @@ final class AppSearchTests: XCTestCase {
 
         XCTAssertEqual(AppSearch.results(for: "pro", in: apps).map(\.name), ["Adobe Pro", "Xcode Pro"])
     }
+
+    func testEveryTypedWordMatchesInAnyOrder() {
+        let apps = [app("Apple Mail")]
+
+        XCTAssertEqual(AppSearch.results(for: "mail apple", in: apps).map(\.name), ["Apple Mail"])
+        XCTAssertTrue(AppSearch.results(for: "photo zzz", in: [app("Adobe Photoshop")]).isEmpty)
+    }
+
+    func testWordsCanSitInsideAWord() {
+        let apps = [app("Adobe Photoshop")]
+
+        XCTAssertEqual(AppSearch.results(for: "photo shop", in: apps).map(\.name), ["Adobe Photoshop"])
+    }
 }

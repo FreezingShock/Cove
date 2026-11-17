@@ -35,18 +35,25 @@ enum AppSearch {
 
     /// The rank of a normalized name against a normalized query, or nil if
     /// the name does not match at all.
+    ///
+    /// Every typed word has to match. Words can come in any order, so
+    /// "mail apple" finds "Apple Mail".
     static func rank(of name: String, query: String) -> Rank? {
         if name == query { return .exact }
         if name.hasPrefix(query) { return .prefix }
-        // Split "Apple Mail" into ["Apple", "Mail"] so any word can match.
-        let words = name.split { !$0.isLetter && !$0.isNumber }
-        if words.contains(where: { $0.hasPrefix(query) }) { return .wordPrefix }
+        let terms = query.split(whereSeparator: \.isWhitespace).map(String.init)
+        // Split "Apple Mail" into ["apple", "mail"] so any word can match.
+        let words = name.split { !$0.isLetter && !$0.isNumber }.map(String.init)
+        if terms.allSatisfy({ term in words.contains { $0.hasPrefix(term) } }) {
+            return .wordPrefix
+        }
         // Initials: "vsc" matches "Visual Studio Code". Needs two or more
         // letters, so a one-letter query does not match every multi-word app.
         if query.count >= 2, words.count >= 2, String(words.compactMap(\.first)) == query {
             return .acronym
         }
-        if name.contains(query) { return .contains }
+        // Otherwise each word may sit anywhere inside the name.
+        if terms.allSatisfy({ name.contains($0) }) { return .contains }
         // Loose match for typed-from-memory names. Three letters minimum,
         // so short queries stay precise.
         if query.count >= 3, isSubsequence(query, of: name) { return .subsequence }
