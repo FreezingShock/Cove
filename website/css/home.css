@@ -96,7 +96,7 @@
   height: 62%;
   fill: none;
   stroke: #FFFFFF;
-  stroke-width: 2;
+  stroke-width: var(--icon-stroke);
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -185,7 +185,7 @@
   cursor: pointer;
 }
 .org-restore .ico { --tile: 24px; border-radius: var(--r-xs); }
-.org-restore .ico svg { stroke-width: 2.2; }
+.org-restore .ico svg { stroke-width: calc(var(--icon-stroke) * 1.2); } /* 24 pt tile: small glyph, one step heavier */
 .org-restore span { font-weight: 500; color: var(--text-2); }
 
 /* Undo toast. */
@@ -399,7 +399,7 @@
 .recipe-hit b { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .recipe-hit small { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .recipe-hit .fi { width: 36px; height: 36px; }
-.recipe-hit .ico { width: 36px; height: 36px; border-radius: 9px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 14px -8px var(--icon-shadow); }
+.recipe-hit .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 14px -8px var(--icon-shadow); }
 .recipe-dock { gap: 10px; justify-content: center; padding: 10px 14px; border-radius: var(--r-lg); }
-.recipe-dock .ico { width: 36px; height: 36px; border-radius: 9px; }
-.recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: 1.8; }
+.recipe-dock .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); }
+.recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
