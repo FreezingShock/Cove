@@ -341,11 +341,12 @@
   var hereEl = document.createElement("span");
   hereEl.className = "nav-here";
   hereEl.setAttribute("aria-hidden", "true");
-  // Phones get a "Get Inlet" button at the end of the page, since they cannot install the disk image.
+  // Phones get a "Download Inlet" button at the end of the page, since they cannot install the disk image.
+  // It links to the download section, which hands the link to the phone.
   var ctaEl = document.createElement("a");
   ctaEl.className = "btn btn-primary btn-sm nav-cta";
   ctaEl.href = onHome ? "#get" : "index.html#get";
-  ctaEl.textContent = "Get Inlet";
+  ctaEl.textContent = "Download Inlet";
   if (innerEl) {
     innerEl.insertBefore(progressEl, innerEl.firstChild);
     var brandEl = innerEl.querySelector(".brand");

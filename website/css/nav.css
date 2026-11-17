@@ -415,7 +415,7 @@ main p a:hover,
   .nav, .nav::before, .nav-inner, .links-ind, .nav-here, .nav-progress { transition: none; }
 }
 
-/* Phones cannot install the disk image, so their end state brings a "Get Inlet" button into the bar
+/* Phones cannot install the disk image, so their end state brings a "Download Inlet" button into the bar
    (it links to the download section, which hands the link to the phone). The search icon and the
    section label step aside to make room. */
 .nav-cta { display: none; }
