@@ -9,6 +9,11 @@
 
 import SwiftUI
 
+/// The part a generated color plays in a theme. Only these change with a theme.
+enum ThemeRole {
+    case background, glass, veil, accent, accentInk, accentSoft
+}
+
 enum ThemeRuntime {
     /// The theme in use. Inlet's own look until a Supporter picks another.
     static var current = AppTheme.standard
@@ -52,6 +57,33 @@ enum ThemeRuntime {
     static func veil(_ color: RGBA) -> RGBA {
         let factor = current.backdropVeil / 0.5
         return RGBA(r: color.r, g: color.g, b: color.b, a: min(color.a * factor, 0.9))
+    }
+
+    /// Builds a generated color token for the role it plays. The generator
+    /// (scripts/build-tokens.py) writes a call here for each themable token,
+    /// so the light and dark values stay in design/tokens.json.
+    static func color(_ role: ThemeRole, light: RGBA, dark: RGBA) -> Color {
+        switch role {
+        case .background:
+            return Color.inlet(light: background(light), dark: background(dark))
+        case .glass:
+            return Color.inlet(light: glass(light), dark: glass(dark))
+        case .veil:
+            return Color.inlet(light: veil(light), dark: veil(dark))
+        case .accent, .accentInk, .accentSoft:
+            guard let custom = customAccent else {
+                return Color.inlet(light: light, dark: dark)
+            }
+            switch role {
+            case .accent:
+                return Color(red: custom.r, green: custom.g, blue: custom.b)
+            case .accentInk:
+                let ink = ThemeColor.inkOn(custom)
+                return Color(red: ink.r, green: ink.g, blue: ink.b)
+            default:
+                return Color(red: custom.r, green: custom.g, blue: custom.b, opacity: 0.15)
+            }
+        }
     }
 
     // MARK: Sizes and labels
