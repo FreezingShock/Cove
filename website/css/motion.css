@@ -7,8 +7,9 @@
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
 }
-/* One offset does the work: scroll-padding clears the 64px sticky header plus a gap.
-   Section scroll-margin is zeroed so the two don't stack. */
+/* One offset does the work: scroll-padding clears the sticky header (12px top margin
+   plus the 60px bar) and leaves a 16px gap. Section scroll-margin is zeroed so the two don't stack.
+   scroll.js reads this same value for its eased jump. */
 html { scroll-padding-top: 88px; }
 section[id] { scroll-margin-top: 0; }
 
@@ -181,12 +182,22 @@ html.intro-pending .hero-stage-wrap { opacity: 0; }
 }
 
 /* ---------- Page changes ----------
-   Same-site links use the View Transitions API (cross-document, declared here on both
-   pages). The header stays put and the page slides under it. Browsers without the
-   API get the fade classes that motion.js adds. */
+   Same-site links use cross-document View Transitions (Chrome, Edge, Safari 18.2+).
+   The header stays put, the page slides under it, and the page title morphs into
+   its place on the next page. Browsers without the API get the fade classes that
+   motion.js adds. Reduce Motion gets a plain short crossfade, no movement. */
 @view-transition { navigation: auto; }
 .nav { view-transition-name: site-nav; }
 ::view-transition-group(site-nav) { animation-duration: 0s; }
+/* Shared elements: the same name on every page, so the browser morphs position and size between them. */
+main h1 { view-transition-name: page-title; }
+.nav .brand .mark { view-transition-name: brand-mark; }
+::view-transition-group(page-title) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-standard, cubic-bezier(0.2, 0.8, 0.2, 1));
+}
+::view-transition-group(brand-mark) { animation-duration: 0s; }
+html[data-motion="lite"]::view-transition-group(page-title) { animation-duration: 260ms; }
 ::view-transition-old(root) {
   animation: 240ms var(--ease-exit, cubic-bezier(0.4, 0, 1, 1)) both vt-out;
 }
@@ -200,6 +211,7 @@ html[data-motion="lite"]::view-transition-new(root) { animation-duration: 200ms;
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root) { animation: 160ms linear both vt-fade-out; }
   ::view-transition-new(root) { animation: 160ms linear both vt-fade-in; }
+  main h1, .nav .brand .mark { view-transition-name: none; }
 }
 @keyframes vt-fade-out { to { opacity: 0; } }
 @keyframes vt-fade-in { from { opacity: 0; } }
@@ -250,7 +262,8 @@ html[data-motion="full"] .spot::after {
 }
 html[data-motion="full"] .spot:hover::after { opacity: 1; }
 
-/* ---------- Scroll progress: a bar under the header, drawn by the page's scroll timeline ---------- */
+/* ---------- Reading progress: a 2px bar across the top edge. scroll.js sets its scaleX on each frame,
+   so it works in every browser, not only those with scroll-driven animations. ---------- */
 .progress {
   position: fixed;
   left: 0;
@@ -259,17 +272,10 @@ html[data-motion="full"] .spot:hover::after { opacity: 1; }
   height: 2px;
   background: var(--accent);
   transform-origin: 0 50%;
-  scale: 0 1;
+  transform: scaleX(0);
   z-index: 60;
   pointer-events: none;
 }
-@supports (animation-timeline: scroll()) {
-  html[data-motion="full"] .progress {
-    animation: progress-grow linear both;
-    animation-timeline: scroll(root);
-  }
-}
-@keyframes progress-grow { to { scale: 1 1; } }
 
 /* ---------- Scroll-linked steps: each recipe's numeral comes up as it reaches the middle of the screen ---------- */
 @supports (animation-timeline: view()) {
