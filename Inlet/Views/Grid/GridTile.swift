@@ -2,10 +2,10 @@
 //  GridTile.swift
 //  Inlet
 //
-//  One app on the paged grid: its icon and name, drawn the same way as the
-//  search grid's AppIconCell. In Edit mode it wobbles, and apps that can be
-//  hidden get a minus badge. The grid handles every touch, so this view has
-//  no buttons of its own.
+//  One entry on the paged grid: an app, or a folder of up to nine apps. It is
+//  drawn the same way as the search grid's AppIconCell. In Edit mode it
+//  wobbles, and apps that can be hidden get a minus badge. The grid handles
+//  every touch, so this view has no buttons of its own.
 //
 
 import SwiftUI
@@ -17,8 +17,50 @@ extension AppItem {
     }
 }
 
+/// A folder's icon: up to nine app icons in a 3 x 3 grid on a glass tile.
+struct FolderIcon: View {
+    let apps: [AppItem]
+
+    /// Gap between the mini icons, and the inset from the tile's edge.
+    private static let gap: CGFloat = 3
+    private static let inset: CGFloat = 6
+
+    var body: some View {
+        let mini = (InletSize.gridIcon - 2 * Self.inset - 2 * Self.gap) / 3
+        let shape = RoundedRectangle(cornerRadius: InletRadius.icon(InletSize.gridIcon), style: .continuous)
+
+        VStack(spacing: Self.gap) {
+            ForEach(0..<3, id: \.self) { row in
+                HStack(spacing: Self.gap) {
+                    ForEach(0..<3, id: \.self) { column in
+                        let index = row * 3 + column
+                        if index < apps.count {
+                            Image(nsImage: IconCache.shared.icon(for: apps[index]))
+                                .resizable()
+                                .interpolation(.high)
+                                .frame(width: mini, height: mini)
+                        } else {
+                            Color.clear.frame(width: mini, height: mini)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(Self.inset)
+        .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
+        .background(shape.fill(InletColor.gFill))
+        .overlay(shape.strokeBorder(InletColor.gEdge, lineWidth: 1))
+        .shadow(color: InletColor.gShadow, radius: 6, y: 3)
+    }
+}
+
 struct GridTile: View {
-    let app: AppItem
+    /// The name under the icon: the app's name, or the folder's name.
+    let title: String
+    /// The apps in the icon. One for an app, up to nine for a folder.
+    let apps: [AppItem]
+    /// True for a folder. Folders draw the 3 x 3 icon and can't be hidden.
+    let isFolder: Bool
     let isEditing: Bool
     /// True in Edit mode for apps that can be hidden.
     let showsBadge: Bool
@@ -30,7 +72,9 @@ struct GridTile: View {
     let isKeyboardFocused: Bool
     /// The pointer is over the tile. Shown as a hover fill, as in search.
     let isHovered: Bool
-    /// Opens the app. Used by VoiceOver only: the grid handles mouse taps.
+    /// A dragged app is over this icon and would merge into it.
+    let isMergeTarget: Bool
+    /// Opens the app, or opens the folder. Used by VoiceOver only.
     let onOpen: () -> Void
     /// Hides the app. Used by VoiceOver only: the grid handles the badge tap.
     let onHide: () -> Void
@@ -48,10 +92,17 @@ struct GridTile: View {
     var body: some View {
         VStack(spacing: InletSpace.s) {
             ZStack(alignment: .topLeading) {
-                Image(nsImage: IconCache.shared.icon(for: app))
-                    .resizable()
-                    .interpolation(.high)
+                icon
                     .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
+                    .scaleEffect(isMergeTarget ? 1.12 : 1)
+                    .overlay {
+                        // The merge target ring, as in the folders mockup.
+                        if isMergeTarget {
+                            RoundedRectangle(cornerRadius: InletRadius.icon(InletSize.gridIcon), style: .continuous)
+                                .strokeBorder(InletColor.accent, lineWidth: 3)
+                                .padding(-4)
+                        }
+                    }
 
                 if showsBadge {
                     // Centered on the icon's top-left corner. The fill and glyph
@@ -71,7 +122,7 @@ struct GridTile: View {
             .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
 
             if ThemeRuntime.showsLabels {
-                Text(app.name)
+                Text(title)
                     .font(ThemeRuntime.labelFont)
                     .foregroundStyle(InletColor.text)
                     .lineLimit(1)
@@ -108,18 +159,31 @@ struct GridTile: View {
         .inletAnimation(.inletPress, value: isLifted)
         .inletAnimation(.inletSnap, value: isHovered)
         .inletAnimation(.inletSnap, value: isKeyboardFocused)
+        .inletAnimation(.inletSnap, value: isMergeTarget)
         .onChange(of: isEditing, initial: true) { _, editing in
             updateWobble(editing)
         }
         .contentShape(RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous))
         // Mouse input is handled by the grid. VoiceOver gets its own actions here.
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(app.name)
+        .accessibilityLabel(title)
+        .accessibilityValue(isFolder ? "\(apps.count) apps" : "")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default) { onOpen() }
         .accessibilityAction(named: Text("Hide")) { onHide() }
         .accessibilityAction(named: Text("Move earlier")) { onMove(-1) }
         .accessibilityAction(named: Text("Move later")) { onMove(1) }
+    }
+
+    @ViewBuilder
+    private var icon: some View {
+        if isFolder {
+            FolderIcon(apps: apps)
+        } else if let app = apps.first {
+            Image(nsImage: IconCache.shared.icon(for: app))
+                .resizable()
+                .interpolation(.high)
+        }
     }
 
     /// The ripple on open, or the plain dismiss on close. Reduce Motion crossfades.
@@ -153,5 +217,55 @@ struct GridTile: View {
         withAnimation(.easeInOut(duration: InletMotion.jiggle).repeatForever(autoreverses: true)) {
             wobble = true
         }
+    }
+}
+
+/// The liquid pull between a dragged icon and the icon it will merge into.
+/// Two blobs joined by a neck, softened with a blur. It is drawn in the
+/// window's own coordinates and never takes touches.
+struct LiquidPull: View {
+    /// Centers of the two icons, in the stage's coordinates.
+    let from: CGPoint
+    let to: CGPoint
+
+    var body: some View {
+        Canvas { context, _ in
+            let radius = InletSize.gridIcon * 0.5
+            let dx = to.x - from.x
+            let dy = to.y - from.y
+            let length = hypot(dx, dy)
+            guard length > 0.5 else { return }
+
+            // Unit vector across the pull, used to place the neck's edges.
+            let perp = CGPoint(x: -dy / length, y: dx / length)
+            let neck = radius * 0.42
+            let mid = CGPoint(x: (from.x + to.x) / 2, y: (from.y + to.y) / 2)
+
+            var bridge = Path()
+            bridge.move(to: CGPoint(x: from.x + perp.x * radius, y: from.y + perp.y * radius))
+            bridge.addQuadCurve(
+                to: CGPoint(x: to.x + perp.x * radius, y: to.y + perp.y * radius),
+                control: CGPoint(x: mid.x + perp.x * neck, y: mid.y + perp.y * neck)
+            )
+            bridge.addLine(to: CGPoint(x: to.x - perp.x * radius, y: to.y - perp.y * radius))
+            bridge.addQuadCurve(
+                to: CGPoint(x: from.x - perp.x * radius, y: from.y - perp.y * radius),
+                control: CGPoint(x: mid.x - perp.x * neck, y: mid.y - perp.y * neck)
+            )
+            bridge.closeSubpath()
+
+            let fill = GraphicsContext.Shading.color(InletColor.accent.opacity(0.4))
+            context.fill(bridge, with: fill)
+            context.fill(
+                Path(ellipseIn: CGRect(x: from.x - radius, y: from.y - radius, width: radius * 2, height: radius * 2)),
+                with: fill
+            )
+            context.fill(
+                Path(ellipseIn: CGRect(x: to.x - radius, y: to.y - radius, width: radius * 2, height: radius * 2)),
+                with: fill
+            )
+        }
+        .blur(radius: 5)
+        .allowsHitTesting(false)
     }
 }

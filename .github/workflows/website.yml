@@ -191,6 +191,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/release/render-changelog.py --page _site/changelog.html
 
+      # Minify the published copy's CSS and JS. Only _site changes: website/ stays readable,
+      # and the Lighthouse and link checks above run on the source. esbuild is pinned, and
+      # a failed minify fails the deploy rather than shipping unminified files silently.
+      - name: Minify CSS and JS in the published copy
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/minify" esbuild@0.24.2
+          before=$(cat _site/css/*.css _site/js/*.js | wc -c)
+          for f in _site/css/*.css _site/js/*.js; do
+            "$RUNNER_TEMP/minify/node_modules/.bin/esbuild" "$f" --minify --allow-overwrite \
+              --log-level=warning --outfile="$f"
+          done
+          after=$(cat _site/css/*.css _site/js/*.js | wc -c)
+          echo "CSS and JS: $before bytes before, $after after minify"
+
+      # Minifying can't break a link, but re-check the published copy anyway.
+      - name: Check the published copy
+        run: python3 scripts/check-website.py _site
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

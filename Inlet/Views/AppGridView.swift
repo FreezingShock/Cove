@@ -5,8 +5,9 @@
 //  The full grid, shown on the overlay: a header, the search panel, the
 //  group bar, then the grid. Typing filters the grid. Arrow keys move
 //  through it. With no search and no group, the grid is paged and can be
-//  edited: reorder, hide an app, and Undo. It sits on the overlay's scrim, so
-//  it has no background of its own.
+//  edited: reorder, merge apps into folders, hide an app, and Undo. Tapping a
+//  folder opens it. It sits on the overlay's scrim, so it has no background
+//  of its own.
 //
 
 import AppKit
@@ -57,7 +58,7 @@ struct OpenPlacement {
 struct AppGridView: View {
     /// The shared app list, provided by the overlay via `.environment(...)`.
     @Environment(AppLibrary.self) private var library
-    /// The saved layout (order, hidden apps), also provided by the overlay.
+    /// The saved layout (order, folders, hidden apps), also provided by the overlay.
     @Environment(LayoutStore.self) private var layoutStore
     /// Read from the system so Increase Contrast applies to secondary text.
     @Environment(\.colorSchemeContrast) private var contrast
@@ -73,7 +74,9 @@ struct AppGridView: View {
     @State private var query = ""
     /// True while the search field has keyboard focus.
     @FocusState private var searchFocused: Bool
-    /// The icon that has keyboard focus, if any. Arrow keys move it.
+    /// The grid item that has keyboard focus, if any. Arrow keys move it.
+    /// In the paged grid this is an entry id ("app:…" or "folder:…"); in the
+    /// search and category grids it is an app id.
     @FocusState private var focusedApp: AppItem.ID?
 
     /// The group the grid is filtered to, by group id. Nil shows every app.
@@ -95,6 +98,8 @@ struct AppGridView: View {
     @State private var undo: HideUndo?
     /// Clears the Undo toast after a few seconds.
     @State private var undoTimer: Task<Void, Never>?
+    /// The id of the folder that is open, if any.
+    @State private var openFolderID: String?
 
     /// What the Undo toast needs to know.
     private struct HideUndo: Equatable {
@@ -186,10 +191,23 @@ struct AppGridView: View {
         return group.appIDs.compactMap { byID[$0] }.filter { !hiddenIDs.contains($0.id) }
     }
 
-    /// The apps in the order the grid draws them, which arrow keys follow.
-    /// The paged grid uses the saved layout order; everything else uses `shownApps`.
-    private var navApps: [AppItem] {
-        isPaged ? layoutApps : shownApps
+    /// The entries of the paged grid, in layout order. Apps that are not
+    /// installed are left out, as the grid leaves them out.
+    private var pagedEntries: [GridEntry] {
+        let installed = Set(library.apps.map(\.id))
+        return layoutStore.layout.entries.filter { entry in
+            switch entry {
+            case .app(let appID):
+                return installed.contains(appID)
+            case .folder(let folder):
+                return folder.appIDs.contains { installed.contains($0) }
+            }
+        }
+    }
+
+    /// The ids arrow keys move through, in the order the grid draws them.
+    private var navIDs: [String] {
+        isPaged ? pagedEntries.map(\.id) : shownApps.map(\.id)
     }
 
     /// Zones to draw. Only a Supporter sees them; the saved zones stay on disk either way.
@@ -221,19 +239,6 @@ struct AppGridView: View {
     /// Every app that sits in a zone. The paged grid leaves these out.
     private var zoneClaimedIDs: Set<String> {
         Set(zoneContents.values.joined().map(\.id))
-    }
-
-    /// Apps from the saved layout, in grid order. Hidden apps are not here.
-    /// Apps that sit in a zone are not here either; the zone shows them.
-    /// Until the folders change lands, every entry in the layout is an app.
-    private var layoutApps: [AppItem] {
-        let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-        let claimed = zoneClaimedIDs
-        return layoutStore.layout.entries.compactMap { entry -> AppItem? in
-            guard case .app(let appID) = entry else { return nil }
-            return byID[appID]
-        }
-        .filter { !claimed.contains($0.id) }
     }
 
     /// The best match. Return opens it. Only exists while searching.
@@ -302,6 +307,7 @@ struct AppGridView: View {
         .overlay(alignment: .topTrailing) { hiddenPanel }
         .overlay(alignment: .topTrailing) { groupsPanel }
         .overlay(alignment: .bottom) { undoToast }
+        .overlay { folderOverlay }
         .sheet(item: $zoneDraft) { draft in
             ZoneEditor(
                 zone: draft.zone,
@@ -328,6 +334,8 @@ struct AppGridView: View {
             )
         }
         .onChange(of: groupID) { _, newGroupID in
+            // Focus ids differ between the paged and the filtered grids.
+            focusedApp = nil
             // A group filter is not paged, so leave Edit mode with it.
             if newGroupID != nil { isEditing = false }
             if rememberLastGroup {
@@ -377,9 +385,13 @@ struct AppGridView: View {
             Spacer()
 
             if library.hasScanned {
+                // The paged grid counts every app on it, folder members included.
+                let visibleCount = isPaged
+                    ? max(0, library.apps.count - layoutStore.layout.hidden.count)
+                    : shownApps.count
                 Text(isSearching
                      ? "\(shownApps.count) of \(library.apps.count)"
-                     : "\(navApps.count) apps")
+                     : "\(visibleCount) apps")
                     .font(InletFont.section)
                     .foregroundStyle(InletText.secondary(contrast))
             }
@@ -487,7 +499,8 @@ struct AppGridView: View {
                     isOpen: isOpen,
                     onLaunch: launch,
                     onHide: hide,
-                    onMove: move,
+                    onOpenFolder: openFolder,
+                    onMove: { move(entryID: $0, by: $1) },
                     onBlankTap: dismissOnBlankTap,
                     onMoveToGroup: moveToGroup
                 )
@@ -596,12 +609,73 @@ struct AppGridView: View {
         }
     }
 
+    /// The open folder, drawn over the grid with a scrim. Tapping the scrim closes it.
+    @ViewBuilder
+    private var folderOverlay: some View {
+        if let folder = openedFolder {
+            ZStack {
+                Rectangle()
+                    .fill(InletColor.scrim)
+                    .contentShape(Rectangle())
+                    .onTapGesture { closeFolder() }
+
+                FolderPanel(
+                    folder: folder,
+                    apps: apps(in: folder),
+                    onRename: { renameFolder(folder.id, to: $0) },
+                    onLaunch: launch,
+                    onTakeOut: { takeOut($0, from: folder.id) },
+                    onClose: closeFolder
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.94)))
+            }
+            .coordinateSpace(name: FolderPanel.coordinateSpace)
+        }
+    }
+
     private var hiddenRows: [HiddenAppsPanel.Row] {
         layoutStore.layout.hidden.map { (hidden: HiddenApp) -> HiddenAppsPanel.Row in
             let name = library.apps.first(where: { $0.id == hidden.appID })?.name
                 ?? URL(fileURLWithPath: hidden.appID).deletingPathExtension().lastPathComponent
             return HiddenAppsPanel.Row(id: hidden.appID, name: name)
         }
+    }
+
+    // MARK: Folders
+
+    /// The folder that is open, if it still exists in the layout.
+    private var openedFolder: GridFolder? {
+        guard let openFolderID else { return nil }
+        for entry in layoutStore.layout.entries {
+            if case .folder(let folder) = entry, folder.id == openFolderID {
+                return folder
+            }
+        }
+        return nil
+    }
+
+    /// The apps in a folder, in its order. Apps that are not installed are skipped.
+    private func apps(in folder: GridFolder) -> [AppItem] {
+        folder.appIDs.compactMap { id in library.apps.first(where: { $0.id == id }) }
+    }
+
+    private func openFolder(_ id: String) {
+        withAnimation(.inletOpen) { openFolderID = id }
+    }
+
+    private func closeFolder() {
+        withAnimation(.inletDismiss) { openFolderID = nil }
+    }
+
+    private func renameFolder(_ id: String, to name: String) {
+        layoutStore.update { $0.renameFolder(withID: id, to: name) }
+    }
+
+    /// Takes an app out of its folder. The folder closes so the app can be
+    /// seen on the grid, right after the folder.
+    private func takeOut(_ app: AppItem, from folderID: String) {
+        layoutStore.update { $0.removeFromFolder(appID: app.id, folderID: folderID) }
+        closeFolder()
     }
 
     // MARK: Actions
@@ -668,50 +742,64 @@ struct AppGridView: View {
         return .handled
     }
 
-    /// Return while an icon has keyboard focus: open that icon.
+    /// Return while an item has keyboard focus: open the app, or open the folder.
+    /// Ignored while a folder is open, so typing a name can't launch an app.
     private func openFocusedApp() -> KeyPress.Result {
-        guard let id = focusedApp,
-              let app = navApps.first(where: { $0.id == id }) else { return .ignored }
+        guard openFolderID == nil, let id = focusedApp else { return .ignored }
+
+        if isPaged {
+            guard let entry = pagedEntries.first(where: { $0.id == id }) else { return .ignored }
+            switch entry {
+            case .app(let appID):
+                guard let app = library.apps.first(where: { $0.id == appID }) else { return .ignored }
+                launch(app)
+            case .folder(let folder):
+                openFolder(folder.id)
+            }
+            return .handled
+        }
+
+        guard let app = shownApps.first(where: { $0.id == id }) else { return .ignored }
         launch(app)
         return .handled
     }
 
-    /// Down arrow in the field: focus the first icon in the grid.
+    /// Down arrow in the field: focus the first item in the grid.
     private func enterGrid() -> KeyPress.Result {
-        guard let first = navApps.first else { return .ignored }
-        focusedApp = first.id
+        guard let first = navIDs.first else { return .ignored }
+        focusedApp = first
         searchFocused = false
         return .handled
     }
 
-    /// Arrow keys while an icon has focus. Moves by `offset` positions in the
+    /// Arrow keys while an item has focus. Moves by `offset` positions in the
     /// shown list, so Left and Right stop at the row edges and Up from the top
     /// row hands focus back to the field.
     private func moveFocus(by offset: Int) -> KeyPress.Result {
-        guard let current = focusedApp else { return .ignored }
-        let apps = navApps
-        guard let index = apps.firstIndex(where: { $0.id == current }) else { return .ignored }
+        guard openFolderID == nil, let current = focusedApp else { return .ignored }
+        let ids = navIDs
+        guard let index = ids.firstIndex(of: current) else { return .ignored }
 
         let columns = gridColumns
         let target = index + offset
 
         if target < 0 {
             // Up from the top row goes back to the field. Left at the very
-            // first icon just stays put.
+            // first item just stays put.
             if offset < -1 {
                 focusedApp = nil
                 searchFocused = true
             }
             return .handled
         }
-        guard target < apps.count else { return .handled }
+        guard target < ids.count else { return .handled }
 
         // In the search and category grids, Left and Right stay on the same row.
         // The paged grid runs on across pages, as classic Launchpad did.
         if abs(offset) == 1 && !isPaged && target / columns != index / columns {
             return .handled
         }
-        focusedApp = apps[target].id
+        focusedApp = ids[target]
         return .handled
     }
 
@@ -721,21 +809,21 @@ struct AppGridView: View {
     }
 
     /// Left, right, up and down. Option + arrow in Edit mode moves the focused
-    /// icon in the saved layout. A plain arrow moves the focus ring.
+    /// entry in the saved layout. A plain arrow moves the focus ring.
     private func arrow(_ press: KeyPress, by offset: Int) -> KeyPress.Result {
         if isEditing, press.modifiers.contains(.option) {
-            guard let id = focusedApp, let app = navApps.first(where: { $0.id == id }) else { return .ignored }
-            move(app, by: offset)
+            guard let id = focusedApp else { return .ignored }
+            move(entryID: id, by: offset)
             return .handled
         }
         return moveFocus(by: offset)
     }
 
-    /// Moves an app `offset` slots in the saved layout, clamped at the ends.
-    /// Edit mode only. VoiceOver's Move earlier and Move later call this too.
-    private func move(_ app: AppItem, by offset: Int) {
+    /// Moves a top-level entry (an app or a folder) `offset` slots in the saved
+    /// layout, clamped at the ends. Edit mode only. VoiceOver's Move earlier and
+    /// Move later call this too.
+    private func move(entryID: String, by offset: Int) {
         guard isEditing else { return }
-        let entryID = GridEntry.app(app.id).id
         let entries = layoutStore.layout.entries
         guard let index = entries.firstIndex(where: { $0.id == entryID }) else { return }
         let target = min(max(index + offset, 0), entries.count - 1)
@@ -745,15 +833,16 @@ struct AppGridView: View {
         }
     }
 
-    /// Edit mode: Delete hides the focused icon, the keyboard path to the minus
-    /// badge. Focus moves to the icon that takes its place.
+    /// Edit mode: Delete hides the focused app, the keyboard path to the minus
+    /// badge. Focus moves to the entry that takes its place. Folders are not hidden.
     private func deleteFocusedApp() -> KeyPress.Result {
         guard isEditing, let id = focusedApp,
-              let app = navApps.first(where: { $0.id == id }), app.isHideable else { return .ignored }
-        let index = navApps.firstIndex(where: { $0.id == id }) ?? 0
+              case .app(let appID)? = pagedEntries.first(where: { $0.id == id }),
+              let app = library.apps.first(where: { $0.id == appID }), app.isHideable else { return .ignored }
+        let index = navIDs.firstIndex(of: id) ?? 0
         hide(app)
-        let remaining = navApps
-        focusedApp = remaining.isEmpty ? nil : remaining[min(index, remaining.count - 1)].id
+        let remaining = navIDs
+        focusedApp = remaining.isEmpty ? nil : remaining[min(index, remaining.count - 1)]
         return .handled
     }
 
@@ -766,10 +855,13 @@ struct AppGridView: View {
         }
     }
 
-    /// Escape leaves Edit mode first. Then it clears the field when the setting
-    /// is on. With nothing to clear, it closes the overlay.
+    /// Escape closes an open folder first. Then it closes the Groups panel, then
+    /// it leaves Edit mode. With nothing else open, it clears the field when the
+    /// setting is on. With nothing to clear, it closes the overlay.
     private func handleEscape() -> KeyPress.Result {
-        if showsGroups {
+        if openFolderID != nil {
+            closeFolder()
+        } else if showsGroups {
             withAnimation(motion(.inletDismiss)) { showsGroups = false }
         } else if isEditing {
             withAnimation(motion(.inletDismiss)) { isEditing = false }

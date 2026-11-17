@@ -201,4 +201,83 @@ final class GridLayoutTests: XCTestCase {
 
         XCTAssertNotEqual(plain.id, folderEntry.id)
     }
+
+    // MARK: - Folders
+
+    func testMergingTwoAppsMakesAFolderAtTheTargetsSpot() {
+        var layout = GridLayout(entries: [.app(appID("A")), .app(appID("B")), .app(appID("C"))])
+
+        let merged = layout.merge(appID: appID("A"), ontoEntryID: GridEntry.app(appID("C")).id, folderName: "Build")
+
+        XCTAssertTrue(merged)
+        XCTAssertEqual(layout.entries.count, 2)
+        XCTAssertEqual(layout.entries[0], .app(appID("B")))
+        guard case .folder(let made) = layout.entries[1] else {
+            return XCTFail("Expected a folder at the target's spot")
+        }
+        XCTAssertEqual(made.name, "Build")
+        XCTAssertEqual(made.appIDs, [appID("C"), appID("A")])
+    }
+
+    func testDroppingAnAppOnAFullFolderChangesNothing() {
+        let full = folder("f", "Full", apps: (1...GridFolder.maxApps).map { "App\($0)" })
+        var layout = GridLayout(entries: [.folder(full), .app(appID("Extra"))])
+        let before = layout
+
+        let merged = layout.merge(appID: appID("Extra"), ontoEntryID: GridEntry.folder(full).id, folderName: "X")
+
+        XCTAssertFalse(merged)
+        XCTAssertEqual(layout, before)
+    }
+
+    func testDroppingAnAppOnAFolderAddsItToTheEnd() {
+        var layout = GridLayout(entries: [.folder(folder("f", "Work", apps: ["A", "B"])), .app(appID("C"))])
+
+        let merged = layout.merge(appID: appID("C"), ontoEntryID: GridEntry.folder(folder("f", "Work", apps: [])).id, folderName: "Ignored")
+
+        XCTAssertTrue(merged)
+        XCTAssertEqual(layout.entries.count, 1)
+        guard case .folder(let result) = layout.entries[0] else {
+            return XCTFail("Expected the folder to remain")
+        }
+        XCTAssertEqual(result.appIDs, [appID("A"), appID("B"), appID("C")])
+        XCTAssertEqual(result.name, "Work")
+    }
+
+    func testTakingAnAppOutLeavesItNextToTheFolder() {
+        var layout = GridLayout(entries: [
+            .app(appID("First")),
+            .folder(folder("f", "Work", apps: ["A", "B", "C"])),
+            .app(appID("Last"))
+        ])
+
+        layout.removeFromFolder(appID: appID("B"), folderID: "f")
+
+        XCTAssertEqual(layout.entries.count, 4)
+        guard case .folder(let remaining) = layout.entries[1] else {
+            return XCTFail("Expected the folder to stay in place")
+        }
+        XCTAssertEqual(remaining.appIDs, [appID("A"), appID("C")])
+        XCTAssertEqual(layout.entries[2], .app(appID("B")))
+    }
+
+    func testTakingOutOfATwoAppFolderTurnsItIntoAPlainApp() {
+        var layout = GridLayout(entries: [.folder(folder("f", "Pair", apps: ["A", "B"]))])
+
+        layout.removeFromFolder(appID: appID("A"), folderID: "f")
+
+        XCTAssertEqual(layout.entries, [.app(appID("B")), .app(appID("A"))])
+    }
+
+    func testRenamingAFolderKeepsItsApps() {
+        var layout = GridLayout(entries: [.folder(folder("f", "Old", apps: ["A", "B"]))])
+
+        layout.renameFolder(withID: "f", to: "New")
+
+        guard case .folder(let renamed) = layout.entries[0] else {
+            return XCTFail("Expected a folder")
+        }
+        XCTAssertEqual(renamed.name, "New")
+        XCTAssertEqual(renamed.appIDs, [appID("A"), appID("B")])
+    }
 }

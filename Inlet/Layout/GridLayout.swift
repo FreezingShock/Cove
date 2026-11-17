@@ -190,6 +190,67 @@ struct GridLayout: Codable, Equatable, Sendable {
         entries.insert(.app(appID), at: index)
     }
 
+    // MARK: Folders
+
+    /// Drops a top-level app onto another entry. Onto an app, the two become a
+    /// new folder named `folderName`. Onto a folder, the app joins it if there
+    /// is room. Returns false and changes nothing when the merge can't happen.
+    /// `draggedID` must be a top-level app, not one already in a folder.
+    @discardableResult
+    mutating func merge(appID draggedID: String, ontoEntryID targetID: String, folderName: String) -> Bool {
+        guard targetID != GridEntry.app(draggedID).id,
+              entries.contains(.app(draggedID)),
+              let targetIndex = entries.firstIndex(where: { $0.id == targetID }) else { return false }
+        if case .folder(let folder) = entries[targetIndex], folder.appIDs.count >= GridFolder.maxApps {
+            return false
+        }
+
+        // The dragged app leaves its place first. Its target is never the dragged app.
+        entries.removeAll { $0 == .app(draggedID) }
+        guard let index = entries.firstIndex(where: { $0.id == targetID }) else { return false }
+        switch entries[index] {
+        case .app(let targetApp):
+            let folder = GridFolder(id: UUID().uuidString, name: folderName, appIDs: [targetApp, draggedID])
+            entries[index] = .folder(folder)
+        case .folder(var folder):
+            folder.appIDs.append(draggedID)
+            entries[index] = .folder(folder)
+        }
+        return true
+    }
+
+    /// Takes an app out of a folder. It lands on the grid right after the
+    /// folder. A folder left with one app turns back into a plain app, and an
+    /// empty folder disappears.
+    mutating func removeFromFolder(appID: String, folderID: String) {
+        guard let folderIndex = entries.firstIndex(where: { $0.id == "folder:" + folderID }),
+              case .folder(var folder) = entries[folderIndex],
+              folder.appIDs.contains(appID) else { return }
+
+        folder.appIDs.removeAll { $0 == appID }
+        let insertAt: Int
+        switch folder.appIDs.count {
+        case 0:
+            entries.remove(at: folderIndex)
+            insertAt = folderIndex
+        case 1:
+            entries[folderIndex] = .app(folder.appIDs[0])
+            insertAt = folderIndex + 1
+        default:
+            entries[folderIndex] = .folder(folder)
+            insertAt = folderIndex + 1
+        }
+        entries.insert(.app(appID), at: min(insertAt, entries.count))
+    }
+
+    /// Renames a folder. The caller trims the name and keeps it short.
+    mutating func renameFolder(withID folderID: String, to name: String) {
+        guard let index = entries.firstIndex(where: { $0.id == "folder:" + folderID }),
+              case .folder(var folder) = entries[index] else { return }
+        folder.name = name
+        entries[index] = .folder(folder)
+    }
+
     // MARK: - Groups
 
     /// The id of the group that holds `appID`, if any.
