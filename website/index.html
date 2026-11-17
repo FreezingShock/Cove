@@ -129,11 +129,9 @@
       <p class="lede hero-lede">Inlet is a full-screen grid of your apps, with search.</p>
       <div class="hero-cta">
         <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download Inlet</a>
-        <a class="btn btn-primary dl-phone-only" href="#get">Get Inlet</a>
+        <a class="btn btn-primary dl-phone-only" href="#get">Download Inlet</a>
         <a class="hero-link" href="#demo">See it in action</a>
       </div>
-      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span data-release="version">Version 0.1</span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
-      <p class="dl-gk"><strong>First launch:</strong> Inlet is not notarized by Apple, so macOS blocks it the first time. Open System Settings, go to Privacy &amp; Security, and click Open Anyway. <a href="download.html#first-launch">Step by step</a></p>
     </div>
 
     <div class="wrap hero-stage-wrap">
@@ -175,6 +173,10 @@
         <p class="win-caption">Try it: type to search, open Create, or swipe between pages. Sample apps only.</p>
       </div>
     </div>
+    <div class="wrap hero-foot">
+      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span data-release="version">Version 0.1</span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
+      <p class="dl-gk"><strong>First launch:</strong> Inlet is not notarized by Apple, so macOS blocks it the first time. Open System Settings, go to Privacy &amp; Security, and click Open Anyway. <a href="download.html#first-launch">Step by step</a></p>
+    </div>
   </section>
 
   <!-- Demo video: the grid opens, search narrows to Photos, Return opens it. Loads only when on screen. -->
@@ -212,7 +214,7 @@
   </section>
 
   <!-- Feature: search -->
-  <section class="wrap feature" id="features">
+  <section class="wrap feature feature--wide" id="features">
     <div class="copy">
       <h2 class="h-feature">Search finds <span class="hl">apps and files</span> together.</h2>
       <p class="body-2">The grid filters as you type. The best match is highlighted, and matching files appear below it.</p>
@@ -243,7 +245,7 @@
   </section>
 
   <!-- Feature: quick panel -->
-  <section class="wrap feature" id="quick">
+  <section class="wrap feature feature--flip" id="quick">
     <div class="copy">
       <h2 class="h-feature">A quick panel from your Dock.</h2>
       <p class="body-2">Click the Inlet icon in the Dock for a compact panel with recent apps, recent files, and a button for the full grid.</p>
@@ -278,7 +280,7 @@
   </section>
 
   <!-- Feature: folders and edit mode -->
-  <section class="wrap feature" id="organize" aria-labelledby="organize-title">
+  <section class="wrap feature feature--sticky" id="organize" aria-labelledby="organize-title">
     <div class="copy">
       <h2 class="h-feature" id="organize-title">Arrange the grid your way.</h2>
       <p class="body-2">Group apps into folders, reorder the grid, and hide the ones you never open. Your layout is saved on your Mac and survives a relaunch.</p>
@@ -316,7 +318,7 @@
   </section>
 
   <!-- Feature: settings -->
-  <section class="wrap feature" id="settings">
+  <section class="wrap feature feature--stack" id="settings">
     <div class="copy">
       <h2 class="h-feature">Two settings. Changes apply right away.</h2>
       <p class="body-2">Pick how many columns the grid shows, and whether Inlet is light, dark, or follows your Mac.</p>
@@ -480,34 +482,31 @@
   <div class="tile-rule is-wide" aria-hidden="true" style="--lit:17"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <!-- Get Inlet: closing call to action -->
     <!-- Who it's for -->
-  <section class="wrap band uc-home" id="for" aria-labelledby="for-title">
+  <section class="wrap band uc-home uc-home--rows" id="for" aria-labelledby="for-title">
     <div class="uc-head">
       <h2 class="h-section" id="for-title">Built for how you work.</h2>
       <p class="lede">Developers, designers and students each use Inlet a little differently. Each page below lists only what the app does today.</p>
     </div>
-    <div class="uc-cards">
-      <a class="uc-card" href="developers.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></span>
-        <span class="uc-kicker">Developers</span>
-        <h3>Your tools, one keystroke away.</h3>
-        <p>Open Xcode or Terminal by typing a few letters. Find project files through Spotlight.</p>
-        <span class="uc-go">Developer page</span>
-      </a>
-      <a class="uc-card" href="designers.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><circle cx="11" cy="11" r="2"/></svg></span>
-        <span class="uc-kicker">Designers</span>
-        <h3>Real icons and fixed springs.</h3>
-        <p>Each app shows its own icon. Motion runs on seven springs with values you can read.</p>
-        <span class="uc-go">Designer page</span>
-      </a>
-      <a class="uc-card" href="students.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span>
-        <span class="uc-kicker">Students</span>
-        <h3>Every class app in one place.</h3>
-        <p>Sort apps into School, Create and Build. Find an essay or a PDF by its name.</p>
-        <span class="uc-go">Student page</span>
-      </a>
-    </div>
+    <ol class="aud-list">
+      <li><a class="aud" href="developers.html">
+        <span class="aud-no">01</span>
+        <span class="aud-who">Developers</span>
+        <span class="aud-main"><b>Your tools, one keystroke away.</b><span>Open Xcode or Terminal by typing a few letters. Find project files through Spotlight.</span></span>
+        <span class="aud-go">Developer page</span>
+      </a></li>
+      <li><a class="aud" href="designers.html">
+        <span class="aud-no">02</span>
+        <span class="aud-who">Designers</span>
+        <span class="aud-main"><b>Real icons and fixed springs.</b><span>Each app shows its own icon. Motion runs on seven springs with values you can read.</span></span>
+        <span class="aud-go">Designer page</span>
+      </a></li>
+      <li><a class="aud" href="students.html">
+        <span class="aud-no">03</span>
+        <span class="aud-who">Students</span>
+        <span class="aud-main"><b>Every class app in one place.</b><span>Sort apps into School, Create and Build. Find an essay or a PDF by its name.</span></span>
+        <span class="aud-go">Student page</span>
+      </a></li>
+    </ol>
     <p class="uc-more"><a href="use-cases.html">All use cases</a> &nbsp;·&nbsp; <a href="compare.html">Compare with Spotlight and Launchpad</a></p>
   </section>
 

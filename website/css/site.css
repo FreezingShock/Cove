@@ -334,9 +334,9 @@ kbd {
 /* ---------- Hero ----------
    Centered: the app icon, one claim, one flat button, then the live window (js/hero.js).
    The button is ink on paper, not a glowing accent pill, so it reads as a Mac control. */
-.hero { padding: 72px 0 var(--sec-y); text-align: center; }
+.hero { padding: 48px 0 var(--sec-y); text-align: center; }
 .hero-inner { display: flex; flex-direction: column; align-items: center; }
-.hero-icon { position: relative; width: 176px; height: 176px; margin-bottom: 36px; }
+.hero-icon { position: relative; width: 96px; height: 96px; margin-bottom: 22px; }
 .hero-icon img {
   display: block;
   width: 100%;
@@ -402,7 +402,7 @@ kbd {
 .hero-note kbd { min-width: 22px; height: 22px; padding: 0 6px; font-size: 12px; }
 
 /* The live window: a real app window under the copy, with a search loop (js/hero.js). */
-.hero-stage-wrap { margin-top: 72px; }
+.hero-stage-wrap { margin-top: 44px; }
 .hero-stage { max-width: 880px; margin: 0 auto; padding: 0; border: 0; border-radius: 0; background: none; overflow: visible; text-align: left; }
 .win {
   position: relative;
