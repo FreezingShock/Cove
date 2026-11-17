@@ -16,6 +16,7 @@
         var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
         var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
         d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (!r && sessionStorage.getItem("inlet-wipe")) d.classList.add("wipe-arrive");
         if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
         var seen = sessionStorage.getItem("inlet-intro");
         d.setAttribute("data-intro", seen ? "soft" : "full");
@@ -31,6 +32,7 @@
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/kit.css">
   <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/designers.html">
@@ -287,5 +289,6 @@
 <script src="js/pages.js" defer></script>
 <script src="js/nav.js" defer></script>
 <script src="js/motion.js" defer></script>
+<script src="js/kit.js" defer></script>
 </body>
 </html>
