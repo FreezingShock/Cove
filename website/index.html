@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/brand.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/download.css">
@@ -111,7 +112,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
         <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
       </button>
-      <a class="btn btn-ghost btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
+      <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
     </div>
   </div>
@@ -168,12 +169,18 @@
   </section>
 
   <!-- Demo video: the grid opens, search narrows to Photos, Return opens it. Loads only when on screen. -->
+  <div class="lit-band" role="note" aria-label="Open. Search. Arrange. Launch. Keep it on your Mac.">
+    <div class="lit-band-track">
+      <ul><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
+      <ul aria-hidden="true"><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
+    </div>
+  </div>
   <section class="wrap showcase" id="demo" aria-labelledby="demo-title">
     <div class="scrub" data-scrub>
       <div class="scrub-sticky">
         <div class="scrub-inner">
           <div class="showcase-head">
-            <h2 class="h-section" id="demo-title">Open, search, launch.</h2>
+            <h2 class="h-section" id="demo-title">Open, search, <span class="hl">launch.</span></h2>
           </div>
           <figure class="demo-figure">
             <div class="demo-frame">
@@ -198,7 +205,7 @@
   <!-- Feature: search -->
   <section class="wrap feature" id="features">
     <div class="copy">
-      <h2 class="h-feature">Search finds apps and files together.</h2>
+      <h2 class="h-feature">Search finds <span class="hl">apps and files</span> together.</h2>
       <p class="body-2">The grid filters as you type. The best match is highlighted, and matching files appear below it.</p>
       <ul class="specs">
         <li>Return opens the top hit</li>
@@ -399,6 +406,7 @@
   </section>
 
   <!-- Feature: motion -->
+  <div class="tile-rule" aria-hidden="true" style="--lit:5"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <section class="wrap feature" id="motion">
     <div class="copy">
       <h2 class="h-feature">Springs with fixed rules.</h2>
@@ -460,6 +468,7 @@
     <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
   </section>
 
+  <div class="tile-rule is-wide" aria-hidden="true" style="--lit:17"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <!-- Get Inlet: closing call to action -->
   <section class="wrap get" id="get" aria-labelledby="get-title">
     <div class="get-box">
