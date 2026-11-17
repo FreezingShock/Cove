@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Inlet brand board</title>
+  <link rel="stylesheet" href="../../website/css/tokens.css">
+  <link rel="stylesheet" href="../../website/css/brand.css">
+  <style>
+    @font-face { font-family: "Figtree"; src: url("../../website/fonts/figtree-latin-wght.woff2") format("woff2"); font-weight: 300 900; font-display: block; }
+    html, body { margin: 0; }
+    body { width: 1600px; height: 1000px; overflow: hidden; background: var(--base); color: var(--text); font-family: Figtree, sans-serif; box-sizing: border-box; padding: 56px 64px; display: grid; grid-template-rows: auto 1fr auto; gap: 36px; }
+    .top { display: flex; justify-content: space-between; align-items: center; }
+    .wordmark { display: flex; align-items: center; gap: 16px; font-size: 44px; font-weight: 700; letter-spacing: -0.03em; }
+    .wordmark svg { width: 56px; height: 56px; }
+    .kicker { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+    .grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 24px; min-height: 0; }
+    .card { border-radius: 26px; padding: 28px; box-sizing: border-box; border: 1px solid var(--hair); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    .label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+    .swatches { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; flex: 1; margin-top: 18px; }
+    .sw { border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 15px; font-weight: 600; box-shadow: inset 0 0 0 1px var(--hair); }
+    .sw small { font-size: 13px; font-weight: 500; opacity: .8; margin-top: 4px; }
+    .sw.cream { background: #F4EFE6; color: #17150F; }
+    .sw.ink { background: #17150F; color: #F4EFE6; }
+    .sw.aqua { background: #46E6D6; color: #17150F; }
+    .rule-note { font-size: 15px; line-height: 1.45; color: var(--text-2); margin: 16px 0 0; }
+    h2 { font-size: 46px; line-height: 1.02; letter-spacing: -0.035em; margin: 16px 0 0; font-weight: 700; }
+    .sample { font-size: 15px; color: var(--text-2); margin: 14px 0 0; line-height: 1.45; }
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: auto; align-items: center; }
+    .btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 999px; font-size: 16px; font-weight: 600; }
+    .btn-primary { background: var(--accent); color: var(--accent-ink); }
+    .btn-ghost { background: var(--field); color: var(--text); box-shadow: inset 0 0 0 1px var(--hair); }
+    .dark-card { background: var(--text); color: var(--base); border-color: transparent; }
+    .dark-card .label { color: rgba(244,239,230,.7); }
+    .dark-card .btn-ghost { background: transparent; color: var(--base); box-shadow: inset 0 0 0 1px rgba(244,239,230,.4); }
+    .lit-band { margin: auto -28px -28px; padding: 22px 0; }
+    .lit-band .lit-band-track { animation: none; }
+    .lit-band li { font-size: 30px; }
+    .motif-row { margin-top: auto; }
+    .hl-demo { font-size: 46px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; margin: 16px 0 0; }
+    .type-role { display: grid; grid-template-columns: 140px 1fr; align-items: baseline; border-top: 1px solid var(--hair); padding: 10px 0; }
+    .type-role span { font-size: 13px; color: var(--text-2); font-weight: 500; }
+    .rules { display: grid; gap: 12px; margin-top: 16px; font-size: 16px; line-height: 1.4; }
+    .rules div { display: flex; gap: 12px; align-items: baseline; }
+    .rules b { flex: none; width: 22px; height: 12px; border-radius: 3px; display: inline-block; }
+    .foot { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="wordmark">
+      <svg viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </div>
+    <div class="kicker">Brand board · v1 · one cream, one ink, one aqua</div>
+  </div>
+
+  <div class="grid">
+    <div class="card" style="grid-row: span 1">
+      <div class="label">Color</div>
+      <div class="swatches">
+        <div class="sw cream">Cream<small>#F4EFE6 · base</small></div>
+        <div class="sw ink">Ink<small>#17150F · all text</small></div>
+        <div class="sw aqua">Aqua<small>#46E6D6 · the one accent</small></div>
+      </div>
+      <p class="rule-note">Aqua is always a fill, never text. Ink carries every label, on cream and on aqua alike. Dark mode swaps cream and ink and keeps the same aqua.</p>
+    </div>
+
+    <div class="card">
+      <div class="label">Type</div>
+      <h2>Every app, <span class="hl">one keystroke</span> away.</h2>
+      <div class="type-role"><span>Display · 72 / bold</span><span style="font-size:22px;font-weight:700;letter-spacing:-0.02em">Figtree, self-hosted</span></div>
+      <div class="type-role"><span>Section · 44 / bold</span><span style="font-size:20px;font-weight:700">Arrange the grid your way.</span></div>
+      <div class="type-role"><span>Body · 17 / regular</span><span style="font-size:15px;color:var(--text-2)">A full-screen grid and search for your Mac.</span></div>
+      <div class="type-role"><span>Label · 12 / semibold caps</span><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Search · Launch · Arrange</span></div>
+    </div>
+
+    <div class="card dark-card">
+      <div class="label">Dark</div>
+      <h2 style="color:var(--base)">Quiet ink, <span class="hl">same aqua.</span></h2>
+      <p class="sample" style="color:rgba(244,239,230,.75)">The band, the lit tile and the primary button stay the same. Only the ground turns.</p>
+      <div class="btns" style="margin-top:auto">
+        <span class="btn btn-primary">Download Inlet</span>
+        <span class="btn btn-ghost">See it in action</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Motifs</div>
+      <h2 style="font-size:34px">One lit tile in a row of ink.</h2>
+      <div class="tile-rule" style="--lit:5;margin:28px 0 0;justify-self:start">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i>
+      </div>
+      <p class="rule-note">The Grid icon's single aqua tile, turned into a divider. It slides into place as you scroll.</p>
+      <div class="rules">
+        <div><b style="background:var(--accent)"></b>Highlight: one aqua word per headline</div>
+        <div><b style="background:var(--text)"></b>Band: ink strip with the product's verbs moving across</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;justify-content:flex-end">
+      <div class="lit-band" style="margin:0">
+        <div class="lit-band-track"><ul>
+          <li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li>
+        </ul></div>
+      </div>
+      <div style="padding:28px;display:flex;flex-direction:column;flex:1;justify-content:space-between">
+        <div class="label">Band</div>
+        <p class="sample" style="margin:12px 0 0">Scrolls slowly and pauses on hover. Under reduced motion it stays still. The mask fades both ends.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Call to action</div>
+      <div class="btns" style="margin-top:22px">
+        <span class="btn btn-primary">Download for Mac</span>
+        <span class="btn btn-ghost">Install steps</span>
+      </div>
+      <p class="rule-note">Primary is aqua with an ink label. Secondary is an ink hairline. The closing panel is the one full aqua block on the site.</p>
+      <div class="motif-row" style="background:var(--accent);border-radius:20px;padding:22px;color:#17150F;margin-top:auto">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.02em">Start with one keystroke.</div>
+        <div style="margin-top:12px"><span class="btn" style="background:#17150F;color:#46E6D6;min-height:40px;font-size:14px">Download for Mac</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Source: design/tokens.json · Figtree (OFL) · SF Pro in the app</span>
+    <span>Full guide: docs/brand.md</span>
+  </div>
+</body>
+</html>

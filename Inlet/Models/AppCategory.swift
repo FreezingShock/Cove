@@ -2,15 +2,16 @@
 //  AppCategory.swift
 //  Inlet
 //
-//  The five buckets on the category bar, and how an app's
-//  LSApplicationCategoryType maps onto them.
+//  The six preset groups, and how an app's LSApplicationCategoryType maps
+//  onto them. A new install seeds one group per case; after that the user
+//  owns the groups (see AppGroup).
 //
 
 import Foundation
 
-/// The five buckets the category bar offers. Every installed app is in
-/// exactly one of them.
-enum AppCategory: String, CaseIterable, Identifiable, Sendable {
+/// The preset groups a new install starts with. Each app's category decides
+/// which preset it joins when it is first installed.
+enum AppCategory: String, Codable, CaseIterable, Identifiable, Sendable {
     case create
     case build
     case school
@@ -20,7 +21,7 @@ enum AppCategory: String, CaseIterable, Identifiable, Sendable {
 
     var id: String { rawValue }
 
-    /// The label on the category bar.
+    /// The name of the matching preset group.
     var title: String {
         switch self {
         case .create: "Create"
@@ -33,7 +34,7 @@ enum AppCategory: String, CaseIterable, Identifiable, Sendable {
     }
 
     /// Maps an app's `LSApplicationCategoryType`, such as
-    /// "public.app-category.developer-tools", to one bucket.
+    /// "public.app-category.developer-tools", to one preset.
     ///
     /// - A nil or empty value goes to `.other`.
     /// - Any value Apple does not document goes to `.other`, so an app
@@ -64,13 +65,6 @@ enum AppCategory: String, CaseIterable, Identifiable, Sendable {
         default:
             return .other
         }
-    }
-
-    /// Returns `apps` in one bucket, or every app when `category` is nil.
-    /// Keeps the input order, so the caller's sort is preserved.
-    static func filter(_ apps: [AppItem], by category: AppCategory?) -> [AppItem] {
-        guard let category else { return apps }
-        return apps.filter { $0.category == category }
     }
 
     // MARK: - Private

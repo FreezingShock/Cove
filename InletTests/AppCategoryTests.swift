@@ -92,37 +92,6 @@ final class AppCategoryTests: XCTestCase {
         XCTAssertEqual(AppCategory.allCases.map(\.title), ["Create", "Build", "School", "Everyday", "Games", "Other"])
     }
 
-    // MARK: - Filtering
-
-    func testNilFilterReturnsEveryAppInOrder() {
-        let apps = sampleApps()
-        XCTAssertEqual(AppCategory.filter(apps, by: nil).map(\.name), apps.map(\.name))
-    }
-
-    func testFilterKeepsOnlyTheChosenBucket() {
-        let apps = sampleApps()
-        let builds = AppCategory.filter(apps, by: .build)
-        XCTAssertEqual(builds.map(\.name), ["Xcode"])
-    }
-
-    func testGamesBucketCollectsEveryGame() {
-        let apps = sampleApps()
-        XCTAssertEqual(AppCategory.filter(apps, by: .games).map(\.name), ["Chess"])
-    }
-
-    func testEveryAppLandsInExactlyOneBucket() {
-        let apps = sampleApps()
-        let counts = AppCategory.allCases.map { AppCategory.filter(apps, by: $0).count }
-        XCTAssertEqual(counts.reduce(0, +), apps.count)
-
-        for app in apps {
-            let owners = AppCategory.allCases.filter { category in
-                AppCategory.filter([app], by: category).isEmpty == false
-            }
-            XCTAssertEqual(owners.count, 1, "\(app.name) is in \(owners.count) buckets")
-        }
-    }
-
     func testAppItemCategoryReadsItsCategoryType() {
         let app = makeApp(name: "Xcode", categoryType: "public.app-category.developer-tools")
         XCTAssertEqual(app.category, .build)
@@ -130,18 +99,6 @@ final class AppCategoryTests: XCTestCase {
     }
 
     // MARK: - Helpers
-
-    private func sampleApps() -> [AppItem] {
-        [
-            makeApp(name: "Affinity Photo", categoryType: "public.app-category.photography"),
-            makeApp(name: "Xcode", categoryType: "public.app-category.developer-tools"),
-            makeApp(name: "Notes", categoryType: "public.app-category.productivity"),
-            makeApp(name: "Chess", categoryType: "public.app-category.strategy-games"),
-            makeApp(name: "Khan Academy", categoryType: "public.app-category.education"),
-            makeApp(name: "Mystery Tool", categoryType: nil),
-            makeApp(name: "Odd Thing", categoryType: "public.app-category.nonsense"),
-        ]
-    }
 
     private func makeApp(name: String, categoryType: String?) -> AppItem {
         AppItem(

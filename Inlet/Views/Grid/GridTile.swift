@@ -36,6 +36,10 @@ struct GridTile: View {
     let onHide: () -> Void
     /// Moves the app by a slot offset in the layout. Used by VoiceOver in Edit mode.
     let onMove: (Int) -> Void
+    /// Where the icon starts before the grid opens, and when its spring begins.
+    let placement: OpenPlacement
+    /// True once the overlay is open. Drives the open choreography.
+    let isOpen: Bool
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// Swings between -1.3 and 1.3 degrees while the grid wobbles.
@@ -66,12 +70,14 @@ struct GridTile: View {
             }
             .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
 
-            Text(app.name)
-                .font(InletFont.iconLabel)
-                .foregroundStyle(InletColor.text)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .frame(width: InletSize.gridCell.width - InletSpace.l)
+            if ThemeRuntime.showsLabels {
+                Text(app.name)
+                    .font(ThemeRuntime.labelFont)
+                    .foregroundStyle(InletColor.text)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(width: InletSize.gridCell.width - InletSpace.l)
+            }
         }
         .padding(.top, InletSpace.s + InletSpace.xxs)
         .frame(width: InletSize.gridCell.width - InletSpace.s, alignment: .top)
@@ -87,6 +93,17 @@ struct GridTile: View {
             }
         }
         .scaleEffect(scale)
+        // Open choreography, the same as the search grid: each icon starts 22%
+        // toward the center at 0.78 scale, then springs into place in a ripple.
+        .scaleEffect(isOpen || reduceMotion ? 1 : 0.78)
+        .offset(isOpen || reduceMotion ? .zero : placement.offset)
+        .opacity(reduceMotion && !isOpen ? 0 : 1)
+        .animation(
+            reduceMotion
+                ? .inletFade
+                : .spring(InletMotion.open).delay(placement.delay),
+            value: isOpen
+        )
         .shadow(color: InletColor.gShadow.opacity(isLifted ? 1 : 0), radius: 12, y: 8)
         .rotationEffect(.degrees(wobbleAngle))
         .inletAnimation(.inletPress, value: isPressed)

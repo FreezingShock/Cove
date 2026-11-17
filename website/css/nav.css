@@ -1,6 +1,6 @@
 /* ---------- Site chrome ----------
    Header, mobile menu, search trigger, command palette, footer, buttons, links,
-   cursor glow and page transitions. Loads last, after site.css, motion.css and
+   and page transitions. Loads last, after site.css, motion.css and
    pages.css, so it can own these parts without touching the page styles above.
    Every motion here is off under Reduce Motion (site.css also zeroes transitions). */
 
@@ -68,34 +68,123 @@ main p a:hover,
 .privacy-link a:hover,
 .privacy-link a:focus-visible { background-size: 100% 1px; }
 
-/* ---------- Header ---------- */
-/* Floating header card, after the Wispr Flow reference: the bar is a rounded, hairline-bordered
-   glass card inset from the page edges, not a full-width strip. The mobile sheet hangs from it. */
+/* ---------- Header ----------
+   One floating glass pill, inset from the page edges. The header keeps a fixed 72 px slot in
+   the flow, so the pill can compact or slide away without moving the page under it.
+   States, set by js/nav.js:
+     .is-scrolled  past 8 px: a hairline band fades in behind the pill, and the pill compacts.
+     .is-hidden    scrolling down past the first screen: the header slides up out of view.
+                   Scrolling up, or focus anywhere in the header, brings it back.
+                   An open menu, the ⌘K palette and the pinned demo keep it on screen. */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 72px;
+  transition: transform var(--dur-medium) var(--ease-standard);
+}
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--base) 82%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: inset 0 -1px 0 var(--hair);
+  transition: opacity var(--dur-medium) var(--ease-fade);
+}
+.nav.is-scrolled::before { opacity: 1; }
+.nav.is-hidden { transform: translate3d(0, calc(-100% - 16px), 0); }
+@media (prefers-reduced-transparency: reduce) {
+  .nav::before { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--base); }
+}
+
 .nav-inner {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   width: min(1040px, calc(100% - 32px));
   height: 60px;
-  margin: 12px auto 0;
-  padding-left: 20px;
-  padding-right: 10px;
+  margin: 6px auto 0;
+  padding: 0 10px 0 20px;
   border-radius: var(--r-row);
   border: 1px solid var(--g-edge);
   background: linear-gradient(180deg, var(--g-sheen-top), var(--g-sheen-bot)), var(--g-fill);
   box-shadow: inset 0 1px 0 var(--g-rim-a), 0 14px 36px -22px var(--g-shadow);
   -webkit-backdrop-filter: blur(30px) saturate(170%);
   backdrop-filter: blur(30px) saturate(170%);
-  transition: box-shadow var(--dur-medium) var(--ease-fade), background-color var(--dur-medium) var(--ease-fade);
+  transition:
+    height var(--dur-medium) var(--ease-standard),
+    margin var(--dur-medium) var(--ease-standard),
+    box-shadow var(--dur-medium) var(--ease-fade);
 }
+/* Compact: the pill shrinks by 8 px and stays centred in the same 72 px slot. */
 .nav.is-scrolled .nav-inner {
+  height: 52px;
+  margin-top: 10px;
   box-shadow: inset 0 1px 0 var(--g-rim-a), 0 20px 44px -20px var(--g-shadow);
 }
-.nav.is-scrolled { box-shadow: none; }
 @media (prefers-reduced-transparency: reduce) {
   .nav-inner { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--g-solid); }
 }
-.links a { transition: color var(--dur-base) var(--ease-fade), background-color var(--dur-base) var(--ease-fade), transform var(--dur-fast) var(--ease-fade); }
-.links a:active { transform: scale(0.97); }
 .nav-right { flex: none; }
+.nav :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+/* ---------- Desktop links ----------
+   One pill slides to the link you point at, focus or are on (aria-current). js/nav.js moves it. */
+.links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+.links > a {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
+}
+.links > a:hover,
+.links > a:focus-visible,
+.links > a[aria-current="page"],
+.links > a[aria-current="true"] { color: var(--text); }
+.links > a:active { transform: scale(0.97); }
+.links-ind {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 36px;
+  margin-top: -18px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--sel-top), var(--sel-bot));
+  box-shadow: inset 0 0 0 1px var(--sel-ring), 0 4px 10px -4px var(--sel-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dur-medium) var(--ease-standard),
+    width var(--dur-medium) var(--ease-standard),
+    opacity var(--dur-fast) var(--ease-fade);
+}
+.links-ind.is-on { opacity: 1; }
+.links-ind.no-anim { transition: none; }
+.menu-extra { display: none; }
+.links .menu-get { display: none; }
 
 .search-btn {
   display: inline-flex;
@@ -140,6 +229,7 @@ main p a:hover,
   cursor: pointer;
   transition: background-color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
 }
+.menu-btn:hover { background: var(--hover); }
 .menu-btn:active { transform: scale(0.94); }
 .menu-btn i {
   position: absolute;
@@ -150,19 +240,16 @@ main p a:hover,
   margin-left: -8px;
   border-radius: var(--r-hair);
   background: currentColor;
-  transition: transform var(--dur-medium) var(--ease-standard);
+  transition: transform var(--dur-medium) var(--ease-standard), translate var(--dur-medium) var(--ease-standard);
 }
 .menu-btn i:nth-child(1) { translate: 0 -5px; }
 .menu-btn i:nth-child(2) { translate: 0 5px; }
 .nav.menu-open .menu-btn i:nth-child(1) { translate: 0 0; transform: rotate(45deg); }
 .nav.menu-open .menu-btn i:nth-child(2) { translate: 0 0; transform: rotate(-45deg); }
 
-.menu-extra { display: none; }
-.links .menu-get { display: none; }
-
 /* ---------- Mobile menu ----------
-   Up to 900 px the links become a glass sheet that drops from the header. It is
-   hidden with visibility, so closed links are out of the tab order. */
+   Up to 900 px the links become a glass sheet that drops from the header. Closed, it is
+   hidden with visibility, so its links are out of the tab order. Open, the links rise in turn. */
 @media (max-width: 900px) {
   .menu-btn { display: block; }
   .links {
@@ -199,7 +286,8 @@ main p a:hover,
       transform var(--dur-slow) var(--ease-standard),
       visibility 0s;
   }
-  .links a {
+  .links-ind { display: none; }
+  .links > a {
     display: flex;
     align-items: center;
     min-height: 48px;
@@ -209,34 +297,45 @@ main p a:hover,
     font-weight: 500;
     color: var(--text);
   }
-  .links a:hover { background: var(--hover); }
-  .links a[aria-current="true"] { background: var(--sel-bot); box-shadow: inset 0 0 0 1px var(--sel-ring); }
+  .links > a:hover { background: var(--hover); }
+  .links > a[aria-current="page"],
+  .links > a[aria-current="true"] { background: var(--sel-bot); box-shadow: inset 0 0 0 1px var(--sel-ring); }
   .nav-right { margin-left: auto; }
+}
+/* Rows rise in turn when the sheet opens. Closing is instant, so nothing lingers on screen. */
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .links > a,
+  .links .menu-get {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+    transition: opacity var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-standard);
+  }
+  .nav.menu-open .links > a,
+  .nav.menu-open .links .menu-get {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur-base) var(--ease-fade),
+      transform var(--dur-slow) var(--ease-standard);
+    transition-delay: calc(var(--i, 0) * 40ms + 60ms);
+  }
 }
 @media (max-width: 560px) {
   .menu-extra {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
     margin-top: 6px;
-    padding: 12px 8px 6px;
+    padding: 10px 8px 0;
     border-top: 1px solid var(--hair);
   }
-  .menu-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    padding: 0 8px;
-  }
-  .menu-extra .seg { display: flex; }
-  .menu-extra .seg button { flex: 1; justify-content: center; min-height: 40px; font-size: 14px; }
-  .links .menu-get { display: flex; justify-content: center; min-height: 48px; font-size: 16px; color: var(--accent-ink); }
-  .links .menu-get:hover { background: var(--accent); filter: brightness(1.07); }
+  .links .menu-get { display: flex; flex: 1; justify-content: center; min-height: 48px; font-size: 16px; color: var(--accent-ink); box-shadow: none; }
+  .links .menu-get:hover { background: var(--accent); filter: brightness(1.07); box-shadow: none; }
   .nav-right .search-btn { width: 36px; padding: 0; justify-content: center; }
   .nav-right .search-btn span,
-  .nav-right .search-btn kbd { display: none; }
+  .nav-right .search-btn kbd,
+  .nav-right .dl-mac { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav, .nav::before, .nav-inner, .links-ind { transition: none; }
 }
 
 /* ---------- Command palette (⌘K) ---------- */
@@ -389,9 +488,47 @@ main p a:hover,
 .foot-brand p { color: var(--text-3); }
 .foot .foot-cols {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px 20px;
+  min-width: 0;
 }
+/* Product cards across the top of the footer. */
+.foot-products {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.foot-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--hair);
+  background-color: var(--grouped);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-base) var(--ease-fade),
+    transform var(--dur-base) var(--ease-standard);
+}
+.foot-card:hover { border-color: var(--text); transform: translate3d(0, -2px, 0); }
+.foot-card:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.foot-card b { display: block; font-size: 16px; font-weight: 600; color: var(--text); }
+.foot-card small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--text-2); }
+.foot-tile {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+.foot-tile svg { width: var(--icon-md); height: var(--icon-md); }
+.foot-note { font-size: 13px; color: var(--text-3); }
 .foot-h {
   margin-bottom: 14px;
   font-size: 12px;
@@ -454,48 +591,55 @@ main p a:hover,
 }
 .foot-hint kbd { height: 20px; min-width: 20px; padding: 0 5px; font-size: 11px; box-shadow: none; }
 
-/* ---------- Cursor glow ----------
-   On a mouse, a soft spot of the accent glow follows the pointer behind the page.
-   scripts/nav.js adds it only for fine pointers with Reduce Motion off. */
-.cursor-glow {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--glow-a), transparent);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-slow) var(--ease-fade);
-  will-change: transform;
-}
-.cursor-glow.is-on { opacity: 0.5; }
-
-/* ---------- Page transitions ----------
-   Same-origin links cross-fade where the View Transitions API is supported. Elsewhere,
-   a short fade-in on load does the same job. Both are off under Reduce Motion. */
-@view-transition { navigation: auto; }
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) { animation: vt-out var(--dur-fast) var(--ease-exit) both; }
-  ::view-transition-new(root) { animation: vt-in 0.36s var(--ease-standard) both; }
-}
-@keyframes vt-out { to { opacity: 0; } }
-@keyframes vt-in { from { opacity: 0; } }
-@supports not (view-transition-name: none) {
-  @media (prefers-reduced-motion: no-preference) {
-    body { animation: page-in var(--dur-slow) var(--ease-fade) both; }
-  }
-}
-@keyframes page-in { from { opacity: 0; } }
-
 /* ---------- Responsive footer ---------- */
 @media (max-width: 900px) {
   .foot { grid-template-columns: minmax(0, 1fr); }
+  .foot .foot-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .foot-products { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 560px) {
   .foot { padding-top: 56px; gap: 40px; }
   .foot .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
   .foot .foot-cols .foot-col:last-child { grid-column: 1 / -1; }
 }
+
+/* ---------- Appearance icon (footer) ----------
+   One quiet icon. A click cycles Auto, Light, Dark; data-mode on the button picks which glyph shows.
+   Auto follows the system, so most visitors never need to touch it. */
+.foot-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.theme-cycle {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hair);
+  background: var(--field);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-fade), color var(--dur-fast) var(--ease-fade), transform var(--dur-fast) var(--ease-fade);
+}
+.theme-cycle:hover { color: var(--text); background: var(--hover); }
+.theme-cycle:active { transform: scale(0.94); }
+.theme-cycle svg {
+  grid-area: 1 / 1;
+  display: none;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-cycle[data-mode="auto"] .ic-auto,
+.theme-cycle[data-mode="light"] .ic-light,
+.theme-cycle[data-mode="dark"] .ic-dark { display: block; }

@@ -19,8 +19,7 @@ permissions:
   contents: read
 
 jobs:
-  # Decides whether the macOS build is needed. Only changes to app code, the
-  # project, workflows or scripts need it. Docs and website PRs skip it.
+  # Reports which paths changed. Kept for reference; the build job now runs on every PR.
   changes:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -50,11 +49,10 @@ jobs:
           echo "app=$app" >> "$GITHUB_OUTPUT"
           echo "Build needed: $app"
 
-  # Keep the job id and name `build`: it is the required check on integration.
-  # When skipped, the check reports as skipped, which counts as passing.
+  # Keep the job id and name `build`: it is the required check on integration. It runs the real
+  # macOS build and tests on every PR, website and docs changes included, so the gate always checks the app.
   build:
     needs: changes
-    if: always() && needs.changes.outputs.app != 'false'
     runs-on: macos-26
     timeout-minutes: 30
     env:

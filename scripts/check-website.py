@@ -41,7 +41,7 @@ IGNORED_SCHEMES = {"mailto", "tel", "data", "javascript", "blob"}
 RESOURCE_RELS = {"stylesheet", "icon", "apple-touch-icon", "preload", "modulepreload", "manifest", "prefetch"}
 
 # The public address of the site. Canonical URLs, the sitemap and social tags must use it.
-BASE = "https://freezingshock.github.io/Cove/"
+BASE = "https://freezingshock.github.io/Inlet/"
 
 EXTERNAL_CSS = re.compile(
     r"""url\(\s*['"]?\s*(https?:)?//|@import\s+(url\(\s*)?['"]?\s*(https?:)?//""",

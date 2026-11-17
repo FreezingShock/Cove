@@ -49,6 +49,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Menu bar icon, shown or hidden by Settings > General.
         MenuBarController.shared.start()
 
+        // Pinch in on the desktop, and a hot corner, also open the grid.
+        OpenTriggers.shared.start()
+
         OverlayController.shared.show()
 
         // First-run setup opens once, until the user finishes it. It is also
