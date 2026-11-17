@@ -1,0 +1,99 @@
+/* Feature demos (js/demos.js): ledger frames, hairlines, square tiles. Uses the shared tokens only. */
+.dm {
+  position: relative;
+  background: var(--grouped);
+  border: 1px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  color: var(--text);
+  overflow: hidden;
+  min-width: 0;
+  --dm-tile: 52px;
+}
+.dm-bar { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-bottom: 1px solid var(--text); }
+.dm-dots { display: flex; gap: 6px; }
+.dm-dots i { width: 9px; height: 9px; background: var(--text); opacity: 0.2; }
+.dm-dots i:first-child { background: var(--accent); opacity: 1; }
+.dm-title { font-size: 13px; font-weight: 600; flex: 1; }
+.dm-hint { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.dm-body { display: grid; gap: 16px; padding: 18px 18px 8px; }
+.dm-status { margin: 0; padding: 10px 18px 14px; font-size: 13px; color: var(--text-2); min-height: 2.4em; border-top: 1px solid var(--hair); }
+
+.dm-field { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 12px; border: 1px solid var(--text); background: var(--window); }
+.dm-field:focus-within { box-shadow: 0 0 0 2px var(--text); }
+.dm-field svg, .dm-qsearch svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; color: var(--text-2); }
+.dm-field input { flex: 1; min-width: 0; border: 0; background: none; color: var(--text); font: 500 16px/1 inherit; font-family: inherit; outline: 0; }
+.dm-field input::placeholder { color: var(--text-3); opacity: 1; }
+.dm-field input::-webkit-search-cancel-button { display: none; }
+.dm-key { font: 600 12px/1 inherit; font-family: inherit; padding: 6px 8px; border: 1px solid var(--hair); color: var(--text-3); transition: background 0.3s, color 0.3s, border-color 0.3s; }
+.dm-key.on { background: var(--accent); color: var(--accent-ink); border-color: var(--text); }
+.dm-chips, .dm-groups { display: flex; flex-wrap: wrap; gap: 8px; }
+.dm-chip, .dm-gchip { font: 600 13px/1 inherit; font-family: inherit; min-height: 36px; padding: 0 14px; background: none; color: var(--text); border: 1px solid var(--hair); cursor: pointer; transition: background 0.25s, border-color 0.25s, color 0.25s; }
+.dm-chip:hover, .dm-gchip:hover { border-color: var(--text); }
+.dm-gchip.on { background: var(--text); color: var(--base); border-color: var(--text); }
+
+.dm-grid { display: grid; grid-template-columns: repeat(var(--c, 6), minmax(0, 1fr)); gap: 14px 6px; justify-items: center; }
+.dm-grid-4 { --c: 4; } .dm-grid-5 { --c: 5; }
+.dm-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; min-width: 0; padding: 4px 2px; border: 0; background: none; color: var(--text); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; font: inherit; }
+.dm-tile[hidden] { display: none; }
+.dm-ico { display: grid; place-items: center; width: var(--dm-tile); height: var(--dm-tile); border-radius: calc(var(--dm-tile) * var(--r-icon, 0.225)); background: linear-gradient(180deg, var(--a), var(--b)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 8px 16px -10px var(--icon-shadow); }
+.dm-ico svg { width: 50%; height: 50%; fill: none; stroke: #fff; stroke-width: var(--icon-stroke, 1.75); stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.22)); }
+.dm-name { max-width: 100%; padding: 1px 4px; font-size: 11px; line-height: 16px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dm-tile.is-top .dm-name { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.dm-tile:focus-visible, .dm-all:focus-visible, .dm-edit:focus-visible, .dm-dockbtn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+.dm-files { display: grid; border-top: 1px solid var(--text); }
+.dm-files[hidden] { display: none; }
+.dm-file { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--hair); font-size: 13px; animation: dm-in 0.4s var(--ease, ease) both; }
+.dm-file svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--text-2); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.dm-file span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dm-file em { font-style: normal; color: var(--text-3); font-size: 12px; }
+@keyframes dm-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* quick panel */
+.dm-desk { position: relative; min-height: 470px; display: grid; justify-items: center; align-content: end; gap: 12px; padding: 18px; background: var(--base-2); }
+.dm-wall { position: absolute; inset: 0; background-image: linear-gradient(var(--hair) 1px, transparent 1px), linear-gradient(90deg, var(--hair) 1px, transparent 1px); background-size: 32px 32px; opacity: 0.7; }
+.dm-panel { position: relative; width: min(320px, 100%); padding: 14px; background: var(--window); border: 1px solid var(--text); box-shadow: 6px 6px 0 var(--text); transform-origin: 50% 100%; }
+.dm-panel.is-down { visibility: hidden; }
+.dm-qhead { margin-bottom: 12px; }
+.dm-qsearch { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px; border: 1px solid var(--hair); font-size: 14px; color: var(--text-3); }
+.dm-label { margin: 12px 0 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.dm-all, .dm-edit { font: 600 14px/1 inherit; font-family: inherit; cursor: pointer; border: 1px solid var(--text); background: var(--text); color: var(--base); min-height: 40px; padding: 0 16px; transition: background 0.25s, color 0.25s; }
+.dm-all { width: 100%; margin-top: 14px; }
+.dm-all:hover, .dm-edit:hover { background: var(--accent); color: var(--accent-ink); }
+.dm-edit { min-height: 30px; padding: 0 12px; font-size: 13px; }
+.dm-edit[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.dm-back { background: none; color: var(--text); }
+.dm-full { position: absolute; inset: 0; padding: 14px; background: var(--window); display: flex; flex-direction: column; justify-content: space-between; }
+.dm-full[hidden] { display: none; }
+.dm-dock { position: relative; padding: 8px 12px; border: 1px solid var(--text); background: var(--window); }
+.dm-dockbtn { display: block; padding: 0; border: 0; background: none; cursor: pointer; --dm-tile: 44px; transition: translate 0.3s var(--ease, ease); }
+.dm-dockbtn:hover { translate: 0 -4px; }
+
+/* groups and edit mode */
+.dm-sortable { min-height: 230px; align-content: start; }
+.dm-minus { display: none; position: absolute; top: 0; left: 6px; width: 20px; height: 20px; place-items: center; background: var(--text); color: var(--base); border-radius: 50%; z-index: 2; }
+.dm-minus svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+.is-editing .dm-minus { display: grid; }
+.is-editing .dm-tile { touch-action: none; cursor: grab; }
+.is-editing .dm-tile .dm-ico { animation: dm-wig 0.5s ease-in-out infinite alternate; }
+.is-editing .dm-tile:nth-child(2n) .dm-ico { animation-delay: -0.25s; }
+.dm-tile.is-drag { z-index: 5; cursor: grabbing; }
+.dm-tile.is-drag .dm-ico { animation: none; scale: 1.1; box-shadow: 0 16px 24px -10px var(--icon-shadow); }
+@keyframes dm-wig { from { rotate: -2deg; } to { rotate: 2deg; } }
+.dm-toast { position: absolute; left: 18px; right: 18px; bottom: 54px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; background: var(--text); color: var(--base); font-size: 13px; }
+.dm-toast[hidden] { display: none; }
+.dm-toast button { font: 700 13px/1 inherit; font-family: inherit; min-height: 30px; padding: 0 10px; background: var(--accent); color: var(--accent-ink); border: 0; cursor: pointer; }
+
+@media (max-width: 520px) {
+  .dm { box-shadow: 5px 5px 0 var(--text); --dm-tile: 46px; }
+  .dm-grid-6 { --c: 4; }
+  .dm-body { padding: 14px 14px 6px; }
+  .dm-desk { min-height: 450px; }
+}
+@media (pointer: coarse) {
+  .dm-chip, .dm-gchip, .dm-edit, .dm-all { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dm-file, .is-editing .dm-tile .dm-ico { animation: none; }
+}
+.dm-wide { max-width: 640px; margin: 40px 0 16px; }

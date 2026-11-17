@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="css/kit.css">
   <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
+  <link rel="stylesheet" href="css/demos.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/features.html">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
@@ -138,6 +139,7 @@
   <section class="wrap band bg-tiles" id="arrange">
     <h2 class="h-section">Arrange the grid your way.</h2>
     <p class="lede">The grid starts in alphabetical order. Changes you make are saved on your Mac and come back after a relaunch.</p>
+    <div class="dm dm-wide" id="demoArrange" role="group" aria-label="Interactive sample: groups and Edit mode"></div>
     <div class="cards four">
       <article class="card">
         <h3>Edit mode</h3>
@@ -174,13 +176,7 @@
           <li>Arrow keys move through the results</li>
         </ul>
       </div>
-      <figure class="shot">
-        <picture>
-          <source type="image/avif" srcset="assets/launch/search-480.avif 480w, assets/launch/search-720.avif 720w, assets/launch/search-960.avif 960w, assets/launch/search.avif 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
-          <source type="image/webp" srcset="assets/launch/search-480.webp 480w, assets/launch/search-720.webp 720w, assets/launch/search-960.webp 960w, assets/launch/search.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
-          <img src="assets/launch/search.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Inlet search with text typed in the field, a highlighted top match among the apps, and matching files listed below.">
-        </picture>
-      </figure>
+      <div class="dm" id="demoSearch" role="group" aria-label="Interactive sample: search"></div>
     </div>
   </section>
 
@@ -196,13 +192,7 @@
           <li>Dock click opens the quick panel or the full grid, your choice</li>
         </ul>
       </div>
-      <figure class="shot">
-        <picture>
-          <source type="image/avif" srcset="assets/launch/quick-panel-360.avif 360w, assets/launch/quick-panel-540.avif 540w, assets/launch/quick-panel-720.avif 720w, assets/launch/quick-panel.avif 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
-          <source type="image/webp" srcset="assets/launch/quick-panel-360.webp 360w, assets/launch/quick-panel-540.webp 540w, assets/launch/quick-panel-720.webp 720w, assets/launch/quick-panel.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
-          <img src="assets/launch/quick-panel.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Inlet quick panel with a search field, a grid of recent apps, a short list of recent files and a Show All Apps button.">
-        </picture>
-      </figure>
+      <div class="dm" id="demoQuick" role="group" aria-label="Interactive sample: quick panel"></div>
     </div>
   </section>
 
@@ -349,6 +339,7 @@
 <script src="js/nav.js" defer></script>
 <script src="js/jump.js" defer></script>
 <script src="js/motion.js" defer></script>
+<script src="js/demos.js" defer></script>
 <script src="js/kit.js" defer></script>
 </body>
 </html>
