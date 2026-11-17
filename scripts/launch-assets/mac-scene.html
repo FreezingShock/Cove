@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inlet trailer scene</title>
+<!--
+  Render-only macOS desktop for scripts/launch-assets/capture.cjs. Not deployed.
+  Everything is drawn here: wallpaper, menu bar, Dock, windows, cursor. No Apple wallpapers,
+  icons or logos are used. renderAt(t) draws the video timeline at time t (seconds).
+  renderPreset(name) draws a still.
+-->
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; background: #05070C; }
+  #screen {
+    position: absolute; inset: 0; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, Inter, "Helvetica Neue", Arial, sans-serif;
+    color: #fff; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11" 1;
+  }
+
+  /* Wallpaper: an original dusk-teal gradient with soft light, plus fine grain. */
+  #wall {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(660px 480px at 14% 86%, rgba(63, 217, 201, .42), transparent 70%),
+      radial-gradient(760px 540px at 88% 12%, rgba(122, 96, 240, .5), transparent 70%),
+      radial-gradient(640px 460px at 64% 112%, rgba(240, 128, 96, .38), transparent 70%),
+      linear-gradient(162deg, #0C1D2E 0%, #142A42 46%, #1D1735 100%);
+  }
+  #grain {
+    position: absolute; inset: 0; opacity: .08; mix-blend-mode: overlay; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Liquid-glass approximation: blurred, saturated backdrop, a rim highlight and a specular sheen. */
+  .glass {
+    position: relative;
+    background: linear-gradient(160deg, rgba(255,255,255,.24), rgba(255,255,255,.07) 55%, rgba(255,255,255,.13));
+    -webkit-backdrop-filter: blur(28px) saturate(175%);
+    backdrop-filter: blur(28px) saturate(175%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.26),
+      inset 0 1.5px 0 rgba(255,255,255,.5),
+      inset 0 -1px 0 rgba(0,0,0,.16),
+      0 20px 50px rgba(0,0,0,.34);
+  }
+  .glass::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.2) 49%, transparent 60%);
+  }
+
+  /* Windows */
+  .win {
+    position: absolute; border-radius: 22px; overflow: hidden; background: #1E2026;
+    box-shadow: 0 0 0 .6px rgba(0,0,0,.7), 0 3px 8px rgba(0,0,0,.28), 0 34px 80px rgba(0,0,0,.5);
+  }
+  .tb {
+    position: relative; height: 46px; display: flex; align-items: center; padding: 0 16px;
+    background: linear-gradient(#30333B, #262930); border-bottom: .5px solid rgba(0,0,0,.55);
+  }
+  .tl { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.25); }
+  .tl.r { background: #FF5F57; } .tl.y { background: #FEBC2E; } .tl.g { background: #28C840; }
+  .ttl { position: absolute; left: 0; right: 0; text-align: center; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.88); }
+
+  #notes { left: 70px; top: 96px; width: 360px; height: 430px; }
+  #notes .body { padding: 24px 26px; }
+  #notes .h { width: 58%; height: 15px; border-radius: 5px; background: rgba(255,255,255,.34); margin-bottom: 22px; }
+  #notes .ln { height: 9px; border-radius: 5px; background: rgba(255,255,255,.14); margin-bottom: 13px; }
+
+  #photos { left: 290px; top: 110px; width: 700px; height: 500px; background: #1E2026; }
+  #photos .split { display: flex; height: calc(100% - 46px); }
+  #photos .side { width: 178px; padding: 12px 8px; background: rgba(255,255,255,.035); border-right: .5px solid rgba(0,0,0,.4); }
+  #photos .si { height: 28px; line-height: 28px; padding: 0 10px; border-radius: 7px; font-size: 13px; color: rgba(255,255,255,.82); margin-bottom: 2px; }
+  #photos .si.on { background: rgba(92, 140, 255, .42); color: #fff; }
+  #photos .sh { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.42); padding: 14px 10px 6px; }
+  #photos .main { flex: 1; padding: 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-content: start; }
+  #photos .th { position: relative; height: 112px; border-radius: 10px; overflow: hidden; }
+  #photos .th::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 70% 30%, rgba(255,255,255,.28), transparent 42%); }
+
+  /* Menu bar */
+  #menubar {
+    position: absolute; left: 0; right: 0; top: 0; height: 30px; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 14px;
+    font-size: 13.5px; font-weight: 500; color: #fff;
+    background: rgba(12, 16, 26, .30);
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 -.5px 0 rgba(255,255,255,.12);
+  }
+  #menubar .l, #menubar .r { display: flex; align-items: center; gap: 16px; }
+  #menubar .r { gap: 14px; }
+  #menubar b { font-weight: 650; }
+  #menubar .sys { display: flex; align-items: center; opacity: .95; }
+  #menubar .clock { font-variant-numeric: tabular-nums; margin-left: 2px; }
+
+  /* Dock */
+  #dock {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 25;
+    display: flex; align-items: flex-end; gap: 10px; padding: 8px 12px 10px; border-radius: 26px;
+  }
+  .dk { position: relative; width: 58px; height: 58px; }
+  .dk .dot { position: absolute; left: 50%; bottom: -10px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: rgba(255,255,255,.9); }
+
+  /* App icons: a squircle with a gradient and a simple glyph. Original art. */
+  .ic { position: relative; width: var(--s); height: var(--s); border-radius: calc(var(--s) * .2237); overflow: hidden;
+        box-shadow: inset 0 0 0 .6px rgba(255,255,255,.34), inset 0 -2px 4px rgba(0,0,0,.12), 0 6px 14px rgba(0,0,0,.36); }
+  .ic::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 50%; background: linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,0)); }
+  .ic svg { position: absolute; left: 16%; top: 16%; width: 68%; height: 68%; z-index: 1; }
+
+  /* Overlay: Inlet grid over a dimmed desktop */
+  #scrim {
+    position: absolute; inset: 0; z-index: 40; background: rgba(6, 10, 18, .46);
+    -webkit-backdrop-filter: blur(20px) saturate(115%); backdrop-filter: blur(20px) saturate(115%);
+  }
+  #overlay { position: absolute; inset: 0; z-index: 42; transform-origin: 640px 400px; }
+  #bar {
+    position: absolute; left: 390px; top: 58px; width: 500px; height: 48px; border-radius: 24px;
+    display: flex; align-items: center; gap: 12px; padding: 0 18px; font-size: 18px;
+  }
+  #bar svg { width: 19px; height: 19px; flex: none; opacity: .75; }
+  #qwrap { position: relative; height: 24px; flex: 1; }
+  #qtext { position: absolute; left: 0; top: 0; white-space: pre; color: #fff; line-height: 24px; letter-spacing: -.005em; }
+  #ph { position: absolute; left: 0; top: 0; color: rgba(255,255,255,.52); line-height: 24px; }
+  #caret { position: absolute; top: 3px; width: 2px; height: 18px; background: #fff; border-radius: 1px; }
+
+  #grid { position: absolute; left: 136px; top: 150px; display: grid; grid-template-columns: repeat(7, 144px); grid-auto-rows: 134px; }
+  .tile { display: flex; flex-direction: column; align-items: center; padding-top: 12px; border-radius: 22px; }
+  .tile .ic { --s: 72px; }
+  .tile span { margin-top: 10px; font-size: 13px; font-weight: 500; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5); white-space: nowrap; }
+  .tile.hit { background: rgba(255,255,255,.1); }
+  .tile.hit .ic { box-shadow: 0 0 0 3px rgba(63, 217, 201, .95), 0 0 26px rgba(63, 217, 201, .55), 0 6px 14px rgba(0,0,0,.36); }
+
+  #files { position: absolute; left: 300px; top: 556px; width: 680px; border-radius: 22px; padding: 8px; }
+  .frow { display: flex; align-items: center; height: 42px; padding: 0 12px; gap: 12px; border-radius: 14px; }
+  .frow.hl { background: rgba(255,255,255,.12); }
+  .frow .fi { width: 22px; height: 26px; flex: none; }
+  .frow .fn { font-size: 15px; font-weight: 500; }
+  .frow .fp { margin-left: auto; font-size: 13px; color: rgba(255,255,255,.55); }
+
+  /* Quick panel (still only) */
+  #quick {
+    position: absolute; left: 454px; top: 150px; width: 372px; border-radius: 32px; padding: 16px; z-index: 43;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  #quick .qs { height: 44px; border-radius: 22px; display: flex; align-items: center; gap: 10px; padding: 0 16px; font-size: 16px; color: rgba(255,255,255,.55); }
+  #quick .qs svg { width: 17px; height: 17px; opacity: .7; }
+  #quick .lab { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.6); padding: 0 6px; margin-bottom: -6px; letter-spacing: .01em; }
+  #quick .qg { display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 8px; }
+  #quick .qg .cell { display: flex; flex-direction: column; align-items: center; }
+  #quick .qg .cell .ic { --s: 56px; }
+  #quick .qg .cell span { margin-top: 7px; font-size: 12px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45); white-space: nowrap; }
+  #quick .qf .frow { height: 40px; }
+  #quick .foot { display: flex; justify-content: center; }
+  #quick .btn { height: 34px; padding: 0 18px; border-radius: 17px; display: flex; align-items: center; font-size: 13px; font-weight: 600; }
+
+  /* Cursor and click ripple */
+  #cursor { position: absolute; left: 0; top: 0; z-index: 60; width: 24px; height: 30px; filter: drop-shadow(0 2px 2.5px rgba(0,0,0,.5)); transform-origin: 2px 1px; }
+  #ripple { position: absolute; left: 0; top: 0; z-index: 55; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; border: 2px solid rgba(255,255,255,.85); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="screen">
+  <div id="wall"></div>
+  <div id="grain"></div>
+
+  <!-- Windows behind the overlay -->
+  <div class="win" id="notes">
+    <div class="tb"><span class="tl r"></span><span class="tl y"></span><span class="tl g"></span><span class="ttl">Notes</span></div>
+    <div class="body">
+      <div class="h"></div>
+      <div class="ln" style="width:96%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:92%"></div>
+      <div class="ln" style="width:58%;margin-bottom:26px"></div>
+      <div class="ln" style="width:94%"></div><div class="ln" style="width:81%"></div><div class="ln" style="width:90%"></div><div class="ln" style="width:44%"></div>
+    </div>
+  </div>
+
+  <div class="win" id="photos" style="opacity:0">
+    <div class="tb"><span class="tl r"></span><span class="tl y"></span><span class="tl g"></span><span class="ttl">Recents</span></div>
+    <div class="split">
+      <div class="side">
+        <div class="sh">Library</div>
+        <div class="si">Library</div>
+        <div class="si" id="sideRecents">Recents</div>
+        <div class="si">Favorites</div>
+        <div class="sh">Albums</div>
+        <div class="si">Trips</div>
+        <div class="si">Screenshots</div>
+      </div>
+      <div class="main" id="thumbs"></div>
+    </div>
+  </div>
+
+  <div id="dock"></div>
+
+  <!-- Inlet overlay -->
+  <div id="scrim" style="opacity:0"></div>
+  <div id="overlay" style="opacity:0; visibility:hidden">
+    <div id="bar" class="glass">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <div id="qwrap">
+        <span id="ph">Search apps and files</span>
+        <span id="qtext"></span>
+        <span id="caret" style="opacity:0"></span>
+      </div>
+    </div>
+    <div id="grid"></div>
+    <div id="files" class="glass" style="opacity:0"></div>
+  </div>
+
+  <div id="quick" class="glass" style="opacity:0; visibility:hidden"></div>
+
+  <div id="menubar">
+    <div class="l">
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .8l5.2 5.2L6 11.2.8 6z" fill="#fff"/></svg>
+      <b id="appname">Finder</b>
+      <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span>
+    </div>
+    <div class="r">
+      <span class="sys"><svg width="15" height="11" viewBox="0 0 15 11"><path d="M1 3.6a9 9 0 0 1 13 0M3.4 6.2a5.5 5.5 0 0 1 8.2 0M5.8 8.7a2 2 0 0 1 3.4 0" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg></span>
+      <span class="sys"><svg width="24" height="11" viewBox="0 0 24 11"><rect x=".5" y=".5" width="20" height="10" rx="2.6" fill="none" stroke="rgba(255,255,255,.55)"/><rect x="2.5" y="2.5" width="14.5" height="6" rx="1.4" fill="#fff"/><rect x="22" y="3.6" width="1.6" height="3.8" rx=".8" fill="rgba(255,255,255,.55)"/></svg></span>
+      <span class="sys"><svg width="14" height="12" viewBox="0 0 14 12"><rect x=".6" y="1" width="12.8" height="3.6" rx="1.8" fill="none" stroke="#fff" stroke-width="1.2"/><rect x=".6" y="7" width="12.8" height="3.6" rx="1.8" fill="none" stroke="#fff" stroke-width="1.2"/><circle cx="4.6" cy="2.8" r="1.5" fill="#fff"/><circle cx="9.4" cy="8.8" r="1.5" fill="#fff"/></svg></span>
+      <span class="sys"><svg width="13" height="13" viewBox="0 0 13 13"><circle cx="5.6" cy="5.6" r="4.2" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M8.8 8.8l3 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+      <span class="clock">Mon 17 Nov&nbsp;&nbsp;9:41 AM</span>
+    </div>
+  </div>
+
+  <div id="ripple"></div>
+  <div id="cursor">
+    <svg width="24" height="30" viewBox="0 0 24 30">
+      <path d="M2.5 1.5 L2.5 23 L7.6 18.1 L11 26 L14.2 24.6 L10.8 17 L17.8 17 Z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- data ------------------------------------------------------------------
+  // Name, glyph, gradient. The names are the apps the demo uses. The art is original.
+  var APPS = [
+    ['Notes', 'note', ['#FFE98A', '#F5B93A']],
+    ['Photos', 'photo', ['#FFFFFF', '#D2DAE5']],
+    ['Photo Booth', 'camera', ['#4D525D', '#16181D']],
+    ['Mail', 'mail', ['#6CC9FF', '#1B6FE8']],
+    ['Messages', 'msg', ['#7CEB86', '#1FAE47']],
+    ['Calendar', 'cal', ['#FFFFFF', '#E3E8EF']],
+    ['Music', 'music', ['#FF7A9A', '#E0245E']],
+    ['Terminal', 'term', ['#3C434F', '#0B0D11']],
+    ['Settings', 'gear', ['#D0D5DD', '#7A8493']],
+    ['Safari', 'globe', ['#8ADBFF', '#1E7CF0']],
+    ['Maps', 'map', ['#9AEB9A', '#2E9E68']],
+    ['Reminders', 'check', ['#FFFFFF', '#DCE2EA']],
+    ['Freeform', 'pen', ['#FFFFFF', '#D7DEE8']],
+    ['Weather', 'weather', ['#7CC8FF', '#2F78DE']],
+    ['Clock', 'clock', ['#2C2E35', '#050507']],
+    ['Calculator', 'calc', ['#4B4E57', '#1A1B20']],
+    ['Books', 'book', ['#FFB35C', '#F0681E']],
+    ['Preview', 'doc', ['#F2F5F9', '#BCC6D3']],
+    ['Podcasts', 'mic', ['#D08CFF', '#8B3DF5']],
+    ['Xcode', 'hammer', ['#6DB8FF', '#2357D9']],
+    ['Files', 'folder', ['#7ACBFF', '#2A8FF2']]
+  ];
+  var DOCK = ['Files', 'Safari', 'Messages', 'Mail', 'Notes', 'Photos', 'Music', 'Settings'];
+  var FILES = {
+    pho: [['photos-trip-notes.md', '~/Documents/Trips'], ['Photo checklist.pdf', '~/Downloads']],
+    note: [['note-ideas.md', '~/Documents'], ['Meeting notes 2026.txt', '~/Documents/Work']]
+  };
+  var QUICK_FILES = [['Trip itinerary.pdf', '~/Downloads'], ['Draft: launch notes.md', '~/Documents'], ['IMG_2041.heic', '~/Pictures']];
+  var THUMBS = [
+    'linear-gradient(180deg,#FFB38A,#E0557A 58%,#4B2A6B)',
+    'linear-gradient(180deg,#9FD8FF,#3B82C4 60%,#17335A)',
+    'linear-gradient(180deg,#F8E7B8,#D9A35A 52%,#5B3C22)',
+    'linear-gradient(180deg,#B8F0D8,#2E8F6A 62%,#123D2D)',
+    'linear-gradient(180deg,#FFD6E8,#C06BB5 55%,#3D2056)',
+    'linear-gradient(180deg,#CFE6FF,#7FA7D9 55%,#2B3E66)',
+    'linear-gradient(180deg,#FFE7A8,#F09A5A 55%,#6C2E3A)',
+    'linear-gradient(180deg,#D7F5F0,#4FB3A6 60%,#1E4B55)',
+    'linear-gradient(180deg,#F2D0C2,#B9705E 58%,#3E2A3C)',
+    'linear-gradient(180deg,#C9D4FF,#6F82D6 60%,#1D2358)',
+    'linear-gradient(180deg,#FFF2C4,#E8C36A 60%,#5A4520)',
+    'linear-gradient(180deg,#BFE9D0,#5DAA86 58%,#1F3F33)'
+  ];
+  var CURSOR = [[0, 1010, 640], [1.3, 930, 585], [2.4, 905, 560], [5.9, 905, 560], [6.8, 380, 220]];
+  var K = { open0: 0.7, open1: 1.45, keys: [[2.2, 'p'], [2.36, 'h'], [2.52, 'o']], ret: 4.3, out0: 4.7, out1: 5.2, win0: 4.8, win1: 5.5, click: 6.8 };
+
+  // ---- glyphs (64 x 64) ------------------------------------------------------
+  var GEAR = '<circle cx="32" cy="32" r="9" fill="none" stroke="#fff" stroke-width="5"/>';
+  for (var i = 0; i < 8; i++) {
+    var a = i * Math.PI / 4;
+    GEAR += '<line x1="' + (32 + Math.cos(a) * 15).toFixed(2) + '" y1="' + (32 + Math.sin(a) * 15).toFixed(2) +
+      '" x2="' + (32 + Math.cos(a) * 22).toFixed(2) + '" y2="' + (32 + Math.sin(a) * 22).toFixed(2) +
+      '" stroke="#fff" stroke-width="7" stroke-linecap="round"/>';
+  }
+  var GLYPH = {
+    note: '<rect x="16" y="13" width="32" height="39" rx="4" fill="#fff"/><path d="M22 25h20M22 32h20M22 39h14" stroke="#C98A12" stroke-width="2.6" stroke-linecap="round"/>',
+    photo: '<rect x="10" y="12" width="44" height="40" rx="7" fill="#fff"/><circle cx="23" cy="24" r="4.6" fill="#FF9F0A"/><path d="M12 48l13-15 9 9 6-7 12 13z" fill="#34C759"/><path d="M28 48l8-10 8 10z" fill="#1C7CF5" opacity=".85"/>',
+    camera: '<rect x="8" y="19" width="48" height="30" rx="7" fill="#E9EDF2"/><path d="M23 19l4-6h10l4 6z" fill="#E9EDF2"/><circle cx="32" cy="34" r="9" fill="#2C3440"/><circle cx="32" cy="34" r="4.5" fill="#7DB6FF"/>',
+    mail: '<rect x="10" y="16" width="44" height="32" rx="5" fill="#fff"/><path d="M12 19l20 15 20-15" stroke="#1C7CF5" stroke-width="3" fill="none" stroke-linejoin="round"/>',
+    msg: '<path d="M32 13c-11.5 0-19.5 7.4-19.5 16.6 0 5.2 2.7 9.6 7 12.5L17 52l9.8-4.6c1.9.4 3.9.6 5.2.6 11.5 0 19.5-7.4 19.5-16.6S43.5 13 32 13z" fill="#fff"/>',
+    cal: '<rect x="0" y="0" width="64" height="64" fill="#fff"/><rect x="0" y="0" width="64" height="19" fill="#FF453A"/><text x="32" y="14" font-size="10" font-weight="700" text-anchor="middle" fill="#fff" font-family="Inter, Arial, sans-serif">NOV</text><text x="32" y="51" font-size="30" font-weight="600" text-anchor="middle" fill="#1d1d1f" font-family="Inter, Arial, sans-serif">17</text>',
+    music: '<circle cx="23" cy="44" r="7.5" fill="#fff"/><circle cx="48" cy="38" r="7.5" fill="#fff"/><path d="M30.5 44V16l25-5v27" stroke="#fff" stroke-width="4" fill="none" stroke-linejoin="round"/>',
+    term: '<path d="M15 21l11 11-11 11" stroke="#5CFF9A" stroke-width="4.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 45h18" stroke="#fff" stroke-width="4.6" stroke-linecap="round"/>',
+    gear: GEAR,
+    globe: '<circle cx="32" cy="32" r="19" stroke="#fff" stroke-width="3.6" fill="none"/><ellipse cx="32" cy="32" rx="8" ry="19" stroke="#fff" stroke-width="3" fill="none"/><path d="M13 32h38" stroke="#fff" stroke-width="3"/>',
+    map: '<path d="M32 12a12.5 12.5 0 0 1 12.5 12.5c0 9.5-12.5 23-12.5 23S19.5 34 19.5 24.5A12.5 12.5 0 0 1 32 12z" fill="#fff"/><circle cx="32" cy="24.5" r="4.6" fill="#2E9E68"/>',
+    check: '<circle cx="32" cy="32" r="19" fill="#fff"/><path d="M23.5 32.5l6 6 11-12.5" stroke="#FF9F0A" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+    pen: '<path d="M14 46C22 30 28 42 35 27S45 17 50 19" stroke="#fff" stroke-width="4.2" fill="none" stroke-linecap="round"/>',
+    weather: '<circle cx="25" cy="25" r="9.5" fill="#FFD60A"/><path d="M21 49h23a7.5 7.5 0 0 0 0-15 11 11 0 0 0-20.5 3.2A6.5 6.5 0 0 0 21 49z" fill="#fff"/>',
+    clock: '<circle cx="32" cy="32" r="20" fill="#fff"/><path d="M32 20v13l8.5 5" stroke="#1d1d1f" stroke-width="3.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+    calc: '<rect x="14" y="10" width="36" height="44" rx="6" fill="#FF9F0A"/><rect x="19" y="16" width="26" height="9" rx="2" fill="#fff"/><g fill="#fff"><circle cx="23" cy="34" r="2.7"/><circle cx="32" cy="34" r="2.7"/><circle cx="41" cy="34" r="2.7"/><circle cx="23" cy="43" r="2.7"/><circle cx="32" cy="43" r="2.7"/><circle cx="41" cy="43" r="2.7"/></g>',
+    book: '<path d="M11 18c8-3 14-2 21 3 7-5 13-6 21-3v29c-8-3-14-2-21 3-7-5-13-6-21-3z" fill="#fff"/><path d="M32 21v29" stroke="#F0681E" stroke-width="2.6"/>',
+    doc: '<path d="M18 11h19l10 10v32H18z" fill="#fff" stroke="#9AA6B6" stroke-width="2"/><path d="M37 11v10h10" fill="none" stroke="#9AA6B6" stroke-width="2"/><path d="M25 32h16M25 39h16M25 46h10" stroke="#8291A6" stroke-width="2.6" stroke-linecap="round"/>',
+    mic: '<rect x="24.5" y="10" width="15" height="28" rx="7.5" fill="#fff"/><path d="M17 31a15 15 0 0 0 30 0M32 46v8" stroke="#fff" stroke-width="3.6" fill="none" stroke-linecap="round"/>',
+    hammer: '<path d="M16 48L38 26" stroke="#fff" stroke-width="6.5" stroke-linecap="round"/><path d="M34 12l17 13-6 6-17-13z" fill="#fff"/>',
+    folder: '<path d="M11 22a4 4 0 0 1 4-4h12l5 5h17a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4z" fill="#fff"/>'
+  };
+  var FILE_ICON = '<svg viewBox="0 0 22 26" class="fi"><path d="M2 1.5h12l7 7v16H2z" fill="#fff" opacity=".92"/><path d="M14 1.5v7h7" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1"/><path d="M6 14h10M6 18h10M6 22h6" stroke="#6B7587" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+  function iconHTML(app, size) {
+    var g = GLYPH[app[1]];
+    return '<div class="ic" style="--s:' + size + 'px;background:linear-gradient(160deg,' + app[2][0] + ',' + app[2][1] + ')">' +
+      '<svg viewBox="0 0 64 64" aria-hidden="true">' + g + '</svg></div>';
+  }
+  function byName(n) { for (var i = 0; i < APPS.length; i++) if (APPS[i][0] === n) return APPS[i]; return null; }
+
+  // ---- helpers ---------------------------------------------------------------
+  function $(id) { return document.getElementById(id); }
+  function clamp(x, a, b) { return Math.min(b, Math.max(a, x)); }
+  function prog(t, a, b) { return clamp((t - a) / (b - a), 0, 1); }
+  function ease(x) { return 1 - Math.pow(1 - x, 3); }
+  function easeInOut(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeOutBack(x) { var c1 = 1.45, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+
+  // ---- build the DOM once ----------------------------------------------------
+  function build() {
+    var dock = $('dock');
+    dock.className = 'glass';
+    dock.innerHTML = DOCK.map(function (n) {
+      var app = byName(n);
+      return '<div class="dk">' + iconHTML(app, 58) + (n === 'Photos' ? '<i class="dot" id="dotPhotos" style="opacity:0"></i>' : '') + '</div>';
+    }).join('');
+
+    $('grid').innerHTML = APPS.map(function (app) {
+      return '<div class="tile" data-name="' + app[0] + '">' + iconHTML(app, 72) + '<span>' + app[0] + '</span></div>';
+    }).join('');
+
+    $('thumbs').innerHTML = THUMBS.map(function (g) { return '<div class="th" style="background:' + g + '"></div>'; }).join('');
+
+    var quickApps = APPS.slice(0, 8);
+    $('quick').innerHTML =
+      '<div class="qs glass"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Search apps and files</div>' +
+      '<div class="lab">Recent apps</div>' +
+      '<div class="qg">' + quickApps.map(function (app) {
+        return '<div class="cell">' + iconHTML(app, 56) + '<span>' + app[0] + '</span></div>';
+      }).join('') + '</div>' +
+      '<div class="lab">Recent files</div>' +
+      '<div class="qf">' + QUICK_FILES.map(function (f, i) {
+        return '<div class="frow' + (i === 0 ? ' hl' : '') + '">' + FILE_ICON + '<span class="fn">' + f[0] + '</span><span class="fp">' + f[1] + '</span></div>';
+      }).join('') + '</div>' +
+      '<div class="foot"><span class="btn glass">Show All Apps</span></div>';
+  }
+
+  var lastFilesKey = null;
+  function filesFor(ql) {
+    if (ql.indexOf('pho') === 0) return 'pho';
+    if (ql.indexOf('note') === 0) return 'note';
+    return null;
+  }
+
+  // ---- draw one state --------------------------------------------------------
+  function render(s) {
+    $('scrim').style.opacity = s.ov;
+    var ov = $('overlay');
+    ov.style.opacity = s.ov;
+    ov.style.visibility = s.ov > 0.001 ? 'visible' : 'hidden';
+    ov.style.transform = 'scale(' + s.ovS.toFixed(4) + ')';
+
+    $('qtext').textContent = s.q;
+    $('ph').style.display = s.q ? 'none' : '';
+    $('caret').style.opacity = s.caret ? 1 : 0;
+    $('caret').style.left = (s.q ? textWidth(s.q) : 0) + 'px';
+
+    var ql = s.q.toLowerCase();
+    var matches = ql ? APPS.filter(function (a) { return a[0].toLowerCase().indexOf(ql) !== -1; }).map(function (a) { return a[0]; }) : [];
+    var hit = matches.length ? matches[0] : null;
+    var tiles = document.querySelectorAll('.tile');
+    for (var i = 0; i < tiles.length; i++) {
+      var el = tiles[i], n = el.getAttribute('data-name');
+      var isMatch = !ql || matches.indexOf(n) !== -1;
+      el.style.opacity = isMatch ? 1 : (1 - 0.86 * s.dim).toFixed(3);
+      el.classList.toggle('hit', n === hit);
+      var icon = el.querySelector('.ic');
+      var press = (n === hit) ? 1 - 0.07 * s.press : 1;
+      icon.style.transform = 'scale(' + press.toFixed(4) + ')';
+    }
+
+    var key = filesFor(ql);
+    var files = $('files');
+    files.style.opacity = s.filesA;
+    if (key !== lastFilesKey) {
+      lastFilesKey = key;
+      files.innerHTML = key ? FILES[key].map(function (f, idx) {
+        return '<div class="frow' + (idx === 0 ? ' hl' : '') + '">' + FILE_ICON + '<span class="fn">' + f[0] + '</span><span class="fp">' + f[1] + '</span></div>';
+      }).join('') : '';
+    }
+
+    var p = $('photos');
+    p.style.opacity = s.photosOp;
+    p.style.transform = 'scale(' + s.photosS.toFixed(4) + ')';
+    $('sideRecents').classList.toggle('on', !!s.sideOn);
+    $('dotPhotos').style.opacity = s.dotA;
+    $('appname').textContent = s.appName;
+
+    var q = $('quick');
+    q.style.opacity = s.quick;
+    q.style.visibility = s.quick > 0.001 ? 'visible' : 'hidden';
+
+    var c = $('cursor');
+    c.style.opacity = s.cur.a;
+    c.style.transform = 'translate(' + (s.cur.x - 2.5).toFixed(2) + 'px,' + (s.cur.y - 1.5).toFixed(2) + 'px) scale(' + (1 - 0.1 * s.cur.press).toFixed(4) + ')';
+    var r = $('ripple');
+    r.style.opacity = s.rip > 0 ? (0.9 * (1 - s.rip)).toFixed(3) : 0;
+    r.style.left = s.cur.x + 'px';
+    r.style.top = s.cur.y + 'px';
+    r.style.transform = 'scale(' + (0.2 + 1.1 * s.rip).toFixed(3) + ')';
+  }
+
+  // Width of the typed text, measured once per call with a hidden span.
+  var measurer = null;
+  function textWidth(str) {
+    if (!measurer) {
+      measurer = document.createElement('span');
+      measurer.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font-size:18px;letter-spacing:-.005em;font-family:inherit;';
+      $('qtext').parentNode.appendChild(measurer);
+    }
+    measurer.textContent = str;
+    return measurer.getBoundingClientRect().width;
+  }
+
+  // ---- video timeline ---------------------------------------------------------
+  function cursorAt(t) {
+    if (t <= CURSOR[0][0]) return { x: CURSOR[0][1], y: CURSOR[0][2] };
+    for (var i = 0; i < CURSOR.length - 1; i++) {
+      var a = CURSOR[i], b = CURSOR[i + 1];
+      if (t >= a[0] && t <= b[0]) {
+        var e = easeInOut((t - a[0]) / (b[0] - a[0]));
+        return { x: a[1] + (b[1] - a[1]) * e, y: a[2] + (b[2] - a[2]) * e };
+      }
+    }
+    var last = CURSOR[CURSOR.length - 1];
+    return { x: last[1], y: last[2] };
+  }
+
+  function timeline(t) {
+    var typed = '';
+    K.keys.forEach(function (k) { if (t >= k[0]) typed += k[1]; });
+    var openP = prog(t, K.open0, K.open1);
+    var outP = prog(t, K.out0, K.out1);
+    var ov = ease(openP) * (1 - easeInOut(outP));
+    var ovS = (0.94 + 0.06 * easeOutBack(openP)) * (1 + 0.025 * outP);
+    var firstKey = K.keys[0][0];
+    var dim = typed ? ease(prog(t, firstKey, firstKey + 0.3)) : 0;
+    var pr = prog(t, K.ret, K.ret + 0.35);
+    var press = Math.sin(Math.PI * pr);
+    var winP = prog(t, K.win0, K.win1);
+    var pos = cursorAt(t);
+    var clickP = prog(t, K.click, K.click + 0.5);
+    return {
+      ov: ov, ovS: ovS, q: typed, caret: ov > 0.6 && t < K.ret, dim: dim, press: press,
+      filesA: typed.length >= 3 ? prog(t, K.keys[2][0] + 0.25, K.keys[2][0] + 0.6) : 0,
+      photosOp: clamp(winP * 1.8, 0, 1), photosS: 0.92 + 0.08 * easeOutBack(winP),
+      sideOn: t >= K.click + 0.1, dotA: prog(t, K.win1, K.win1 + 0.25),
+      appName: t >= K.win0 + 0.1 ? 'Photos' : 'Finder', quick: 0,
+      cur: { x: pos.x, y: pos.y, a: 1, press: Math.sin(Math.PI * prog(t, K.click, K.click + 0.2)) },
+      rip: t >= K.click ? clickP : 0
+    };
+  }
+
+  var BASE = {
+    ov: 0, ovS: 1, q: '', caret: false, dim: 0, press: 0, filesA: 0, photosOp: 0, photosS: 1,
+    sideOn: false, dotA: 0, appName: 'Finder', quick: 0, cur: { x: 0, y: 0, a: 0, press: 0 }, rip: 0
+  };
+  function preset(name) {
+    var s = Object.assign({}, BASE);
+    if (name === 'grid') { s.ov = 1; s.caret = true; }
+    if (name === 'search') { s.ov = 1; s.q = 'note'; s.dim = 1; s.caret = true; s.filesA = 1; }
+    if (name === 'quick') { s.quick = 1; }
+    return s;
+  }
+
+  window.renderAt = function (t) { render(timeline(t)); };
+  window.renderPreset = function (name) { render(preset(name)); };
+  window.ready = false;
+  build();
+  // Set the caret position once the fonts are in, then mark the page ready.
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+    window.renderPreset('grid');
+    window.ready = true;
+  });
+})();
+</script>
+</body>
+</html>
