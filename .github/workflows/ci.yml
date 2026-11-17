@@ -51,14 +51,30 @@ jobs:
 
   # Keep the job id and name `build`: it is the required check on integration. It runs the real
   # macOS build and tests on every PR, website and docs changes included, so the gate always checks the app.
+  # A draft PR cannot merge, and marking it ready runs this job again, so drafts skip the macOS
+  # runner. Merge gating is unchanged: the check still runs on every ready PR and on integration.
   build:
     needs: changes
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: macos-26
     timeout-minutes: 30
     env:
       SCHEME: Inlet
     steps:
       - uses: actions/checkout@v4
+
+      # Reuse dependency downloads and incremental build output between runs on the same branch.
+      - name: Cache SwiftPM and DerivedData
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm
+            ~/Library/org.swift.swiftpm
+            ~/Library/Developer/Xcode/DerivedData
+          key: macos-${{ hashFiles('Inlet.xcodeproj/project.pbxproj') }}-${{ github.ref_name }}
+          restore-keys: |
+            macos-${{ hashFiles('Inlet.xcodeproj/project.pbxproj') }}-
+            macos-
 
       - name: Select Xcode 26.6
         run: sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
