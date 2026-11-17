@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>For designers · Inlet</title>
+  <meta name="description" content="Inlet shows each app's own icon, follows macOS accessibility settings, and uses seven springs with fixed, readable values.">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/explore.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="canonical" href="https://freezingshock.github.io/Cove/designers.html">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="For designers · Inlet">
+  <meta property="og:description" content="Inlet shows each app's own icon, follows macOS accessibility settings, and uses seven springs with fixed, readable values.">
+  <meta property="og:url" content="https://freezingshock.github.io/Cove/designers.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="For designers · Inlet">
+  <meta name="twitter:description" content="Inlet shows each app's own icon, follows macOS accessibility settings, and uses seven springs with fixed, readable values.">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/inlet-icon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <nav class="links" id="siteLinks" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="use-cases.html" aria-current="page">Use cases</a>
+      <a href="compare.html">Compare</a>
+      <a href="download.html">Download</a>
+      <a href="faq.html">FAQ</a>
+      <div class="menu-extra">
+        <p class="menu-label" id="menuAppLbl">Appearance</p>
+        <div class="seg" role="group" aria-labelledby="menuAppLbl">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+        </div>
+        <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
+      </div>
+    </nav>
+    <div class="nav-right">
+      <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
+      </button>
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="index.html#get">Get Inlet</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap uc-hero" aria-labelledby="des-title">
+    <p class="eyebrow">For designers</p>
+    <h1 id="des-title">Real icons. Fixed springs.<span class="soft">Your display settings, followed.</span></h1>
+    <p class="lede">Inlet doesn't redraw your app icons. It shows the icon from each app's own bundle. It follows Reduce Motion, Reduce Transparency and Increase Contrast with nothing to set up, and its motion runs on seven springs with values you can read.</p>
+    <div class="uc-meta"><span>Seven springs</span><span>Light, Dark or Auto</span><span>Source on GitHub</span></div>
+    <nav class="on-page" aria-label="On this page">
+      <a href="#icons">Icons</a>
+      <a href="#springs">Springs</a>
+      <a href="#access">Accessibility</a>
+      <a href="#layout">Layout</a>
+      <a href="#appearance">Appearance</a>
+    </nav>
+  </section>
+
+  <section class="wrap band" id="icons">
+    <div class="split">
+      <div class="copy">
+        <h2 class="h-feature">Icons come from each app's bundle.</h2>
+        <p class="body-2">Each app appears with the icon it ships with, so the grid matches Finder and the Dock. Inlet doesn't theme or replace icons. Icons are cached in one place, so the grid stays quick as it scrolls.</p>
+        <ul class="specs">
+          <li>The icon from each app's own bundle</li>
+          <li>One icon cache for the grid, search and quick panel</li>
+          <li>5 to 9 columns, 7 by default</li>
+        </ul>
+      </div>
+      <figure class="shot">
+        <picture>
+          <source type="image/avif" srcset="assets/launch/grid-480.avif 480w, assets/launch/grid-720.avif 720w, assets/launch/grid-960.avif 960w, assets/launch/grid.avif 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
+          <source type="image/webp" srcset="assets/launch/grid-480.webp 480w, assets/launch/grid-720.webp 720w, assets/launch/grid-960.webp 960w, assets/launch/grid.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
+          <img src="assets/launch/grid.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Inlet's full-screen grid of installed apps, each shown with its icon and name.">
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="springs" aria-labelledby="springs-title">
+    <h2 class="h-section" id="springs-title">Seven springs, with fixed values.</h2>
+    <p class="lede">Every animation uses one of seven springs, each set by a duration and a bounce. Anything that opens can bounce a little. Anything that closes can't, so the dismiss spring has no bounce. With Reduce Motion on, every spring is replaced by a 0.2 second fade.</p>
+    <div class="table-wrap">
+      <table class="spec-table">
+        <caption>Spring values from <code>Inlet/InletTheme.swift</code>, in the order the file lists them.</caption>
+        <thead>
+          <tr><th scope="col">Spring</th><th scope="col">Duration</th><th scope="col">Bounce</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Snap</th><td data-label="Duration">0.24 s</td><td data-label="Bounce">0.00</td></tr>
+          <tr><th scope="row">Press</th><td data-label="Duration">0.26 s</td><td data-label="Bounce">0.42</td></tr>
+          <tr><th scope="row">Open</th><td data-label="Duration">0.46 s</td><td data-label="Bounce">0.24</td></tr>
+          <tr><th scope="row">Morph</th><td data-label="Duration">0.52 s</td><td data-label="Bounce">0.30</td></tr>
+          <tr><th scope="row">Rise</th><td data-label="Duration">0.50 s</td><td data-label="Bounce">0.32</td></tr>
+          <tr><th scope="row">Settle</th><td data-label="Duration">0.60 s</td><td data-label="Bounce">0.18</td></tr>
+          <tr><th scope="row">Dismiss</th><td data-label="Duration">0.26 s</td><td data-label="Bounce">0.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note-line">Duration is in seconds, and bounce runs from 0 to 1. These are the values Apple's Spring(duration:bounce:) takes.</p>
+  </section>
+
+  <section class="wrap band" id="access" aria-labelledby="access-title">
+    <h2 class="h-section" id="access-title">Follows your Mac's display settings.</h2>
+    <p class="lede">Nothing needs to be set inside Inlet. It reads the macOS accessibility settings and adjusts.</p>
+    <div class="cards">
+      <article class="card">
+        <h3>Reduce Motion</h3>
+        <p>Springs give way to a short fade. Nothing scales or bounces.</p>
+      </article>
+      <article class="card">
+        <h3>Reduce Transparency</h3>
+        <p>The glass panels switch to a solid fill with no blur.</p>
+      </article>
+      <article class="card">
+        <h3>Increase Contrast</h3>
+        <p>Secondary text becomes full strength, and dividers are easier to see.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap band" id="layout" aria-labelledby="layout-title">
+    <div class="split rev">
+      <div class="copy">
+        <h2 class="h-feature" id="layout-title">A layout you set, saved on your Mac.</h2>
+        <p class="body-2">Arrange the grid in Edit mode. Group apps into folders, and swipe between pages. Your layout survives a relaunch.</p>
+        <ul class="specs">
+          <li>Folders hold up to nine apps</li>
+          <li>Folders can't sit inside other folders</li>
+          <li>The category bar filters by kind of app</li>
+        </ul>
+      </div>
+      <figure class="shot">
+        <picture>
+          <source type="image/avif" srcset="assets/launch/quick-panel-360.avif 360w, assets/launch/quick-panel-540.avif 540w, assets/launch/quick-panel-720.avif 720w, assets/launch/quick-panel.avif 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
+          <source type="image/webp" srcset="assets/launch/quick-panel-360.webp 360w, assets/launch/quick-panel-540.webp 540w, assets/launch/quick-panel-720.webp 720w, assets/launch/quick-panel.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 560px">
+          <img src="assets/launch/quick-panel.webp" width="1280" height="800" loading="lazy" decoding="async" alt="Inlet quick panel with a search field, a grid of recent apps, a short list of recent files and a Show All Apps button.">
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="appearance" aria-labelledby="appear-title">
+    <h2 class="h-section" id="appear-title">Light, Dark, or Auto.</h2>
+    <p class="lede">Auto follows your Mac. Light and Dark stay put. Inlet has no theme or icon pack setting. Appearance is Light, Dark or Auto, and that's the full set of choices.</p>
+    <p class="note-line">The Appearance control on this site works the same way. It saves your choice in this browser and doesn't change the app.</p>
+  </section>
+
+  <section class="wrap band">
+    <div class="still">
+      <div>
+        <h2>Look at the real grid.</h2>
+        <p>Read the full feature list, or check the accessibility details on the features page.</p>
+      </div>
+      <div class="download-row">
+        <a class="btn btn-ghost" href="features.html#accessibility">Accessibility details</a>
+        <a class="btn btn-primary" href="download.html">Download Inlet</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <div class="foot-products" aria-label="Start here">
+    <a class="foot-card" href="download.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
+    </a>
+    <a class="foot-card" href="features.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
+    </a>
+    <a class="foot-card" href="compare.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
+    </a>
+  </div>
+  <div class="foot-brand">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <p>Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.</p>
+  </div>
+  <nav class="foot-cols" aria-label="Footer">
+    <div class="foot-col">
+      <p class="foot-h">Product</p>
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="changelog.html">Changelog</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Who it's for</p>
+      <a href="use-cases.html">All use cases</a>
+      <a href="developers.html">Developers</a>
+      <a href="designers.html">Designers</a>
+      <a href="students.html">Students</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Compare</p>
+      <a href="compare.html#spotlight">Spotlight</a>
+      <a href="compare.html#launchpad">Launchpad</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Help</p>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Project</p>
+      <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+      <a href="download.html#build">Build from source</a>
+      <a href="download.html#updates">Update checks</a>
+    </div>
+  </nav>
+  <div class="foot-bar">
+    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    <p class="foot-note">For macOS 26 or later. In development.</p>
+  </div>
+</footer>
+
+<script src="js/site.js" defer></script>
+<script src="js/nav.js" defer></script>
+</body>
+</html>
