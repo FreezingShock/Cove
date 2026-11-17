@@ -110,6 +110,9 @@ final class FileSearch {
             results = []
             return
         }
+        // Rows that still match the new text stay up while Spotlight catches
+        // up. Rows that no longer match leave at once, so nothing stale shows.
+        results = Self.keeping(results, matching: terms)
 
         debounceTask = Task { [weak self] in
             try? await Task.sleep(for: self?.debounceInterval ?? .milliseconds(150))
@@ -210,6 +213,13 @@ final class FileSearch {
         NSPredicate(format: "NOT (%K == %@)", NSMetadataItemContentTypeTreeKey, "com.apple.application-bundle"),
         NSPredicate(format: "NOT (%K == %@)", NSMetadataItemContentTypeTreeKey, "public.folder"),
     ]
+
+    /// The rows whose name still contains every typed word, in their current order.
+    static func keeping(_ items: [FileItem], matching terms: [String]) -> [FileItem] {
+        items.filter { item in
+            terms.allSatisfy { item.name.localizedCaseInsensitiveContains($0) }
+        }
+    }
 
     /// Orders matches so exact names come first, then names that start with the query,
     /// then everything else. Ties keep Spotlight's last-used order.

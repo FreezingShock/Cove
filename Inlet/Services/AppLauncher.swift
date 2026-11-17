@@ -11,10 +11,15 @@ enum AppLauncher {
     /// Launches (or brings forward, if already running) the app.
     /// Shows an alert if macOS refuses, e.g. the app was deleted after
     /// the last scan or is damaged.
+    ///
+    /// - Parameter closesOverlay: Hide the overlay first, so the app comes up
+    ///   with nothing in front of it. The grid passes its "Close after
+    ///   launching" setting here.
     @MainActor
-    static func launch(_ app: AppItem) {
-        // Hide the overlay first, so the app comes up with nothing in front of it.
-        OverlayController.shared.hide()
+    static func launch(_ app: AppItem, closesOverlay: Bool = true) {
+        if closesOverlay {
+            OverlayController.shared.hide()
+        }
 
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true // bring the app to the front

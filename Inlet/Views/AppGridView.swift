@@ -538,7 +538,8 @@ struct AppGridView: View {
     /// The Hidden apps list, opened from the header.
     @ViewBuilder
     private var hiddenPanel: some View {
-        if showsHidden, !layoutStore.layout.hidden.isEmpty {
+        // The list belongs to the paged grid. Searching or a category filter hides it.
+        if isPaged, showsHidden, !layoutStore.layout.hidden.isEmpty {
             HiddenAppsPanel(rows: hiddenRows, onRestore: restore)
                 .padding(.top, 64)
                 .padding(.trailing, InletSize.gridSidePadding)
@@ -612,7 +613,7 @@ struct AppGridView: View {
     /// next open starts fresh.
     private func launch(_ app: AppItem) {
         closeAfterAction()
-        AppLauncher.launch(app)
+        AppLauncher.launch(app, closesOverlay: closeAfterLaunch)
     }
 
     /// A tap on a file row: open the file with its default app.

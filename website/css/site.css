@@ -280,9 +280,9 @@ kbd {
 }
 .cell .name {
   max-width: 100%;
-  padding: 1px 6px;
+  padding: 1px 4px;
   border-radius: var(--r-lg);
-  font-size: 12px;
+  font-size: 11px;
   line-height: 16px;
   font-weight: 500;
   white-space: nowrap;

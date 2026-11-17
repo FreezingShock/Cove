@@ -116,8 +116,11 @@ final class OverlayController {
         }
 
         // Start from the closed state, then open on the next turn so the
-        // open animation has a starting point to animate from.
+        // open animation has a starting point to animate from. A new session
+        // rebuilds the grid, so each open starts clean: no leftover search,
+        // Edit mode, Hidden panel or Undo toast from the last time.
         motion.isOpen = false
+        motion.session += 1
         blurView?.alphaValue = 0
         NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
@@ -152,4 +155,6 @@ final class OverlayController {
 @Observable
 final class OverlayMotion {
     var isOpen = false
+    /// Counts up on every show. The grid view is keyed by it, so it rebuilds with fresh state.
+    var session = 0
 }
