@@ -17,26 +17,14 @@
     });
   }
   window.addEventListener("scroll", requestFrame, { passive: true });
-  window.addEventListener("resize", function () { layoutScrub(); requestFrame(); });
+  window.addEventListener("resize", function () { measureScroll(); layoutScrub(); requestFrame(); });
 
   /* ---------- Sticky header: a hairline and blur once the page has moved ---------- */
   frameHooks.push(function () {
     if (nav) nav.classList.toggle("is-scrolled", window.scrollY > 8);
   });
 
-  /* ---------- Anchor jumps: move focus to the target so keyboard users land there ---------- */
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest && e.target.closest('a[href^="#"]');
-    if (!a) return;
-    var id = a.getAttribute("href").slice(1);
-    var target = id && document.getElementById(id);
-    if (!target) return;
-    if (!target.hasAttribute("tabindex")) {
-      target.setAttribute("tabindex", "-1");
-      target.addEventListener("blur", function () { target.removeAttribute("tabindex"); }, { once: true });
-    }
-    setTimeout(function () { target.focus({ preventScroll: true }); }, 0);
-  });
+  /* Anchor jumps and reading progress live in js/jump.js, which every page loads. */
 
   /* ---------- Scroll-spy: the nav link for the section in view gets aria-current ---------- */
   var links = Array.prototype.slice.call(document.querySelectorAll('.links a[href^="#"]'));
@@ -64,7 +52,7 @@
   }
 
   /* ---------- Reveal: blocks rise in once when they enter the screen ---------- */
-  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box, .recipe, .proof-item, .uses-head";
+  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box, .recipe, .proof-item, .uses-head, .showcase-head, .facts";
   var revealTargets = Array.prototype.slice.call(document.querySelectorAll(REVEAL));
   if (hasIO && !reduceQuery.matches) {
     revealTargets.forEach(function (el, i) {
@@ -125,7 +113,8 @@
   }
 
   // The sticky block pins just below the header. Its height is the viewport minus the header.
-  var navH = 0, stickyH = 0;
+  var navH = 0, stickyH = 0, blockH = 0, stickTop = 0;
+  var PIN_PAD = 32; // breathing room above and below the demo while it is pinned
 
   function layoutScrub() {
     if (!track || !demo) return;
@@ -134,7 +123,9 @@
     track.style.setProperty("--nav-h", navH + "px");
     track.classList.remove("is-pinned");
     track.style.height = "";
-    if (reduceQuery.matches) { setPinned(false); return; }
+    if (sticky) { sticky.style.height = ""; sticky.style.top = ""; }
+    // Lite and static tiers play the demo as a plain video: no pin, no per-frame seeks.
+    if (reduceQuery.matches || document.documentElement.getAttribute("data-motion") === "lite") { track.classList.remove("is-pinned"); setPinned(false); return; }
     // Pin only when the whole sticky block fits below the header, so nothing gets cut off.
     track.classList.add("is-pinned");
     var fits = inner.offsetHeight <= stickyH;
@@ -143,15 +134,21 @@
       setPinned(false);
       return;
     }
-    track.style.height = (stickyH + window.innerHeight * 2) + "px"; // sticky block + 2 viewports of scroll
+    // The block is only as tall as its content plus PIN_PAD, centred under the header. The track ends
+    // with the block, so no empty band is left between the caption and the next section.
+    blockH = Math.min(stickyH, inner.offsetHeight + 2 * PIN_PAD);
+    stickTop = navH + Math.max(0, (stickyH - blockH) / 2);
+    sticky.style.height = blockH + "px";
+    sticky.style.top = stickTop + "px";
+    track.style.height = (blockH + window.innerHeight * 2) + "px"; // block + 2 viewports of scroll
     setPinned(true);
     requestFrame();
   }
 
   function updateScrub() {
     var r = track.getBoundingClientRect();
-    var span = track.offsetHeight - stickyH;
-    var p = span > 0 ? Math.min(1, Math.max(0, (navH - r.top) / span)) : 0;
+    var span = track.offsetHeight - blockH;
+    var p = span > 0 ? Math.min(1, Math.max(0, (stickTop - r.top) / span)) : 0;
 
     if (bar) bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
 
@@ -173,6 +170,8 @@
   }
 
   if (demo && track) {
+    // Tier changes (frame probe, Reduce Motion) re-check whether the pin is allowed.
+    window.addEventListener("inlet:tier", layoutScrub);
     frameHooks.push(function () { if (pinned) updateScrub(); });
     demo.addEventListener("seeked", function () { if (pinned) requestFrame(); });
     reduceQuery.addEventListener("change", layoutScrub);

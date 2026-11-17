@@ -22,6 +22,16 @@ struct SearchPanel: View {
     let matchCount: Int
     /// Spotlight file matches for the query, best first. Shown under the top hit.
     let files: [FileItem]
+    /// The value of the query as a sum, formatted, e.g. "8". Nil when the query is not a sum.
+    let calculation: String?
+    /// True after the sum has been copied, so the row can say so.
+    let calculationCopied: Bool
+    /// Copies the sum text. A tap on the sum row uses it; Return goes through the grid.
+    let onCopyCalculation: (String) -> Void
+    /// System Settings panes that match the query, best first. Shown under the top hit.
+    let panes: [SystemPane]
+    /// A tap on a pane row opens that pane.
+    let onOpenPane: (SystemPane) -> Void
     /// Return in the field (or a tap on the top-hit row) opens the top hit.
     let onOpenTopHit: () -> Void
     /// A tap on a file row opens that file.
@@ -38,7 +48,9 @@ struct SearchPanel: View {
 
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
     /// The panel opens when there is an app or a file to show.
-    private var isExpanded: Bool { isSearching && (topHit != nil || !files.isEmpty) }
+    private var isExpanded: Bool {
+        isSearching && (calculation != nil || topHit != nil || !panes.isEmpty || !files.isEmpty)
+    }
     /// The field widens a little when it has focus, per the spec (500 -> 560).
     private var width: CGFloat {
         isFocused.wrappedValue ? InletSize.searchFieldFocusedWidth : InletSize.searchField.width
@@ -50,8 +62,18 @@ struct SearchPanel: View {
                 field
 
                 if isExpanded {
+                    if let calculation {
+                        calculationRow(calculation)
+                            .padding(.horizontal, InletSpace.s)
+                            .padding(.bottom, InletSpace.s)
+                    }
                     if let topHit {
                         topHitRow(topHit)
+                            .padding(.horizontal, InletSpace.s)
+                            .padding(.bottom, InletSpace.s)
+                    }
+                    if !panes.isEmpty {
+                        paneRows
                             .padding(.horizontal, InletSpace.s)
                             .padding(.bottom, InletSpace.s)
                     }
@@ -110,6 +132,89 @@ struct SearchPanel: View {
         .frame(height: InletSize.searchField.height)
     }
 
+    // MARK: Calculation
+
+    /// The sum for the query, as a row above the top hit. Return or a tap copies it.
+    /// The caption changes to "Copied" for as long as the query stays the same.
+    private func calculationRow(_ value: String) -> some View {
+        HStack(spacing: InletSpace.m) {
+            Text("=")
+                .font(InletFont.headline)
+                .foregroundStyle(InletColor.accent)
+                .frame(width: InletSize.rowIcon, height: InletSize.rowIcon)
+                .background(Circle().fill(InletColor.accentSoft))
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: InletSpace.xxs) {
+                Text(value)
+                    .font(InletFont.title)
+                    .foregroundStyle(InletColor.text)
+                    .lineLimit(1)
+                Text(calculationCopied ? "Copied" : "Return copies the result")
+                    .font(InletFont.caption)
+                    .foregroundStyle(InletText.secondary(contrast))
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(InletSpace.s)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous)
+                .fill(InletColor.hover)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous))
+        .onTapGesture { onCopyCalculation(value) }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel("Result \(value). Copy it.")
+    }
+
+    // MARK: System Settings
+
+    /// Matching System Settings panes, under a "System Settings" caption.
+    /// Each row is a button, so Tab and VoiceOver reach it.
+    private var paneRows: some View {
+        VStack(alignment: .leading, spacing: InletSpace.xxs) {
+            Text("System Settings")
+                .font(InletFont.caption)
+                .foregroundStyle(InletText.secondary(contrast))
+                .padding(.horizontal, InletSpace.m)
+                .padding(.top, InletSpace.xs)
+
+            ForEach(panes) { pane in
+                Button {
+                    onOpenPane(pane)
+                } label: {
+                    HStack(spacing: InletSpace.m) {
+                        Image(systemName: pane.symbol)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(InletColor.text)
+                            .frame(width: 30, height: 30)
+                            .background(
+                                RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous)
+                                    .fill(InletColor.hover)
+                            )
+                            .accessibilityHidden(true)
+
+                        Text(pane.title)
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(InletColor.text)
+                            .lineLimit(1)
+
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.vertical, InletSpace.s)
+                    .padding(.horizontal, InletSpace.m)
+                    .contentShape(RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Open \(pane.title) in System Settings")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     // MARK: Files
 
     /// The file matches from Spotlight, under a small "Files" caption with a
@@ -133,7 +238,7 @@ struct SearchPanel: View {
                 } label: {
                     FileResultRow(item: file)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(InletRowButtonStyle(cornerRadius: InletRadius.row))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

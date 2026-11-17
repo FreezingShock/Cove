@@ -27,7 +27,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     case general, appearance, shortcuts
     case grid, hiddenApps, search, quickPanel
     case privacy, updates
-    case about
+    case pro, about
 
     var id: String { rawValue }
 
@@ -36,7 +36,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         SidebarGroup(title: nil, panes: [.general, .appearance, .shortcuts]),
         SidebarGroup(title: "Launcher", panes: [.grid, .hiddenApps, .search, .quickPanel]),
         SidebarGroup(title: "Privacy & Updates", panes: [.privacy, .updates]),
-        SidebarGroup(title: "Inlet", panes: [.about]),
+        SidebarGroup(title: "Inlet", panes: [.pro, .about]),
     ]
 
     var title: String {
@@ -50,6 +50,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .quickPanel: return "Quick Panel"
         case .privacy:    return "Privacy & Permissions"
         case .updates:    return "Updates"
+        case .pro:        return "Inlet Pro"
         case .about:      return "About"
         }
     }
@@ -66,6 +67,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .quickPanel: return "dock.rectangle"
         case .privacy:    return "hand.raised.fill"
         case .updates:    return "arrow.down.circle.fill"
+        case .pro:        return "star.circle.fill"
         case .about:      return "info.circle.fill"
         }
     }
@@ -75,7 +77,8 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .general, .shortcuts, .about: return .gray
         case .appearance:                  return .indigo
         case .grid:                        return .blue
-        case .hiddenApps:                  return .purple
+        case .hiddenApps:                  return .mint
+        case .pro:                         return .purple
         case .search:                      return .orange
         case .quickPanel:                  return .teal
         case .privacy:                     return .pink
@@ -133,6 +136,7 @@ struct SettingsView: View {
         case .quickPanel: QuickPanelPane()
         case .privacy:    PrivacyPane()
         case .updates:    UpdatesPane()
+        case .pro:        ProPane()
         case .about:      AboutPane()
         }
     }

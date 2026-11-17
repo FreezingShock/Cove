@@ -28,8 +28,8 @@ struct AppItem: Identifiable, Hashable, Sendable {
     /// "public.app-category.developer-tools". Nil when the app declares none.
     let categoryType: String?
 
-    /// The category-bar bucket this app falls into. Unknown or missing
-    /// categories land in `.other`.
+    /// The preset this app's category suggests. Unknown or missing
+    /// categories suggest `.other`. Used when the app is first installed.
     var category: AppCategory {
         AppCategory.bucket(forCategoryType: categoryType)
     }

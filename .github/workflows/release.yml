@@ -236,6 +236,26 @@ jobs:
           scripts/release/package.sh "$APP" "$VERSION" build/release
           python3 scripts/release/changelog.py extract --version "$VERSION" > build/release/notes.md
 
+      # The site reads this file (website/js/download.js) to show the version and size.
+      # The Website workflow picks it up from the latest release when it redeploys.
+      - name: Write release info for the site
+        if: steps.version.outputs.build == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build_number }}
+        run: |
+          DMG="build/release/Inlet.dmg"
+          BYTES="$(stat -f%z "$DMG")"
+          SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
+          jq -n \
+            --arg version "$VERSION" \
+            --arg build "$BUILD" \
+            --argjson bytes "$BYTES" \
+            --arg sha "$SHA" \
+            '{version: $version, build: $build, dmg_bytes: $bytes, dmg_sha256: $sha}' \
+            > build/release/release.json
+          cat build/release/release.json
+
       - name: Update Sparkle appcast (when the script exists)
         if: steps.version.outputs.build == 'true'
         env:
@@ -267,6 +287,7 @@ jobs:
             "build/release/Inlet-$VERSION.dmg"
             "build/release/Inlet.dmg"
             "build/release/SHA256SUMS.txt"
+            "build/release/release.json"
           )
           if [ -f build/release/appcast.xml ]; then
             ASSETS+=("build/release/appcast.xml")

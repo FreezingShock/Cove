@@ -31,6 +31,13 @@ extension KeyboardShortcuts.Name {
         "showQuickPanel",
         initial: KeyboardShortcuts.Shortcut(.space, modifiers: [.control, .option])
     )
+
+    /// The classic Launchpad key. Same action as `showGrid`, switched in
+    /// Settings > General ("F4 opens the grid"), so it has no recorder row.
+    static let showGridF4 = Self(
+        "showGridF4",
+        initial: KeyboardShortcuts.Shortcut(.f4, modifiers: [])
+    )
 }
 
 /// Owns Inlet's two global hotkeys.
@@ -72,6 +79,19 @@ final class HotkeyManager {
         }
         KeyboardShortcuts.onKeyDown(for: .showQuickPanel) { [weak self] in
             self?.onQuickPanelHotkey?()
+        }
+        KeyboardShortcuts.onKeyDown(for: .showGridF4) { [weak self] in
+            self?.onGridHotkey?()
+        }
+        setF4Enabled(InletSettings.f4Opens)
+    }
+
+    /// Turns the F4 key on or off, from Settings > General.
+    func setF4Enabled(_ enabled: Bool) {
+        if enabled {
+            KeyboardShortcuts.enable(.showGridF4)
+        } else {
+            KeyboardShortcuts.disable(.showGridF4)
         }
     }
 

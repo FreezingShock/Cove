@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  /* Site chrome: the mobile menu, the ⌘K command palette, the magnetic primary buttons
-     and the cursor glow. Works on every page. Each part is skipped when its markup or
-     its input is missing, and nothing here changes the page's content. */
+  /* Site chrome: the mobile menu, the ⌘K command palette and the magnetic primary buttons.
+     Works on every page. Each part is skipped when its markup or its input is missing,
+     and nothing here changes the page's content. */
 
   var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var fineQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -21,6 +21,7 @@
   var linksEl = document.getElementById("siteLinks");
 
   function setMenu(open) {
+    if (open) showHeader();
     nav.classList.toggle("menu-open", open);
     if (menuBtn) {
       menuBtn.setAttribute("aria-expanded", String(open));
@@ -75,16 +76,14 @@
   var onHome = file === "index.html";
   function toHome(hash) { return onHome ? hash : "index.html" + hash; }
   function themeAction(choice) {
-    return function () {
-      var b = nav.querySelector('.seg [data-theme-choice="' + choice + '"]');
-      if (b) b.click();
-    };
+    return function () { setChoice(choice); };
   }
 
   var ITEMS = [
     { group: "Pages", label: "Home", hint: "Page", icon: ICON.home, href: "index.html", keys: "home start inlet landing" },
     { group: "Pages", label: "Features", hint: "Page", icon: ICON.doc, href: "features.html", keys: "features search settings motion" },
     { group: "Pages", label: "Download", hint: "Page", icon: ICON.doc, href: "download.html", keys: "download install dmg mac requirements" },
+    { group: "Pages", label: "Pricing", hint: "Page", icon: ICON.doc, href: "pricing.html", keys: "pricing price cost free supporter subscription plan" },
     { group: "Pages", label: "Changelog", hint: "Page", icon: ICON.doc, href: "changelog.html", keys: "changelog releases version notes" },
     { group: "Pages", label: "FAQ", hint: "Page", icon: ICON.doc, href: "faq.html", keys: "faq questions help" },
     { group: "Pages", label: "Privacy", hint: "Page", icon: ICON.lock, href: "privacy.html", keys: "privacy data tracking update check" },
@@ -101,7 +100,7 @@
     { group: "Actions", label: "Appearance: Auto", hint: "Theme", icon: ICON.theme, action: themeAction("auto"), keys: "theme appearance auto system" },
     { group: "Actions", label: "Appearance: Light", hint: "Theme", icon: ICON.theme, action: themeAction("light"), keys: "theme appearance light" },
     { group: "Actions", label: "Appearance: Dark", hint: "Theme", icon: ICON.theme, action: themeAction("dark"), keys: "theme appearance dark" },
-    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Cove", keys: "github source code repository" }
+    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Inlet", keys: "github source code repository" }
   ];
   if (onHome) {
     ITEMS.splice(7, 0, {
@@ -287,6 +286,116 @@
   var trigger = nav.querySelector(".search-btn");
   if (trigger) trigger.addEventListener("click", open);
 
+  /* ---------- Appearance: one icon in the footer cycles Auto, Light and Dark. Auto follows the system. ---------- */
+  var THEME_KEY = "inlet-page-theme"; // same key as site.js and pages.js
+  var THEME_ORDER = ["auto", "light", "dark"];
+  var THEME_NAME = { auto: "Auto", light: "Light", dark: "Dark" };
+  var cycleBtn = document.querySelector("[data-theme-cycle]");
+
+  function savedChoice() {
+    var c = "auto";
+    try { c = localStorage.getItem(THEME_KEY) || "auto"; } catch (err) { c = "auto"; }
+    return THEME_ORDER.indexOf(c) === -1 ? "auto" : c;
+  }
+  function nextChoice(c) {
+    return THEME_ORDER[(THEME_ORDER.indexOf(c) + 1) % THEME_ORDER.length];
+  }
+  function syncCycle() {
+    if (!cycleBtn) return;
+    var c = savedChoice();
+    cycleBtn.dataset.mode = c;
+    cycleBtn.setAttribute("aria-label", "Appearance: " + THEME_NAME[c] + ". Switch to " + THEME_NAME[nextChoice(c)]);
+    cycleBtn.title = "Appearance: " + THEME_NAME[c];
+  }
+  function setChoice(choice) {
+    if (choice === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", choice);
+    try { localStorage.setItem(THEME_KEY, choice); } catch (err) { /* private window or blocked storage */ }
+    syncCycle();
+  }
+  if (cycleBtn) cycleBtn.addEventListener("click", function () { setChoice(nextChoice(savedChoice())); });
+  // The home page's Settings demo sets the same key through site.js; keep the icon in step with it.
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-theme-choice]")) setTimeout(syncCycle, 0);
+  });
+  syncCycle();
+
+  /* ---------- Header states: out of the way while reading down, back on scroll up, always on screen while a menu or the palette is open ---------- */
+  var lastY = window.scrollY || 0;
+  var headerQueued = false;
+  var MOVE = 6;   // px of scroll before the header reacts, so small jitters do nothing
+  var TOP = 120;  // above this the header is always shown
+
+  function showHeader() { nav.classList.remove("is-hidden"); }
+  function hideHeader() {
+    if (menuOpen() || (palette && palette.open())) return;
+    if (document.querySelector("[data-scrub].is-pinned")) return; // the pinned demo sits right under the header
+    nav.classList.add("is-hidden");
+  }
+  function onHeaderScroll() {
+    headerQueued = false;
+    var y = window.scrollY || 0;
+    var dy = y - lastY;
+    if (y <= TOP) { showHeader(); lastY = y; return; }
+    if (Math.abs(dy) < MOVE) return;
+    if (dy > 0) hideHeader(); else showHeader();
+    lastY = y;
+  }
+  window.addEventListener("scroll", function () {
+    if (headerQueued) return;
+    headerQueued = true;
+    requestAnimationFrame(onHeaderScroll);
+  }, { passive: true });
+  // Keyboard focus anywhere in the header brings it back, so nothing tabs into a hidden bar.
+  nav.addEventListener("focusin", showHeader);
+  onHeaderScroll();
+
+  /* ---------- Desktop links: one pill slides to the link under the pointer or focus, and rests on the current page ---------- */
+  if (linksEl) {
+    var pill = document.createElement("span");
+    pill.className = "links-ind no-anim";
+    pill.setAttribute("aria-hidden", "true");
+    linksEl.insertBefore(pill, linksEl.firstChild);
+
+    var linkEls = Array.prototype.slice.call(linksEl.children).filter(function (el) { return el.tagName === "A"; });
+    linkEls.forEach(function (a, i) { a.style.setProperty("--i", String(i)); });
+    var menuGet = linksEl.querySelector(".menu-get");
+    if (menuGet) menuGet.style.setProperty("--i", String(linkEls.length));
+
+    function currentLink() {
+      return linksEl.querySelector(":scope > a[aria-current='page'], :scope > a[aria-current='true']");
+    }
+    function linkOf(target) {
+      var a = target && target.closest ? target.closest("a") : null;
+      return a && a.parentNode === linksEl ? a : null;
+    }
+    function placePill(a) {
+      if (!a || mobileQuery.matches) { pill.classList.remove("is-on"); return; }
+      pill.style.width = a.offsetWidth + "px";
+      pill.style.transform = "translate3d(" + a.offsetLeft + "px, 0, 0)";
+      pill.classList.add("is-on");
+    }
+    function restPill() { placePill(currentLink()); }
+
+    linksEl.addEventListener("pointerover", function (e) {
+      if (!fineQuery.matches) return;
+      var a = linkOf(e.target);
+      if (a) placePill(a);
+    });
+    linksEl.addEventListener("pointerleave", restPill);
+    linksEl.addEventListener("focusin", function (e) {
+      var a = linkOf(e.target);
+      if (a) placePill(a);
+    });
+    linksEl.addEventListener("focusout", restPill);
+    window.addEventListener("resize", restPill);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(restPill);
+
+    restPill();
+    // Place the pill before the first paint, then let it animate on later moves.
+    requestAnimationFrame(function () { pill.classList.remove("no-anim"); });
+  }
+
   /* ---------- Magnetic primary buttons: a few pixels toward the pointer, fine pointers only ---------- */
   if (fineQuery.matches && !reduceQuery.matches) {
     Array.prototype.forEach.call(document.querySelectorAll(".btn-primary"), function (b) {
@@ -301,33 +410,6 @@
         b.style.setProperty("--mx", "0px");
         b.style.setProperty("--my", "0px");
       });
-    });
-  }
-
-  /* ---------- Cursor glow: a soft spot of the accent follows the pointer, eased ---------- */
-  if (fineQuery.matches && !reduceQuery.matches) {
-    var glow = document.createElement("div");
-    glow.className = "cursor-glow";
-    glow.setAttribute("aria-hidden", "true");
-    document.body.appendChild(glow);
-
-    var tx = 0, ty = 0, cx = 0, cy = 0, frame = false, live = false;
-    function step() {
-      cx += (tx - cx) * 0.16;
-      cy += (ty - cy) * 0.16;
-      glow.style.transform = "translate3d(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px,0) translate(-50%,-50%)";
-      if (Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4) requestAnimationFrame(step);
-      else frame = false;
-    }
-    document.addEventListener("pointermove", function (e) {
-      tx = e.clientX;
-      ty = e.clientY;
-      if (!live) { live = true; glow.classList.add("is-on"); cx = tx; cy = ty; }
-      if (!frame) { frame = true; requestAnimationFrame(step); }
-    }, { passive: true });
-    document.documentElement.addEventListener("pointerleave", function () {
-      live = false;
-      glow.classList.remove("is-on");
     });
   }
 })();
