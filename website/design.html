@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Design system · Inlet</title>
+  <meta name="description" content="The Inlet design system: color, type, shape, space and motion tokens, generated from one file for the app and the site.">
+  <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/type.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/explore.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/brand.css">
+  <link rel="stylesheet" href="css/design.css">
+  <link rel="canonical" href="https://freezingshock.github.io/Inlet/design.html">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Design system · Inlet">
+  <meta property="og:description" content="The Inlet design system: color, type, shape, space and motion tokens.">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/design.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Design system · Inlet">
+  <meta name="twitter:description" content="The Inlet design system: color, type, shape, space and motion tokens.">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/inlet-icon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <img class="mark" src="assets/inlet-icon-light.svg" width="28" height="28" alt="">
+      <span>Inlet</span>
+    </a>
+    <nav class="links" id="siteLinks" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="faq.html">FAQ</a>
+      <div class="menu-extra">
+        <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
+      </div>
+    </nav>
+    <div class="nav-right">
+      <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
+      </button>
+      <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap page-hero">
+    <p class="eyebrow">Design system</p>
+    <h1 class="h-display">One set of tokens for the app and the site.</h1>
+    <p class="lede">Every value on this page comes from <code>design/tokens.json</code>. The Swift app and the website both build from that file, and CI fails the build if a generated value drifts from it.</p>
+    <ul class="on-page" aria-label="On this page">
+      <li><a href="#color">Color</a></li>
+      <li><a href="#type">Type</a></li>
+      <li><a href="#shape">Shape</a></li>
+      <li><a href="#space">Space</a></li>
+      <li><a href="#motion">Motion</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#brand">Brand</a></li>
+      <li><a href="#sync">Sync</a></li>
+    </ul>
+  </section>
+
+  <section class="wrap band" aria-labelledby="rules-h">
+    <h2 class="h-section" id="rules-h">Five rules</h2>
+    <ol class="ds-rules">
+      <li><b>Cream is the base.</b> Ink is the only text color.</li>
+      <li><b>Aqua is a fill, never text.</b> Ink sits on it, so the label keeps its contrast.</li>
+      <li><b>Radii nest.</b> An inner radius is the outer radius minus the inset.</li>
+      <li><b>Spacing sits on a 4 pt scale.</b> 44 is a hit target, not a gap.</li>
+      <li><b>Bounce in, never out.</b> Anything that closes uses a spring with no bounce.</li>
+    </ol>
+  </section>
+
+  <section class="wrap band" id="color" aria-labelledby="color-h">
+    <p class="eyebrow">Color</p>
+    <h2 class="h-section" id="color-h">Cream, ink and one aqua accent.</h2>
+    <p class="body-2">Both panels use the same tokens. The light and dark sets are forced with <code>.t-light</code> and <code>.t-dark</code>, so you can compare them on any page. The full set lives in <code>website/css/tokens.css</code>.</p>
+    <!-- BEGIN GENERATED: design-color. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<div class="ds-theme-grid">
+<div class="ds-theme t-light">
+<p class="ds-theme-name">Light</p>
+<ul class="ds-swatches">
+<li class="ds-sw"><span class="ds-chip" style="background:var(--base)"></span><span class="ds-sw-name">base</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--window)"></span><span class="ds-sw-name">window</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--grouped)"></span><span class="ds-sw-name">grouped</span><code>#FBF8F2</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text)"></span><span class="ds-sw-name">text</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text-2)"></span><span class="ds-sw-name">text-2</span><code>rgba(23,21,15,0.76)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text-3)"></span><span class="ds-sw-name">text-3</span><code>rgba(23,21,15,0.64)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hair)"></span><span class="ds-sw-name">hair</span><code>rgba(60,45,20,0.13)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent)"></span><span class="ds-sw-name">accent</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent-soft)"></span><span class="ds-sw-name">accent-soft</span><code>rgba(70,230,214,0.22)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent-ink)"></span><span class="ds-sw-name">accent-ink</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--logo-aqua)"></span><span class="ds-sw-name">logo-aqua</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--glow-a)"></span><span class="ds-sw-name">glow-a</span><code>rgba(70,230,214,0.46)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--g-fill)"></span><span class="ds-sw-name">g-fill</span><code>rgba(255,252,245,0.58)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--g-solid)"></span><span class="ds-sw-name">g-solid</span><code>#FFFDF8</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--scrim)"></span><span class="ds-sw-name">scrim</span><code>rgba(244,239,230,0.46)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--track)"></span><span class="ds-sw-name">track</span><code>rgba(23,21,15,0.45)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hover)"></span><span class="ds-sw-name">hover</span><code>rgba(60,45,20,0.06)</code></li>
+</ul>
+</div>
+<div class="ds-theme t-dark">
+<p class="ds-theme-name">Dark</p>
+<ul class="ds-swatches">
+<li class="ds-sw"><span class="ds-chip" style="background:var(--base)"></span><span class="ds-sw-name">base</span><code>#101211</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--window)"></span><span class="ds-sw-name">window</span><code>#101211</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--grouped)"></span><span class="ds-sw-name">grouped</span><code>rgba(244,239,230,0.05)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text)"></span><span class="ds-sw-name">text</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text-2)"></span><span class="ds-sw-name">text-2</span><code>rgba(244,239,230,0.78)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text-3)"></span><span class="ds-sw-name">text-3</span><code>rgba(244,239,230,0.60)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hair)"></span><span class="ds-sw-name">hair</span><code>rgba(244,239,230,0.12)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent)"></span><span class="ds-sw-name">accent</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent-soft)"></span><span class="ds-sw-name">accent-soft</span><code>rgba(70,230,214,0.16)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--accent-ink)"></span><span class="ds-sw-name">accent-ink</span><code>#101211</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--logo-aqua)"></span><span class="ds-sw-name">logo-aqua</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--glow-a)"></span><span class="ds-sw-name">glow-a</span><code>rgba(70,230,214,0.22)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--g-fill)"></span><span class="ds-sw-name">g-fill</span><code>rgba(16,24,21,0.56)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--g-solid)"></span><span class="ds-sw-name">g-solid</span><code>#1A2622</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--scrim)"></span><span class="ds-sw-name">scrim</span><code>rgba(5,9,8,0.46)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--track)"></span><span class="ds-sw-name">track</span><code>rgba(244,239,230,0.40)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hover)"></span><span class="ds-sw-name">hover</span><code>rgba(255,250,240,0.07)</code></li>
+</ul>
+</div>
+</div>
+<!-- END GENERATED: design-color -->
+
+    <h3 class="ds-h3">Contrast</h3>
+    <p class="ds-note">Text must hold 4.5:1 on the surface it sits on. The build checks these pairs and fails if one falls short. Ratios are computed with translucent colors composited over the surface.</p>
+    <!-- BEGIN GENERATED: design-contrast. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<table class="ds-table">
+<thead><tr><th scope="col">Text on surface</th><th scope="col">Mode</th><th scope="col">Contrast</th></tr></thead>
+<tbody>
+<tr><th scope="row">text on base</th><td>light</td><td>15.9:1</td></tr>
+<tr><th scope="row">text-2 on base</th><td>light</td><td>7.8:1</td></tr>
+<tr><th scope="row">text-3 on base</th><td>light</td><td>5.2:1</td></tr>
+<tr><th scope="row">text on grouped</th><td>light</td><td>17.2:1</td></tr>
+<tr><th scope="row">accent-ink on accent</th><td>light</td><td>11.8:1</td></tr>
+<tr><th scope="row">text on base</th><td>dark</td><td>16.4:1</td></tr>
+<tr><th scope="row">text-2 on base</th><td>dark</td><td>10.2:1</td></tr>
+<tr><th scope="row">text-3 on base</th><td>dark</td><td>6.4:1</td></tr>
+<tr><th scope="row">text on grouped</th><td>dark</td><td>14.8:1</td></tr>
+<tr><th scope="row">accent-ink on accent</th><td>dark</td><td>12.1:1</td></tr>
+</tbody>
+</table>
+<!-- END GENERATED: design-contrast -->
+  </section>
+
+  <section class="wrap band" id="type" aria-labelledby="type-h">
+    <p class="eyebrow">Type</p>
+    <h2 class="h-section" id="type-h">Two families, one scale.</h2>
+    <p class="body-2">The website sets Figtree, self-hosted. The app sets SF Pro through the system font, so it picks the optical size on its own. Both use the same role names.</p>
+    <!-- BEGIN GENERATED: design-type. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<div class="ds-type">
+<p class="ds-sub">Website: Figtree, self-hosted</p>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">display</p><p class="ds-spec">clamp(44px, 7.2vw, 72px) · bold · line 1.02 · tracking -0.035em</p></div><p class="ds-type-sample" style="font-size:var(--fs-display);font-weight:var(--fw-display);line-height:var(--lh-display);letter-spacing:var(--ls-display)">Every app, one keystroke away.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">section</p><p class="ds-spec">clamp(32px, 4.4vw, 44px) · bold · line 1.08 · tracking -0.028em</p></div><p class="ds-type-sample" style="font-size:var(--fs-section);font-weight:var(--fw-section);line-height:var(--lh-section);letter-spacing:var(--ls-section)">Search, sort and open from one place.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">feature</p><p class="ds-spec">clamp(26px, 3vw, 32px) · heading · line 1.12 · tracking -0.02em</p></div><p class="ds-type-sample" style="font-size:var(--fs-feature);font-weight:var(--fw-feature);line-height:var(--lh-feature);letter-spacing:var(--ls-feature)">Your files, grouped your way.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">lede</p><p class="ds-spec">20px · regular · line 1.5 · tracking 0</p></div><p class="ds-type-sample" style="font-size:var(--fs-lede);font-weight:var(--fw-lede);line-height:var(--lh-lede);letter-spacing:var(--ls-lede)">Inlet opens with one key and gets out of the way.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">body</p><p class="ds-spec">17px · regular · line 1.55 · tracking 0</p></div><p class="ds-type-sample" style="font-size:var(--fs-body);font-weight:var(--fw-body);line-height:var(--lh-body);letter-spacing:var(--ls-body)">Results update as you type, and every file keeps its place.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">small</p><p class="ds-spec">15px · regular · line 1.5 · tracking 0</p></div><p class="ds-type-sample" style="font-size:var(--fs-small);font-weight:var(--fw-small);line-height:var(--lh-small);letter-spacing:var(--ls-small)">Paths and secondary text sit one step down.</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">caption</p><p class="ds-spec">13px · medium · line 1.4 · tracking 0</p></div><p class="ds-type-sample" style="font-size:var(--fs-caption);font-weight:var(--fw-caption);line-height:var(--lh-caption);letter-spacing:var(--ls-caption)">~/Documents/Projects/Inlet</p></div>
+<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">label</p><p class="ds-spec">12px · semibold · line 1.3 · tracking 0.06em</p></div><p class="ds-type-sample ds-caps" style="font-size:var(--fs-label);font-weight:var(--fw-label);line-height:var(--lh-label);letter-spacing:var(--ls-label)">Supporter · Groups</p></div>
+</div>
+<div class="ds-type-app">
+<p class="ds-sub">App: SF Pro through Font.system</p>
+<table class="ds-table">
+<thead><tr><th scope="col">Role</th><th scope="col">Size</th><th scope="col">Weight</th><th scope="col">Use</th></tr></thead>
+<tbody>
+<tr><th scope="row">wordmark</th><td>28 pt</td><td>semibold</td><td>Display: wordmark and onboarding title</td></tr>
+<tr><th scope="row">title</th><td>20 pt</td><td>semibold</td><td>Title</td></tr>
+<tr><th scope="row">headline</th><td>15 pt</td><td>semibold</td><td>Top hit and row titles</td></tr>
+<tr><th scope="row">subhead</th><td>15 pt</td><td>regular</td><td>Subhead: intro copy and grid labels</td></tr>
+<tr><th scope="row">body</th><td>13 pt</td><td>regular</td><td>Body</td></tr>
+<tr><th scope="row">section</th><td>13 pt</td><td>semibold</td><td>Section label on the launcher</td></tr>
+<tr><th scope="row">caption</th><td>12 pt</td><td>regular</td><td>Caption: paths, footers</td></tr>
+<tr><th scope="row">label</th><td>11 pt</td><td>semibold</td><td>Label: use with textCase(.uppercase)</td></tr>
+<tr><th scope="row">search</th><td>18 pt</td><td>regular</td><td>Launcher search input</td></tr>
+<tr><th scope="row">iconLabel</th><td>12 pt</td><td>medium</td><td>One line under each icon</td></tr>
+<tr><th scope="row">rowTitle</th><td>15 pt</td><td>medium</td><td>File row titles in the search panel and quick panel</td></tr>
+</tbody>
+</table>
+</div>
+<!-- END GENERATED: design-type -->
+  </section>
+
+  <section class="wrap band" id="shape" aria-labelledby="shape-h">
+    <p class="eyebrow">Shape</p>
+    <h2 class="h-section" id="shape-h">Corners are named steps, and they nest.</h2>
+    <p class="body-2">Use a scale name, never a raw number. A card inside a panel takes the inner radius from the table, so the two curves stay concentric.</p>
+    <!-- BEGIN GENERATED: design-radius. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<ul class="ds-radii">
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-xs)" aria-hidden="true"></span><p class="ds-sw-name">xs</p><code>6</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-sm)" aria-hidden="true"></span><p class="ds-sw-name">sm</p><code>10</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-md)" aria-hidden="true"></span><p class="ds-sw-name">md</p><code>16</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-lg)" aria-hidden="true"></span><p class="ds-sw-name">lg</p><code>20</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-row)" aria-hidden="true"></span><p class="ds-sw-name">row</p><code>24</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-sidebar)" aria-hidden="true"></span><p class="ds-sw-name">sidebar</p><code>18</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-window)" aria-hidden="true"></span><p class="ds-sw-name">window</p><code>26</code></li>
+<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-panel)" aria-hidden="true"></span><p class="ds-sw-name">panel</p><code>32</code></li>
+</ul>
+<p class="ds-note">Pill <code>999</code> · hairline <code>2</code> · app icon corner <code>0.224</code> of the icon width.</p>
+<table class="ds-table">
+<thead><tr><th scope="col">Inner in outer</th><th scope="col">Inset</th><th scope="col">Use</th></tr></thead>
+<tbody>
+<tr><th scope="row">row in panel</th><td>8</td><td>selected row inside a results panel</td></tr>
+<tr><th scope="row">md in panel</th><td>16</td><td>group or row inside a panel with 16 pt padding</td></tr>
+<tr><th scope="row">lg in panel</th><td>12</td><td>card inside a panel with 12 pt padding</td></tr>
+<tr><th scope="row">sidebar in window</th><td>8</td><td>Settings sidebar inside the window</td></tr>
+<tr><th scope="row">sm in sidebar</th><td>8</td><td>sidebar row</td></tr>
+<tr><th scope="row">xs in sm</th><td>4</td><td>keycap or symbol tile inside a small tile</td></tr>
+</tbody>
+</table>
+<!-- END GENERATED: design-radius -->
+  </section>
+
+  <section class="wrap band" id="space" aria-labelledby="space-h">
+    <p class="eyebrow">Space</p>
+    <h2 class="h-section" id="space-h">One 4 point scale.</h2>
+    <p class="body-2">Every gap and padding comes from this scale. Tokens are emitted as <code>--space-N</code> in <code>tokens.css</code>.</p>
+    <!-- BEGIN GENERATED: design-space. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<ul class="ds-spaces">
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-2)" aria-hidden="true"></span><code>2</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-4)" aria-hidden="true"></span><code>4</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-8)" aria-hidden="true"></span><code>8</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-12)" aria-hidden="true"></span><code>12</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-16)" aria-hidden="true"></span><code>16</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-20)" aria-hidden="true"></span><code>20</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-24)" aria-hidden="true"></span><code>24</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-32)" aria-hidden="true"></span><code>32</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-40)" aria-hidden="true"></span><code>40</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-48)" aria-hidden="true"></span><code>48</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-64)" aria-hidden="true"></span><code>64</code></li>
+<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-84)" aria-hidden="true"></span><code>84</code></li>
+</ul>
+<p class="ds-note">Base <code>4</code> pt. Hit target <code>44</code> pt, which is not spacing.</p>
+<!-- END GENERATED: design-space -->
+  </section>
+
+  <section class="wrap band" id="motion" aria-labelledby="motion-h">
+    <p class="eyebrow">Motion</p>
+    <h2 class="h-section" id="motion-h">Springs, matched to the app.</h2>
+    <p class="body-2">Each spring is <code>Spring(duration:bounce:)</code> in the app and a <code>linear()</code> curve on the web, so both settle the same way. Press a track to see the spring run. With Reduce Motion on, the app swaps each spring for a 0.2 s fade, and the site stops the travel.</p>
+    <!-- BEGIN GENERATED: design-motion. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<div class="ds-motion-grid">
+<div><p class="ds-sub">Durations</p><table class="ds-table"><tbody>
+<tr><th scope="row">fast</th><td>0.2 s</td></tr>
+<tr><th scope="row">base</th><td>0.26 s</td></tr>
+<tr><th scope="row">medium</th><td>0.36 s</td></tr>
+<tr><th scope="row">slow</th><td>0.5 s</td></tr>
+<tr><th scope="row">slower</th><td>0.8 s</td></tr>
+<tr><th scope="row">jiggle</th><td>0.19 s</td></tr>
+<tr><th scope="row">blink</th><td>1.0 s</td></tr>
+</tbody></table></div>
+<div><p class="ds-sub">Easing</p><table class="ds-table"><tbody>
+<tr><th scope="row">standard</th><td><code>cubic-bezier(0.2, 0.8, 0.2, 1)</code></td></tr>
+<tr><th scope="row">exit</th><td><code>cubic-bezier(0.4, 0, 1, 1)</code></td></tr>
+<tr><th scope="row">fade</th><td><code>cubic-bezier(0.25, 0.1, 0.25, 1)</code></td></tr>
+<tr><th scope="row">inOut</th><td><code>cubic-bezier(0.42, 0, 0.58, 1)</code></td></tr>
+</tbody></table></div>
+</div>
+<p class="ds-sub">Springs</p>
+<div class="ds-springs">
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">snap</p><p class="ds-spec">0.24 s · bounce 0.0</p><p class="ds-use">hover, selection move, focus ring</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the snap spring" style="--sp:var(--spring-snap);--spd:var(--spring-snap-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">press</p><p class="ds-spec">0.26 s · bounce 0.42</p><p class="ds-use">icon and button press, release overshoot</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the press spring" style="--sp:var(--spring-press);--spd:var(--spring-press-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">open</p><p class="ds-spec">0.46 s · bounce 0.24</p><p class="ds-use">full grid appears, icons ripple out</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the open spring" style="--sp:var(--spring-open);--spd:var(--spring-open-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">morph</p><p class="ds-spec">0.52 s · bounce 0.3</p><p class="ds-use">search capsule melts into the results panel</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the morph spring" style="--sp:var(--spring-morph);--spd:var(--spring-morph-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">rise</p><p class="ds-spec">0.5 s · bounce 0.32</p><p class="ds-use">quick panel rises out of the Dock icon</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the rise spring" style="--sp:var(--spring-rise);--spd:var(--spring-rise-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">settle</p><p class="ds-spec">0.6 s · bounce 0.18</p><p class="ds-use">grid reflow when a search filters icons</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the settle spring" style="--sp:var(--spring-settle);--spd:var(--spring-settle-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+<div class="ds-spring-row">
+<div class="ds-spring-meta"><p class="ds-role">dismiss</p><p class="ds-spec">0.26 s · bounce 0.0</p><p class="ds-use">anything closing; never bounce on the way out</p></div>
+<button class="ds-track" type="button" aria-pressed="false" aria-label="Play the dismiss spring" style="--sp:var(--spring-dismiss);--spd:var(--spring-dismiss-dur)"><span class="ds-dot" aria-hidden="true"></span></button>
+</div>
+</div>
+<!-- END GENERATED: design-motion -->
+  </section>
+
+  <section class="wrap band" id="components" aria-labelledby="components-h">
+    <p class="eyebrow">Components</p>
+    <h2 class="h-section" id="components-h">Built from the tokens above.</h2>
+    <p class="body-2">These are the parts the app and the site share. Each one reads its color, radius and motion from a token, and none of them uses a raw value.</p>
+    <div class="ds-components">
+      <div class="ds-demo">
+        <p class="ds-sub">Buttons and chips</p>
+        <div class="ds-demo-row">
+          <button class="btn btn-primary" type="button">Get Inlet</button>
+          <button class="btn btn-ghost" type="button">Copy link</button>
+          <button class="btn btn-primary btn-sm" type="button">Download</button>
+        </div>
+        <div class="ds-demo-row">
+          <button class="chip" type="button">note</button>
+          <button class="chip" type="button">groups</button>
+          <button class="chip" type="button">files</button>
+        </div>
+        <p class="ds-sub">Search</p>
+        <label class="ds-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+          <span class="sr-only">Search apps and files</span>
+          <input type="search" placeholder="Search apps and files" autocomplete="off">
+        </label>
+        <p class="ds-sub">Shortcuts</p>
+        <div class="ds-demo-row"><kbd>⌘</kbd><kbd>K</kbd><span class="ds-use">Open search from anywhere</span></div>
+      </div>
+      <div class="ds-demo">
+        <p class="ds-sub">Panel, rows and switch</p>
+        <div class="ds-glass">
+          <ul class="ds-rows">
+            <li class="ds-row is-selected"><span>Groups</span><span class="ds-row-meta">Work, Study</span></li>
+            <li class="ds-row"><span>Automatic updates</span>
+              <button class="switch" type="button" role="switch" aria-checked="true" aria-label="Automatic updates"></button>
+            </li>
+            <li class="ds-row"><span>Hide third-party apps</span>
+              <button class="switch" type="button" role="switch" aria-checked="false" aria-label="Hide third-party apps"></button>
+            </li>
+          </ul>
+        </div>
+        <p class="ds-note">The selected row sits inside the panel with the row radius, 8 points in from the edge.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap band" id="brand" aria-labelledby="brand-h">
+    <p class="eyebrow">Brand</p>
+    <h2 class="h-section" id="brand-h">One lit tile, one highlight.</h2>
+    <p class="body-2">The Grid icon is a field of ink tiles with one lit tile. The site repeats that motif in its rules and its highlights, and the aqua fill is that lit tile.</p>
+    <div class="ds-brand">
+      <div class="t-light ds-stage">
+        <img src="assets/inlet-icon-light.svg" width="128" height="128" alt="Inlet app icon, light">
+        <p class="ds-sub">Light</p>
+      </div>
+      <div class="t-dark ds-stage">
+        <img src="assets/inlet-icon-dark.svg" width="128" height="128" alt="Inlet app icon, dark">
+        <p class="ds-sub">Dark</p>
+      </div>
+    </div>
+    <div class="tile-rule" aria-hidden="true" style="--lit:5"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
+    <p class="h-feature">Every app, <span class="hl">one keystroke away.</span></p>
+  </section>
+
+  <section class="wrap band" id="sync" aria-labelledby="sync-h">
+    <p class="eyebrow">Sync</p>
+    <h2 class="h-section" id="sync-h">How this page stays in step.</h2>
+    <ol class="ds-steps">
+      <li>Edit <code>design/tokens.json</code>.</li>
+      <li>Run <code>python3 scripts/build-tokens.py</code>. It rewrites <code>website/css/tokens.css</code>, <code>website/css/type.css</code>, <code>Inlet/InletTheme.swift</code> and every generated block on this page.</li>
+      <li>CI runs the same script with <code>--check</code> on every pull request that touches these files. A stale block fails the Website workflow.</li>
+    </ol>
+    <p class="ds-note">SF Pro only ships on Apple systems, so this page shows the app's type spec and the website's Figtree rendering side by side.</p>
+  </section>
+</main>
+
+
+<footer class="wrap foot">
+  <div class="foot-products" aria-label="Start here">
+    <a class="foot-card" href="download.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
+    </a>
+    <a class="foot-card" href="features.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
+    </a>
+    <a class="foot-card" href="compare.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
+    </a>
+  </div>
+  <div class="foot-brand">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <img class="mark" src="assets/inlet-icon-light.svg" width="28" height="28" alt="">
+      <span>Inlet</span>
+    </a>
+    <p>Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.</p>
+  </div>
+  <nav class="foot-cols" aria-label="Footer">
+    <div class="foot-col">
+      <p class="foot-h">Product</p>
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="changelog.html">Changelog</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Who it's for</p>
+      <a href="use-cases.html">All use cases</a>
+      <a href="developers.html">Developers</a>
+      <a href="designers.html">Designers</a>
+      <a href="students.html">Students</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Compare</p>
+      <a href="compare.html#spotlight">Spotlight</a>
+      <a href="compare.html#launchpad">Launchpad</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Help</p>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Project</p>
+      <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
+      <a href="download.html#build">Build from source</a>
+      <a href="download.html#updates">Update checks</a>
+    </div>
+  </nav>
+  <div class="foot-bar">
+    <div class="foot-tools">
+      <button class="theme-cycle" type="button" data-theme-cycle data-mode="auto" aria-label="Appearance: Auto. Switch to Light" title="Appearance: Auto"><svg class="ic-auto" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg><svg class="ic-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg><svg class="ic-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg></button>
+      <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js" defer></script>
+<script src="js/jump.js" defer></script>
+<script src="js/motion.js" defer></script>
+<script src="js/design.js" defer></script>
+</body>
+</html>
