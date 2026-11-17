@@ -30,6 +30,8 @@ final class OverlayController {
     private var panel: OverlayPanel?
     /// Frosted desktop behind the grid, as classic Launchpad had. Fades in on open.
     private var blurView: NSVisualEffectView?
+    /// Removes the panel once a `dismiss()` has played out. Cancelled by a reopen.
+    private var closeTask: Task<Void, Never>?
 
     private init() {}
 
@@ -62,7 +64,7 @@ final class OverlayController {
         // the search first and close only when there is nothing to clear.
         let root = OverlayView(
             motion: motion,
-            onDismiss: { [weak self] in self?.hide() }
+            onDismiss: { [weak self] in self?.dismiss() }
         )
         .environment(library)
         .environment(layoutStore)
@@ -98,7 +100,7 @@ final class OverlayController {
     func toggle() {
         if isVisible {
             InletSignpost.cancelHotkeyToVisible()
-            hide()
+            dismiss()
         } else {
             show()
         }
@@ -106,7 +108,21 @@ final class OverlayController {
 
     /// Shows the overlay on the screen under the cursor.
     func show() {
-        guard let panel, !panel.isVisible else { return }
+        guard let panel else { return }
+
+        if panel.isVisible {
+            // Opened again while the dismiss is still playing: keep the panel
+            // and spring the icons back open instead of ignoring the request.
+            guard !motion.isOpen else { return }
+            closeTask?.cancel()
+            closeTask = nil
+            motion.isOpen = true
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = InletMotion.base
+                self.blurView?.animator().alphaValue = 1
+            }
+            return
+        }
 
         // Cover the whole screen that holds the cursor, menu bar included.
         let mouse = NSEvent.mouseLocation
@@ -136,9 +152,34 @@ final class OverlayController {
         }
     }
 
-    /// Hides the overlay. Instant on purpose: an app launch should not wait
-    /// for an animation.
+    /// Closes the overlay with the dismiss motion (Escape, a click on empty
+    /// space, the hotkey, Show in Finder). The icons shrink back toward the
+    /// center and the blur fades, then the panel is removed. Nothing bounces
+    /// on the way out.
+    func dismiss() {
+        guard let panel, panel.isVisible else { return }
+        // Still opening, so there is nothing to animate back.
+        guard motion.isOpen else { hide(); return }
+
+        motion.isOpen = false
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = InletMotion.base
+            self.blurView?.animator().alphaValue = 0
+        }
+        closeTask?.cancel()
+        closeTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(300))
+            // A reopen during the dismiss cancels this, so the panel stays up.
+            guard !Task.isCancelled else { return }
+            self.hide()
+        }
+    }
+
+    /// Hides the overlay at once. Used when an app launches, so the launch
+    /// never waits for an animation. Use `dismiss()` for every other close.
     func hide() {
+        closeTask?.cancel()
+        closeTask = nil
         guard let panel, panel.isVisible else { return }
         panel.orderOut(nil)
         motion.isOpen = false
