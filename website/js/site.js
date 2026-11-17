@@ -109,6 +109,7 @@
       icon(app) + (withName ? '<span class="name">' + app.n + '</span>' : '') + '</button>';
   }
   function fillGrid(el, apps, withName) {
+    if (!el) return;
     el.innerHTML = apps.map(function (a) { return cellHTML(a, withName); }).join("");
   }
   function $(sel) { return document.querySelector(sel); }
@@ -125,6 +126,24 @@
     c.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0) scale(" + k.toFixed(4) + ")";
   }
 
+  /* ---------- Appearance: Auto follows the system, Light and Dark set the page ---------- */
+  var KEY = "inlet-page-theme";
+  function setTheme(choice) {
+    if (choice === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", choice);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.themeChoice === choice));
+    });
+    try { localStorage.setItem(KEY, choice); } catch (err) { /* private window or blocked storage */ }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (b) {
+    b.addEventListener("click", function () { setTheme(b.dataset.themeChoice); });
+  });
+  var saved = "auto";
+  try { saved = localStorage.getItem(KEY) || "auto"; } catch (err) { saved = "auto"; }
+  setTheme(saved);
+
+  if (document.getElementById("qp")) {
   /* ---------- Hero grid: opens from the center, ripple outward ---------- */
   var heroGrid = $("#heroGrid");
   fillGrid(heroGrid, APPS, true);
@@ -245,11 +264,11 @@
   /* ---------- Quick panel: rises from the Dock icon, closes with no bounce ---------- */
   var qp = $("#qp"), qpWrap = $("#qpWrap"), dockInlet = $("#dockInlet");
   fillGrid($("#qpApps"), APPS.slice(0, 8), true);
-  $("#qpFiles").innerHTML = FILES.slice(0, 3).map(function (f) {
+  if ($("#qpFiles")) $("#qpFiles").innerHTML = FILES.slice(0, 3).map(function (f) {
     return '<li><span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
   }).join("");
   // Dock sample icons (static, no interaction)
-  $("#dockApps").innerHTML = APPS.slice(0, 5).map(function (a) {
+  if ($("#dockApps")) $("#dockApps").innerHTML = APPS.slice(0, 5).map(function (a) {
     return '<span class="dock-btn" aria-hidden="true" style="pointer-events:none"><span class="ico" style="--tile:44px;--a:' + a.a + ';--b:' + a.b + '"><svg viewBox="0 0 24 24">' + GLYPH[a.g] + '</svg></span><span class="ind"></span></span>';
   }).join("");
 
@@ -283,23 +302,6 @@
     miniGrid.style.setProperty("--cols", cols.value);
     colsOut.textContent = cols.value;
   });
-
-  /* ---------- Appearance: Auto follows the system, Light and Dark set the page ---------- */
-  var KEY = "inlet-page-theme";
-  function setTheme(choice) {
-    if (choice === "auto") document.documentElement.removeAttribute("data-theme");
-    else document.documentElement.setAttribute("data-theme", choice);
-    Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (b) {
-      b.setAttribute("aria-pressed", String(b.dataset.themeChoice === choice));
-    });
-    try { localStorage.setItem(KEY, choice); } catch (err) { /* private window or blocked storage */ }
-  }
-  Array.prototype.forEach.call(document.querySelectorAll("[data-theme-choice]"), function (b) {
-    b.addEventListener("click", function () { setTheme(b.dataset.themeChoice); });
-  });
-  var saved = "auto";
-  try { saved = localStorage.getItem(KEY) || "auto"; } catch (err) { saved = "auto"; }
-  setTheme(saved);
 
   /* ---------- Motion demo: each card plays its own token ---------- */
   Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (card) {
@@ -347,5 +349,6 @@
       }, { threshold: 0.4 });
       demoIO.observe(demo);
     }
+  }
   }
 })();

@@ -81,6 +81,8 @@ struct AppGridView: View {
     @State private var groupID: String? = InletSettings.startingGroupID
     /// Spotlight file matches for the query, shown under the search field.
     @State private var fileSearch = FileSearch()
+    /// True once the sum in the search field has been copied. Resets when the query changes.
+    @State private var calculationCopied = false
 
     /// Edit mode: icons wobble, drag to reorder, minus badges hide apps.
     /// Only the paged grid has it (no search, no group).
@@ -108,6 +110,12 @@ struct AppGridView: View {
     @AppStorage(InletSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(InletSettings.Key.searchIncludesFiles.rawValue) private var searchIncludesFiles = true
     @AppStorage(InletSettings.Key.searchFileResultCount.rawValue) private var fileResultCount = 5
+    /// Supporter zones. Read here so the grid updates when the switch changes.
+    @AppStorage(InletSettings.Key.supporterActive.rawValue) private var supporterOn = false
+    /// The saved zones. Only drawn for a Supporter.
+    private let zoneStore = ZoneStore.shared
+    /// The zone open in the editor sheet, if any.
+    @State private var zoneDraft: ZoneDraft?
 
     /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
     private var columns: [GridItem] {
@@ -133,7 +141,38 @@ struct AppGridView: View {
     /// Matches come back best-first.
     private var shownApps: [AppItem] {
         let pool = isSearching ? library.apps : groupApps
-        return AppSearch.results(for: query, in: pool)
+        return AppSearch.results(for: query, in: pool, usage: launchCounts)
+    }
+
+    /// How often each app was launched through Inlet, keyed by app ID (its path).
+    /// Counts the launches still kept in recents, so it breaks ties between
+    /// equally good matches.
+    private var launchCounts: [String: Int] {
+        RecentsStore.shared.apps.reduce(into: [:]) { counts, recent in
+            counts[recent.path, default: 0] += 1
+        }
+    }
+
+    /// The sum for the query, formatted, or nil when the query is not a sum.
+    private var calculation: String? {
+        guard isSearching, let value = QuickCalc.evaluate(query) else { return nil }
+        return QuickCalc.format(value)
+    }
+
+    /// System Settings panes that match the query. Up to three.
+    private var panes: [SystemPane] {
+        isSearching ? SystemPane.matches(for: query, limit: 3) : []
+    }
+
+    /// The ⌘1 to ⌘9 hints for the first nine shown apps. Only in search and
+    /// category views, where the apps are not in an editable order.
+    private var shortcutNumbers: [AppItem.ID: Int] {
+        guard !isPaged else { return [:] }
+        var result: [AppItem.ID: Int] = [:]
+        for (index, app) in shownApps.prefix(9).enumerated() {
+            result[app.id] = index + 1
+        }
+        return result
     }
 
     /// The apps in the selected group, in the group's order. Hidden apps are
@@ -153,14 +192,48 @@ struct AppGridView: View {
         isPaged ? layoutApps : shownApps
     }
 
+    /// Zones to draw. Only a Supporter sees them; the saved zones stay on disk either way.
+    private var visibleZones: [GridZone] {
+        guard supporterOn else { return [] }
+        return zoneStore.zones.map { $0.fitted(columns: gridColumns) }
+    }
+
+    /// The group each app belongs to, from the saved groups. Zones pick apps by group.
+    private var groupIDByApp: [String: String] {
+        var result: [String: String] = [:]
+        for group in layoutStore.layout.groups {
+            for appID in group.appIDs { result[appID] = group.id }
+        }
+        return result
+    }
+
+    /// The apps each zone holds. Hidden apps are left out.
+    private var zoneContents: [String: [AppItem]] {
+        let hidden = Set(layoutStore.layout.hidden.map(\.appID))
+        return ZoneLayout.contents(
+            of: visibleZones,
+            apps: library.apps,
+            hidden: hidden,
+            groupOf: { groupIDByApp[$0.id] ?? "" }
+        )
+    }
+
+    /// Every app that sits in a zone. The paged grid leaves these out.
+    private var zoneClaimedIDs: Set<String> {
+        Set(zoneContents.values.joined().map(\.id))
+    }
+
     /// Apps from the saved layout, in grid order. Hidden apps are not here.
+    /// Apps that sit in a zone are not here either; the zone shows them.
     /// Until the folders change lands, every entry in the layout is an app.
     private var layoutApps: [AppItem] {
         let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let claimed = zoneClaimedIDs
         return layoutStore.layout.entries.compactMap { entry -> AppItem? in
             guard case .app(let appID) = entry else { return nil }
             return byID[appID]
         }
+        .filter { !claimed.contains($0.id) }
     }
 
     /// The best match. Return opens it. Only exists while searching.
@@ -188,6 +261,11 @@ struct AppGridView: View {
                     topHit: topHit,
                     matchCount: shownApps.count,
                     files: fileSearch.results,
+                    calculation: calculation,
+                    calculationCopied: calculationCopied,
+                    onCopyCalculation: copyCalculation,
+                    panes: panes,
+                    onOpenPane: openPane,
                     onOpenTopHit: openTopHit,
                     onOpenFile: openFile,
                     onRevealFile: revealFile,
@@ -221,11 +299,23 @@ struct AppGridView: View {
         }
         .frame(minWidth: minimumGridWidth, maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .bottom) { undoToast }
+        .sheet(item: $zoneDraft) { draft in
+            ZoneEditor(
+                zone: draft.zone,
+                isNew: draft.isNew,
+                columns: gridColumns,
+                groups: layoutStore.layout.groups,
+                others: zoneStore.zones.filter { $0.id != draft.zone.id },
+                onSave: { zoneStore.save($0, columns: gridColumns) },
+                onDelete: { zoneStore.remove(draft.zone.id) }
+            )
+        }
         // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
         // Typing again returns keyboard focus to the field from the grid.
         .onChange(of: query) { _, newQuery in
             focusedApp = nil
+            calculationCopied = false
             // Searching and editing don't mix, since search isn't paged.
             if isSearching { isEditing = false }
             // Zero when the setting is off, which clears the file rows.
@@ -267,6 +357,7 @@ struct AppGridView: View {
         .onKeyPress(.upArrow, phases: .down) { arrow($0, by: -gridColumns) }
         .onKeyPress(.downArrow, phases: .down) { arrow($0, by: gridColumns) }
         .onKeyPress(.delete, phases: .down) { _ in deleteFocusedApp() }
+        .onKeyPress(characters: .decimalDigits, phases: .down) { openShortcut($0) }
         // No scan here: the app scans once at launch (spec: never scan on open).
     }
 
@@ -316,6 +407,12 @@ struct AppGridView: View {
                 }
             }
 
+            if isPaged, isEditing, supporterOn {
+                headerButton("Add Zone") {
+                    let row = ZoneLayout.bandRows(zoneStore.zones)
+                    zoneDraft = ZoneDraft(zone: GridZone.new(columns: gridColumns, row: row), isNew: true)
+                }
+            }
             if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
                     withAnimation(motion(.inletOpen)) { isEditing.toggle() }
@@ -368,18 +465,33 @@ struct AppGridView: View {
         } else if isPaged {
             // Paged and editable, in the saved layout order.
             // Arrow keys still move the focus ring here.
-            EditableGridView(
-                apps: library.apps,
-                columns: gridColumns,
-                focusedID: focusedApp,
-                isEditing: $isEditing,
-                isOpen: isOpen,
-                onLaunch: launch,
-                onHide: hide,
-                onMove: move,
-                onBlankTap: dismissOnBlankTap,
-                onMoveToGroup: moveToGroup
-            )
+            VStack(spacing: 0) {
+                if !visibleZones.isEmpty {
+                    ZoneCanvas(
+                        zones: visibleZones,
+                        contents: zoneContents,
+                        columns: gridColumns,
+                        isEditing: isEditing,
+                        onLaunch: launch,
+                        onEdit: { zone in zoneDraft = ZoneDraft(zone: zone, isNew: false) }
+                    )
+                    .padding(.bottom, InletSpace.xl)
+                }
+                EditableGridView(
+                    apps: library.apps.filter { !zoneClaimedIDs.contains($0.id) },
+                    columns: gridColumns,
+                    focusedID: focusedApp,
+                    isEditing: $isEditing,
+                    isOpen: isOpen,
+                    onLaunch: launch,
+                    onHide: hide,
+                    onMove: move,
+                    onBlankTap: dismissOnBlankTap,
+                    onMoveToGroup: moveToGroup
+                )
+                .frame(maxHeight: .infinity)
+            }
+            .frame(maxHeight: .infinity)
         } else {
             scrollGrid
         }
@@ -388,6 +500,7 @@ struct AppGridView: View {
     /// The search results and group views: one scrolling grid, keyboard-navigable.
     private var scrollGrid: some View {
         let placements = openPlacements
+        let numbers = shortcutNumbers
         return ScrollView {
             // `LazyVGrid` only builds the cells that are on screen,
             // so icons load as you scroll instead of all at once.
@@ -398,6 +511,7 @@ struct AppGridView: View {
                         onLaunch: launch,
                         isTopHit: app.id == topHit?.id,
                         isKeyboardFocused: focusedApp == app.id,
+                        shortcutNumber: numbers[app.id],
                         placement: placements[app.id] ?? .none,
                         isOpen: isOpen
                     )
@@ -506,10 +620,38 @@ struct AppGridView: View {
         file.revealInFinder()
     }
 
-    /// Return in the field, or a tap on the top-hit row: open the top hit.
+    /// Return in the field, or a tap on the top-hit row. Order: a sum is copied,
+    /// then the top app opens, then the top System Settings pane opens.
     private func openTopHit() {
-        guard let app = topHit else { return }
-        launch(app)
+        if let calculation {
+            copyCalculation(calculation)
+        } else if let app = topHit {
+            launch(app)
+        } else if let pane = panes.first {
+            openPane(pane)
+        }
+    }
+
+    /// Copies a sum to the clipboard. The overlay stays open, so the row can say "Copied".
+    private func copyCalculation(_ text: String) {
+        AppActions.copy(text)
+        withAnimation(motion(.inletSnap)) { calculationCopied = true }
+    }
+
+    /// Opens a System Settings pane. Closes the overlay first, like an app launch.
+    private func openPane(_ pane: SystemPane) {
+        closeAfterAction()
+        pane.open()
+    }
+
+    /// ⌘1 to ⌘9 while searching or in a category: open the matching shown app.
+    /// Plain digits are not handled here, so they still type into the field.
+    private func openShortcut(_ press: KeyPress) -> KeyPress.Result {
+        guard press.modifiers.contains(.command), !isPaged,
+              let digit = Int(press.characters), (1...9).contains(digit),
+              digit <= shownApps.count else { return .ignored }
+        launch(shownApps[digit - 1])
+        return .handled
     }
 
     /// Return while an icon has keyboard focus: open that icon.

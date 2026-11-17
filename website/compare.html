@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Compare · Inlet</title>
+  <meta name="description" content="How Inlet compares with Spotlight and Launchpad: what each one does on macOS 26 and where Inlet fits.">
+  <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/type.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/explore.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/brand.css">
+  <link rel="canonical" href="https://freezingshock.github.io/Inlet/compare.html">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Compare · Inlet">
+  <meta property="og:description" content="How Inlet compares with Spotlight and Launchpad: what each one does on macOS 26 and where Inlet fits.">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/compare.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Compare · Inlet">
+  <meta name="twitter:description" content="How Inlet compares with Spotlight and Launchpad: what each one does on macOS 26 and where Inlet fits.">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/inlet-icon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <nav class="links" id="siteLinks" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="use-cases.html">Use cases</a>
+      <a href="compare.html" aria-current="page">Compare</a>
+      <a href="download.html">Download</a>
+      <a href="faq.html">FAQ</a>
+      <div class="menu-extra">
+        <p class="menu-label" id="menuAppLbl">Appearance</p>
+        <div class="seg" role="group" aria-labelledby="menuAppLbl">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+        </div>
+        <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
+      </div>
+    </nav>
+    <div class="nav-right">
+      <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
+      </button>
+      <div class="seg" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+      <a class="btn btn-primary btn-sm" href="index.html#get">Get Inlet</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap uc-hero" aria-labelledby="cmp-title">
+    <p class="eyebrow">Compare</p>
+    <h1 id="cmp-title">Inlet, Spotlight and Launchpad.<span class="soft">What each one is for.</span></h1>
+    <p class="lede">Launchpad is gone from macOS 26 Tahoe. Spotlight is still there, with an Apps view of its own. Inlet is a full-screen grid of your apps, with one search field for apps and files on top. It uses Spotlight's index for files.</p>
+    <nav class="on-page" aria-label="On this page">
+      <a href="#table">At a glance</a>
+      <a href="#spotlight">Spotlight</a>
+      <a href="#launchpad">Launchpad</a>
+      <a href="#different">What Inlet adds</a>
+    </nav>
+  </section>
+
+  <section class="wrap band" id="table" aria-labelledby="table-title">
+    <h2 class="h-section" id="table-title">At a glance.</h2>
+    <div class="table-wrap">
+      <table class="cmp">
+        <caption class="sr-only">Inlet, Spotlight and Launchpad compared on the features each one has.</caption>
+        <thead>
+          <tr><th scope="col">Feature</th><th scope="col">Inlet</th><th scope="col">Spotlight</th><th scope="col">Launchpad</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Status on macOS 26</th>
+            <td data-label="Inlet">Available, in development</td>
+            <td data-label="Spotlight">Built in</td>
+            <td data-label="Launchpad">Removed in macOS 26 Tahoe</td>
+          </tr>
+          <tr>
+            <th scope="row">Main job</th>
+            <td data-label="Inlet">A full-screen grid of apps, with search on top</td>
+            <td data-label="Spotlight">Search across your Mac, with an Apps view</td>
+            <td data-label="Launchpad">A grid of apps, with folders and pages</td>
+          </tr>
+          <tr>
+            <th scope="row">Searches apps and files</th>
+            <td data-label="Inlet">Yes, in one field</td>
+            <td data-label="Spotlight">Yes, and more besides</td>
+            <td data-label="Launchpad">Apps only</td>
+          </tr>
+          <tr>
+            <th scope="row">Your own grid layout</th>
+            <td data-label="Inlet">Edit mode, folders of up to nine apps, pages</td>
+            <td data-label="Spotlight">Not a grid you arrange</td>
+            <td data-label="Launchpad">Folders and pages</td>
+          </tr>
+          <tr>
+            <th scope="row">Hide apps you never open</th>
+            <td data-label="Inlet">Yes, third-party apps. Hidden list to restore</td>
+            <td data-label="Spotlight">Not a feature Apple documents</td>
+            <td data-label="Launchpad">Not a feature</td>
+          </tr>
+          <tr>
+            <th scope="row">Quick panel from the Dock</th>
+            <td data-label="Inlet">Yes, with recent apps and files</td>
+            <td data-label="Spotlight">Apps view opens from its Dock icon</td>
+            <td data-label="Launchpad">n/a</td>
+          </tr>
+          <tr>
+            <th scope="row">Default shortcut</th>
+            <td data-label="Inlet">Option Space for the grid</td>
+            <td data-label="Spotlight">Command Space</td>
+            <td data-label="Launchpad">n/a</td>
+          </tr>
+          <tr>
+            <th scope="row">Where data lives</th>
+            <td data-label="Inlet">On your Mac. One daily update check, which you can turn off</td>
+            <td data-label="Spotlight">On your Mac, with Spotlight's own services</td>
+            <td data-label="Launchpad">n/a</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note-line">Spotlight details come from Apple's macOS Tahoe feature information. Apple changes Spotlight between releases, so check its Apps view on your own Mac before you rely on a detail here.</p>
+  </section>
+
+  <section class="wrap band" id="spotlight" aria-labelledby="spot-title">
+    <div class="split">
+      <div class="copy">
+        <h2 class="h-feature" id="spot-title">Spotlight: fast when you know the name.</h2>
+        <p class="body-2">If you know the name of an app or a file, Spotlight is quick to type and needs nothing extra. Inlet's file results come from Spotlight, so anything Spotlight finds, Inlet can find too. Inlet keeps no index of its own.</p>
+        <ul class="specs">
+          <li>Spotlight is built into macOS</li>
+          <li>Inlet shows the whole set of apps at once</li>
+          <li>Inlet is built to be looked at, not just searched</li>
+        </ul>
+      </div>
+      <div class="note-stack">
+        <p class="note"><strong>When Spotlight is enough.</strong> If you only open one or two apps and always know their names, Spotlight does the job. Inlet is for when you want to see your apps, arrange them, or open one from the Dock without searching first.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap band" id="launchpad" aria-labelledby="lp-title">
+    <h2 class="h-section" id="lp-title">Launchpad: gone in macOS 26.</h2>
+    <p class="lede">Launchpad gave you a full-screen grid of your apps, with folders and pages. Apple removed it in macOS 26 Tahoe, and its Apps view now sits inside Spotlight. Inlet brings back the full-screen grid with folders and pages, and it adds a search field for files.</p>
+    <p class="note-line">Inlet is for macOS 26 and later, the version that dropped Launchpad.</p>
+  </section>
+
+  <section class="wrap band" id="different" aria-labelledby="diff-title">
+    <h2 class="h-section" id="diff-title">What Inlet adds.</h2>
+    <div class="uc-list">
+      <div class="uc-item"><span class="n" aria-hidden="true">01</span><div class="uc-body"><h3>One field for apps and files</h3><p>Type once. Apps and matching files appear together, and Return opens the top match.</p></div></div>
+      <div class="uc-item"><span class="n" aria-hidden="true">02</span><div class="uc-body"><h3>A grid you arrange</h3><p>Reorder apps, group them into folders of up to nine, and swipe between pages. The layout is saved on your Mac.</p></div></div>
+      <div class="uc-item"><span class="n" aria-hidden="true">03</span><div class="uc-body"><h3>A panel at the Dock</h3><p>Click the Inlet icon for recent apps and recent files, without opening the full grid.</p></div></div>
+      <div class="uc-item"><span class="n" aria-hidden="true">04</span><div class="uc-body"><h3>A quieter grid</h3><p>Hide third-party apps you never open. Apple's own apps can't be hidden, and the Hidden list restores anything you take out.</p></div></div>
+      <div class="uc-item"><span class="n" aria-hidden="true">05</span><div class="uc-body"><h3>No second index</h3><p>File search uses the Spotlight index that macOS already keeps. Inlet doesn't copy your files anywhere.</p></div></div>
+    </div>
+  </section>
+
+  <section class="wrap band">
+    <div class="still">
+      <div>
+        <h2>See the grid on your own Mac.</h2>
+        <p>Download the build, or read the full feature list first.</p>
+      </div>
+      <div class="download-row">
+        <a class="btn btn-ghost" href="features.html">See all features</a>
+        <a class="btn btn-primary" href="download.html">Download Inlet</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <div class="foot-products" aria-label="Start here">
+    <a class="foot-card" href="download.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
+    </a>
+    <a class="foot-card" href="features.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
+    </a>
+    <a class="foot-card" href="compare.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
+    </a>
+  </div>
+  <div class="foot-brand">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <svg class="mark" viewBox="0 0 1024 1024" aria-hidden="true">
+        <path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="currentColor" stroke-width="172" stroke-linecap="round"/>
+        <circle cx="512" cy="512" r="96" fill="#46E6D6"/>
+      </svg>
+      <span>Inlet</span>
+    </a>
+    <p>Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.</p>
+  </div>
+  <nav class="foot-cols" aria-label="Footer">
+    <div class="foot-col">
+      <p class="foot-h">Product</p>
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="changelog.html">Changelog</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Who it's for</p>
+      <a href="use-cases.html">All use cases</a>
+      <a href="developers.html">Developers</a>
+      <a href="designers.html">Designers</a>
+      <a href="students.html">Students</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Compare</p>
+      <a href="compare.html#spotlight">Spotlight</a>
+      <a href="compare.html#launchpad">Launchpad</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Help</p>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Project</p>
+      <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
+      <a href="download.html#build">Build from source</a>
+      <a href="download.html#updates">Update checks</a>
+    </div>
+  </nav>
+  <div class="foot-bar">
+    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    <p class="foot-note">For macOS 26 or later. In development.</p>
+  </div>
+</footer>
+
+<script src="js/site.js" defer></script>
+<script src="js/pages.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/motion.js" defer></script>
+</body>
+</html>

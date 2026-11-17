@@ -1,0 +1,204 @@
+/* Explore: the use-case pages, the comparison page and the "who it's for" band on the home page.
+   Loads after pages.css and before nav.css. Colors come from tokens only, so a palette change
+   in tokens.css reaches these pages with no edits here. Accent is a fill or a rule, never text. */
+
+section[id] { scroll-margin-top: 88px; }
+
+/* ---------- Hero ---------- */
+.uc-hero { padding-block: 72px 48px; }
+.uc-hero h1 {
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.02;
+  letter-spacing: var(--ls-display);
+  font-weight: 700;
+  max-width: 16ch;
+  margin-top: 20px;
+}
+.uc-hero h1 .soft { display: block; color: var(--text-2); font-weight: 600; }
+.uc-hero .lede { margin-top: 22px; max-width: 58ch; }
+.uc-hero .on-page { margin-top: 32px; }
+.uc-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.uc-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hair);
+  background-color: var(--field);
+  color: var(--text-2);
+  font-size: 13px;
+}
+.uc-meta span::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+/* ---------- Notes beside a split ---------- */
+.note-stack { display: grid; align-content: center; }
+.note-line { margin-top: 20px; max-width: 64ch; color: var(--text-3); font-size: 14px; }
+
+/* ---------- Use-case cards (hub and home page) ---------- */
+.uc-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 36px;
+}
+.uc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px;
+  border-radius: var(--r-panel);
+  border: 1px solid var(--hair);
+  background-color: var(--grouped);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-fade),
+    background-color var(--dur-base) var(--ease-fade);
+}
+.uc-card:hover { transform: translate3d(0, -3px, 0); border-color: var(--text); }
+.uc-card:active { transform: scale(0.99); }
+.uc-card:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.uc-tile {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+.uc-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.uc-card h3 { font-size: 22px; line-height: 1.15; font-weight: 650; letter-spacing: -0.015em; }
+.uc-card p { color: var(--text-2); }
+.uc-go { margin-top: auto; padding-top: 6px; font-size: 15px; font-weight: 550; color: var(--text); }
+.uc-go::after { content: " \2192"; }
+.uc-more { margin-top: 24px; font-size: 15px; }
+.uc-more a { color: var(--text); font-weight: 550; }
+
+/* ---------- Numbered list ---------- */
+.uc-list {
+  margin-top: 40px;
+  border-top: 1px solid var(--hair);
+}
+.uc-item {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 8px 20px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.uc-item .n {
+  padding-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.uc-body h3 { font-size: var(--fs-title); font-weight: 650; letter-spacing: -0.01em; }
+.uc-body p { margin-top: 6px; max-width: 64ch; color: var(--text-2); }
+
+/* ---------- Tables (spring values, comparison) ---------- */
+.table-wrap { margin-top: 40px; }
+.spec-table,
+.cmp {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.spec-table caption,
+.cmp caption { caption-side: bottom; text-align: left; margin-top: 12px; font-size: 13px; color: var(--text-3); }
+.spec-table th,
+.spec-table td,
+.cmp th,
+.cmp td {
+  padding: 16px 16px 16px 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--hair);
+}
+.spec-table thead th,
+.cmp thead th {
+  padding-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.spec-table tbody th,
+.cmp tbody th { width: 26%; font-weight: 550; color: var(--text); }
+.spec-table td,
+.cmp td { color: var(--text-2); }
+.spec-table td { font-variant-numeric: tabular-nums; }
+.cmp td:nth-child(2) { color: var(--text); }
+.spec-table td:first-child { width: 0; }
+
+@media (max-width: 640px) {
+  .spec-table thead,
+  .cmp thead { display: none; }
+  .spec-table,
+  .spec-table tbody,
+  .spec-table tr,
+  .spec-table th,
+  .spec-table td,
+  .cmp,
+  .cmp tbody,
+  .cmp tr,
+  .cmp th,
+  .cmp td { display: block; width: 100%; }
+  .spec-table tr,
+  .cmp tr { padding: 16px 0; border-bottom: 1px solid var(--hair); }
+  .spec-table th,
+  .spec-table td,
+  .cmp th,
+  .cmp td { padding: 4px 0; border: 0; }
+  .spec-table td::before,
+  .cmp td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+  }
+  .cmp tbody th { width: 100%; margin-bottom: 8px; }
+  .spec-table tbody th { width: 100%; }
+}
+
+/* ---------- Home page band ---------- */
+.uc-home .uc-cards { margin-top: 40px; }
+
+@media (max-width: 900px) {
+  .uc-cards { grid-template-columns: minmax(0, 1fr); }
+  .uc-card { padding: 24px; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .uc-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .uc-card { padding: 20px; }
+  .uc-card h3 { font-size: 19px; }
+}
+@media (max-width: 560px) {
+  .uc-hero { padding-block: 48px 32px; }
+  .uc-item { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .uc-item .n { padding-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-card, .uc-card:hover { transform: none; transition: none; }
+}
