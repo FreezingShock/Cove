@@ -14,6 +14,7 @@ Usage:
   python3 scripts/build-tokens.py          rewrite the blocks
   python3 scripts/build-tokens.py --check  exit 1 if the blocks are out of date (CI)
 """
+import html
 import json
 import math
 import re
@@ -24,6 +25,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "design" / "tokens.json"
 CSS_FILE = ROOT / "website" / "css" / "tokens.css"
 SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
+DESIGN_FILE = ROOT / "website" / "design.html"
 TYPE_CSS_FILE = ROOT / "website" / "css" / "type.css"
 SWIFT_TYPE_BEGIN, SWIFT_TYPE_END = "// BEGIN GENERATED: type", "// END GENERATED: type"
 
@@ -95,6 +97,9 @@ def build_css(cfg):
     ]
     for k, v in m["durations"].items():
         lines.append(f"  --dur-{k}: {fmt(v)}s;")
+    lines += ["", "  /* Spacing (px). One 4 pt based scale. 44 is a hit target, not spacing. */"]
+    for v in cfg["space"]["scale"]:
+        lines.append(f"  --space-{v}: {v}px;")
     lines += ["", "  /* Easing curves. */"]
     for k, v in m["easing"].items():
         lines.append(f"  --ease-{k}: cubic-bezier({', '.join(fmt(x) for x in v)});")
@@ -350,6 +355,157 @@ def splice(text, begin, end, block, path):
     return text[:start] + block + text[stop:].lstrip("\n") if False else text[:start] + block + text[stop:].removeprefix("\n")
 
 
+# ---------- Design system page (website/design.html) ----------
+# The token sections of the page are generated here, so the page shows the same values the app
+# and the site use. Contrast is checked on every build: text pairs must hold 4.5:1.
+CORE_COLORS = [
+    "base", "window", "grouped", "text", "text-2", "text-3", "hair", "accent", "accent-soft",
+    "accent-ink", "logo-aqua", "glow-a", "g-fill", "g-solid", "scrim", "track", "hover",
+]
+CONTRAST_PAIRS = [("text", "base"), ("text-2", "base"), ("text-3", "base"),
+                  ("text", "grouped"), ("accent-ink", "accent")]
+MIN_CONTRAST = 4.5
+TYPE_SAMPLES = {
+    "display": "Every app, one keystroke away.",
+    "section": "Search, sort and open from one place.",
+    "feature": "Your files, grouped your way.",
+    "lede": "Inlet opens with one key and gets out of the way.",
+    "body": "Results update as you type, and every file keeps its place.",
+    "small": "Paths and secondary text sit one step down.",
+    "caption": "~/Documents/Projects/Inlet",
+    "label": "Supporter · Groups",
+}
+
+
+def _lum(rgb):
+    def ch(c):
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = (ch(x) for x in rgb[:3])
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _over(fg, bg):
+    """Composite an (r, g, b[, a]) color over an opaque (r, g, b)."""
+    a = fg[3] if len(fg) == 4 else 1.0
+    return [fg[i] * a + bg[i] * (1 - a) for i in range(3)]
+
+
+def contrast_ratio(fg, bg, under):
+    """WCAG ratio of fg on bg. Both may be translucent; bg sits on the opaque `under` color."""
+    base = parse_css_color(under)[:3]
+    surface = _over(parse_css_color(bg), base)
+    text = _over(parse_css_color(fg), surface)
+    hi, lo = sorted((_lum(text), _lum(surface)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def build_design_page(cfg):
+    """Returns {name: block} for each generated section of website/design.html."""
+    e = lambda v: html.escape(str(v), quote=True)
+    c, t, rs, m, sp = cfg["color"], cfg["type"], cfg["radius"], cfg["motion"], cfg["space"]
+
+    def wrap(name, body):
+        return (f"<!-- BEGIN GENERATED: design-{name}. Source: design/tokens.json, built by scripts/build-tokens.py.\n"
+                f"     Edit the JSON and rerun the script; do not hand-edit this block. -->\n"
+                f"{body}\n<!-- END GENERATED: design-{name} -->\n")
+
+    blocks = {}
+
+    # Color: one panel per mode. The panels force their own mode with .t-light and .t-dark, so both show on any page.
+    panels = []
+    for mode, label, cls in (("light", "Light", "t-light"), ("dark", "Dark", "t-dark")):
+        chips = "\n".join(
+            f'<li class="ds-sw"><span class="ds-chip" style="background:var(--{k})"></span>'
+            f'<span class="ds-sw-name">{e(k)}</span><code>{e(c[mode][k])}</code></li>'
+            for k in CORE_COLORS)
+        panels.append(f'<div class="ds-theme {cls}">\n<p class="ds-theme-name">{label}</p>\n'
+                      f'<ul class="ds-swatches">\n{chips}\n</ul>\n</div>')
+    blocks["color"] = wrap("color", '<div class="ds-theme-grid">\n' + "\n".join(panels) + "\n</div>")
+
+    rows = []
+    for mode in ("light", "dark"):
+        for fg, bg in CONTRAST_PAIRS:
+            ratio = contrast_ratio(c[mode][fg], c[mode][bg], c[mode]["base"])
+            if ratio < MIN_CONTRAST:
+                sys.exit(f"{mode}: {fg} on {bg} is {ratio:.2f}:1, below {MIN_CONTRAST}:1")
+            rows.append(f'<tr><th scope="row">{e(fg)} on {e(bg)}</th><td>{e(mode)}</td>'
+                        f'<td>{ratio:.1f}:1</td></tr>')
+    blocks["contrast"] = wrap("contrast",
+        '<table class="ds-table">\n<thead><tr><th scope="col">Text on surface</th><th scope="col">Mode</th>'
+        '<th scope="col">Contrast</th></tr></thead>\n<tbody>\n' + "\n".join(rows) + "\n</tbody>\n</table>")
+
+    # Type: web roles rendered at their real settings, app roles as a spec table.
+    web = t["web"]
+    web_rows = []
+    for name, role in web["roles"].items():
+        spec = f"{role['size']} · {role['weight']} · line {role['lineHeight']} · tracking {role['tracking']}"
+        caps = " ds-caps" if name == "label" else ""
+        style = (f"font-size:var(--fs-{name});font-weight:var(--fw-{name});"
+                 f"line-height:var(--lh-{name});letter-spacing:var(--ls-{name})")
+        web_rows.append(
+            f'<div class="ds-type-row"><div class="ds-type-meta"><p class="ds-role">{e(name)}</p>'
+            f'<p class="ds-spec">{e(spec)}</p></div>'
+            f'<p class="ds-type-sample{caps}" style="{style}">{e(TYPE_SAMPLES.get(name, name))}</p></div>')
+    app_rows = "\n".join(
+        f'<tr><th scope="row">{e(n)}</th><td>{e(v["size"])} pt</td><td>{e(v["weight"])}</td><td>{e(v["use"])}</td></tr>'
+        for n, v in t["app"]["roles"].items())
+    blocks["type"] = wrap("type",
+        '<div class="ds-type">\n<p class="ds-sub">Website: Figtree, self-hosted</p>\n' + "\n".join(web_rows) +
+        '\n</div>\n<div class="ds-type-app">\n<p class="ds-sub">App: SF Pro through Font.system</p>\n'
+        '<table class="ds-table">\n<thead><tr><th scope="col">Role</th><th scope="col">Size</th>'
+        '<th scope="col">Weight</th><th scope="col">Use</th></tr></thead>\n<tbody>\n' + app_rows +
+        "\n</tbody>\n</table>\n</div>")
+
+    # Shape: radii as tiles, nesting as a table, plus pill and hairline.
+    tiles = "\n".join(
+        f'<li class="ds-radius"><span class="ds-radius-tile" style="border-radius:var(--r-{k})" aria-hidden="true"></span>'
+        f'<p class="ds-sw-name">{e(k)}</p><code>{v}</code></li>'
+        for k, v in rs["scale"].items())
+    nest = "\n".join(
+        f'<tr><th scope="row">{e(n["inner"])} in {e(n["outer"])}</th><td>{e(n["inset"])}</td><td>{e(n["use"])}</td></tr>'
+        for n in rs["nesting"])
+    blocks["radius"] = wrap("radius",
+        f'<ul class="ds-radii">\n{tiles}\n</ul>\n'
+        f'<p class="ds-note">Pill <code>{e(rs["pill"])}</code> · hairline <code>{e(rs["hair"])}</code> · '
+        f'app icon corner <code>{e(rs["iconRatio"])}</code> of the icon width.</p>\n'
+        '<table class="ds-table">\n<thead><tr><th scope="col">Inner in outer</th><th scope="col">Inset</th>'
+        '<th scope="col">Use</th></tr></thead>\n<tbody>\n' + nest + "\n</tbody>\n</table>")
+
+    # Space: the 4 pt scale, drawn from the --space-N variables in tokens.css.
+    bars = "\n".join(
+        f'<li class="ds-space"><span class="ds-space-bar" style="width:var(--space-{v})" aria-hidden="true"></span>'
+        f'<code>{v}</code></li>'
+        for v in sp["scale"])
+    blocks["space"] = wrap("space",
+        f'<ul class="ds-spaces">\n{bars}\n</ul>\n'
+        f'<p class="ds-note">Base <code>{e(sp["base"])}</code> pt. Hit target <code>{e(sp["hitTarget"])}</code> pt, '
+        'which is not spacing.</p>')
+
+    # Motion: durations, easing curves and springs. Each spring has a track you can play.
+    durs = "\n".join(f'<tr><th scope="row">{e(k)}</th><td>{e(v)} s</td></tr>' for k, v in m["durations"].items())
+    eases = "\n".join(
+        f'<tr><th scope="row">{e(k)}</th><td><code>cubic-bezier({", ".join(str(x) for x in v)})</code></td></tr>'
+        for k, v in m["easing"].items())
+    springs = []
+    for name, sprg in m["springs"].items():
+        springs.append(
+            f'<div class="ds-spring-row">\n<div class="ds-spring-meta"><p class="ds-role">{e(name)}</p>'
+            f'<p class="ds-spec">{e(sprg["duration"])} s · bounce {e(sprg["bounce"])}</p>'
+            f'<p class="ds-use">{e(sprg["use"])}</p></div>\n'
+            f'<button class="ds-track" type="button" aria-pressed="false" '
+            f'aria-label="Play the {e(name)} spring" '
+            f'style="--sp:var(--spring-{name});--spd:var(--spring-{name}-dur)">'
+            f'<span class="ds-dot" aria-hidden="true"></span></button>\n</div>')
+    blocks["motion"] = wrap("motion",
+        '<div class="ds-motion-grid">\n'
+        f'<div><p class="ds-sub">Durations</p><table class="ds-table"><tbody>\n{durs}\n</tbody></table></div>\n'
+        f'<div><p class="ds-sub">Easing</p><table class="ds-table"><tbody>\n{eases}\n</tbody></table></div>\n'
+        '</div>\n<p class="ds-sub">Springs</p>\n<div class="ds-springs">\n' + "\n".join(springs) + "\n</div>")
+
+    return blocks
+
+
+
 def main():
     check = "--check" in sys.argv
     cfg = json.loads(SOURCE.read_text())
@@ -357,6 +513,11 @@ def main():
     color_block = build_color(cfg)
     swift_block = build_swift(cfg)
     swift_color_block = build_swift_colors(cfg)
+    design_blocks = build_design_page(cfg)
+    design_now = DESIGN_FILE.read_text()
+    design_new = design_now
+    for name, block in design_blocks.items():
+        design_new = splice(design_new, f"<!-- BEGIN GENERATED: design-{name}", f"<!-- END GENERATED: design-{name} -->", block, DESIGN_FILE)
 
     css_now = CSS_FILE.read_text()
     swift_now = SWIFT_FILE.read_text()
@@ -372,6 +533,7 @@ def main():
         (CSS_FILE, css_now, css_new),
         (SWIFT_FILE, swift_now, swift_new),
         (TYPE_CSS_FILE, type_css_now, type_css_new),
+        (DESIGN_FILE, design_now, design_new),
     ]
 
     if check:
