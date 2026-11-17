@@ -60,6 +60,11 @@ final class AppUpdater: ObservableObject {
         self.controller = controller
         self.automaticallyChecks = controller.updater.automaticallyChecksForUpdates
 
+        // Download and install updates without asking. Sparkle applies a
+        // downloaded update the next time Inlet quits, and it still checks the
+        // EdDSA signature first.
+        controller.updater.automaticallyDownloadsUpdates = true
+
         // Sparkle publishes canCheckForUpdates through KVO (Key-Value Observing).
         // Combine turns that into a stream we can copy into a @Published property,
         // so SwiftUI redraws when it changes.
@@ -69,6 +74,14 @@ final class AppUpdater: ObservableObject {
                 self?.canCheckForUpdates = value
             }
             .store(in: &cancellables)
+
+        // Check on every launch. Sparkle's own timer (SUScheduledCheckInterval)
+        // only checks once it is due, so this call makes each launch check.
+        if !AppUpdater.isRunningUnitTests {
+            Task { @MainActor in
+                controller.updater.checkForUpdatesInBackground()
+            }
+        }
     }
 
     /// A user-started check. Sparkle shows "You're up to date" or the update window.

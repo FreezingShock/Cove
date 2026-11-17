@@ -4,9 +4,9 @@ name: Release
 # it and publishes a GitHub Release tagged v<version>. It is safe to re-run: a
 # version that already has a release is skipped.
 #
-# Builds are signed with Developer ID and notarized when the signing secrets are set
-# (see "Signing and notarization" in RELEASING.md). With no secrets, the build stays
-# ad-hoc signed and the signing and notarization steps skip.
+# Builds are signed with the self-signed certificate in CODE_SIGN_P12 (see "Signing" in
+# RELEASING.md). Developer ID signing and notarization are optional: they run only when the
+# Apple secrets are set. With no signing secrets, the build stays ad-hoc signed.
 
 on:
   push:
@@ -75,91 +75,142 @@ jobs:
           xcodebuild -version
           xcrun --sdk macosx --show-sdk-version
 
-      - name: Set up Developer ID signing (when secrets are set)
+      - name: Set up code signing
         if: steps.version.outputs.build == 'true'
         env:
+          CODE_SIGN_P12: ${{ secrets.CODE_SIGN_P12 }}
+          CODE_SIGN_P12_PASSWORD: ${{ secrets.CODE_SIGN_P12_PASSWORD }}
           MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
           MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         run: |
-          # No signing secrets at all: stay ad-hoc signed and skip notarization.
-          if [ -z "$MACOS_CERT_P12" ] && [ -z "$APPLE_ID" ] && [ -z "$APPLE_APP_PASSWORD" ]; then
-            echo "::notice::No signing secrets are set. Building ad-hoc signed, not notarized."
-            echo "SIGN_IDENTITY=-" >> "$GITHUB_ENV"
-            echo "SIGNED=false" >> "$GITHUB_ENV"
-            exit 0
+          # Three modes, picked from the secrets:
+          #   developer-id  Developer ID certificate, then notarized. Optional. It needs a paid
+          #                 Apple Developer account, which Inlet does not use.
+          #   self-signed   The free self-signed certificate in CODE_SIGN_P12. This is the normal
+          #                 release. It keeps one stable signing identity, so the privacy grants
+          #                 macOS keeps for Inlet survive updates. It is not notarized.
+          #   ad-hoc        No certificate. The identity changes with every build, and Gatekeeper
+          #                 blocks the first launch.
+          MODE=ad-hoc
+          if [ -n "$MACOS_CERT_P12$APPLE_ID$APPLE_APP_PASSWORD" ]; then
+            MISSING=""
+            for name in MACOS_CERT_P12 MACOS_CERT_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_PASSWORD; do
+              if [ -z "${!name}" ]; then MISSING="$MISSING $name"; fi
+            done
+            if [ -n "$MISSING" ]; then
+              echo "::error::Developer ID signing is partly set up. Add these secrets, or remove the rest:$MISSING"
+              exit 1
+            fi
+            MODE=developer-id
+          elif [ -n "$CODE_SIGN_P12" ]; then
+            if [ -z "$CODE_SIGN_P12_PASSWORD" ]; then
+              echo "::error::CODE_SIGN_P12 is set but CODE_SIGN_P12_PASSWORD is not."
+              exit 1
+            fi
+            MODE=self-signed
+          else
+            echo "::warning::No signing secrets are set. Building ad-hoc signed. Run scripts/release/make-signing-certificate.sh and add CODE_SIGN_P12 to fix this."
           fi
-
-          # Some but not all secrets set: fail loudly. A half-configured release
-          # should never look signed when it is not.
-          MISSING=""
-          for name in MACOS_CERT_P12 MACOS_CERT_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_PASSWORD; do
-            if [ -z "${!name}" ]; then MISSING="$MISSING $name"; fi
-          done
-          if [ -n "$MISSING" ]; then
-            echo "::error::Signing is partly set up. Add these secrets:$MISSING"
-            exit 1
+          echo "SIGN_MODE=$MODE" >> "$GITHUB_ENV"
+          echo "SIGNED=false" >> "$GITHUB_ENV"
+          if [ "$MODE" = "ad-hoc" ]; then
+            exit 0
           fi
 
           KEYCHAIN="$RUNNER_TEMP/inlet-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
-          P12="$RUNNER_TEMP/developer-id.p12"
-          printf '%s' "$MACOS_CERT_P12" | base64 -d > "$P12"
+          P12="$RUNNER_TEMP/inlet-signing.p12"
+          if [ "$MODE" = "developer-id" ]; then
+            printf '%s' "$MACOS_CERT_P12" | base64 -d > "$P12"
+            P12_PASSWORD="$MACOS_CERT_PASSWORD"
+          else
+            printf '%s' "$CODE_SIGN_P12" | base64 -d > "$P12"
+            P12_PASSWORD="$CODE_SIGN_P12_PASSWORD"
+          fi
 
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
-          security import "$P12" -k "$KEYCHAIN" -P "$MACOS_CERT_PASSWORD" \
+          security import "$P12" -k "$KEYCHAIN" -P "$P12_PASSWORD" \
             -T /usr/bin/codesign -T /usr/bin/security
           rm -f "$P12"
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
             -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
           security list-keychains -d user -s "$KEYCHAIN" \
             $(security list-keychains -d user | sed -e 's/^[[:space:]]*"//' -e 's/"$//')
-
-          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" \
-            | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -n 1)"
-          if [ -z "$IDENTITY" ]; then
-            echo "::error::MACOS_CERT_P12 has no Developer ID Application certificate with its private key."
-            exit 1
-          fi
-          echo "Signing with: $IDENTITY"
-
-          # Store the notary credentials in the temporary keychain. This keeps the
-          # Apple ID password out of later commands.
-          xcrun notarytool store-credentials inlet-notary \
-            --apple-id "$APPLE_ID" \
-            --team-id "$APPLE_TEAM_ID" \
-            --password "$APPLE_APP_PASSWORD" \
-            --keychain "$KEYCHAIN" >/dev/null
-
-          echo "SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
-          echo "SIGNED=true" >> "$GITHUB_ENV"
           echo "KEYCHAIN=$KEYCHAIN" >> "$GITHUB_ENV"
+
+          if [ "$MODE" = "developer-id" ]; then
+            IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" \
+              | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -n 1)"
+            if [ -z "$IDENTITY" ]; then
+              echo "::error::MACOS_CERT_P12 has no Developer ID Application certificate with its private key."
+              exit 1
+            fi
+            echo "Signing with: $IDENTITY"
+
+            # Store the notary credentials in the temporary keychain. This keeps the
+            # Apple ID password out of later commands.
+            xcrun notarytool store-credentials inlet-notary \
+              --apple-id "$APPLE_ID" \
+              --team-id "$APPLE_TEAM_ID" \
+              --password "$APPLE_APP_PASSWORD" \
+              --keychain "$KEYCHAIN" >/dev/null
+
+            echo "SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+            echo "SIGNED=true" >> "$GITHUB_ENV"
+          else
+            # A self-signed certificate is not "valid" for trust purposes, so list
+            # every code-signing identity, not only the trusted ones (-v).
+            IDENTITY="$(security find-identity -p codesigning "$KEYCHAIN" \
+              | sed -n 's/^[[:space:]]*[0-9]*) [0-9A-F]* "\(.*\)".*/\1/p' | head -n 1)"
+            if [ -z "$IDENTITY" ]; then
+              echo "::error::CODE_SIGN_P12 has no code-signing certificate with its private key."
+              exit 1
+            fi
+            echo "Signing with the self-signed identity: $IDENTITY"
+            echo "SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+          fi
 
       - name: Build Release
         if: steps.version.outputs.build == 'true'
         run: |
           SCHEME="$(xcodebuild -list -project Inlet.xcodeproj -json | jq -r '.project.schemes[0]')"
           echo "Using scheme: $SCHEME"
-          if [ "${SIGNED:-false}" = "true" ]; then
-            # Hardened runtime and a secure timestamp are both required for notarization.
-            SIGNING_ARGS=(
-              CODE_SIGN_STYLE=Manual
-              CODE_SIGN_IDENTITY="$SIGN_IDENTITY"
-              ENABLE_HARDENED_RUNTIME=YES
-              OTHER_CODE_SIGN_FLAGS=--timestamp
-              CODE_SIGNING_ALLOWED=YES
-            )
-          else
-            SIGNING_ARGS=(
-              CODE_SIGN_IDENTITY="${SIGN_IDENTITY:--}"
-              CODE_SIGNING_REQUIRED=NO
-              CODE_SIGNING_ALLOWED=YES
-            )
-          fi
+          case "${SIGN_MODE:-ad-hoc}" in
+            developer-id)
+              # Hardened runtime and a secure timestamp are both required for notarization.
+              SIGNING_ARGS=(
+                CODE_SIGN_STYLE=Manual
+                CODE_SIGN_IDENTITY="$SIGN_IDENTITY"
+                ENABLE_HARDENED_RUNTIME=YES
+                OTHER_CODE_SIGN_FLAGS=--timestamp
+                CODE_SIGNING_ALLOWED=YES
+              )
+              ;;
+            self-signed)
+              # Same identity on every build, so macOS keeps the grants it has for Inlet.
+              # Hardened runtime stays off: a self-signed build can't be notarized, and
+              # the hardened runtime's library checks would reject its Sparkle framework.
+              SIGNING_ARGS=(
+                CODE_SIGN_STYLE=Manual
+                CODE_SIGN_IDENTITY="$SIGN_IDENTITY"
+                ENABLE_HARDENED_RUNTIME=NO
+                CODE_SIGNING_REQUIRED=YES
+                CODE_SIGNING_ALLOWED=YES
+              )
+              ;;
+            *)
+              SIGNING_ARGS=(
+                CODE_SIGN_IDENTITY=-
+                CODE_SIGNING_REQUIRED=NO
+                CODE_SIGNING_ALLOWED=YES
+              )
+              ;;
+          esac
           xcodebuild build \
             -project Inlet.xcodeproj \
             -scheme "$SCHEME" \
@@ -191,7 +242,7 @@ jobs:
         if: steps.version.outputs.build == 'true'
         run: |
           if [ "${SIGNED:-false}" != "true" ]; then
-            echo "::notice::Not signed with Developer ID, so there is nothing to notarize."
+            echo "::notice::Not a Developer ID build, so there is nothing to notarize."
             exit 0
           fi
           APP="$(find build/DerivedData/Build/Products/Release -maxdepth 1 -name '*.app' -print -quit)"

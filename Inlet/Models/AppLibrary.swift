@@ -3,7 +3,8 @@
 //  Inlet
 //
 //  Holds the list of installed apps and refreshes it. Views read from
-//  this object and redraw automatically when `apps` changes.
+//  this object and redraw automatically when `apps` changes. A file-system
+//  watcher asks for a rescan whenever an app is added, removed or renamed.
 //
 
 import Foundation
@@ -25,19 +26,34 @@ final class AppLibrary {
     /// When the last scan finished. Shown in Settings > About.
     private(set) var lastScanned: Date?
 
-    /// True when a reload was asked for during a scan. The scan that is
-    /// running may have read the folders before the change, so one more runs after it.
-    private var reloadQueued = false
+    /// Set when a change arrives during a scan. The scan that is running
+    /// may have read the folders before the change, so one more scan runs
+    /// after it. Without this the change would wait for the next launch.
+    @ObservationIgnored private var rescanRequested = false
+    @ObservationIgnored private var watcher: AppFolderWatcher?
+
+    /// Starts watching the app folders. Call once at launch, after the first
+    /// `reload()`. Folders that don't exist yet (such as ~/Applications) are
+    /// picked up at the next launch.
+    func startWatching() {
+        guard watcher == nil else { return }
+        let watcher = AppFolderWatcher(paths: AppScanner.existingSearchFolderPaths) { [weak self] in
+            self?.reload()
+        }
+        watcher.start()
+        self.watcher = watcher
+    }
 
     /// Rescans the app folders in the background.
-    /// Safe to call often: a request during a scan is queued, not dropped,
-    /// so an app installed mid-scan still shows up.
+    /// Safe to call often: if a scan is already running, the next one is queued
+    /// (one extra scan at most, however many calls arrive).
     func reload() {
         guard !isScanning else {
-            reloadQueued = true
+            rescanRequested = true
             return
         }
         isScanning = true
+        rescanRequested = false
 
         Task {
             // Scanning touches the disk, so run it off the main thread
@@ -55,8 +71,7 @@ final class AppLibrary {
             hasScanned = true
             lastScanned = Date()
 
-            if reloadQueued {
-                reloadQueued = false
+            if rescanRequested {
                 reload()
             }
         }

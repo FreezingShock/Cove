@@ -30,6 +30,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         OverlayController.shared.configure(library: library, layoutStore: layoutStore)
         // Scan once at launch. The overlay never scans on open (spec).
         library.reload()
+        // Rescan on its own when an app is installed, removed or renamed.
+        library.startWatching()
 
         // Grid hotkey (Option+Space) toggles the full grid overlay: the first
         // press opens it, the second closes it.

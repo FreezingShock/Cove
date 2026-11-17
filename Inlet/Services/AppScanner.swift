@@ -19,6 +19,18 @@ enum AppScanner {
         ]
     }
 
+    /// The search folders that exist right now, with symlinks resolved. The file
+    /// watcher uses these, since FSEvents can only watch folders that exist.
+    static var existingSearchFolderPaths: [String] {
+        searchFolders.compactMap { folder in
+            let resolved = folder.resolvingSymlinksInPath()
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: resolved.path, isDirectory: &isDirectory),
+                  isDirectory.boolValue else { return nil }
+            return resolved.path
+        }
+    }
+
     /// Returns every launchable app in `searchFolders`, sorted by name the
     /// way Finder sorts (so "App 2" comes before "App 10").
     ///
@@ -28,7 +40,9 @@ enum AppScanner {
         var seenBundleIDs = Set<String>()
         var seenPaths = Set<String>()
 
-        for folder in searchFolders {
+        // Resolve each folder first, so a folder that is a symlink (such as a
+        // ~/Applications that points at another disk) is scanned at its target.
+        for folder in searchFolders.map({ $0.resolvingSymlinksInPath() }) {
             for appURL in findAppBundles(in: folder) {
                 // Resolve symlinks so one app linked from two places
                 // only appears once.

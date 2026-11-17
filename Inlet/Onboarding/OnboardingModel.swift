@@ -8,7 +8,7 @@
 //
 //  Where each answer goes:
 //  - Habit: only suggests a starting shortcut. Nothing is stored.
-//  - Files and Folders: InletSettings.Key.searchIncludesFiles, written at once.
+//  - Files in search: InletSettings.Key.searchIncludesFiles, written at once.
 //  - Open at Login: SMAppService.mainApp, changed at once.
 //  - Groups: which preset groups start on. Written to the layout when setup
 //    finishes, so closing the window early leaves the grid as it was.
@@ -520,7 +520,7 @@ final class OnboardingModel {
             OnboardingSummaryRow(label: "Groups", value: "\(presetChoices.count) of \(AppCategory.allCases.count)"),
             OnboardingSummaryRow(label: "What opens", value: surface.label),
             OnboardingSummaryRow(label: "Press", value: press == .tap ? "Tap to toggle" : "Hold to peek"),
-            OnboardingSummaryRow(label: "Files and Folders", value: includeFiles ? "On" : "Off"),
+            OnboardingSummaryRow(label: "Files in search", value: includeFiles ? "On" : "Off"),
             OnboardingSummaryRow(label: "Open at Login", value: openAtLogin ? "On" : "Off"),
             OnboardingSummaryRow(label: "Network access", value: "None"),
         ]
