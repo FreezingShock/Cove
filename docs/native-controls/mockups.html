@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inlet native controls, mockups</title>
+<style>
+  /* Approximations of the macOS 26 controls the app now uses. SF Pro is not
+     on Linux, so the page falls back to Inter. Glass is a flat tint here. */
+  :root {
+    --base: #05070C;
+    --text: #FFFFFF;
+    --text-2: rgba(235,240,255,.78);
+    --text-3: rgba(235,240,255,.56);
+    --accent: #3FD9C9;
+    --accent-ink: #04201D;
+    --glass: rgba(12,16,26,.62);
+    --glass-edge: rgba(255,255,255,.14);
+    --field: rgba(255,255,255,.08);
+    --hover: rgba(255,255,255,.10);
+    --blue: #0A84FF; --teal: #64D2FF; --green: #30D158; --orange: #FF9F0A;
+    --red: #FF453A; --purple: #BF5AF2; --pink: #FF375F; --yellow: #FFD60A;
+    --sel: rgba(63,217,201,.18);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --base: #E6ECF2; --text: #0B111C; --text-2: rgba(16,24,40,.66); --text-3: rgba(16,24,40,.52);
+      --accent: #0A7F74; --accent-ink: #FFFFFF; --glass: rgba(250,252,255,.70); --glass-edge: rgba(16,24,40,.10);
+      --field: rgba(16,24,40,.06); --hover: rgba(16,24,40,.07); --sel: rgba(10,127,116,.16);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--base); color: var(--text);
+    font: 400 14px/1.35 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; padding: 40px 48px 56px;
+    background-image:
+      radial-gradient(520px 340px at 14% 12%, rgba(48,196,186,.26), transparent 70%),
+      radial-gradient(560px 360px at 88% 92%, rgba(70,90,200,.24), transparent 70%);
+    background-color: var(--base);
+  }
+  h1 { font-size: 26px; font-weight: 650; letter-spacing: -.01em; margin: 0 0 6px; }
+  .lede { color: var(--text-2); margin: 0 0 28px; max-width: 760px; }
+  .board { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .card {
+    position: relative; border-radius: 26px; padding: 22px; min-height: 420px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)), var(--base);
+    border: 1px solid var(--glass-edge); overflow: hidden;
+  }
+  .label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 0 0 14px; }
+  .glass {
+    background: var(--glass); border: 1px solid var(--glass-edge); border-radius: 32px;
+    backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 18px 40px rgba(0,0,0,.28);
+  }
+  .popover { border-radius: 14px; padding: 12px; width: 340px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+  .popover h4 { margin: 0; font-size: 15px; font-weight: 600; }
+  .row-head { display: flex; align-items: center; justify-content: space-between; margin: 2px 4px 10px; }
+  .btn-prominent {
+    display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; border-radius: 999px;
+    background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 600; border: 0;
+  }
+  .btn-glass {
+    display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    background: var(--hover); color: var(--text); border: 1px solid var(--glass-edge);
+  }
+  .btn-glass.on { background: var(--sel); }
+  .group-row {
+    display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 10px; background: var(--field); margin-bottom: 6px;
+  }
+  .sym {
+    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .name { flex: 1; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .menu {
+    display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px 0 9px; border-radius: 6px;
+    background: var(--hover); border: 1px solid var(--glass-edge); font-size: 12px; white-space: nowrap;
+  }
+  .menu::after { content: "\25BE"; color: var(--text-3); font-size: 11px; }
+  .ib { width: 22px; height: 22px; display: grid; place-items: center; color: var(--text); opacity: 1; font-size: 12px; font-weight: 700; }
+  .ib.dim { opacity: .3; }
+  .ib.danger { color: var(--red); }
+  .caption { font-size: 12px; color: var(--text-3); margin: 10px 4px 0; }
+  .symgrid { display: grid; grid-template-columns: repeat(6, 38px); gap: 6px; padding: 12px; border-radius: 14px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 16px 40px rgba(0,0,0,.35); width: 290px; }
+  .sg { width: 38px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; color: var(--text); }
+  .sg.on { background: var(--sel); color: var(--accent); font-weight: 700; }
+  .tiles { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-top: 16px; }
+  .tile { aspect-ratio: 1; border-radius: 16px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; }
+  .bar { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-edge); }
+  .seg { height: 30px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); }
+  .seg.on { background: linear-gradient(180deg, rgba(63,217,201,.35), rgba(63,217,201,.16)); color: var(--text); }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .hdr { display: flex; gap: 8px; }
+  .scrim { position: absolute; inset: 0; background: rgba(4,6,10,.44); }
+  .alert {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 300px; padding: 20px 18px 16px;
+    border-radius: 18px; background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 24px 60px rgba(0,0,0,.45); text-align: center;
+  }
+  .alert h5 { margin: 0 0 6px; font-size: 15px; font-weight: 650; }
+  .alert p { margin: 0 0 16px; font-size: 13px; color: var(--text-2); }
+  .alert .btns { display: flex; justify-content: center; gap: 8px; }
+  .alert .btn-danger { height: 30px; padding: 0 16px; border-radius: 8px; background: var(--red); color: #fff; font-weight: 600; font-size: 13px; border: 0; }
+  .alert .btn-plain { height: 30px; padding: 0 16px; border-radius: 8px; background: var(--hover); color: var(--text); font-weight: 500; font-size: 13px; border: 1px solid var(--glass-edge); }
+  .hidden-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px; font-size: 13px; }
+  .toast {
+    display: inline-flex; align-items: center; gap: 14px; padding: 8px 8px 8px 16px; border-radius: 999px; font-size: 13px;
+    background: var(--glass); border: 1px solid var(--glass-edge); box-shadow: 0 10px 26px rgba(0,0,0,.3);
+  }
+  .toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tg { height: 44px; padding: 0 12px; border-radius: 10px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; background: var(--field); border: 1px solid var(--glass-edge); }
+  .tg.on { background: var(--text); color: var(--base); border-color: transparent; }
+  .tg .k { font-size: 17px; }
+  .tg.on .k { color: var(--base); }
+  .seg-wide { margin-top: 14px; display: flex; gap: 0; border-radius: 9px; background: var(--field); padding: 2px; width: max-content; }
+  .seg-wide span { padding: 4px 14px; font-size: 13px; border-radius: 7px; }
+  .seg-wide span.on { background: var(--glass); box-shadow: 0 1px 2px rgba(0,0,0,.2); font-weight: 600; }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+  .ghost { color: var(--text-2); font-size: 14px; font-weight: 600; }
+  .cta { height: 36px; padding: 0 20px; border-radius: 999px; background: var(--text); color: var(--base); display: inline-flex; align-items: center; font-weight: 600; }
+  .notes { margin-top: 28px; color: var(--text-3); font-size: 12px; max-width: 760px; }
+  @media (max-width: 900px) {
+    body { padding: 24px 16px 40px; }
+    .board { grid-template-columns: 1fr; gap: 20px; }
+    .card { min-height: 0; padding: 16px; }
+    .popover, .symgrid { width: 100%; max-width: 100%; }
+    .symgrid { grid-template-columns: repeat(6, 1fr); }
+    .tiles { grid-template-columns: repeat(4, 1fr); }
+    .toolbar { flex-wrap: wrap; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+  <h1>Native controls</h1>
+  <p class="lede">The Groups and Hidden panels are now popovers, group colors are a pop-up menu, icons come from a popover, deleting asks with an alert, and the header, Restore, Undo and onboarding buttons use the system glass styles. Mockups show the intended look; they are HTML approximations, not Mac screenshots.</p>
+
+  <div class="board">
+
+    <!-- 1. Header and Groups popover -->
+    <section class="card">
+      <p class="label">1 · Header and Groups popover</p>
+      <div class="toolbar">
+        <span class="bar">
+          <span class="seg on">All</span><span class="seg">Create</span><span class="seg">Build</span><span class="seg">Games</span>
+        </span>
+        <span class="hdr">
+          <span class="btn-glass">Hidden 2</span>
+          <span class="btn-glass on">Groups</span>
+          <span class="btn-glass">Edit</span>
+        </span>
+      </div>
+      <div class="popover">
+        <div class="row-head">
+          <h4>Groups</h4>
+          <span class="btn-prominent">+ Add Group</span>
+        </div>
+        <div class="group-row">
+          <span class="sym" style="background:var(--blue)">B</span>
+          <span class="name">Create</span>
+          <span class="dot" style="background:var(--blue)"></span>
+          <span class="menu">Blue</span>
+          <span class="ib">&#8593;</span><span class="ib">&#8595;</span><span class="ib danger">&#128465;</span>
+        </div>
+        <div class="group-row">
+          <span class="sym" style="background:var(--teal)">H</span>
+          <span class="name">Build</span>
+          <span class="dot" style="background:var(--teal)"></span>
+          <span class="menu">Teal</span>
+          <span class="ib">&#8593;</span><span class="ib">&#8595;</span><span class="ib danger">&#128465;</span>
+        </div>
+        <div class="group-row">
+          <span class="sym" style="background:var(--orange)">G</span>
+          <span class="name">Games</span>
+          <span class="dot" style="background:var(--orange)"></span>
+          <span class="menu">Orange</span>
+          <span class="ib">&#8593;</span><span class="ib">&#8595;</span><span class="ib danger">&#128465;</span>
+        </div>
+        <p class="caption">Each app is in one group. Right-click an icon to move it.</p>
+      </div>
+    </section>
+
+    <!-- 2. Icon popover -->
+    <section class="card">
+      <p class="label">2 · Icon popover, opened from a group's icon</p>
+      <div style="display:flex; gap:14px; align-items:flex-start; margin-top:8px">
+        <div class="popover" style="width:auto">
+          <div class="group-row" style="margin:0">
+            <span class="sym" style="background:var(--teal); width:28px; height:28px">H</span>
+            <span class="name">Build</span>
+          </div>
+        </div>
+      </div>
+      <div class="symgrid" style="margin-top:14px">
+        <span class="sg">&#9733;</span><span class="sg">&#9829;</span><span class="sg">&#9889;</span><span class="sg">&#128293;</span><span class="sg">&#127811;</span><span class="sg">&#9790;</span>
+        <span class="sg">&#128396;</span><span class="sg on">&#128296;</span><span class="sg">&#128214;</span><span class="sg">&#8962;</span><span class="sg">&#127918;</span><span class="sg">&#9638;</span>
+        <span class="sg">&#127925;</span><span class="sg">&#128247;</span><span class="sg">&#127902;</span><span class="sg">&#128188;</span><span class="sg">&#128722;</span><span class="sg">&#9992;</span>
+      </div>
+      <p class="caption">Each symbol is an SF Symbol in the app. The chosen one takes the group's color. Choosing one closes the popover.</p>
+    </section>
+
+    <!-- 3. Delete alert -->
+    <section class="card">
+      <p class="label">3 · Delete confirmation, standard alert</p>
+      <div class="tiles" style="opacity:.55">
+        <span class="tile" style="background:#0A84FF">A</span><span class="tile" style="background:#FF9F0A">B</span><span class="tile" style="background:#30D158">C</span><span class="tile" style="background:#BF5AF2">D</span><span class="tile" style="background:#FF375F">E</span><span class="tile" style="background:#64D2FF">F</span><span class="tile" style="background:#FFD60A">G</span>
+        <span class="tile" style="background:#FF9F0A">H</span><span class="tile" style="background:#0A84FF">I</span><span class="tile" style="background:#30D158">J</span><span class="tile" style="background:#BF5AF2">K</span><span class="tile" style="background:#FF375F">L</span><span class="tile" style="background:#64D2FF">M</span><span class="tile" style="background:#FFD60A">N</span>
+      </div>
+      <div class="scrim"></div>
+      <div class="alert">
+        <h5>Delete “Games”?</h5>
+        <p>Its apps move to Create.</p>
+        <div class="btns"><span class="btn-plain">Cancel</span><span class="btn-danger">Delete</span></div>
+      </div>
+    </section>
+
+    <!-- 4. Hidden popover and Undo toast -->
+    <section class="card">
+      <p class="label">4 · Hidden apps popover and Undo toast</p>
+      <div class="toolbar" style="justify-content:flex-end">
+        <span class="hdr"><span class="btn-glass on">Hidden 2</span><span class="btn-glass">Groups</span><span class="btn-glass">Edit</span></span>
+      </div>
+      <div class="popover" style="width:280px; margin-left:auto">
+        <h4 style="margin:2px 4px 8px">Hidden apps</h4>
+        <div class="hidden-row"><span>Photo Booth</span><span class="btn-prominent" style="height:24px">Restore</span></div>
+        <div class="hidden-row"><span>Dictionary</span><span class="btn-prominent" style="height:24px">Restore</span></div>
+      </div>
+      <div style="position:absolute; left:50%; bottom:26px; transform:translateX(-50%)">
+        <span class="toast">Hidden Maps <span class="btn-glass" style="height:26px; font-size:12px; padding:0 12px">Undo</span></span>
+      </div>
+    </section>
+
+    <!-- 5. Onboarding shortcut step -->
+    <section class="card" style="grid-column: 1 / -1">
+      <p class="label">5 · Onboarding, shortcut step</p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:28px">
+        <div>
+          <p class="label" style="margin-bottom:8px">Modifier keys</p>
+          <div class="toggles">
+            <span class="tg on"><span class="k">&#8984;</span>Command</span>
+            <span class="tg"><span class="k">&#8997;</span>Option</span>
+            <span class="tg"><span class="k">&#8679;</span>Shift</span>
+            <span class="tg"><span class="k">&#8963;</span>Control</span>
+          </div>
+          <p class="label" style="margin:16px 0 6px">Key</p>
+          <div class="seg-wide"><span>Space</span><span class="on">Tab</span><span>`</span></div>
+        </div>
+        <div>
+          <p class="label" style="margin-bottom:8px">Footer</p>
+          <div class="foot" style="margin-top:0">
+            <span class="btn-glass" style="height:30px">Back</span>
+            <span class="btn-glass" style="height:30px; background:transparent; border-color:transparent">Skip for now</span>
+            <span class="cta">Continue</span>
+          </div>
+          <p class="caption" style="margin-top:14px">Continue is the prominent ink button. Back and Skip are borderless, so the system draws their hover and focus.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="notes">Mockups by hand from the SwiftUI changes in this PR. Exact metrics, the real SF Symbols and the true glass come from macOS 26; check them with docs/mac-test-checklist.md on a Mac.</p>
+</body>
+</html>

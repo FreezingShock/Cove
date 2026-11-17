@@ -2,13 +2,15 @@
 //  GridOverlays.swift
 //  Inlet
 //
-//  The panels that float over the grid: the Hidden apps list and the Undo
-//  toast that follows a hide. Both use the Inlet glass and tokens.
+//  The Hidden apps list, shown in a popover from the header, and the Undo
+//  toast that follows a hide. Restore and Undo use the system glass button
+//  style, so they get the native hover, press and focus behavior.
 //
 
 import SwiftUI
 
-/// The list of hidden apps, each with a Restore button.
+/// The list of hidden apps, each with a Restore button. The popover that
+/// holds it supplies the window chrome, so this view draws no background.
 struct HiddenAppsPanel: View {
     struct Row: Identifiable {
         let id: String
@@ -21,31 +23,30 @@ struct HiddenAppsPanel: View {
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        VStack(alignment: .leading, spacing: InletSpace.xxs) {
+        VStack(alignment: .leading, spacing: InletSpace.xs) {
             Text("Hidden apps")
-                .font(InletFont.section)
+                .font(.headline)
                 .foregroundStyle(InletText.secondary(contrast))
-                .padding(.horizontal, InletSpace.s)
-                .padding(.vertical, InletSpace.s)
+
+            if rows.isEmpty {
+                Text("No hidden apps.")
+                    .font(.callout)
+                    .foregroundStyle(InletText.secondary(contrast))
+            }
 
             ForEach(rows) { row in
                 HStack(spacing: InletSpace.m) {
                     Text(row.name)
-                        .font(InletFont.subhead)
-                        .foregroundStyle(InletColor.text)
+                        .font(.body)
                         .lineLimit(1)
                     Spacer(minLength: InletSpace.s)
                     Button("Restore") { onRestore(row.id) }
                         .buttonStyle(InletAccentButtonStyle())
                 }
-                .padding(.horizontal, InletSpace.s)
-                .padding(.vertical, InletSpace.xs)
             }
         }
-        .padding(InletSpace.s)
+        .padding(InletSpace.m)
         .frame(width: 280, alignment: .leading)
-        .inletPanelGlass(cornerRadius: InletRadius.panel)
-        .shadow(color: InletColor.gShadow, radius: 18, y: 8)
     }
 }
 
