@@ -14,7 +14,7 @@
 
 <p align="center">
   <strong>Every app, one keystroke away.</strong><br>
-  A full-screen app grid and search for your Mac, built to replace Launchpad.
+  The full-screen app grid Apple took away, back on your Mac.
 </p>
 
 <p align="center">
@@ -24,85 +24,104 @@
 </p>
 
 <p align="center">
-  macOS 26 or later &nbsp;·&nbsp; MIT licensed &nbsp;·&nbsp; No accounts, no tracking
+  macOS 26 or later &nbsp;·&nbsp; Free &nbsp;·&nbsp; Open source (MIT)
 </p>
 
 <p align="center">
-  <img src="docs/readme/hero-grid.png" alt="Inlet's full-screen grid over a macOS desktop, with the search field at the top" width="100%">
+  <img src="docs/readme/hero-grid.png" alt="Inlet's full-screen grid of apps over a macOS desktop, with the search field at the top" width="100%">
 </p>
 
-Apple removed Launchpad in macOS 26 Tahoe. Inlet brings the full-screen grid back and adds one search field for apps and files. Your apps, files and layout stay on your Mac.
-
-<p align="center">
-  <img src="docs/readme/quick-panel.png" alt="The Inlet quick panel above the Dock, showing recent apps and recent files" width="49%">
-  <img src="docs/readme/search.png" alt="Searching for note in Inlet, with matching apps and files" width="49%">
-</p>
-
-## Features
-
-**Grid.** Every app in `/Applications`, `~/Applications` and `/System/Applications` shows up with its own macOS icon. Click one to open it. Escape or a click outside closes the grid. Swipe between pages on the trackpad, or pinch to open the grid. Pinch and F4 are on by default.
-
-**Search.** Start typing and the grid filters as you go. The best match is highlighted, and matching files from Spotlight appear underneath. Inlet keeps no index of its own, so anything Spotlight can find, Inlet can find.
-
-**Edit mode.** Press and hold an icon to rearrange the grid. Group related apps into folders, up to nine apps each. Tap the minus badge to hide a third-party app. Apple's built-in apps can't be hidden. Undo is one tap away, and hidden apps come back from the Hidden list.
-
-**Groups.** Six presets (Create, Build, School, Everyday, Games and Other) sit in a bar above the grid. Tap one to filter the grid to it. Add your own, then rename, recolor, re-icon and reorder them. Right-click an app to move it to another group.
-
-**Quick panel.** Click Inlet's Dock icon, or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>Space</kbd>, for a small panel with recent apps, recent files and a Show All Apps button. Show 4, 8 or 12 recent apps and 0 to 5 recent files. A Dock click can open the full grid instead if you prefer.
-
-**Accessibility.** Inlet follows Reduce Motion, Reduce Transparency and Increase Contrast from your Mac's settings. Nothing needs to be set up inside Inlet.
-
-## Keyboard
-
-| Keys | What it does |
-| --- | --- |
-| <kbd>⌥</kbd> <kbd>Space</kbd> | Open the full grid. Change it in Settings › Keyboard. |
-| <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd> | Open the quick panel. |
-| <kbd>F4</kbd> | Open the grid. On by default. |
-| <kbd>Return</kbd> | Open the top match. |
-| <kbd>⌘</kbd> <kbd>Return</kbd> | Show the top file in Finder. |
-| <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> | Move through results. |
-| <kbd>Esc</kbd> | Clear the search first, then close. |
-
-While Inlet is running, <kbd>⌥</kbd><kbd>Space</kbd> belongs to Inlet everywhere, so it won't type a non-breaking space in text fields. Change the shortcut if that gets in your way.
-
-## Settings
-
-Open Settings with <kbd>⌘</kbd><kbd>,</kbd>. It uses standard macOS controls, so it works the way the rest of your Mac does.
-
-| Pane | Controls |
-| --- | --- |
-| General | Open at login, menu bar icon, close after launch, Escape behavior |
-| Keyboard | The grid and quick panel shortcuts. Press the keys you want, or Esc to cancel. |
-| Appearance | Light, Dark, or Auto (follows your Mac) |
-| Grid | Columns, 5 to 9 (7 by default) |
-| Search | Include files, and how many (0 to 8) |
-| Quick Panel | Dock click action, recent apps and recent files |
-| Privacy | Erase launch history |
-| About | Version, apps found, last scan, update checks |
+---
 
 ## Install
 
+Inlet installs like any other Mac app. You don't need an account, and there's nothing to set up first.
+
+1. **Download** Inlet with the button above. You get a file called `Inlet.dmg`.
+2. **Open** the disk image and drag **Inlet** onto **Applications**.
+3. **Open Inlet** from Applications. Apple doesn't check Inlet yet, so macOS stops the first launch. Click **Done**.
+4. Open **System Settings**, go to **Privacy & Security**, scroll down, and click **Open Anyway** next to Inlet. Enter your password. Inlet opens, and you won't see this again.
+
+<p align="center">
+  <img src="docs/readme/feature-install.png" alt="Drag Inlet from the disk image into the Applications folder" width="92%">
+</p>
+
+If the Open Anyway button disappears, try opening Inlet once more and it will come back.
+
 Requires macOS 26 or later.
 
-1. Click **Download for Mac**. You get `Inlet.dmg`.
-2. Open the disk image and drag **Inlet** into **Applications**.
-3. Open Inlet. macOS says it can't verify the app, because Inlet isn't notarized by Apple. Click **Done**.
-4. Open **System Settings › Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to Inlet. Confirm with your password, then open Inlet again.
+---
 
-The Open Anyway button stays available for a short time after the first attempt. If it's gone, try opening Inlet again.
+## Features
 
-Prefer Terminal? Run this once, then open Inlet normally:
+<p align="center">
+  <img src="docs/readme/feature-grid.png" alt="The grid of every app on your Mac" width="92%">
+</p>
 
-```sh
-xattr -dr com.apple.quarantine /Applications/Inlet.app
-```
+**Every app, in one grid.** Inlet shows all the apps on your Mac with their own icons. Click one to open it. Press Escape or click outside to close the grid. You can swipe between pages on the trackpad, and pinch to open it.
 
-Inlet is free and open source. Notarizing it needs a paid Apple Developer account, and the project doesn't use one.
+<p align="center">
+  <img src="docs/readme/feature-search.png" alt="Typing a search shows matching apps and files" width="92%">
+</p>
 
-## Build from source
+**Search for anything.** Start typing and the grid narrows down. The best match is highlighted, and matching files show up underneath. Press Return to open the top match, or Command Return to show a file in Finder.
 
-Requires macOS 26 and Xcode 26.
+<p align="center">
+  <img src="docs/readme/feature-quick.png" alt="The quick panel above the Dock, with recent apps and files" width="92%">
+</p>
+
+**A quick panel from your Dock.** Click the Inlet icon in the Dock to see your recent apps and files, with one button to open the full grid. You choose how many recent apps and files to show.
+
+<p align="center">
+  <img src="docs/readme/feature-groups.png" alt="A row of group tabs above the app grid, with four groups and their apps" width="92%">
+</p>
+
+**Groups.** Sort your apps into groups like Create, Build, School, Everyday, Games, and Other. Tap a group to see only its apps. Make your own groups too, and name them, color them, and put them in the order you like. Right-click any app to move it to another group.
+
+<p align="center">
+  <img src="docs/readme/feature-edit.png" alt="Edit mode with apps jiggling, a folder, and an Undo button" width="92%">
+</p>
+
+**Arrange it your way.** Press and hold an icon to move it. Put related apps in a folder, up to nine apps each. Hide any app you don't use by tapping the small minus badge, and bring it back later from the hidden list. Apple's own apps can't be hidden. Your layout is saved on your Mac.
+
+<p align="center">
+  <img src="docs/readme/feature-keys.png" alt="Keycaps for Option Space, Control Option Space, Return, and Command Return" width="92%">
+</p>
+
+**Keyboard first.** <kbd>⌥</kbd> <kbd>Space</kbd> opens the grid from anywhere. <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd> opens the quick panel. <kbd>F4</kbd> also opens the grid. <kbd>Esc</kbd> clears your search first and closes the grid when the search is empty. You can change any of these in Settings.
+
+<p align="center">
+  <img src="docs/readme/feature-settings.png" alt="A settings window with appearance, grid columns, search files, updates, and hot corner controls" width="92%">
+</p>
+
+**Settings that feel like a Mac.** Pick Light, Dark, or Auto for the appearance. Choose 5 to 9 grid columns. Decide whether search includes files. Turn update checks on or off. Press <kbd>⌘</kbd> <kbd>,</kbd> to open Settings.
+
+<p align="center">
+  <img src="docs/readme/feature-privacy.png" alt="A lock icon with the words stays on your Mac" width="92%">
+</p>
+
+**Stays on your Mac.** Inlet has no account and no analytics, and it doesn't upload your files or your list of apps. Your recent items, groups, and layout are saved only on your Mac. The one network call is a daily check for updates, and you can turn it off in Settings.
+
+---
+
+## Supporter
+
+<p align="center">
+  <img src="docs/readme/supporter.png" alt="The Supporter plan at five dollars a month, with custom themes and zones, unlimited groups, early builds, and the 1.0 release" width="92%">
+</p>
+
+Inlet is free, and the whole app is included. If you want to help keep it going, you can become a **Supporter** for **$5 a month** through [GitHub Sponsors](https://github.com/sponsors/FreezingShock).
+
+Supporters get the customization tools (custom themes and zones) and early builds a few weeks before each release. Supporter opens with the 1.0 release. Building Inlet from source stays free.
+
+---
+
+## Build it yourself
+
+<details>
+<summary>Build from source (for developers)</summary>
+
+You need macOS 26 and Xcode 26.
 
 ```sh
 git clone https://github.com/FreezingShock/Inlet.git
@@ -110,22 +129,26 @@ cd Inlet
 open Inlet.xcodeproj
 ```
 
-In Xcode, choose the **Inlet** scheme and **My Mac**, then press <kbd>⌘</kbd><kbd>R</kbd>. If Xcode asks for a development team, open **Signing & Capabilities** for the Inlet target and choose **Sign to Run Locally**. Press <kbd>⌘</kbd><kbd>U</kbd> to run the tests.
+In Xcode, choose the **Inlet** scheme and **My Mac**, then press <kbd>⌘</kbd> <kbd>R</kbd>. If Xcode asks for a development team, open **Signing & Capabilities** for the Inlet target and choose **Sign to Run Locally**. Press <kbd>⌘</kbd> <kbd>U</kbd> to run the tests.
 
-## Supporter
-
-Inlet is free, and the whole app is included with no sign-in. Supporter is **$5 a month** through [GitHub Sponsors](https://github.com/sponsors/FreezingShock). It pays for the customization tools (custom themes and zones) and for early builds. Supporter opens with the 1.0 release. Building from source is always free.
-
-## Privacy
-
-Inlet has no accounts, analytics or tracking. Your recent items, groups, layout and settings are saved on your Mac, and Inlet doesn't upload your files or your app list.
-
-The only network call is an update check to GitHub, once a day. You can turn it off in Settings. Inlet never sends a crash or feedback report on its own. Those open a GitHub issue in your browser, and you decide what to post.
-
-## License
-
-Inlet is released under the [MIT License](LICENSE). Read it, change it, and build it for any purpose.
+</details>
 
 ---
 
-Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.
+## Privacy
+
+Your data stays on your Mac. Inlet doesn't upload your files or your app list, and it has no analytics or tracking. The only network call is a daily update check to GitHub, and you can turn it off in Settings.
+
+Inlet never sends a crash or feedback report on its own. Those open a GitHub issue in your browser, and you decide what to post.
+
+---
+
+## License
+
+Inlet is open source under the [MIT License](LICENSE). Read it, change it, and build it for any purpose.
+
+---
+
+<p align="center">
+  <sub>Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.</sub>
+</p>
