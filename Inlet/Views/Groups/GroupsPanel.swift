@@ -2,9 +2,15 @@
 //  GroupsPanel.swift
 //  Inlet
 //
-//  The panel that manages groups: add one, rename it in place, pick a color
-//  and an icon, move it up or down the bar, or delete it. It only shows the
-//  groups and reports what the user chose. AppGridView saves the change.
+//  The Groups popover, opened from the Groups button in the grid header. It
+//  adds a group, renames one in place, picks a color from a menu, picks an
+//  icon from a popover, moves a group up or down the bar, and deletes one
+//  after an alert asks. It only reports what the user chose. AppGridView
+//  saves the change.
+//
+//  Controls are the stock macOS ones: a pop-up menu for color, a popover for
+//  the symbol grid, a destructive alert, and borderless icon buttons that get
+//  the system hover, press and keyboard focus for free.
 //
 
 import SwiftUI
@@ -21,31 +27,25 @@ struct GroupsPanel: View {
     let onDelete: (String) -> Void
 
     @Environment(\.colorSchemeContrast) private var contrast
-    /// The group whose icon grid is open, if any.
+    /// The group whose icon popover is open, if any.
     @State private var iconPickerID: String?
-    /// The group whose Delete button is showing. Deleting takes two taps.
-    @State private var armedDeleteID: String?
+    /// The group the user asked to delete. Setting it shows the alert.
+    @State private var pendingDelete: AppGroup?
 
     var body: some View {
         VStack(alignment: .leading, spacing: InletSpace.s) {
-            HStack(alignment: .firstTextBaseline) {
+            HStack(alignment: .center) {
                 Text("Groups")
-                    .font(InletFont.section)
-                    .foregroundStyle(InletText.secondary(contrast))
+                    .font(.headline)
                 Spacer()
                 Button(action: onAdd) {
-                    Label("Add group", systemImage: "plus")
-                        .font(InletFont.section)
-                        .foregroundStyle(InletColor.accentInk)
-                        .padding(.horizontal, InletSpace.m)
-                        .padding(.vertical, InletSpace.xs)
-                        .background(Capsule().fill(InletColor.accent))
-                        .contentShape(Capsule())
+                    Label("Add Group", systemImage: "plus")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glassProminent)
+                .tint(InletColor.accent)
+                .controlSize(.small)
             }
-            .padding(.horizontal, InletSpace.s)
-            .padding(.top, InletSpace.s)
+            .padding(.horizontal, InletSpace.xs)
 
             ScrollView {
                 VStack(spacing: InletSpace.xs) {
@@ -54,124 +54,124 @@ struct GroupsPanel: View {
                     }
                 }
             }
-            .frame(maxHeight: 440)
+            .frame(maxHeight: 420)
 
             Text("Each app is in one group. Right-click an icon to move it.")
-                .font(InletFont.caption)
+                .font(.caption)
                 .foregroundStyle(InletText.secondary(contrast))
-                .padding(.horizontal, InletSpace.s)
-                .padding(.bottom, InletSpace.xs)
+                .padding(.horizontal, InletSpace.xs)
         }
-        .padding(InletSpace.xs)
-        .frame(width: 340, alignment: .leading)
-        .inletPanelGlass(cornerRadius: InletRadius.panel)
-        .shadow(color: InletColor.gShadow, radius: 18, y: 8)
+        .padding(InletSpace.m)
+        .frame(width: 360, alignment: .leading)
+        .alert(
+            alertTitle,
+            isPresented: Binding(
+                get: { pendingDelete != nil },
+                set: { if !$0 { pendingDelete = nil } }
+            ),
+            presenting: pendingDelete
+        ) { group in
+            Button("Delete", role: .destructive) {
+                onDelete(group.id)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: { group in
+            Text("Its apps move to \(fallbackName(excluding: group.id)).")
+        }
+    }
+
+    private var alertTitle: String {
+        if let pendingDelete {
+            return "Delete “\(pendingDelete.name)”?"
+        }
+        return "Delete group?"
     }
 
     // MARK: - Rows
 
     private func groupRow(_ group: AppGroup, index: Int) -> some View {
-        VStack(alignment: .leading, spacing: InletSpace.xs) {
-            HStack(spacing: InletSpace.xs) {
-                Button {
-                    iconPickerID = iconPickerID == group.id ? nil : group.id
-                } label: {
-                    Image(systemName: group.symbol)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(group.color.color)
-                        .frame(width: 28, height: 28)
-                        .background(Circle().fill(InletColor.hover))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Icon for \(group.name)")
-                .accessibilityHint("Shows the icon choices")
-
-                GroupNameField(name: group.name) { newName in
-                    onRename(group.id, newName)
-                }
-
-                iconButton("arrow.up", label: "Move \(group.name) up", enabled: index > 0) {
-                    onMove(group.id, index - 1)
-                }
-                iconButton("arrow.down", label: "Move \(group.name) down", enabled: index < groups.count - 1) {
-                    onMove(group.id, index + 1)
-                }
-
-                if armedDeleteID == group.id {
-                    Button("Delete") {
-                        armedDeleteID = nil
-                        onDelete(group.id)
-                    }
-                    .buttonStyle(.plain)
-                    .font(InletFont.section)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, InletSpace.s)
-                    .padding(.vertical, InletSpace.xs)
-                    .background(Capsule().fill(Color.red))
-                    .contentShape(Capsule())
-                } else {
-                    iconButton("trash", label: "Delete \(group.name)", enabled: groups.count > 1) {
-                        armedDeleteID = group.id
-                    }
-                }
+        HStack(spacing: InletSpace.xs) {
+            // The icon opens a popover with the symbol choices.
+            Button {
+                iconPickerID = group.id
+            } label: {
+                Image(systemName: group.symbol)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(group.color.color)
+                    .frame(width: 26, height: 26)
             }
-
-            colorRow(group)
-
-            if iconPickerID == group.id {
+            .buttonStyle(.borderless)
+            .help("Choose an icon")
+            .accessibilityLabel("Icon for \(group.name)")
+            .accessibilityHint("Shows the icon choices")
+            .popover(isPresented: iconPopoverBinding(for: group.id), arrowEdge: .trailing) {
                 iconGrid(group)
             }
 
-            if armedDeleteID == group.id {
-                Text("Its apps move to \(fallbackName(excluding: group.id)).")
-                    .font(InletFont.caption)
-                    .foregroundStyle(InletText.secondary(contrast))
-                    .padding(.leading, 36)
+            GroupNameField(name: group.name) { newName in
+                onRename(group.id, newName)
+            }
+
+            // The color is a pop-up menu. The dot shows the current choice.
+            Circle()
+                .fill(group.color.color)
+                .frame(width: 10, height: 10)
+                .accessibilityHidden(true)
+
+            Picker(
+                "Color",
+                selection: Binding(
+                    get: { group.color },
+                    set: { onRecolor(group.id, $0) }
+                )
+            ) {
+                ForEach(GroupColor.allCases, id: \.self) { color in
+                    Text(color.label).tag(color)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
+
+            Spacer(minLength: 0)
+
+            iconButton("arrow.up", label: "Move \(group.name) up", help: "Move up", enabled: index > 0) {
+                onMove(group.id, index - 1)
+            }
+            iconButton("arrow.down", label: "Move \(group.name) down", help: "Move down", enabled: index < groups.count - 1) {
+                onMove(group.id, index + 1)
+            }
+            iconButton("trash", label: "Delete \(group.name)", help: "Delete group", enabled: groups.count > 1, role: .destructive) {
+                pendingDelete = group
             }
         }
-        .padding(InletSpace.s)
+        .padding(.horizontal, InletSpace.s)
+        .padding(.vertical, InletSpace.xs)
         .background(
             RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous)
-                .fill(InletColor.hover)
+                .fill(.quaternary)
         )
     }
 
-    private func colorRow(_ group: AppGroup) -> some View {
-        HStack(spacing: InletSpace.xs) {
-            ForEach(GroupColor.allCases, id: \.self) { color in
-                Button {
-                    onRecolor(group.id, color)
-                } label: {
-                    Circle()
-                        .fill(color.color)
-                        .frame(width: 16, height: 16)
-                        .overlay {
-                            Circle()
-                                .strokeBorder(InletColor.text, lineWidth: 2)
-                                .frame(width: 22, height: 22)
-                                .opacity(group.color == color ? 1 : 0)
-                        }
-                        .frame(width: 22, height: 22)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("\(color.label) color")
-                .accessibilityAddTraits(group.color == color ? .isSelected : [])
-            }
-        }
-        .padding(.leading, 36)
+    private func iconPopoverBinding(for id: String) -> Binding<Bool> {
+        Binding(
+            get: { iconPickerID == id },
+            set: { if !$0 { iconPickerID = nil } }
+        )
     }
 
     private func iconGrid(_ group: AppGroup) -> some View {
         LazyVGrid(
-            columns: Array(repeating: GridItem(.fixed(38), spacing: InletSpace.xs), count: 6),
-            alignment: .leading,
-            spacing: InletSpace.xs
+            columns: Array(repeating: GridItem(.fixed(38), spacing: 6), count: 6),
+            alignment: .center,
+            spacing: 6
         ) {
             ForEach(AppGroup.symbolChoices, id: \.self) { symbol in
                 iconChoice(symbol, for: group)
             }
         }
-        .padding(.leading, 36)
+        .padding(12)
+        .frame(width: 290)
     }
 
     private func iconChoice(_ symbol: String, for group: AppGroup) -> some View {
@@ -181,15 +181,16 @@ struct GroupsPanel: View {
             iconPickerID = nil
         } label: {
             Image(systemName: symbol)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(chosen ? group.color.color : InletColor.text)
-                .frame(width: 38, height: 30)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(chosen ? group.color.color : .primary)
+                .frame(width: 38, height: 32)
                 .background(
                     RoundedRectangle(cornerRadius: InletRadius.xs, style: .continuous)
-                        .fill(chosen ? InletColor.accentSoft : InletColor.hover)
+                        .fill(chosen ? Color.accentColor.opacity(0.18) : Color.clear)
                 )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
+        .help(symbol)
         .accessibilityLabel("Icon \(symbol)")
         .accessibilityAddTraits(chosen ? .isSelected : [])
     }
@@ -197,19 +198,20 @@ struct GroupsPanel: View {
     private func iconButton(
         _ symbol: String,
         label: String,
+        help: String,
         enabled: Bool = true,
+        role: ButtonRole? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
+        Button(role: role, action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(InletColor.text)
+                .font(.system(size: 12, weight: .semibold))
                 .frame(width: 22, height: 22)
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .disabled(!enabled)
-        .opacity(enabled ? 1 : 0.35)
+        .help(help)
         .accessibilityLabel(label)
     }
 
@@ -240,8 +242,7 @@ private struct GroupNameField: View {
     var body: some View {
         TextField("Group name", text: $text)
             .textFieldStyle(.plain)
-            .font(InletFont.subhead)
-            .foregroundStyle(InletColor.text)
+            .font(.body)
             .lineLimit(1)
             .focused($isFocused)
             .onSubmit { commit() }

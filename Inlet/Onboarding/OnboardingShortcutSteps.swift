@@ -152,33 +152,26 @@ private struct OnboardingFieldGroup<Content: View>: View {
     }
 }
 
-/// A modifier toggle. On is ink-filled, the same as a selected segment.
+/// A modifier toggle, drawn as the system button-style toggle. Its on state is
+/// the same selected look as a segmented control.
 private struct ModifierChip: View {
     let modifier: OnboardingModifier
     let isOn: Bool
     let toggle: () -> Void
 
     var body: some View {
-        Button(action: toggle) {
+        Toggle(isOn: Binding(get: { isOn }, set: { _ in toggle() })) {
             HStack(spacing: InletSpace.s) {
                 Text(modifier.symbol)
                     .font(.system(size: 17))
                 Text(modifier.name)
-                    .font(InletFont.body.weight(.semibold))
-                Spacer(minLength: 0)
+                    .font(.body.weight(.semibold))
             }
-            .foregroundStyle(isOn ? OnboardingInk.onInk : InletColor.text)
-            .padding(.horizontal, InletSpace.m + InletSpace.xxs)
-            .frame(height: InletSize.hitTarget - InletSpace.xs)
-            .background(isOn ? InletColor.text : InletColor.field, in: RoundedRectangle(cornerRadius: InletRadius.md - InletSpace.xs, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: InletRadius.md - InletSpace.xs, style: .continuous)
-                    .strokeBorder(InletColor.hair, lineWidth: isOn ? 0 : 1)
-            )
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.plain)
-        .inletAnimation(.inletPress, value: isOn)
-        .accessibilityAddTraits(isOn ? .isSelected : [])
+        .toggleStyle(.button)
+        .controlSize(.large)
+        .tint(InletColor.accent)
         .accessibilityLabel(modifier.name)
     }
 }
@@ -242,7 +235,8 @@ struct TryStep: View {
             Button(model.deskOpen ? "Close Inlet" : "Open with a click instead") {
                 model.toggleDeskFromButton()
             }
-            .buttonStyle(OnboardingButtonStyle(kind: .ghost))
+            .buttonStyle(.borderless)
+            .controlSize(.large)
             .padding(.top, InletSpace.xs)
         }
         .inletAnimation(.inletOpen, value: model.deskOpen)

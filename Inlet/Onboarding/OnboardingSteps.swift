@@ -369,9 +369,12 @@ struct DoneStep: View {
 
             HStack(spacing: InletSpace.m) {
                 Button("Change shortcut", action: onChangeShortcut)
-                    .buttonStyle(OnboardingButtonStyle(kind: .ghost))
+                    .buttonStyle(.borderless)
+                    .controlSize(.large)
                 Button("Start using Inlet", action: onStart)
-                    .buttonStyle(OnboardingButtonStyle(kind: .primary))
+                    .buttonStyle(.glassProminent)
+                    .tint(InletColor.text)
+                    .controlSize(.large)
             }
             .padding(.top, InletSpace.xxl)
         }

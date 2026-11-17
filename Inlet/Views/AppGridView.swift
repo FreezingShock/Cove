@@ -220,8 +220,6 @@ struct AppGridView: View {
             }
         }
         .frame(minWidth: minimumGridWidth, maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .topTrailing) { hiddenPanel }
-        .overlay(alignment: .topTrailing) { groupsPanel }
         .overlay(alignment: .bottom) { undoToast }
         // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
@@ -292,12 +290,17 @@ struct AppGridView: View {
                     .foregroundStyle(InletText.secondary(contrast))
             }
 
+            // Hidden and Groups open as native popovers anchored to their button.
+            // Clicking outside a popover closes it, the same as the other menus.
             if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
                     withAnimation(motion(.inletOpen)) {
                         showsGroups = false
                         showsHidden.toggle()
                     }
+                }
+                .popover(isPresented: $showsHidden, arrowEdge: .bottom) {
+                    hiddenPanelContent
                 }
             }
 
@@ -307,6 +310,9 @@ struct AppGridView: View {
                         showsHidden = false
                         showsGroups.toggle()
                     }
+                }
+                .popover(isPresented: $showsGroups, arrowEdge: .bottom) {
+                    groupsPanelContent
                 }
             }
 
@@ -321,17 +327,15 @@ struct AppGridView: View {
         .padding(.bottom, InletSpace.xl)
     }
 
-    /// A small capsule button for the header.
+    /// A header button in the system Liquid Glass button style, so it gets the
+    /// native hover, press and keyboard focus rings.
     private func headerButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(InletFont.section)
-                .foregroundStyle(InletColor.text)
-                .padding(.horizontal, InletSpace.l)
-                .padding(.vertical, InletSpace.s)
-                .background(Capsule().fill(InletColor.hover))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.glass)
+        .controlSize(.large)
     }
 
     // MARK: Grid
@@ -422,47 +426,36 @@ struct AppGridView: View {
     }
 
     /// The Hidden apps list, opened from the header.
-    @ViewBuilder
-    private var hiddenPanel: some View {
-        if showsHidden, !layoutStore.layout.hidden.isEmpty {
-            HiddenAppsPanel(rows: hiddenRows, onRestore: restore)
-                .padding(.top, 64)
-                .padding(.trailing, InletSize.gridSidePadding)
-                .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
-        }
+    /// The Hidden apps popover, opened from the Hidden button.
+    private var hiddenPanelContent: some View {
+        HiddenAppsPanel(rows: hiddenRows, onRestore: restore)
     }
 
-    /// The Groups panel, opened from the header.
-    @ViewBuilder
-    private var groupsPanel: some View {
-        if showsGroups {
-            GroupsPanel(
-                groups: layoutStore.layout.groups,
-                onAdd: addGroup,
-                onRename: { id, name in
-                    layoutStore.update { $0.editGroup(withID: id, name: name) }
-                },
-                onRecolor: { id, color in
-                    layoutStore.update { $0.editGroup(withID: id, color: color) }
-                },
-                onSetSymbol: { id, symbol in
-                    layoutStore.update { $0.editGroup(withID: id, symbol: symbol) }
-                },
-                onMove: { id, index in
-                    withAnimation(motion(.inletSettle)) {
-                        layoutStore.update { $0.moveGroup(withID: id, to: index) }
-                    }
-                },
-                onDelete: { id in
-                    withAnimation(motion(.inletSettle)) {
-                        layoutStore.update { $0.deleteGroup(withID: id) }
-                    }
+    /// The Groups popover, opened from the Groups button.
+    private var groupsPanelContent: some View {
+        GroupsPanel(
+            groups: layoutStore.layout.groups,
+            onAdd: addGroup,
+            onRename: { id, name in
+                layoutStore.update { $0.editGroup(withID: id, name: name) }
+            },
+            onRecolor: { id, color in
+                layoutStore.update { $0.editGroup(withID: id, color: color) }
+            },
+            onSetSymbol: { id, symbol in
+                layoutStore.update { $0.editGroup(withID: id, symbol: symbol) }
+            },
+            onMove: { id, index in
+                withAnimation(motion(.inletSettle)) {
+                    layoutStore.update { $0.moveGroup(withID: id, to: index) }
                 }
-            )
-            .padding(.top, 64)
-            .padding(.trailing, InletSize.gridSidePadding)
-            .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.94, anchor: .topTrailing)))
-        }
+            },
+            onDelete: { id in
+                withAnimation(motion(.inletSettle)) {
+                    layoutStore.update { $0.deleteGroup(withID: id) }
+                }
+            }
+        )
     }
 
     /// The Undo toast, shown for a few seconds after an app is hidden.

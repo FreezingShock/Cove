@@ -97,7 +97,8 @@ struct OnboardingView: View {
             HStack(spacing: InletSpace.s) {
                 if model.canGoBack {
                     Button("Back") { model.back() }
-                        .buttonStyle(OnboardingButtonStyle(kind: .ghost))
+                        .buttonStyle(.borderless)
+                        .controlSize(.large)
                 }
             }
             .frame(minWidth: 170, alignment: .leading)
@@ -107,10 +108,13 @@ struct OnboardingView: View {
             HStack(spacing: InletSpace.s) {
                 if model.canSkip {
                     Button("Skip for now") { model.skipTry() }
-                        .buttonStyle(OnboardingButtonStyle(kind: .ghost))
+                        .buttonStyle(.borderless)
+                        .controlSize(.large)
                 }
                 Button(model.continueTitle) { model.next() }
-                    .buttonStyle(OnboardingButtonStyle(kind: .primary))
+                    .buttonStyle(.glassProminent)
+                    .tint(InletColor.text)
+                    .controlSize(.large)
                     .disabled(!model.canContinue)
             }
             .frame(minWidth: 170, alignment: .trailing)
@@ -131,29 +135,5 @@ struct OnboardingView: View {
             RadialGradient(colors: [InletColor.glowC, .clear], center: UnitPoint(x: 0.6, y: 0.3), startRadius: 0, endRadius: 360)
         }
         .clipShape(RoundedRectangle(cornerRadius: InletRadius.window, style: .continuous))
-    }
-}
-
-/// Primary is the ink-filled pill that moves the flow forward. Ghost is the
-/// quiet text button beside it.
-struct OnboardingButtonStyle: ButtonStyle {
-    enum Kind {
-        case primary, ghost
-    }
-
-    let kind: Kind
-
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(InletFont.headline)
-            .foregroundStyle(kind == .primary ? OnboardingInk.onInk : InletColor.text2)
-            .padding(.horizontal, kind == .primary ? 24 : 16)
-            .frame(height: InletSize.hitTarget)
-            .background(kind == .primary ? InletColor.text : Color.clear, in: Capsule())
-            .opacity(isEnabled ? 1 : 0.38)
-            .scaleEffect(configuration.isPressed ? 0.94 : 1)
-            .animation(.inletPress, value: configuration.isPressed)
     }
 }
