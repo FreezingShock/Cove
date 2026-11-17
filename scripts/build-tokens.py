@@ -6,6 +6,10 @@ Writes two marked blocks:
                                   radius and motion between /* BEGIN GENERATED: radius */ and /* END GENERATED */
   - Inlet/InletTheme.swift        radius and motion between // BEGIN GENERATED and // END GENERATED
 
+Writes the type scale too:
+  - website/css/type.css                  whole file, generated (web fonts and type roles)
+  - Inlet/InletTheme.swift                between // BEGIN GENERATED: type and // END GENERATED: type
+
 Usage:
   python3 scripts/build-tokens.py          rewrite the blocks
   python3 scripts/build-tokens.py --check  exit 1 if the blocks are out of date (CI)
@@ -19,6 +23,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "design" / "tokens.json"
 CSS_FILE = ROOT / "website" / "css" / "tokens.css"
 SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
+TYPE_CSS_FILE = ROOT / "website" / "css" / "type.css"
+SWIFT_TYPE_BEGIN, SWIFT_TYPE_END = "// BEGIN GENERATED: type", "// END GENERATED: type"
 
 CSS_COLOR_BEGIN, CSS_COLOR_END = "/* BEGIN GENERATED: color", "/* END GENERATED: color */"
 CSS_BEGIN, CSS_END = "/* BEGIN GENERATED: radius", "/* END GENERATED */"
@@ -203,6 +209,65 @@ def build_swift(cfg):
     return "\n".join(out) + "\n"
 
 
+SWIFT_WEIGHTS = {"regular": ".regular", "medium": ".medium", "semibold": ".semibold", "bold": ".bold"}
+
+
+def build_type_css(cfg):
+    t = cfg["type"]["web"]
+    roles = t["roles"]
+    w = t["weights"]
+    lines = [
+        "/* Generated from design/tokens.json by scripts/build-tokens.py. Do not hand-edit; change the JSON and rerun. */",
+        "",
+        "/* Figtree, self-hosted (SIL Open Font License, see fonts/OFL-Figtree.txt). One variable file covers",
+        "   weights 300 to 900. Latin subset only; anything else falls back to the system stack. */",
+        "@font-face {",
+        "  font-family: \"Figtree\";",
+        "  src: url(\"../fonts/figtree-latin-wght.woff2\") format(\"woff2\");",
+        "  font-weight: 300 900;",
+        "  font-style: normal;",
+        "  font-display: swap;",
+        "}",
+        "",
+        ":root {",
+        f"  --font-ui: {t['stack']};",
+        f"  --font-mono: {t['mono']};",
+    ]
+    for k, v in w.items():
+        lines.append(f"  --w-{k}: {v};")
+    for name, r in roles.items():
+        lines.append(f"  --fs-{name}: {r['size']};")
+        lines.append(f"  --fw-{name}: var(--w-{r['weight']});")
+        lines.append(f"  --lh-{name}: {fmt(r['lineHeight'])};")
+        lines.append(f"  --ls-{name}: {r['tracking']};")
+    lines.append("}")
+    return "\n".join(lines) + "\n"
+
+
+def build_type_swift(cfg):
+    roles = cfg["type"]["app"]["roles"]
+    out = [
+        "// BEGIN GENERATED: type. Source: design/tokens.json, built by scripts/build-tokens.py.",
+        "// Edit the JSON and rerun the script; do not hand-edit this block.",
+        "",
+        "/// Type roles. SF Pro throughout, through Font.system, which picks the optical size itself.",
+        "/// SwiftUI has no 650 weight, so the spec's 650 becomes .semibold.",
+        "enum InletFont {",
+    ]
+    for name, r in roles.items():
+        weight = SWIFT_WEIGHTS[r["weight"]]
+        if r["weight"] == "regular":
+            expr = f"Font.system(size: {fmt(r['size'])})"
+        else:
+            expr = f"Font.system(size: {fmt(r['size'])}, weight: {weight})"
+        out.append(f"    static let {name} = {expr}  // {r['use']}")
+    out += [
+        "}",
+        "// END GENERATED: type",
+    ]
+    return "\n".join(out) + "\n"
+
+
 def splice(text, begin, end, block, path):
     start = text.find(begin)
     stop = text.find(end)
@@ -225,19 +290,28 @@ def main():
     css_new = splice(css_now, CSS_COLOR_BEGIN, CSS_COLOR_END, color_block, CSS_FILE)
     css_new = splice(css_new, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
     swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
+    swift_new = splice(swift_new, SWIFT_TYPE_BEGIN, SWIFT_TYPE_END, build_type_swift(cfg), SWIFT_FILE)
+    type_css_now = TYPE_CSS_FILE.read_text() if TYPE_CSS_FILE.exists() else ""
+    type_css_new = build_type_css(cfg)
+
+    targets = [
+        (CSS_FILE, css_now, css_new),
+        (SWIFT_FILE, swift_now, swift_new),
+        (TYPE_CSS_FILE, type_css_now, type_css_new),
+    ]
 
     if check:
-        stale = [str(p.relative_to(ROOT)) for p, now, new in
-                 [(CSS_FILE, css_now, css_new), (SWIFT_FILE, swift_now, swift_new)] if now != new]
+        stale = [str(p.relative_to(ROOT)) for p, now, new in targets if now != new]
         if stale:
             print("Out of date, run: python3 scripts/build-tokens.py ->", ", ".join(stale))
             sys.exit(1)
         print("Token blocks are up to date.")
         return
 
-    CSS_FILE.write_text(css_new)
-    SWIFT_FILE.write_text(swift_new)
-    print(f"Wrote {CSS_FILE.relative_to(ROOT)} and {SWIFT_FILE.relative_to(ROOT)}")
+    for path, now, new in targets:
+        if now != new:
+            path.write_text(new)
+    print("Wrote " + ", ".join(str(p.relative_to(ROOT)) for p, _, _ in targets))
 
 
 if __name__ == "__main__":

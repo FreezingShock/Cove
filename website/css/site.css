@@ -4,14 +4,16 @@ body {
   margin: 0;
   background: var(--base);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 17px;
-  line-height: 1.5;
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-feature-settings: "kern", "liga", "calt";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 section { position: relative; scroll-margin-top: 24px; }
 h1, h2, h3, h4, p { margin: 0; }
-h1, h2, h3 { font-weight: 650; text-wrap: balance; }
+h1, h2, h3 { font-weight: var(--w-heading); text-wrap: balance; }
 a { color: inherit; }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
@@ -25,55 +27,41 @@ button, input { font: inherit; color: inherit; }
 
 /* ---------- Type roles ---------- */
 .eyebrow {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-label);
+  line-height: var(--lh-label);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--text-2);
   margin-bottom: 16px;
 }
-/* Web type scale (SF Pro system stack only). Each step is one clear level below the one above:
-   display 72 > section 44 > feature 32 > lede 20 > body 17 > small 15 > caption 13 > label 12.
-   Web-only tokens live here, not in tokens.css, which is a synced copy of the design system. */
-:root {
-  --sec-y: 96px;
-  --fs-display: clamp(44px, 7.2vw, 72px);
-  --fs-section: clamp(32px, 4.4vw, 44px);
-  --fs-feature: clamp(26px, 3vw, 32px);
-  --fs-lede: 20px;
-  --fs-body: 17px;
-  --fs-small: 15px;
-  --fs-caption: 13px;
-  --fs-label: 12px;
-  --ls-display: -0.045em;
-  --ls-section: -0.032em;
-  --ls-feature: -0.026em;
-}
+/* Type roles (--fs-*, --fw-*, --lh-*, --ls-*) come from css/type.css, generated from design/tokens.json. */
+:root { --sec-y: 96px; }
 .h-display {
   font-size: var(--fs-display);
-  font-weight: 650;
-  line-height: 1.0;
+  font-weight: var(--fw-display);
+  line-height: var(--lh-display);
   letter-spacing: var(--ls-display);
   text-wrap: balance;
 }
 .h-display .soft { color: var(--text-3); }
 .h-section {
   font-size: var(--fs-section);
-  font-weight: 650;
-  line-height: 1.08;
+  font-weight: var(--fw-section);
+  line-height: var(--lh-section);
   letter-spacing: var(--ls-section);
   text-wrap: balance;
 }
 .h-feature {
   font-size: var(--fs-feature);
-  font-weight: 650;
-  line-height: 1.12;
+  font-weight: var(--fw-feature);
+  line-height: var(--lh-feature);
   letter-spacing: var(--ls-feature);
   text-wrap: balance;
 }
-.lede { font-size: var(--fs-lede); line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
-.body-2 { font-size: var(--fs-body); line-height: 1.55; color: var(--text-2); text-wrap: pretty; }
-.caption { font-size: var(--fs-caption); color: var(--text-3); }
+.lede { font-size: var(--fs-lede); font-weight: var(--fw-lede); line-height: var(--lh-lede); color: var(--text-2); text-wrap: pretty; }
+.body-2 { font-size: var(--fs-body); font-weight: var(--fw-body); line-height: var(--lh-body); color: var(--text-2); text-wrap: pretty; }
+.caption { font-size: var(--fs-caption); font-weight: var(--fw-caption); line-height: var(--lh-caption); color: var(--text-3); }
 
 /* ---------- Glass ----------
    Glass is for the floating controls only (header, buttons, the Dock sample). Panels and cards
