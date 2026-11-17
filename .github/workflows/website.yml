@@ -33,6 +33,10 @@ on:
   workflow_run:
     workflows: [Release]
     types: [completed]
+  # Publishing, editing or removing a release by hand (for example, fixing its notes)
+  # redeploys the site, so the changelog page stays in step with GitHub Releases.
+  release:
+    types: [published, edited, unpublished, deleted]
 
 permissions:
   contents: read
@@ -63,6 +67,19 @@ jobs:
         if: steps.guard.outputs.present == 'true'
         with:
           python-version: "3.12"
+
+      # Unit tests for the Markdown and release-notes renderer used by the changelog page.
+      - name: Test the release notes renderer
+        if: steps.guard.outputs.present == 'true'
+        run: python3 scripts/release/test_render_changelog.py
+
+      # Fills the changelog's release notes from the published GitHub Releases, so the preview
+      # matches the live page. Runs on the runner's copy only. The repository is not changed.
+      - name: Render release notes into the preview
+        if: steps.guard.outputs.present == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/release/render-changelog.py --page website/changelog.html
 
       # Fails on broken local links, missing #anchors, or any resource that
       # loads from another site (the page promises no external requests).
@@ -118,9 +135,10 @@ jobs:
     # finished Release on main publishes the site.
     if: >-
       needs.check.outputs.present == 'true' &&
-      github.ref == 'refs/heads/main' &&
+      (github.ref == 'refs/heads/main' || github.event_name == 'release') &&
       (github.event_name == 'push' ||
        github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'release' ||
        (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -136,7 +154,10 @@ jobs:
       group: pages
       cancel-in-progress: false
     steps:
+      # Always deploy main, even when the run starts from a release tag.
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       # enablement turns Pages on with the Actions source the first time.
       # If this step is refused, enable it once by hand:
@@ -161,6 +182,13 @@ jobs:
           else
             echo "::notice::No release with release.json yet. The site keeps its built-in version."
           fi
+
+      # Fill the changelog's release notes from the published releases. With no release
+      # yet, the page keeps its empty state.
+      - name: Render release notes into the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/release/render-changelog.py --page _site/changelog.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

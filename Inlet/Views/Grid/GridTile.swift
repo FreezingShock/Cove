@@ -95,18 +95,17 @@ struct GridTile: View {
         .scaleEffect(scale)
         // Open choreography, the same as the search grid: each icon starts 22%
         // toward the center at 0.78 scale, then springs into place in a ripple.
+        // Closing shrinks back with `dismiss`: no delay, no bounce.
         .scaleEffect(isOpen || reduceMotion ? 1 : 0.78)
         .offset(isOpen || reduceMotion ? .zero : placement.offset)
-        .opacity(reduceMotion && !isOpen ? 0 : 1)
-        .animation(
-            reduceMotion
-                ? .inletFade
-                : .spring(InletMotion.open).delay(placement.delay),
-            value: isOpen
-        )
+        .opacity(isOpen ? 1 : 0)
+        .animation(openAnimation, value: isOpen)
         .shadow(color: InletColor.gShadow.opacity(isLifted ? 1 : 0), radius: 12, y: 8)
         .rotationEffect(.degrees(wobbleAngle))
-        .inletAnimation(.inletPress, value: isPressed)
+        // Press: snap down on touch, spring back up on release (as AppIconCell).
+        .inletAnimation(isPressed ? .inletSnap : .inletPress, value: isPressed)
+        // The lift for a drag eases in, and the shadow with it, instead of snapping.
+        .inletAnimation(.inletPress, value: isLifted)
         .inletAnimation(.inletSnap, value: isHovered)
         .inletAnimation(.inletSnap, value: isKeyboardFocused)
         .onChange(of: isEditing, initial: true) { _, editing in
@@ -121,6 +120,13 @@ struct GridTile: View {
         .accessibilityAction(named: Text("Hide")) { onHide() }
         .accessibilityAction(named: Text("Move earlier")) { onMove(-1) }
         .accessibilityAction(named: Text("Move later")) { onMove(1) }
+    }
+
+    /// The ripple on open, or the plain dismiss on close. Reduce Motion crossfades.
+    private var openAnimation: Animation {
+        if reduceMotion { return Animation.inletFade }
+        if isOpen { return Animation.spring(InletMotion.open).delay(placement.delay) }
+        return Animation.inletDismiss
     }
 
     /// Size for press and lift. Under Reduce Motion nothing scales.

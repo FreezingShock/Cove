@@ -283,6 +283,7 @@ struct AppGridView: View {
                     topHit: topHit,
                     matchCount: shownApps.count,
                     files: fileSearch.results,
+                    isLoadingFiles: fileSearch.isSearching,
                     calculation: calculation,
                     calculationCopied: calculationCopied,
                     onCopyCalculation: copyCalculation,
@@ -405,9 +406,10 @@ struct AppGridView: View {
                     .foregroundStyle(InletText.secondary(contrast))
             }
 
+            // Opening springs with `open`; closing uses `dismiss`, which never bounces.
             if isPaged, !layoutStore.layout.hidden.isEmpty {
                 headerButton("Hidden \(layoutStore.layout.hidden.count)") {
-                    withAnimation(motion(.inletOpen)) {
+                    withAnimation(motion(showsHidden ? .inletDismiss : .inletOpen)) {
                         showsGroups = false
                         showsHidden.toggle()
                     }
@@ -416,7 +418,7 @@ struct AppGridView: View {
 
             if library.hasScanned, !library.apps.isEmpty {
                 headerButton("Groups") {
-                    withAnimation(motion(.inletOpen)) {
+                    withAnimation(motion(showsGroups ? .inletDismiss : .inletOpen)) {
                         showsHidden = false
                         showsGroups.toggle()
                     }
@@ -431,7 +433,7 @@ struct AppGridView: View {
             }
             if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
-                    withAnimation(motion(.inletOpen)) { isEditing.toggle() }
+                    withAnimation(motion(isEditing ? .inletDismiss : .inletOpen)) { isEditing.toggle() }
                 }
             }
         }
@@ -459,27 +461,31 @@ struct AppGridView: View {
     private var content: some View {
         if !library.hasScanned {
             // Before the first scan finishes.
-            ProgressView()
-                .controlSize(.small)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            InletLoadingView(message: "Finding your apps…")
         } else if library.apps.isEmpty {
-            Text("No apps found.")
-                .font(InletFont.subhead)
-                .foregroundStyle(InletText.secondary(contrast))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            InletStateView(
+                symbol: "app.dashed",
+                title: "No apps found",
+                message: "Inlet looks in Applications, System Applications and ~/Applications. Install an app there, then rescan.",
+                actionTitle: "Rescan",
+                action: { library.reload() }
+            )
         } else if isSearching && shownApps.isEmpty {
-            Text("Nothing matches that search.")
-                .font(InletFont.subhead)
-                .foregroundStyle(InletText.secondary(contrast))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Apps are checked first. File matches may still arrive in the panel above.
+            InletStateView(
+                symbol: "magnifyingglass",
+                title: "No apps match “\(query.trimmingCharacters(in: .whitespaces))”",
+                message: "Check the spelling, or try a shorter word. Files and System Settings panes are searched too.",
+                actionTitle: "Clear Search",
+                action: { query = "" }
+            )
         } else if !isPaged && shownApps.isEmpty {
             // A group with nothing in it yet. Say how to fill it.
-            Text("No apps in \(selectedGroupName) yet. Drag an icon onto its name in the bar, or right-click an icon to move it here.")
-                .font(InletFont.subhead)
-                .foregroundStyle(InletText.secondary(contrast))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, InletSize.gridSidePadding)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            InletStateView(
+                symbol: "folder",
+                title: "\(selectedGroupName) is empty",
+                message: "Drag an icon onto its name in the bar, or right-click an icon to move it here."
+            )
         } else if isPaged {
             // Paged and editable, in the saved layout order.
             // Arrow keys still move the focus ring here.

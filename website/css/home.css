@@ -403,3 +403,125 @@
 .recipe-dock .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); }
 .recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
 
+
+/* Closing call to action on the home page: a quiet cream panel with one aqua button.
+   The full aqua slab read as the loudest thing on the page. The aqua stays on the action. */
+.get.get-quiet .get-box {
+  background: var(--grouped);
+  color: var(--text);
+  border: 1px solid var(--hair);
+  box-shadow: none;
+}
+.get.get-quiet .get-box h2 { color: var(--text); }
+.get.get-quiet .get-box .lede,
+.get.get-quiet .get-box .get-lede,
+.get.get-quiet .get-box .dl-meta,
+.get.get-quiet .get-box .dl-gk { color: var(--text-2); }
+.get.get-quiet .get-box .dl-gk a { color: var(--text); }
+.get.get-quiet .get-box .btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.get.get-quiet .get-box .btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink); }
+.get.get-quiet .get-box .btn-ghost { color: var(--text); border-color: var(--hair); background: transparent; }
+.get.get-quiet .get-box .btn-ghost:hover { background: var(--hover); color: var(--text); }
+.get.get-quiet .get-box .reqs span {
+  background: var(--base);
+  color: var(--text-2);
+  border-color: var(--hair);
+}
+.get.get-quiet .get-box .keyline { background: var(--base); border-color: var(--hair); }
+.get.get-quiet .get-box kbd {
+  background: var(--grouped);
+  color: var(--text);
+  border-color: var(--hair);
+}
+.get.get-quiet .get-box .typed { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- Hero notes sit under the window, so the window is the first thing after the CTA ---------- */
+.hero-foot { display: grid; justify-items: center; gap: 16px; margin-top: 28px; }
+.hero-foot .hero-note { margin: 0; }
+.hero-foot .dl-gk { margin: 0 auto; max-width: 62ch; text-align: left; }
+
+/* ---------- Feature sections: five arrangements, so the page does not read as one template ---------- */
+/* 01 wide: heading and copy on top, the window spans the full width */
+.feature--wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; }
+.feature--wide .stage { grid-column: 1 / -1; }
+/* 02 flip: the stage leads on the left, copy on the right */
+.feature--flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.feature--flip .copy { order: 2; }
+/* 03 sticky: the copy stays beside the stage while the list scrolls */
+.feature--sticky .copy { position: sticky; top: 120px; align-self: start; }
+/* 04 stack: centred copy, the stage below it, and the settings as one row */
+.feature--stack { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+.feature--stack .copy { display: grid; justify-items: center; }
+.feature--stack .copy .body-2 { margin-inline: auto; }
+.feature--stack .copy .specs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; border-top: 0; margin-top: 24px; }
+.feature--stack .copy .specs li { padding: 0; border-bottom: 0; }
+.feature--stack .stage { width: min(100%, 760px); }
+@media (max-width: 900px) {
+  .feature--wide, .feature--flip, .feature--stack { grid-template-columns: minmax(0, 1fr); }
+  .feature--wide .stage { grid-column: auto; }
+  .feature--flip .copy { order: 0; }
+  .feature--sticky .copy { position: static; }
+}
+
+/* ---------- Audience: editorial rows instead of three cards ---------- */
+.uc-home--rows .aud-list { list-style: none; margin: 48px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.uc-home--rows .aud {
+  display: grid;
+  grid-template-columns: 48px 136px minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: baseline;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--hair);
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.uc-home--rows .aud:hover .aud-go { text-decoration: underline; text-underline-offset: 4px; }
+.uc-home--rows .aud:focus-visible { outline: 2px solid var(--text); outline-offset: 4px; }
+.aud-no { font-size: var(--fs-label); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.aud-who { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+.aud-main b { display: block; font-size: clamp(24px, 3vw, 34px); line-height: 1.1; letter-spacing: -0.025em; font-weight: 650; }
+.aud-main > span { display: block; margin-top: 10px; max-width: 52ch; font-size: 16px; line-height: 1.55; color: var(--text-2); }
+.aud-go { font-size: 15px; font-weight: 550; white-space: nowrap; }
+.aud-go::after { content: " \2192"; }
+@media (max-width: 760px) {
+  .uc-home--rows .aud { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 24px 0; }
+  .aud-no { display: none; }
+  .aud-go { margin-top: 6px; }
+}
+/* On wide screens the nav mark carries the icon, so the window can start above the fold. */
+@media (min-width: 900px) { .hero-icon { display: none; } }
+
+/* ---------- Audience icons: each sample app's own colors, with a 3D tilt on hover ---------- */
+.uc-home--rows .aud { grid-template-columns: 56px 130px minmax(0, 1fr) auto; }
+.aud-ico {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: var(--ico);
+  background: linear-gradient(160deg, var(--a), var(--b));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 22px -14px var(--b);
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s ease;
+}
+.aud-ico svg { width: 24px; height: 24px; transform: translateZ(14px); }
+.uc-home--rows .aud:hover .aud-ico,
+.uc-home--rows .aud:focus-visible .aud-ico {
+  transform: perspective(520px) rotateX(16deg) rotateY(-20deg) translateY(-4px) scale(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 26px 26px 30px -16px var(--b);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aud-ico, .aud-ico svg { transition: none; transform: none; }
+  .uc-home--rows .aud:hover .aud-ico, .uc-home--rows .aud:focus-visible .aud-ico { transform: none; }
+}
+/* The old number label is replaced by the icon. */
+.aud-no { display: none; }
+@media (max-width: 760px) {
+  .uc-home--rows .aud { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+}

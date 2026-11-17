@@ -144,30 +144,7 @@
   setTheme(saved);
 
   if (document.getElementById("qp")) {
-  /* ---------- Hero grid: opens from the center, ripple outward ---------- */
-  var heroGrid = $("#heroGrid");
-  fillGrid(heroGrid, APPS, true);
-  function openHero() {
-    var cells = heroGrid.querySelectorAll(".cell");
-    var cx = heroGrid.clientWidth / 2, cy = heroGrid.clientHeight / 2;
-    Array.prototype.forEach.call(cells, function (c) {
-      var x = c.offsetLeft + c.offsetWidth / 2, y = c.offsetTop + c.offsetHeight / 2;
-      var s = st(c);
-      s.ox = (cx - x) * 0.22;
-      s.oy = (cy - y) * 0.22;
-      s.p = 0;
-      cellRender(c);
-      var delay = Math.min(Math.hypot(cx - x, cy - y) * 0.6, 520); // 0.6 ms per point from center, capped at 520 ms
-      animate(c, "open", 0, 1, "open", function (v) { s.p = v; cellRender(c); }, delay);
-    });
-  }
-  $("#replayBtn").addEventListener("click", openHero);
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (entries) {
-      if (entries[0].isIntersecting) { io.disconnect(); openHero(); }
-    }, { threshold: 0.35 });
-    io.observe($("#heroStage"));
-  }
+  /* The hero window (grid, folder, pages, search) lives in js/hero.js. */
 
   /* ---------- Press feedback: snap down, spring back ---------- */
   var pressed = null;

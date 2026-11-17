@@ -97,17 +97,10 @@ section[id] { scroll-margin-top: 88px; }
 }
 .uc-item {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px 20px;
   padding: 28px 0;
   border-bottom: 1px solid var(--hair);
-}
-.uc-item .n {
-  padding-top: 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-3);
-  font-variant-numeric: tabular-nums;
 }
 .uc-body h3 { font-size: var(--fs-title); font-weight: 650; letter-spacing: -0.01em; }
 .uc-body p { margin-top: 6px; max-width: 64ch; color: var(--text-2); }
@@ -196,7 +189,6 @@ section[id] { scroll-margin-top: 88px; }
 @media (max-width: 560px) {
   .uc-hero { padding-block: 48px 32px; }
   .uc-item { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-  .uc-item .n { padding-top: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
