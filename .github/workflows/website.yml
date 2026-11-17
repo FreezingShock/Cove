@@ -91,6 +91,7 @@ jobs:
       # from design/tokens.json. Fails if someone edited a block by hand or skipped the script.
       - name: Check generated radius and motion tokens
         run: python3 scripts/build-tokens.py --check
+      - run: python3 scripts/build-icon-kit.py --check
 
       - name: Upload preview artifact
         if: steps.guard.outputs.present == 'true'

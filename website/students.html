@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>For students · Inlet</title>
   <meta name="description" content="Sort your apps into School, Create and Build, keep a folder for each class, and find an essay or PDF by its name with Inlet.">
+  <meta name="robots" content="max-image-preview:large">
   <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
@@ -16,6 +17,7 @@
         var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
         var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
         d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (!r && sessionStorage.getItem("inlet-wipe")) d.classList.add("wipe-arrive");
         if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
         var seen = sessionStorage.getItem("inlet-intro");
         d.setAttribute("data-intro", seen ? "soft" : "full");
@@ -31,6 +33,7 @@
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/kit.css">
   <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/students.html">
@@ -56,6 +59,7 @@
   <link rel="icon" href="assets/inlet-icon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="css/icons.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -86,7 +90,7 @@
     </nav>
     <div class="nav-right">
       <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>
         <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
       </button>
       <div class="seg" role="group" aria-label="Appearance">
@@ -211,15 +215,15 @@
 <footer class="wrap foot">
   <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><g class="k-m"><path d="M12 3v12M7 10l5 5 5-5"/></g><path d="M3 15v6h18v-6"/><rect class="k-a" x="3" y="18" width="18" height="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
     </a>
     <a class="foot-card" href="features.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><rect class="k-a" x="3" y="3" width="8" height="8"/><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></span>
       <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
     </a>
     <a class="foot-card" href="compare.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><rect class="k-a" x="3" y="3" width="6" height="18"/><path d="M3 3h18v18H3zM9 3v18"/></svg></span>
       <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
     </a>
   </div>
@@ -267,7 +271,7 @@
     </div>
   </nav>
   <div class="foot-bar">
-    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    <a class="foot-top" href="#top"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g class="k-m"><path d="M12 20V4M5 11l7-7 7 7"/></g><rect class="k-a" x="10" y="20" width="4" height="2"/></svg>Back to top</a>
     <p class="foot-note">For macOS 26 or later. In development.</p>
   </div>
 </footer>
@@ -276,5 +280,6 @@
 <script src="js/pages.js" defer></script>
 <script src="js/nav.js" defer></script>
 <script src="js/motion.js" defer></script>
+<script src="js/kit.js" defer></script>
 </body>
 </html>

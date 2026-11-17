@@ -46,7 +46,7 @@
     { n: "Budget 2026.csv", p: "Documents / Money" },
     { n: "Trip photos, May.pdf", p: "Downloads" }
   ];
-  var DOC_GLYPH = '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" />';
+  var DOC_GLYPH = '<path d="M5 3h10l4 4v14H5zM15 3v4h4M8 11h8M8 14h8"/><rect class="k-a" x="8" y="17" width="5" height="2"/>';
   /* Shared with home.js (folders and edit mode demo). */
   window.InletSamples = { APPS: APPS, GLYPH: GLYPH };
 
@@ -218,7 +218,7 @@
     var hits = searchGrid.querySelectorAll(".cell:not([hidden])").length;
     var files = q ? FILES.filter(function (f) { return f.n.toLowerCase().indexOf(q) !== -1; }).slice(0, 4) : [];
     fileRows.innerHTML = files.map(function (f) {
-      return '<li><span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
+      return '<li><span class="fi"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
     }).join("");
     filesPanel.hidden = files.length === 0;
     emptyMsg.hidden = !(q && hits === 0 && files.length === 0);
@@ -242,7 +242,7 @@
   var qp = $("#qp"), qpWrap = $("#qpWrap"), dockInlet = $("#dockInlet");
   fillGrid($("#qpApps"), APPS.slice(0, 8), true);
   if ($("#qpFiles")) $("#qpFiles").innerHTML = FILES.slice(0, 3).map(function (f) {
-    return '<li><span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
+    return '<li><span class="fi"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true">' + DOC_GLYPH + '</svg></span><span><b>' + f.n + '</b><small>' + f.p + '</small></span></li>';
   }).join("");
   // Dock sample icons (static, no interaction)
   if ($("#dockApps")) $("#dockApps").innerHTML = APPS.slice(0, 5).map(function (a) {
