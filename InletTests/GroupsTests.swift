@@ -191,6 +191,26 @@ final class GroupsTests: XCTestCase {
         XCTAssertEqual(layout.groups.map(\.id), ["solo"])
     }
 
+    // MARK: - Group icons
+
+    func testIconChoicesAreUniqueAndFillWholeRows() {
+        let choices = AppGroup.symbolChoices
+        XCTAssertEqual(Set(choices).count, choices.count)
+        XCTAssertEqual(choices.count % 6, 0)
+    }
+
+    func testEveryPresetIconIsOfferedInThePicker() {
+        for preset in AppGroup.presets {
+            XCTAssertTrue(AppGroup.symbolChoices.contains(preset.symbol), preset.symbol)
+        }
+    }
+
+    func testEveryIconChoiceHasAReadableName() {
+        for symbol in AppGroup.symbolChoices {
+            XCTAssertNotEqual(AppGroup.name(forSymbol: symbol), symbol, symbol)
+        }
+    }
+
     // MARK: - Setup choices
 
     private var allPresets: Set<AppCategory> { Set(AppCategory.allCases) }
