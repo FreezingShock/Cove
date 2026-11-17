@@ -48,6 +48,8 @@ enum InletSettings {
         case quickPanelRecentApps     = "inlet.quickPanel.recentApps"            // Int, 4, 8 or 12, 8
         case quickPanelRecentFiles    = "inlet.quickPanel.recentFiles"           // Int, 0...5, 3
 
+        // Privacy
+        case diagnosticsEnabled       = "inlet.diagnostics.enabled"              // Bool, false
         // Supporter: custom themes and zones. Honor-based gate, see Supporter.swift
         case supporterActive          = "inlet.supporter.active"                 // Bool, false
         case activeTheme              = "inlet.themes.active"                    // String, an AppTheme id, "inlet"
@@ -83,6 +85,7 @@ enum InletSettings {
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
             Key.quickPanelRecentApps.rawValue: 8,
             Key.quickPanelRecentFiles.rawValue: 3,
+            Key.diagnosticsEnabled.rawValue: false,
             Key.supporterActive.rawValue: false,
             Key.activeTheme.rawValue: AppTheme.standard.id,
         ])
@@ -163,6 +166,11 @@ enum InletSettings {
 
     static var escapeClearsSearchFirst: Bool {
         UserDefaults.standard.bool(forKey: Key.escapeClearsSearchFirst.rawValue)
+    }
+
+    /// Crash reporting is opt-in. Read at launch by DiagnosticsCollector.
+    static var diagnosticsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: Key.diagnosticsEnabled.rawValue)
     }
 
     static var appearance: AppearanceMode {

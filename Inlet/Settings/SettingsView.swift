@@ -2,28 +2,54 @@
 //  SettingsView.swift
 //  Inlet
 //
-//  The Settings window (Cmd+,). A sidebar lists the panes, and the detail
-//  side shows the selected pane as a grouped Form. Standard controls only,
-//  so macOS 26 draws the glass sidebar and grouped rows for us.
+//  The Settings window (Cmd+,). A sidebar groups the panes the way System
+//  Settings does, and the detail side shows the selected pane as a grouped
+//  Form. Standard controls only, so macOS 26 draws the glass sidebar and
+//  grouped rows for us.
+//
+//  Adding a pane (for example Groups): add a case to SettingsPane, give it
+//  a title, symbol, tint and sidebar group, then add its view to
+//  `detail(for:)`. Panes read and write through InletSettings keys only.
 //
 
 import SwiftUI
 
-/// The panes in the sidebar, in the order the mockup shows them.
+/// A titled block of rows in the sidebar. A nil title draws no header.
+struct SidebarGroup: Identifiable {
+    let title: String?
+    let panes: [SettingsPane]
+
+    var id: String { title ?? "main" }
+}
+
+/// The panes in the sidebar, in the order they appear.
 enum SettingsPane: String, CaseIterable, Identifiable {
-    case general, keyboard, appearance, grid, search, quickPanel, privacy, pro, about
+    case general, appearance, shortcuts
+    case grid, hiddenApps, search, quickPanel
+    case privacy, updates
+    case pro, about
 
     var id: String { rawValue }
+
+    /// The sidebar, top to bottom.
+    static let groups: [SidebarGroup] = [
+        SidebarGroup(title: nil, panes: [.general, .appearance, .shortcuts]),
+        SidebarGroup(title: "Launcher", panes: [.grid, .hiddenApps, .search, .quickPanel]),
+        SidebarGroup(title: "Privacy & Updates", panes: [.privacy, .updates]),
+        SidebarGroup(title: "Inlet", panes: [.pro, .about]),
+    ]
 
     var title: String {
         switch self {
         case .general:    return "General"
-        case .keyboard:   return "Keyboard"
         case .appearance: return "Appearance"
+        case .shortcuts:  return "Shortcuts"
         case .grid:       return "Grid"
+        case .hiddenApps: return "Hidden Apps"
         case .search:     return "Search"
         case .quickPanel: return "Quick Panel"
-        case .privacy:    return "Privacy"
+        case .privacy:    return "Privacy & Permissions"
+        case .updates:    return "Updates"
         case .pro:        return "Inlet Pro"
         case .about:      return "About"
         }
@@ -33,12 +59,14 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .general:    return "gearshape.fill"
-        case .keyboard:   return "keyboard.fill"
         case .appearance: return "circle.lefthalf.filled"
+        case .shortcuts:  return "keyboard.fill"
         case .grid:       return "square.grid.3x3.fill"
+        case .hiddenApps: return "eye.slash.fill"
         case .search:     return "magnifyingglass"
         case .quickPanel: return "dock.rectangle"
         case .privacy:    return "hand.raised.fill"
+        case .updates:    return "arrow.down.circle.fill"
         case .pro:        return "star.circle.fill"
         case .about:      return "info.circle.fill"
         }
@@ -46,14 +74,15 @@ enum SettingsPane: String, CaseIterable, Identifiable {
 
     var tint: Color {
         switch self {
-        case .general, .keyboard: return .gray
-        case .appearance:         return .indigo
-        case .grid:               return .blue
-        case .search:             return .orange
-        case .quickPanel:         return .teal
-        case .privacy:            return .pink
-        case .pro:                return .purple
-        case .about:              return .gray
+        case .general, .shortcuts, .about: return .gray
+        case .appearance:                  return .indigo
+        case .grid:                        return .blue
+        case .hiddenApps:                  return .mint
+        case .pro:                         return .purple
+        case .search:                      return .orange
+        case .quickPanel:                  return .teal
+        case .privacy:                     return .pink
+        case .updates:                     return .green
         }
     }
 }
@@ -63,13 +92,18 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(SettingsPane.allCases, selection: $selection) { pane in
-                Label {
-                    Text(pane.title)
-                } icon: {
-                    SettingsTile(symbol: pane.symbol, tint: pane.tint)
+            List(selection: $selection) {
+                ForEach(SettingsPane.groups) { group in
+                    Section {
+                        ForEach(group.panes) { pane in
+                            sidebarRow(pane)
+                        }
+                    } header: {
+                        if let title = group.title {
+                            Text(title)
+                        }
+                    }
                 }
-                .tag(pane)
             }
             .navigationSplitViewColumnWidth(min: 200, ideal: 200, max: 200)
         } detail: {
@@ -81,16 +115,27 @@ struct SettingsView: View {
         .inletAppearance()
     }
 
+    private func sidebarRow(_ pane: SettingsPane) -> some View {
+        Label {
+            Text(pane.title)
+        } icon: {
+            SettingsTile(symbol: pane.symbol, tint: pane.tint)
+        }
+        .tag(pane)
+    }
+
     @ViewBuilder
     private func detail(for pane: SettingsPane) -> some View {
         switch pane {
         case .general:    GeneralPane()
-        case .keyboard:   KeyboardPane()
         case .appearance: AppearancePane()
+        case .shortcuts:  ShortcutsPane()
         case .grid:       GridPane()
+        case .hiddenApps: HiddenAppsPane()
         case .search:     SearchPane()
         case .quickPanel: QuickPanelPane()
         case .privacy:    PrivacyPane()
+        case .updates:    UpdatesPane()
         case .pro:        ProPane()
         case .about:      AboutPane()
         }
