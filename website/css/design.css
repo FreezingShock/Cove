@@ -294,3 +294,19 @@ code { font-size: 0.9em; color: var(--text-2); overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) {
   .ds-track { transition: none; }
 }
+
+/* Ledger specimen: the Ledger Tiles tokens drawn on each theme. Reads tokens only. */
+.ds-led-spec { margin: 0 0 22px; border-top: var(--rule-base) solid var(--rule); background: var(--base); }
+.ds-led-fig { margin: 12px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+.ds-led-h { margin: 0 0 16px; font-size: 28px; line-height: 1.05; letter-spacing: -0.04em; font-weight: 700; color: var(--text); }
+.ds-led-ul { background: linear-gradient(var(--hand), var(--hand)) 0 100% / 100% var(--ul-weight) no-repeat; padding-bottom: 4px; }
+.ds-led-field { display: grid; grid-template-columns: repeat(8, 1fr); gap: var(--tile-gap); background: var(--rule); border: var(--rule-base) solid var(--rule); }
+.ds-led-field i { aspect-ratio: 1; background: var(--tile-cell); }
+.ds-led-field i.dim { background: color-mix(in srgb, var(--text) 8%, var(--tile-cell)); }
+.ds-led-field i.lit { background: var(--tile-lit); }
+.ds-led-tick { margin: 0; padding: 10px 12px; background: var(--accent); color: var(--accent-ink); font-size: 22px; font-weight: 700; letter-spacing: -0.03em; border-bottom: var(--rule-base) solid var(--accent-ink); }
+.ds-led-tick .o { color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); }
+.ds-led-band { padding: 16px 12px; background: var(--band); color: var(--band-text); }
+.ds-led-band p { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--band-text); }
+.ds-led-band .ds-led-band-3 { margin-top: 6px; font-size: 14px; font-weight: 500; letter-spacing: 0; color: var(--band-text-3); }
+.ds-led-card { margin: 16px var(--rule-offset) var(--rule-offset) 0; padding: 14px; background: var(--card); color: var(--text); border: var(--rule-base) solid var(--rule); box-shadow: var(--rule-offset) var(--rule-offset) 0 var(--shadow-offset); font-size: 15px; }

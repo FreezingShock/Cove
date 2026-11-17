@@ -80,3 +80,17 @@ Rules:
 | Brand board | `docs/brand/brand-board.html` and `.png` |
 | OG card | `scripts/launch-assets/og.html` and `website/assets/launch/og-image.png` |
 | This guide | `docs/brand.md` |
+
+## Ledger tokens (site style E, "Ledger Tiles")
+
+The bolder site style is built from tokens in `design/tokens.json` (`color` and `ledger`). Rebuild with `python3 scripts/build-tokens.py`; the page `website/design.html` (section Ledger) shows them live in both themes.
+
+- **Rules:** `--rule` is the strong 1 px rule (ink in Light, cream at 72% in Dark). `--rule-2` is a firmer divider than `--hair`. Weights are `--rule-hair`, `--rule-base`, `--rule-heavy`. No radius on anything in this style.
+- **Ink:** `--ink` fills solid buttons and tiles, `--ink-on` is the text on it. Both flip in Dark (cream button, dark label), so never hard-code `#17150F`.
+- **Band:** `--band` with `--band-text`, `--band-text-2`, `--band-text-3`, `--band-hair`, `--band-rule`. In Dark the band is `#181D1B`, one step above the page, not a black slab. Every band text token holds 4.5:1.
+- **Tiles:** `--tile-cell` (field cell), `--tile-dim`, `--tile-lit` (aqua), sizes `--tile-xs|sm|md`, hairline gap `--tile-gap`. Column counts are `--field-*`.
+- **Hard shadow:** `--rule-offset` with `--shadow-offset` (ink in Light, aqua at 38% in Dark). No blur.
+- **Underline and highlight:** `--hand` strokes the hand underline (`--ul-weight`, `--ul-draw`, `--ul-delay`), `--hl-height` and `--hl-offset` size the highlight block. In Dark the underline is aqua because ink there is cream.
+- **Layout:** `--layout-wrap`, `--layout-margin` (figure-label column), `--layout-section-y`. Breakpoints are 900 and 420 px.
+- **Motion:** `--led-*`. Scripts read `--led-scroll-boost`, `--led-scroll-decay`, `--led-lit-chance`, and `--led-motion` (1, or 0 under Reduced Motion) with `getComputedStyle`. Gate every animation on `prefers-reduced-motion: no-preference`.
+- The build fails if a text pair drops under 4.5:1 or a rule or track under 3:1.

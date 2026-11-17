@@ -98,6 +98,7 @@
       <li><a href="#shape">Shape</a></li>
       <li><a href="#space">Space</a></li>
       <li><a href="#motion">Motion</a></li>
+      <li><a href="#ledger">Ledger</a></li>
       <li><a href="#components">Components</a></li>
       <li><a href="#brand">Brand</a></li>
       <li><a href="#sync">Sync</a></li>
@@ -140,7 +141,7 @@
 <li class="ds-sw"><span class="ds-chip" style="background:var(--g-fill)"></span><span class="ds-sw-name">g-fill</span><code>rgba(255,252,245,0.58)</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--g-solid)"></span><span class="ds-sw-name">g-solid</span><code>#FFFDF8</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--scrim)"></span><span class="ds-sw-name">scrim</span><code>rgba(244,239,230,0.46)</code></li>
-<li class="ds-sw"><span class="ds-chip" style="background:var(--track)"></span><span class="ds-sw-name">track</span><code>rgba(23,21,15,0.45)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--track)"></span><span class="ds-sw-name">track</span><code>rgba(23,21,15,0.50)</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--hover)"></span><span class="ds-sw-name">hover</span><code>rgba(60,45,20,0.06)</code></li>
 </ul>
 </div>
@@ -152,8 +153,8 @@
 <li class="ds-sw"><span class="ds-chip" style="background:var(--grouped)"></span><span class="ds-sw-name">grouped</span><code>rgba(244,239,230,0.05)</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--text)"></span><span class="ds-sw-name">text</span><code>#F4EFE6</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--text-2)"></span><span class="ds-sw-name">text-2</span><code>rgba(244,239,230,0.78)</code></li>
-<li class="ds-sw"><span class="ds-chip" style="background:var(--text-3)"></span><span class="ds-sw-name">text-3</span><code>rgba(244,239,230,0.60)</code></li>
-<li class="ds-sw"><span class="ds-chip" style="background:var(--hair)"></span><span class="ds-sw-name">hair</span><code>rgba(244,239,230,0.12)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--text-3)"></span><span class="ds-sw-name">text-3</span><code>rgba(244,239,230,0.66)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hair)"></span><span class="ds-sw-name">hair</span><code>rgba(244,239,230,0.14)</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--accent)"></span><span class="ds-sw-name">accent</span><code>#46E6D6</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--accent-soft)"></span><span class="ds-sw-name">accent-soft</span><code>rgba(70,230,214,0.16)</code></li>
 <li class="ds-sw"><span class="ds-chip" style="background:var(--accent-ink)"></span><span class="ds-sw-name">accent-ink</span><code>#101211</code></li>
@@ -183,7 +184,7 @@
 <tr><th scope="row">accent-ink on accent</th><td>light</td><td>11.8:1</td></tr>
 <tr><th scope="row">text on base</th><td>dark</td><td>16.4:1</td></tr>
 <tr><th scope="row">text-2 on base</th><td>dark</td><td>10.2:1</td></tr>
-<tr><th scope="row">text-3 on base</th><td>dark</td><td>6.4:1</td></tr>
+<tr><th scope="row">text-3 on base</th><td>dark</td><td>7.5:1</td></tr>
 <tr><th scope="row">text on grouped</th><td>dark</td><td>14.8:1</td></tr>
 <tr><th scope="row">accent-ink on accent</th><td>dark</td><td>12.1:1</td></tr>
 </tbody>
@@ -340,6 +341,161 @@
 </div>
 </div>
 <!-- END GENERATED: design-motion -->
+  </section>
+
+  <section class="wrap band" id="ledger" aria-labelledby="ledger-h">
+    <p class="eyebrow">Ledger</p>
+    <h2 class="h-section" id="ledger-h">Rules, tiles and a hard shadow.</h2>
+    <p class="body-2">The site style from mockup E. Sharp 1 px rules, square tiles on hairlines, a figure label in the margin, an aqua ticker and an ink band. Dark mode lifts the band to a green-black surface and flips ink to cream, so every pair still holds its contrast. The variables are <code>--rule-*</code>, <code>--tile-*</code>, <code>--field-*</code>, <code>--layout-*</code> and <code>--led-*</code> in <code>tokens.css</code>.</p>
+    <!-- BEGIN GENERATED: design-ledger. Source: design/tokens.json, built by scripts/build-tokens.py.
+     Edit the JSON and rerun the script; do not hand-edit this block. -->
+<div class="ds-theme-grid">
+<div class="ds-theme t-light">
+<p class="ds-theme-name">Light</p>
+<div class="ds-led-spec">
+<p class="ds-led-fig">Fig. 1.0 · Search</p>
+<p class="ds-led-h">Type a few letters, <span class="ds-led-ul">done.</span></p>
+<div class="ds-led-field" aria-hidden="true"><i></i><i></i><i></i><i class="lit"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i></i><i></i><i class="lit"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i></i></div>
+<p class="ds-led-tick" aria-hidden="true"><span>Type</span> · <span class="o">Return</span> · <span>Escape</span></p>
+<div class="ds-led-band"><p>Nothing leaves your Mac.</p><p class="ds-led-band-3">Quiet text on the band.</p></div>
+<div class="ds-led-card"><b>Screen</b> with a hard offset shadow.</div>
+</div>
+<ul class="ds-swatches">
+<li class="ds-sw"><span class="ds-chip" style="background:var(--rule)"></span><span class="ds-sw-name">rule</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--rule-2)"></span><span class="ds-sw-name">rule-2</span><code>rgba(60,45,20,0.24)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--ink)"></span><span class="ds-sw-name">ink</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--ink-on)"></span><span class="ds-sw-name">ink-on</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band)"></span><span class="ds-sw-name">band</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text)"></span><span class="ds-sw-name">band-text</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text-2)"></span><span class="ds-sw-name">band-text-2</span><code>rgba(244,239,230,0.80)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text-3)"></span><span class="ds-sw-name">band-text-3</span><code>rgba(244,239,230,0.68)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-hair)"></span><span class="ds-sw-name">band-hair</span><code>rgba(244,239,230,0.16)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-rule)"></span><span class="ds-sw-name">band-rule</span><code>rgba(244,239,230,0.40)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--card)"></span><span class="ds-sw-name">card</span><code>#FBF8F2</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-dim)"></span><span class="ds-sw-name">tile-dim</span><code>rgba(23,21,15,0.07)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-cell)"></span><span class="ds-sw-name">tile-cell</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-lit)"></span><span class="ds-sw-name">tile-lit</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hand)"></span><span class="ds-sw-name">hand</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--shadow-offset)"></span><span class="ds-sw-name">shadow-offset</span><code>#17150F</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--selection)"></span><span class="ds-sw-name">selection</span><code>rgba(70,230,214,0.45)</code></li>
+</ul>
+</div>
+<div class="ds-theme t-dark">
+<p class="ds-theme-name">Dark</p>
+<div class="ds-led-spec">
+<p class="ds-led-fig">Fig. 1.0 · Search</p>
+<p class="ds-led-h">Type a few letters, <span class="ds-led-ul">done.</span></p>
+<div class="ds-led-field" aria-hidden="true"><i></i><i></i><i></i><i class="lit"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i></i><i></i><i class="lit"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i class="dim"></i><i></i><i></i><i></i></div>
+<p class="ds-led-tick" aria-hidden="true"><span>Type</span> · <span class="o">Return</span> · <span>Escape</span></p>
+<div class="ds-led-band"><p>Nothing leaves your Mac.</p><p class="ds-led-band-3">Quiet text on the band.</p></div>
+<div class="ds-led-card"><b>Screen</b> with a hard offset shadow.</div>
+</div>
+<ul class="ds-swatches">
+<li class="ds-sw"><span class="ds-chip" style="background:var(--rule)"></span><span class="ds-sw-name">rule</span><code>rgba(244,239,230,0.72)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--rule-2)"></span><span class="ds-sw-name">rule-2</span><code>rgba(244,239,230,0.22)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--ink)"></span><span class="ds-sw-name">ink</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--ink-on)"></span><span class="ds-sw-name">ink-on</span><code>#101211</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band)"></span><span class="ds-sw-name">band</span><code>#181D1B</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text)"></span><span class="ds-sw-name">band-text</span><code>#F4EFE6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text-2)"></span><span class="ds-sw-name">band-text-2</span><code>rgba(244,239,230,0.80)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-text-3)"></span><span class="ds-sw-name">band-text-3</span><code>rgba(244,239,230,0.68)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-hair)"></span><span class="ds-sw-name">band-hair</span><code>rgba(244,239,230,0.14)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--band-rule)"></span><span class="ds-sw-name">band-rule</span><code>rgba(244,239,230,0.34)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--card)"></span><span class="ds-sw-name">card</span><code>#171C1A</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-dim)"></span><span class="ds-sw-name">tile-dim</span><code>rgba(244,239,230,0.07)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-cell)"></span><span class="ds-sw-name">tile-cell</span><code>#101211</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--tile-lit)"></span><span class="ds-sw-name">tile-lit</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--hand)"></span><span class="ds-sw-name">hand</span><code>#46E6D6</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--shadow-offset)"></span><span class="ds-sw-name">shadow-offset</span><code>rgba(70,230,214,0.38)</code></li>
+<li class="ds-sw"><span class="ds-chip" style="background:var(--selection)"></span><span class="ds-sw-name">selection</span><code>rgba(70,230,214,0.35)</code></li>
+</ul>
+</div>
+</div>
+<div class="ds-motion-grid">
+<div><p class="ds-sub">Rules (px)</p><table class="ds-table"><tbody>
+<tr><th scope="row">hair</th><td>1</td></tr>
+<tr><th scope="row">base</th><td>1</td></tr>
+<tr><th scope="row">heavy</th><td>2</td></tr>
+<tr><th scope="row">offset</th><td>10</td></tr>
+</tbody></table><p class="ds-sub">Tiles (px)</p><table class="ds-table"><tbody>
+<tr><th scope="row">xs</th><td>8</td></tr>
+<tr><th scope="row">sm</th><td>14</td></tr>
+<tr><th scope="row">md</th><td>30</td></tr>
+<tr><th scope="row">inset</th><td>9</td></tr>
+<tr><th scope="row">gap</th><td>1</td></tr>
+</tbody></table><p class="ds-sub">Tile field columns</p><table class="ds-table"><tbody>
+<tr><th scope="row">cols</th><td>6</td></tr>
+<tr><th scope="row">colsTablet</th><td>8</td></tr>
+<tr><th scope="row">wall</th><td>16</td></tr>
+<tr><th scope="row">wallTablet</th><td>10</td></tr>
+<tr><th scope="row">wipe</th><td>20</td></tr>
+<tr><th scope="row">wipeTablet</th><td>10</td></tr>
+</tbody></table></div>
+<div><p class="ds-sub">Layout (px)</p><table class="ds-table"><tbody>
+<tr><th scope="row">wrap</th><td>1120</td></tr>
+<tr><th scope="row">gutter</th><td>16</td></tr>
+<tr><th scope="row">margin</th><td>200</td></tr>
+<tr><th scope="row">navHeight</th><td>60</td></tr>
+<tr><th scope="row">sectionY</th><td>112</td></tr>
+<tr><th scope="row">sectionYTablet</th><td>84</td></tr>
+<tr><th scope="row">tablet</th><td>900</td></tr>
+<tr><th scope="row">phone</th><td>420</td></tr>
+</tbody></table><p class="ds-sub">Ledger motion</p><table class="ds-table"><tbody>
+<tr><th scope="row">reveal</th><td>0.8</td></tr>
+<tr><th scope="row">rise</th><td>18</td></tr>
+<tr><th scope="row">tile</th><td>0.3</td></tr>
+<tr><th scope="row">tileStagger</th><td>0.018</td></tr>
+<tr><th scope="row">wipeStep</th><td>0.018</td></tr>
+<tr><th scope="row">ticker</th><td>28</td></tr>
+<tr><th scope="row">tickerFast</th><td>9</td></tr>
+<tr><th scope="row">flip</th><td>7</td></tr>
+<tr><th scope="row">rowShift</th><td>14</td></tr>
+<tr><th scope="row">scrollBoost</th><td>6</td></tr>
+<tr><th scope="row">scrollDecay</th><td>0.92</td></tr>
+<tr><th scope="row">litChance</th><td>0.08</td></tr>
+</tbody></table></div>
+</div>
+<p class="ds-sub">Contrast</p>
+<table class="ds-table">
+<thead><tr><th scope="col">Pair</th><th scope="col">Mode</th><th scope="col">Ratio</th></tr></thead>
+<tbody>
+<tr><th scope="row">text on base</th><td>light</td><td>15.9:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-2 on base</th><td>light</td><td>7.8:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on base</th><td>light</td><td>5.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text on card</th><td>light</td><td>17.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-2 on card</th><td>light</td><td>8.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on card</th><td>light</td><td>5.4:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text on grouped</th><td>light</td><td>17.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on grouped</th><td>light</td><td>5.4:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text on band</th><td>light</td><td>15.9:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text-2 on band</th><td>light</td><td>10.4:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text-3 on band</th><td>light</td><td>7.8:1 (needs 4.5)</td></tr>
+<tr><th scope="row">accent on band</th><td>light</td><td>11.8:1 (needs 4.5)</td></tr>
+<tr><th scope="row">accent-ink on accent</th><td>light</td><td>11.8:1 (needs 4.5)</td></tr>
+<tr><th scope="row">ink-on on ink</th><td>light</td><td>15.9:1 (needs 4.5)</td></tr>
+<tr><th scope="row">rule on base</th><td>light</td><td>15.9:1 (needs 3)</td></tr>
+<tr><th scope="row">hand on base</th><td>light</td><td>15.9:1 (needs 3)</td></tr>
+<tr><th scope="row">track on base</th><td>light</td><td>3.3:1 (needs 3)</td></tr>
+<tr><th scope="row">text on base</th><td>dark</td><td>16.4:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-2 on base</th><td>dark</td><td>10.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on base</th><td>dark</td><td>7.5:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text on card</th><td>dark</td><td>15.1:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-2 on card</th><td>dark</td><td>9.5:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on card</th><td>dark</td><td>7.2:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text on grouped</th><td>dark</td><td>14.8:1 (needs 4.5)</td></tr>
+<tr><th scope="row">text-3 on grouped</th><td>dark</td><td>7.1:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text on band</th><td>dark</td><td>14.9:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text-2 on band</th><td>dark</td><td>9.9:1 (needs 4.5)</td></tr>
+<tr><th scope="row">band-text-3 on band</th><td>dark</td><td>7.5:1 (needs 4.5)</td></tr>
+<tr><th scope="row">accent on band</th><td>dark</td><td>11.0:1 (needs 4.5)</td></tr>
+<tr><th scope="row">accent-ink on accent</th><td>dark</td><td>12.1:1 (needs 4.5)</td></tr>
+<tr><th scope="row">ink-on on ink</th><td>dark</td><td>16.4:1 (needs 4.5)</td></tr>
+<tr><th scope="row">rule on base</th><td>dark</td><td>8.8:1 (needs 3)</td></tr>
+<tr><th scope="row">hand on base</th><td>dark</td><td>12.1:1 (needs 3)</td></tr>
+<tr><th scope="row">track on base</th><td>dark</td><td>3.5:1 (needs 3)</td></tr>
+</tbody>
+</table>
+<!-- END GENERATED: design-ledger -->
   </section>
 
   <section class="wrap band" id="components" aria-labelledby="components-h">
