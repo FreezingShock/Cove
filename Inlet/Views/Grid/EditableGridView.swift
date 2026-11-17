@@ -146,31 +146,7 @@ struct EditableGridView: View {
         let track = -CGFloat(current) * geo.pageWidth + swipeOffset
         return ZStack(alignment: .topLeading) {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, app in
-                // Each value is named on its own line, so the type-checker
-                // handles every expression separately.
-                let placement: OpenPlacement = openPlacement(forIndex: index, total: items.count, geo: geo)
-                let center: CGPoint = tilePosition(for: app, index: index, geo: geo, track: track)
-
-                GridTile(
-                    app: app,
-                    placement: placement,
-                    isOpen: isOpen,
-                    isEditing: isEditing,
-                    showsBadge: showsBadge(for: app),
-                    isLifted: isDragging(app),
-                    isPressed: isPressed(app),
-                    isKeyboardFocused: app.id == focusedID,
-                    isHovered: isHoverTarget(app),
-                    onOpen: { onLaunch(app) },
-                    onHide: { if app.isHideable { onHide(app) } },
-                    onMove: { onMove(app, $0) }
-                )
-                .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
-                .position(center)
-                // The dragged icon follows the pointer exactly, so it doesn't animate.
-                .transaction { transaction in
-                    if isDragging(app) { transaction.animation = nil }
-                }
+                tile(for: app, index: index, total: items.count, geo: geo, track: track)
             }
         }
         .frame(width: geo.pageWidth, height: height, alignment: .topLeading)
@@ -189,6 +165,35 @@ struct EditableGridView: View {
         }
         // Reorders and page changes animate. Ids only, so a swipe doesn't re-animate.
         .animation(motion(.inletSettle), value: items.map(\.id))
+    }
+
+    /// One icon on the page, placed at its slot. Kept out of the ForEach closure,
+    /// so the compiler checks its modifier chain on its own.
+    private func tile(for app: AppItem, index: Int, total: Int, geo: GridGeometry, track: CGFloat) -> some View {
+        let placement = openPlacement(forIndex: index, total: total, geo: geo)
+        let center = tilePosition(for: app, index: index, geo: geo, track: track)
+        let dragging = isDragging(app)
+
+        return GridTile(
+            app: app,
+            placement: placement,
+            isOpen: isOpen,
+            isEditing: isEditing,
+            showsBadge: showsBadge(for: app),
+            isLifted: dragging,
+            isPressed: isPressed(app),
+            isKeyboardFocused: app.id == focusedID,
+            isHovered: isHoverTarget(app),
+            onOpen: { onLaunch(app) },
+            onHide: { if app.isHideable { onHide(app) } },
+            onMove: { onMove(app, $0) }
+        )
+        .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
+        .position(center)
+        // The dragged icon follows the pointer exactly, so it doesn't animate.
+        .transaction { transaction in
+            if dragging { transaction.animation = nil }
+        }
     }
 
     /// True while this icon is the one being dragged.
