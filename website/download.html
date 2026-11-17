@@ -94,6 +94,7 @@
     <p class="lede">Download the disk image, drag Inlet into Applications, and open it. Inlet needs macOS 26 or later. It is not notarized by Apple, so the first launch takes one extra step.</p>
     <div class="download-row">
       <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download for Mac</a>
+      <a class="btn btn-ghost dl-mac" href="install.html">Install guide, with pictures</a>
       <div class="dl-phone-cta">
         <a class="btn btn-primary" href="mailto:?subject=Inlet%20for%20Mac&amp;body=Install%20Inlet%20on%20your%20Mac.%20Open%20this%20link%20there%3A%0A%0Ahttps%3A%2F%2Fgithub.com%2FFreezingShock%2FInlet%2Freleases%2Flatest%2Fdownload%2FInlet.dmg">Email me the link</a>
         <button class="btn btn-ghost dl-copy" type="button" data-copy="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg">Copy link</button>
@@ -109,6 +110,7 @@
     <p class="note"><strong>No release is out yet?</strong> The download button points to the newest published release on GitHub. If it shows a GitHub 404 page, no release has been published yet. Until one is, you can <a href="#build">build Inlet from source</a>.</p>
     <ul class="on-page" aria-label="On this page">
       <li><a href="#install">Install</a></li>
+      <li><a href="install.html">Install guide</a></li>
       <li><a href="#first-launch">First launch</a></li>
       <li><a href="#build">Build from source</a></li>
       <li><a href="#updates">Updates</a></li>
@@ -148,34 +150,11 @@
 
   <section class="wrap band bg-grain" id="first-launch">
     <h2 class="h-section">Get past the first-launch warning.</h2>
-    <p class="lede">Inlet is not notarized by Apple, so macOS blocks it the first time you open it. Allow it once after you install, then it opens like any other app. Use either method below.</p>
-    <ol class="steps">
-      <li>
-        <div>
-          <h3>In Finder</h3>
-          <ol>
-            <li>Open Inlet. macOS says it cannot verify the app. Click <strong>Done</strong>.</li>
-            <li>Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>.</li>
-            <li>Scroll to the Security section and click <strong>Open Anyway</strong> next to Inlet. Confirm with your password.</li>
-          </ol>
-          <p>macOS keeps the Open Anyway button for a short time after the first attempt. If it is gone, open Inlet again and it will return.</p>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>In Terminal</h3>
-          <p>Remove the download flag from the app, then open Inlet as usual:</p>
-          <pre class="cmd">xattr -dr com.apple.quarantine /Applications/Inlet.app</pre>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>Choose what Inlet starts with</h3>
-          <p>Open at login is a setting, not a requirement. Turn it on in Settings, General if you want Inlet to start when you log in. Inlet doesn't ask for Accessibility or Screen Recording access in version 1.</p>
-          <p>Right-click does not bypass this check on recent macOS releases, so use one of the two methods above.</p>
-        </div>
-      </li>
-    </ol>
+    <p class="lede">Inlet is not notarized by Apple, so macOS blocks it the first time you open it. You allow it once, in Privacy &amp; Security, and then it opens like any other app.</p>
+    <div class="download-row">
+      <a class="btn btn-primary" href="install.html#allow">Show me the Open Anyway step</a>
+      <a class="btn btn-ghost" href="install.html">Full install guide</a>
+    </div>
   </section>
 
   <section class="wrap band" id="build">
