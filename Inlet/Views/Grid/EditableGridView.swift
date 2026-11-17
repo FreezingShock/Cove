@@ -174,10 +174,9 @@ struct EditableGridView: View {
         let center = tilePosition(for: app, index: index, geo: geo, track: track)
         let dragging = isDragging(app)
 
+        // Arguments follow the order of GridTile's stored properties.
         return GridTile(
             app: app,
-            placement: placement,
-            isOpen: isOpen,
             isEditing: isEditing,
             showsBadge: showsBadge(for: app),
             isLifted: dragging,
@@ -186,7 +185,9 @@ struct EditableGridView: View {
             isHovered: isHoverTarget(app),
             onOpen: { onLaunch(app) },
             onHide: { if app.isHideable { onHide(app) } },
-            onMove: { onMove(app, $0) }
+            onMove: { onMove(app, $0) },
+            placement: placement,
+            isOpen: isOpen
         )
         .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
         .position(center)
