@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/icon-dark.png">
-    <img src="docs/readme/icon-light.png" alt="Inlet app icon" width="112">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/icon-dark.svg">
+    <img src="docs/readme/icon-light.svg" alt="Inlet app icon" width="112">
   </picture>
 </p>
 
