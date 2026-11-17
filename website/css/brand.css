@@ -36,8 +36,8 @@
 }
 
 /* ---- Tile rule: a row of ink tiles with one lit tile, used as a section divider. ---- */
+/* One row, always. Tiles flow into columns, so a long rule never wraps onto a second line. */
 .tile-rule {
-  --n: 12;
   --cell: 10px;
   --gap: 10px;
   position: relative;
@@ -46,7 +46,8 @@
   margin: clamp(56px, 8vw, 96px) auto;
   height: var(--cell);
   display: grid;
-  grid-template-columns: repeat(var(--n), var(--cell));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cell);
   gap: var(--gap);
   pointer-events: none;
 }
