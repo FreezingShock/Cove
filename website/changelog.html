@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Changelog · Inlet</title>
-  <meta name="description" content="Inlet's version plan from 0.1 to 1.0, and how each release's notes are written.">
+  <meta name="description" content="Inlet release notes, newest first, and the version plan from 0.1 to 1.0.">
   <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
@@ -28,9 +28,11 @@
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/changelog.css">
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/changelog.html">
   <meta name="color-scheme" content="light dark">
@@ -39,7 +41,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Inlet">
   <meta property="og:title" content="Changelog · Inlet">
-  <meta property="og:description" content="The version plan for Inlet, from 0.1 to 1.0, and how each release is documented.">
+  <meta property="og:description" content="Inlet release notes, newest first, and the version plan from 0.1 to 1.0.">
   <meta property="og:url" content="https://freezingshock.github.io/Inlet/changelog.html">
   <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -47,7 +49,7 @@
   <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Changelog · Inlet">
-  <meta name="twitter:description" content="The version plan for Inlet, from 0.1 to 1.0, and how each release is documented.">
+  <meta name="twitter:description" content="Inlet release notes, newest first, and the version plan from 0.1 to 1.0.">
   <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
   <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -86,16 +88,29 @@
 </header>
 
 <main>
-  <section class="wrap page-hero">
-    <h1>Release notes and the plan.</h1>
-    <p class="lede">Inlet is still in development, so no release is out yet. Each version gets an entry here when it ships, newest first. Until then, the plan is below.</p>
+  <section class="wrap band release-band" id="notes" aria-labelledby="notes-title">
+    <div class="release-head">
+      <p class="eyebrow">Release notes</p>
+      <h2 class="h-section" id="notes-title">Every release, as it ships.</h2>
+      <p class="lede">Each version is listed here once it is published on GitHub, with what changed in it. The full history is in the <a href="https://github.com/FreezingShock/Inlet/commits/main" target="_blank" rel="noopener">commit log</a>.</p>
+    </div>
+    <!-- release-notes:start -->
+    <div class="release-empty" role="status">
+      <p class="release-empty-title">No release yet</p>
+      <p>Inlet is still in development. The first version to ship is listed here with what changed in it, and this page updates itself when a release is published.</p>
+      <div class="release-empty-actions">
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet/commits/main" target="_blank" rel="noopener">Commit log</a>
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet/releases" target="_blank" rel="noopener">Releases on GitHub</a>
+      </div>
+    </div>
+    <!-- release-notes:end -->
   </section>
 
   <section class="wrap band roadmap-band bg-ink" id="plan" aria-labelledby="plan-title">
     <div class="roadmap-head">
       <p class="eyebrow">Roadmap to 1.0</p>
       <h2 class="h-section" id="plan-title">Four milestones are built. Two remain before 1.0.</h2>
-      <p class="lede">Each status is checked against the code on the integration branch, as of 17 November 2026. Nothing has shipped yet, so every entry below is work in the code, not a release.</p>
+      <p class="lede">Each status is checked against the code on the integration branch, as of 17 November 2026. A status means the work is in the code. It is not always a release, so see the notes above for what has shipped.</p>
       <ul class="legend" aria-label="Status key">
         <li><span class="rm-status is-built">Built</span></li>
         <li><span class="rm-status is-progress">In progress</span></li>
@@ -245,14 +260,20 @@
       </li>
     </ol>
   </section>
+  <section class="wrap page-hero">
+    <h1>Release notes and the plan.</h1>
+    <p class="lede">What changed in each Inlet release, newest first, and the work still ahead before 1.0.</p>
+    <ul class="on-page" aria-label="On this page">
+      <li><a href="#notes">Release notes</a></li>
+      <li><a href="#plan">Roadmap to 1.0</a></li>
+    </ul>
+  </section>
 
-  <section class="wrap band" id="notes">
-<p class="lede">Full history is in the <a href="https://github.com/FreezingShock/Inlet/commits/main" target="_blank" rel="noopener">commit log</a>, and each release is on the <a href="https://github.com/FreezingShock/Inlet/releases" target="_blank" rel="noopener">releases page</a>.</p>
-</section>
+
 </main>
 
 <footer class="wrap foot">
-  <div class="foot-products" aria-label="Start here">
+  <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
       <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>

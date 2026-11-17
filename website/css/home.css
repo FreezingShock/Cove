@@ -403,3 +403,37 @@
 .recipe-dock .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); }
 .recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
 
+
+/* Closing call to action on the home page: a quiet cream panel with one aqua button.
+   The full aqua slab read as the loudest thing on the page. The aqua stays on the action. */
+.get.get-quiet .get-box {
+  background: var(--grouped);
+  color: var(--text);
+  border: 1px solid var(--hair);
+  box-shadow: none;
+}
+.get.get-quiet .get-box h2 { color: var(--text); }
+.get.get-quiet .get-box .lede,
+.get.get-quiet .get-box .get-lede,
+.get.get-quiet .get-box .dl-meta,
+.get.get-quiet .get-box .dl-gk { color: var(--text-2); }
+.get.get-quiet .get-box .dl-gk a { color: var(--text); }
+.get.get-quiet .get-box .btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.get.get-quiet .get-box .btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink); }
+.get.get-quiet .get-box .btn-ghost { color: var(--text); border-color: var(--hair); background: transparent; }
+.get.get-quiet .get-box .btn-ghost:hover { background: var(--hover); color: var(--text); }
+.get.get-quiet .get-box .reqs span {
+  background: var(--base);
+  color: var(--text-2);
+  border-color: var(--hair);
+}
+.get.get-quiet .get-box .keyline { background: var(--base); border-color: var(--hair); }
+.get.get-quiet .get-box kbd {
+  background: var(--grouped);
+  color: var(--text);
+  border-color: var(--hair);
+}
+.get.get-quiet .get-box .typed { background: var(--accent); color: var(--accent-ink); }

@@ -16,7 +16,7 @@ h1, h2, h3, h4, p { margin: 0; }
 h1, h2, h3 { font-weight: var(--w-heading); text-wrap: balance; }
 a { color: inherit; }
 button, input { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
 .wrap {
   width: min(1120px, 100%);
@@ -280,9 +280,9 @@ kbd {
 }
 .cell .name {
   max-width: 100%;
-  padding: 1px 6px;
+  padding: 1px 4px;
   border-radius: var(--r-lg);
-  font-size: 12px;
+  font-size: 11px;
   line-height: 16px;
   font-weight: 500;
   white-space: nowrap;
@@ -437,7 +437,7 @@ kbd {
   cursor: text;
   transition: box-shadow var(--dur-medium) var(--ease-fade);
 }
-.win-search:focus-within { box-shadow: 0 0 0 2px var(--accent); }
+.win-search:focus-within { box-shadow: 0 0 0 2px var(--text); }
 .win-search input {
   flex: 1;
   min-width: 0;
@@ -555,7 +555,7 @@ kbd {
   caret-color: var(--accent);
 }
 .searchbar input::placeholder { color: var(--text-3); opacity: 1; }
-.searchbar:focus-within { box-shadow: inset 0 1px 0 var(--g-rim-a), 0 0 0 2px var(--accent); }
+.searchbar:focus-within { box-shadow: inset 0 1px 0 var(--g-rim-a), 0 0 0 2px var(--text); }
 .sm-ico { width: var(--icon-md); height: var(--icon-md); flex: none; fill: none; stroke: currentColor; stroke-width: var(--icon-stroke); stroke-linecap: round; stroke-linejoin: round; }
 .caption-line { font-size: 13px; color: var(--text-3); }
 
@@ -920,4 +920,12 @@ body { counter-reset: feature; }
   margin-top: 16px;
   font-size: 14px;
   color: var(--text-3);
+}
+
+/* Touch targets: on touch screens, controls get at least 44 px. Footer links get padding instead of a larger font. */
+@media (pointer: coarse) {
+  .chip { min-height: 44px; }
+  .capsule-btn { height: auto; min-height: 44px; }
+  .foot-col a, .foot-products a { display: inline-block; padding-block: 12px; }
+  .theme-cycle { min-width: 44px; min-height: 44px; }
 }
