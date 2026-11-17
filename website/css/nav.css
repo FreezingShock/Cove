@@ -1,6 +1,6 @@
 /* ---------- Site chrome ----------
    Header, mobile menu, search trigger, command palette, footer, buttons, links,
-   cursor glow and page transitions. Loads last, after site.css, motion.css and
+   and page transitions. Loads last, after site.css, motion.css and
    pages.css, so it can own these parts without touching the page styles above.
    Every motion here is off under Reduce Motion (site.css also zeroes transitions). */
 
@@ -491,25 +491,6 @@ main p a:hover,
   color: var(--text-3);
 }
 .foot-hint kbd { height: 20px; min-width: 20px; padding: 0 5px; font-size: 11px; box-shadow: none; }
-
-/* ---------- Cursor glow ----------
-   On a mouse, a soft spot of the accent glow follows the pointer behind the page.
-   scripts/nav.js adds it only for fine pointers with Reduce Motion off. */
-.cursor-glow {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: -1;
-  width: 620px;
-  height: 620px;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--glow-a), transparent);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-slow) var(--ease-fade);
-  will-change: transform;
-}
-.cursor-glow.is-on { opacity: 0.5; }
 
 /* ---------- Page transitions ----------
    Same-origin links cross-fade where the View Transitions API is supported. Elsewhere,
