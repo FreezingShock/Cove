@@ -17,7 +17,7 @@ section[id] { scroll-margin-top: 0; }
   position: sticky;
   top: 0;
   z-index: 50;
-  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+  transition: background-color var(--dur-medium) var(--ease-fade), box-shadow var(--dur-medium) var(--ease-fade);
 }
 .nav.is-scrolled {
   background: color-mix(in srgb, var(--base) 78%, transparent);
@@ -33,7 +33,7 @@ section[id] { scroll-margin-top: 0; }
   }
 }
 /* Current section, set by scroll.js from an IntersectionObserver. */
-.links a { transition: color 0.3s ease, background-color 0.3s ease; }
+.links a { transition: color var(--dur-medium) var(--ease-fade), background-color var(--dur-medium) var(--ease-fade); }
 .links a[aria-current="true"] { color: var(--text); background: var(--hover); }
 
 /* ---------- Reveal on scroll ----------
@@ -44,8 +44,8 @@ section[id] { scroll-margin-top: 0; }
     opacity: 0;
     transform: translate3d(0, 28px, 0);
     transition:
-      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
-      transform 1s cubic-bezier(0.2, 0.8, 0.2, 1.04) var(--d, 0ms);
+      opacity var(--dur-slower) var(--ease-standard) var(--d, 0ms),
+      transform var(--dur-slower) var(--ease-standard) var(--d, 0ms);
   }
   .reveal.is-in {
     opacity: 1;
@@ -145,10 +145,10 @@ section[id] { scroll-margin-top: 0; }
   align-items: center;
   gap: 8px;
   padding: 6px 14px 6px 6px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   font-size: 14px;
   color: var(--text-3);
-  transition: color 0.4s ease, background-color 0.4s ease;
+  transition: color var(--dur-slow) var(--ease-fade), background-color var(--dur-slow) var(--ease-fade);
 }
 .scrub-steps li > span {
   display: grid;
@@ -160,7 +160,7 @@ section[id] { scroll-margin-top: 0; }
   font-weight: 600;
   background: var(--field);
   color: var(--text-2);
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition: background-color var(--dur-slow) var(--ease-fade), color var(--dur-slow) var(--ease-fade);
 }
 .scrub-steps li.is-active { color: var(--text); background: var(--field); }
 .scrub-steps li.is-active > span { background: var(--accent); color: var(--accent-ink); }
@@ -168,7 +168,7 @@ section[id] { scroll-margin-top: 0; }
   display: block;
   height: 2px;
   margin-top: 20px;
-  border-radius: 2px;
+  border-radius: var(--r-hair);
   background: var(--hair);
   overflow: hidden;
 }

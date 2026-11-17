@@ -127,7 +127,7 @@ struct GridTile: View {
             withTransaction(stop) { wobble = false }
             return
         }
-        withAnimation(.easeInOut(duration: 0.19).repeatForever(autoreverses: true)) {
+        withAnimation(.easeInOut(duration: InletMotion.jiggle).repeatForever(autoreverses: true)) {
             wobble = true
         }
     }

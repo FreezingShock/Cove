@@ -197,10 +197,10 @@ private struct Keycap: View {
             .padding(.horizontal, InletSpace.l - InletSpace.xxs)
             .background(
                 LinearGradient(colors: [InletColor.selTop, InletColor.selBot], startPoint: .top, endPoint: .bottom),
-                in: RoundedRectangle(cornerRadius: 15, style: .continuous)
+                in: RoundedRectangle(cornerRadius: InletRadius.md, style: .continuous)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                RoundedRectangle(cornerRadius: InletRadius.md, style: .continuous)
                     .strokeBorder(InletColor.selRing, lineWidth: 1)
             )
             .shadow(color: InletColor.selShadow, radius: 8, y: 6)
@@ -321,7 +321,7 @@ struct TryStep: View {
                 .focused($searchFocused)
                 .padding(.horizontal, InletSpace.l - InletSpace.xxs)
                 .frame(height: 38)
-                .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+                .background(.white.opacity(0.16), in: RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous))
                 .onKeyPress(.escape) {
                     model.closeDesk()
                     return .handled

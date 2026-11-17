@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+"""Generate the radius and motion tokens for the app and the website from design/tokens.json.
+
+Writes two marked blocks:
+  - website/css/tokens.css        between /* BEGIN GENERATED */ and /* END GENERATED */
+  - Inlet/InletTheme.swift        between // BEGIN GENERATED and // END GENERATED
+
+Usage:
+  python3 scripts/build-tokens.py          rewrite the blocks
+  python3 scripts/build-tokens.py --check  exit 1 if the blocks are out of date (CI)
+"""
+import json
+import math
+import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+SOURCE = ROOT / "design" / "tokens.json"
+CSS_FILE = ROOT / "website" / "css" / "tokens.css"
+SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
+
+CSS_BEGIN, CSS_END = "/* BEGIN GENERATED", "/* END GENERATED */"
+SWIFT_BEGIN, SWIFT_END = "// BEGIN GENERATED", "// END GENERATED"
+
+
+def fmt(v):
+    """Plain number text: 6 -> '6', 0.5 -> '0.5', 0.0 -> '0.0'."""
+    return str(v)
+
+
+def spring_samples(duration, bounce):
+    """Position curve of a spring with SwiftUI's Spring(duration:bounce:) meaning.
+
+    Mass 1, natural frequency w0 = 2*pi/duration, damping ratio z = 1 - bounce.
+    Returns (settle_seconds, samples in 0...1 with 0 at the start and 1 at the end).
+    """
+    z = 1.0 - bounce
+    w0 = 2 * math.pi / duration
+
+    if z < 1:
+        wd = w0 * math.sqrt(1 - z * z)
+
+        def x(t):
+            return 1 - math.exp(-z * w0 * t) * (math.cos(wd * t) + (z * w0 / wd) * math.sin(wd * t))
+    else:
+        def x(t):
+            return 1 - math.exp(-w0 * t) * (1 + w0 * t)
+
+    # Settle time: the last moment the curve is more than 0.1% away from its target.
+    dt = duration / 4000
+    settle, t = 0.0, 0.0
+    while t < 10 * duration:
+        if abs(x(t) - 1) > 0.001:
+            settle = t + dt
+        t += dt
+
+    n = 48
+    pts = [x(settle * i / n) for i in range(n + 1)]
+    pts[0], pts[-1] = 0.0, 1.0
+    return settle, pts
+
+
+def linear_fn(pts):
+    body = ", ".join(f"{p:.3f}".rstrip("0").rstrip(".") if p not in (0.0, 1.0) else fmt(p) for p in pts)
+    return f"linear({body})"
+
+
+def build_css(cfg):
+    r, m = cfg["radius"], cfg["motion"]
+    s = r["scale"]
+    lines = [
+        "/* BEGIN GENERATED: radius and motion. Source: design/tokens.json, built by scripts/build-tokens.py.",
+        "   Edit the JSON and rerun the script; do not hand-edit this block. */",
+        ":root {",
+        "  /* Radius (px). Inner = outer - inset; see the nesting table in design/tokens.json. */",
+    ]
+    for k, v in s.items():
+        lines.append(f"  --r-{k}: {v}px;")
+    lines += [
+        f"  --r-pill: {r['pill']}px;",
+        f"  --r-hair: {r['hair']}px;",
+        f"  --r-icon: {r['iconRatio']};  /* app icon squircle, as a fraction of the icon size */",
+        "",
+        "  /* Motion durations (seconds). */",
+    ]
+    for k, v in m["durations"].items():
+        lines.append(f"  --dur-{k}: {fmt(v)}s;")
+    lines += ["", "  /* Easing curves. */"]
+    for k, v in m["easing"].items():
+        lines.append(f"  --ease-{k}: cubic-bezier({', '.join(fmt(x) for x in v)});")
+    lines += [
+        "",
+        "  /* Springs, matched to the app: a linear() curve and the time it takes to settle. Use only",
+        "     where linear() is supported (@supports (transition-timing-function: linear(0, 1))). */",
+    ]
+    for name, sp in m["springs"].items():
+        settle, pts = spring_samples(sp["duration"], sp["bounce"])
+        lines.append(f"  --spring-{name}: {linear_fn(pts)};")
+        lines.append(f"  --spring-{name}-dur: {settle:.3f}s;")
+    lines += ["}", "/* END GENERATED */"]
+    return "\n".join(lines) + "\n"
+
+
+def build_swift(cfg):
+    r, m = cfg["radius"], cfg["motion"]
+    s = r["scale"]
+    doc = {
+        "xs": "keycaps, symbol tiles",
+        "sm": "small tiles, sidebar rows, theme thumbnails",
+        "md": "rows and groups inside a 32 pt panel with 16 pt padding",
+        "lg": "cards inside a 32 pt panel with 12 pt padding",
+        "row": "selected row inside a results panel (32 - 8)",
+        "sidebar": "Settings sidebar inside a 26 pt window with 8 pt inset",
+        "window": "Settings and onboarding window",
+        "panel": "every glass panel: results, quick panel, folder overlay",
+    }
+    out = [
+        "// BEGIN GENERATED: radius and motion. Source: design/tokens.json, built by scripts/build-tokens.py.",
+        "// Edit the JSON and rerun the script; do not hand-edit this block.",
+        "",
+        "// MARK: - Shape tokens (points). Radii nest: inner = outer - inset (see design/tokens.json)",
+        "",
+        "enum InletRadius {",
+    ]
+    for k, v in s.items():
+        out.append(f"    static let {k}: CGFloat = {fmt(v)}  // {doc.get(k, '')}".rstrip())
+    out += [
+        f"    static let pill: CGFloat = {fmt(r['pill'])}  // capsule ends",
+        f"    static let hair: CGFloat = {fmt(r['hair'])}  // rules, progress bars",
+        f"    /// App icons use {r['iconRatio'] * 100:.1f}% of their width as the corner radius.",
+        f"    static let iconRatio: CGFloat = {fmt(r['iconRatio'])}",
+        "    static func icon(_ size: CGFloat) -> CGFloat { size * iconRatio }",
+        "}",
+        "",
+        "// MARK: - Motion tokens",
+        "",
+        "/// Springs are `Spring(duration:bounce:)` (macOS 14+). Bounce in, never out: `dismiss` has no bounce.",
+        "enum InletMotion {",
+    ]
+    spring_names = {
+        "snap": "Hover, selection move, focus ring",
+        "press": "Icon and button press, release overshoot",
+        "open": "Full grid appears, icons ripple out from center",
+        "morph": "Search capsule melts into the results panel",
+        "rise": "Quick panel rises out of the Dock icon",
+        "settle": "Grid reflow when a search filters icons",
+        "dismiss": "Anything closing. Never bounce on the way out",
+    }
+    for name, sp in m["springs"].items():
+        out.append(f"    /// {spring_names.get(name, sp.get('use', ''))}")
+        out.append(f"    static let {name} = Spring(duration: {fmt(sp['duration'])}, bounce: {fmt(sp['bounce'])})")
+    out.append("")
+    out.append("    /// Durations (seconds) for fades and loops that are not springs.")
+    for k, v in m["durations"].items():
+        out.append(f"    static let {k}: Double = {fmt(v)}")
+    out += [
+        "}",
+        "",
+        "extension Animation {",
+    ]
+    for name in m["springs"]:
+        out.append(f"    static var inlet{name[0].upper()}{name[1:]}: Animation {{ .spring(InletMotion.{name}) }}")
+    out += [
+        "    /// Fades and cross-dissolves. Use this for Reduce Motion fallbacks as well.",
+        "    static var inletFade: Animation { .easeInOut(duration: InletMotion.fast) }",
+        "",
+        "    /// For a drag release: carries the drag's speed into the rise spring (macOS 14+).",
+        "    static func inletRelease(velocity: Double) -> Animation {",
+        "        .interpolatingSpring(InletMotion.rise, initialVelocity: velocity)",
+        "    }",
+        "}",
+        "// END GENERATED",
+    ]
+    return "\n".join(out) + "\n"
+
+
+def splice(text, begin, end, block, path):
+    start = text.find(begin)
+    stop = text.find(end)
+    if start == -1 or stop == -1 or stop < start:
+        sys.exit(f"{path}: missing {begin!r} ... {end!r} markers")
+    stop += len(end)
+    # Keep everything after the END marker as it was, so reruns are stable.
+    return text[:start] + block + text[stop:].lstrip("\n") if False else text[:start] + block + text[stop:].removeprefix("\n")
+
+
+def main():
+    check = "--check" in sys.argv
+    cfg = json.loads(SOURCE.read_text())
+    css_block = build_css(cfg)
+    swift_block = build_swift(cfg)
+
+    css_now = CSS_FILE.read_text()
+    swift_now = SWIFT_FILE.read_text()
+    css_new = splice(css_now, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
+    swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
+
+    if check:
+        stale = [str(p.relative_to(ROOT)) for p, now, new in
+                 [(CSS_FILE, css_now, css_new), (SWIFT_FILE, swift_now, swift_new)] if now != new]
+        if stale:
+            print("Out of date, run: python3 scripts/build-tokens.py ->", ", ".join(stale))
+            sys.exit(1)
+        print("Token blocks are up to date.")
+        return
+
+    CSS_FILE.write_text(css_new)
+    SWIFT_FILE.write_text(swift_new)
+    print(f"Wrote {CSS_FILE.relative_to(ROOT)} and {SWIFT_FILE.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    main()

@@ -81,7 +81,7 @@ struct EditableGridView: View {
 
     /// Wraps a Inlet spring. Under Reduce Motion it becomes a short crossfade.
     private func motion(_ animation: Animation) -> Animation {
-        reduceMotion ? .easeInOut(duration: 0.2) : animation
+        reduceMotion ? .inletFade : animation
     }
 
     /// Apps in grid order, with the saved layout applied. A drag shows its draft order instead.

@@ -17,7 +17,20 @@
   if (!win || !grid || !input || !tape || !status || !enter) return;
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var EASE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+  /* Motion tokens come from tokens.css (generated from design/tokens.json), so the demo
+     moves on the same curves as the app. Fallbacks match the token values. */
+  function token(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
+  function ms(name, fallback) { return parseFloat(token(name, fallback)) * 1000; }
+  var canLinear = !!(window.CSS && CSS.supports && CSS.supports("animation-timing-function", "linear(0, 1)"));
+  var EASE = token("--ease-standard", "cubic-bezier(0.2, 0.8, 0.2, 1)");
+  /* Grid reflow uses the settle spring where linear() is supported; the cubic is the fallback. */
+  var SETTLE = canLinear ? token("--spring-settle", EASE) : EASE;
+  var SETTLE_MS = canLinear ? ms("--spring-settle-dur", "0.82s") : ms("--dur-medium", "0.36s");
   var WORD = "photos";
   var total = grid.querySelectorAll(".cell").length;
   var running = false;
@@ -59,11 +72,11 @@
         var dx = o.x - c.offsetLeft, dy = o.y - c.offsetTop;
         if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
           anim(c, [{ translate: dx + "px " + dy + "px" }, { translate: "0px 0px" }],
-            { duration: 520, easing: EASE });
+            { duration: SETTLE_MS, easing: SETTLE });
         }
       } else {
         anim(c, [{ opacity: 0, scale: "0.6" }, { opacity: 1, scale: "1" }],
-          { duration: 420, easing: EASE });
+          { duration: SETTLE_MS, easing: SETTLE });
       }
     });
 
@@ -92,10 +105,10 @@
     if (!top) return;
     anim(top.querySelector(".ico"),
       [{ scale: "1" }, { scale: "0.88", offset: 0.22 }, { scale: "1.05", offset: 0.66 }, { scale: "1" }],
-      { duration: 560, easing: "linear" });
+      { duration: ms("--dur-slow", "0.5s"), easing: "linear" });
     anim(glintEl,
       [{ translate: "-120% 0" }, { translate: "260% 0" }],
-      { duration: 900, easing: EASE });
+      { duration: ms("--dur-slower", "0.8s"), easing: EASE });
   }
 
   async function loop(id) {

@@ -138,20 +138,73 @@ enum InletText {
     }
 }
 
-// MARK: - Shape tokens (points). Radii nest: inner = outer - padding (spec section 5)
+// BEGIN GENERATED: radius and motion. Source: design/tokens.json, built by scripts/build-tokens.py.
+// Edit the JSON and rerun the script; do not hand-edit this block.
+
+// MARK: - Shape tokens (points). Radii nest: inner = outer - inset (see design/tokens.json)
 
 enum InletRadius {
-    static let xs: CGFloat = 6        // keycaps, symbol tiles
-    static let sm: CGFloat = 10       // small tiles, sidebar rows, theme thumbnails
-    static let md: CGFloat = 16       // rows and groups inside a 32 pt panel with 16 pt padding
-    static let row: CGFloat = 24      // selected row inside a results panel (32 - 8)
+    static let xs: CGFloat = 6  // keycaps, symbol tiles
+    static let sm: CGFloat = 10  // small tiles, sidebar rows, theme thumbnails
+    static let md: CGFloat = 16  // rows and groups inside a 32 pt panel with 16 pt padding
+    static let lg: CGFloat = 20  // cards inside a 32 pt panel with 12 pt padding
+    static let row: CGFloat = 24  // selected row inside a results panel (32 - 8)
     static let sidebar: CGFloat = 18  // Settings sidebar inside a 26 pt window with 8 pt inset
-    static let window: CGFloat = 26  // Settings window
-    static let panel: CGFloat = 32    // every glass panel: results, quick panel, folder overlay
-
+    static let window: CGFloat = 26  // Settings and onboarding window
+    static let panel: CGFloat = 32  // every glass panel: results, quick panel, folder overlay
+    static let pill: CGFloat = 999  // capsule ends
+    static let hair: CGFloat = 2  // rules, progress bars
     /// App icons use 22.4% of their width as the corner radius.
-    static func icon(_ size: CGFloat) -> CGFloat { size * 0.224 }
+    static let iconRatio: CGFloat = 0.224
+    static func icon(_ size: CGFloat) -> CGFloat { size * iconRatio }
 }
+
+// MARK: - Motion tokens
+
+/// Springs are `Spring(duration:bounce:)` (macOS 14+). Bounce in, never out: `dismiss` has no bounce.
+enum InletMotion {
+    /// Hover, selection move, focus ring
+    static let snap = Spring(duration: 0.24, bounce: 0.0)
+    /// Icon and button press, release overshoot
+    static let press = Spring(duration: 0.26, bounce: 0.42)
+    /// Full grid appears, icons ripple out from center
+    static let open = Spring(duration: 0.46, bounce: 0.24)
+    /// Search capsule melts into the results panel
+    static let morph = Spring(duration: 0.52, bounce: 0.3)
+    /// Quick panel rises out of the Dock icon
+    static let rise = Spring(duration: 0.5, bounce: 0.32)
+    /// Grid reflow when a search filters icons
+    static let settle = Spring(duration: 0.6, bounce: 0.18)
+    /// Anything closing. Never bounce on the way out
+    static let dismiss = Spring(duration: 0.26, bounce: 0.0)
+
+    /// Durations (seconds) for fades and loops that are not springs.
+    static let fast: Double = 0.2
+    static let base: Double = 0.26
+    static let medium: Double = 0.36
+    static let slow: Double = 0.5
+    static let slower: Double = 0.8
+    static let jiggle: Double = 0.19
+    static let blink: Double = 1.0
+}
+
+extension Animation {
+    static var inletSnap: Animation { .spring(InletMotion.snap) }
+    static var inletPress: Animation { .spring(InletMotion.press) }
+    static var inletOpen: Animation { .spring(InletMotion.open) }
+    static var inletMorph: Animation { .spring(InletMotion.morph) }
+    static var inletRise: Animation { .spring(InletMotion.rise) }
+    static var inletSettle: Animation { .spring(InletMotion.settle) }
+    static var inletDismiss: Animation { .spring(InletMotion.dismiss) }
+    /// Fades and cross-dissolves. Use this for Reduce Motion fallbacks as well.
+    static var inletFade: Animation { .easeInOut(duration: InletMotion.fast) }
+
+    /// For a drag release: carries the drag's speed into the rise spring (macOS 14+).
+    static func inletRelease(velocity: Double) -> Animation {
+        .interpolatingSpring(InletMotion.rise, initialVelocity: velocity)
+    }
+}
+// END GENERATED
 
 // MARK: - Spacing (points). One 4 pt based scale: 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 84
 
@@ -218,42 +271,6 @@ enum InletTracking {
     static let display: CGFloat = -0.84  // -0.03em at 28 pt
     static let title: CGFloat = -0.4     // -0.02em at 20 pt
     static let label: CGFloat = 0.66     // 0.06em at 11 pt
-}
-
-// MARK: - Motion tokens
-
-/// Each spring is `Spring(duration:bounce:)` (macOS 14+).
-/// Bounce in, never out: `dismiss` has no bounce.
-enum InletMotion {
-    /// Hover, selection move, focus ring
-    static let snap = Spring(duration: 0.24, bounce: 0.0)
-    /// Icon and button press, release overshoot
-    static let press = Spring(duration: 0.26, bounce: 0.42)
-    /// Full grid appears, icons ripple out from center
-    static let open = Spring(duration: 0.46, bounce: 0.24)
-    /// Search capsule melts into the results panel
-    static let morph = Spring(duration: 0.52, bounce: 0.30)
-    /// Quick panel rises out of the Dock icon
-    static let rise = Spring(duration: 0.50, bounce: 0.32)
-    /// Grid reflow when a search filters icons
-    static let settle = Spring(duration: 0.60, bounce: 0.18)
-    /// Anything closing. Never bounce on the way out
-    static let dismiss = Spring(duration: 0.26, bounce: 0.0)
-}
-
-extension Animation {
-    static var inletSnap: Animation { .spring(InletMotion.snap) }
-    static var inletPress: Animation { .spring(InletMotion.press) }
-    static var inletOpen: Animation { .spring(InletMotion.open) }
-    static var inletMorph: Animation { .spring(InletMotion.morph) }
-    static var inletRise: Animation { .spring(InletMotion.rise) }
-    static var inletSettle: Animation { .spring(InletMotion.settle) }
-    static var inletDismiss: Animation { .spring(InletMotion.dismiss) }
-
-    /// For a drag release: carries the drag's speed into the rise spring (macOS 14+).
-    static func inletRelease(velocity: Double) -> Animation {
-        .interpolatingSpring(InletMotion.rise, initialVelocity: velocity)
-    }
 }
 
 // MARK: - Glass
@@ -332,7 +349,7 @@ private struct InletAnimated<V: Equatable>: ViewModifier {
     let value: V
 
     func body(content: Content) -> some View {
-        content.animation(reduceMotion ? .easeInOut(duration: 0.2) : animation, value: value)
+        content.animation(reduceMotion ? .inletFade : animation, value: value)
     }
 }
 
