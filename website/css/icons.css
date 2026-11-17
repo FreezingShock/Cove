@@ -60,3 +60,15 @@ a:hover > svg.kit .k-m, button:hover > svg.kit .k-m { transform: translate(1px, 
   .kit-tile:hover .k-m, .kit-cell:hover .k-m, .foot-card:hover .k-m, .uc-card:hover .k-m, .aud:hover .k-m,
   a:hover svg.kit .k-a, a:hover svg.kit .k-m, button:hover > svg.kit .k-a, button:hover > svg.kit .k-m { transform: none; }
 }
+
+/* Tiles that lead a card or install step. */
+.kit-tile--card { margin-bottom: 14px; }
+.steps .kit-tile--card { margin-bottom: 10px; }
+.card:hover .kit-tile--card { background: var(--accent); color: var(--accent-ink, #17150F); --kit-accent: var(--accent-ink, #17150F); }
+.card:hover .kit-tile--card .k-a { transform: scale(1.3); }
+.card:hover .kit-tile--card .k-m { transform: translate(1px, -1px); }
+@media (prefers-reduced-motion: reduce) { .card:hover .kit-tile--card .k-a, .card:hover .kit-tile--card .k-m { transform: none; } }
+.card .kit-tile--card { grid-column: 1; grid-row: 1; margin-bottom: 4px; }
+.card .kit-tile--card + h3 { grid-row: 2; }
+.card .kit-tile--card ~ .keys-line { grid-row: 3; }
+@media (max-width: 760px) { .card .kit-tile--card, .card .kit-tile--card + h3 { grid-row: auto; } }
