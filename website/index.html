@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/motion.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/download.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
@@ -90,7 +91,7 @@
         <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
         <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
         </div>
-        <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
+        <a class="btn btn-primary menu-get dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download for Mac</a>
       </div>
     </nav>
     <div class="nav-right">
@@ -103,7 +104,8 @@
         <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
         <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
       </div>
-      <a class="btn btn-primary btn-sm" href="index.html#get">Get Inlet</a>
+      <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
+      <a class="btn btn-primary btn-sm dl-phone-only" href="#get">Get Inlet</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
     </div>
   </div>
@@ -124,7 +126,8 @@
         <a class="btn btn-primary dl-phone-only" href="#get">Get Inlet</a>
         <a class="hero-link" href="#demo">See it in action</a>
       </div>
-      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span>macOS 26 or later</span><span>In development</span></p>
+      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span>Version 1.0</span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
+      <p class="dl-gk"><strong>First launch:</strong> Inlet is not notarized by Apple, so macOS blocks it the first time. Open System Settings, go to Privacy &amp; Security, and click Open Anyway. <a href="download.html#first-launch">Step by step</a></p>
     </div>
 
     <div class="wrap hero-stage-wrap">
@@ -459,15 +462,23 @@
         <div class="keyline keyline-lg" role="img" aria-label="Option Space, then type a few letters, then Return">
           <kbd aria-hidden="true">⌥</kbd><kbd aria-hidden="true">Space</kbd><i class="arr" aria-hidden="true">→</i><span class="typed" aria-hidden="true">type</span><i class="arr" aria-hidden="true">→</i><kbd aria-hidden="true">Return</kbd>
         </div>
-        <p class="lede get-lede">Inlet is in development and needs macOS 26 or later. The build, release notes, and source are on GitHub.</p>
+        <p class="lede get-lede">Download the disk image, drag Inlet into Applications, and open it. The release notes and source are on GitHub.</p>
         <div class="reqs" role="group" aria-label="Requirements">
           <span>macOS 26 or later</span>
+          <span>Apple silicon and Intel</span>
           <span>Files stay on your Mac</span>
         </div>
       </div>
       <div class="get-actions">
-        <a class="btn btn-primary" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" rel="noopener">Download Inlet</a>
-        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download for Mac</a>
+        <div class="dl-phone-cta">
+          <a class="btn btn-primary" href="mailto:?subject=Inlet%20for%20Mac&amp;body=Install%20Inlet%20on%20your%20Mac.%20Open%20this%20link%20there%3A%0A%0Ahttps%3A%2F%2Fgithub.com%2FFreezingShock%2FInlet%2Freleases%2Flatest%2Fdownload%2FInlet.dmg">Email me the link</a>
+          <button class="btn btn-ghost dl-copy" type="button" data-copy="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg">Copy link</button>
+        </div>
+        <a class="btn btn-ghost" href="download.html">Install steps</a>
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">View source on GitHub</a>
+        <p class="dl-meta" aria-label="Download details"><span>Version 1.0</span><span>Disk image (.dmg)</span><span>macOS 26 or later</span></p>
+        <p class="dl-gk"><strong>First launch:</strong> macOS blocks Inlet once because it is not notarized by Apple. Click Open Anyway in System Settings, Privacy &amp; Security. <a href="download.html#first-launch">Step by step</a></p>
       </div>
     </div>
   </section>
@@ -512,6 +523,7 @@
 <script src="js/hero.js" defer></script>
 <script src="js/scroll.js" defer></script>
 <script src="js/home.js" defer></script>
+<script src="js/download.js" defer></script>
 <script src="js/nav.js" defer></script>
 </body>
 </html>
