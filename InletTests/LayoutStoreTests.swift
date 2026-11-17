@@ -87,4 +87,30 @@ final class LayoutStoreTests: XCTestCase {
         let aside = directory.appendingPathComponent("layout.unreadable.json")
         XCTAssertTrue(FileManager.default.fileExists(atPath: aside.path))
     }
+
+    func testVersion1FileLoadsAndGainsGroupsOnReconcile() throws {
+        // A layout saved before groups existed: the file has no groups key.
+        let v1 = GridLayout(version: 1, entries: [.app("/Applications/Mail.app")])
+        let encoded = try JSONEncoder().encode(v1)
+        var object = (try JSONSerialization.jsonObject(with: encoded) as? [String: Any]) ?? [:]
+        object.removeValue(forKey: "groups")
+        try JSONSerialization.data(withJSONObject: object).write(to: fileURL)
+
+        let store = LayoutStore(fileURL: fileURL)
+        XCTAssertEqual(store.layout.entries, [.app("/Applications/Mail.app")])
+        XCTAssertFalse(FileManager.default.fileExists(
+            atPath: directory.appendingPathComponent("layout.unreadable.json").path
+        ), "A version 1 file must load, not be moved aside")
+
+        let mail = AppItem(
+            name: "Mail",
+            url: URL(fileURLWithPath: "/Applications/Mail.app"),
+            bundleIdentifier: nil,
+            categoryType: "public.app-category.productivity"
+        )
+        store.reconcile(with: [mail])
+        XCTAssertEqual(store.layout.version, GridLayout.currentVersion)
+        XCTAssertEqual(store.layout.groups.count, 6)
+        XCTAssertEqual(store.layout.groupID(containing: mail.id), "everyday")
+    }
 }

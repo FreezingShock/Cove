@@ -1,0 +1,176 @@
+/* Inlet brand layer: the motifs from the Grid icon (one lit tile among ink tiles),
+   the inlet band, the highlight mark and the aqua call to action.
+   Colors come only from tokens.css (cream, ink, aqua). See docs/brand.md. */
+
+:root {
+  /* An ink tile on cream: the Grid icon's unlit tiles, at a quiet strength. */
+  --tile: rgba(23, 21, 15, 0.10);
+  --tile-lit: var(--accent);
+  --band-speed: 46s;
+}
+:root[data-theme="dark"], .t-dark { --tile: rgba(244, 239, 230, 0.12); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --tile: rgba(244, 239, 230, 0.12); }
+}
+
+/* ---- Call to action: aqua fill, ink label. The one accent carries the action. ---- */
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:active { background: var(--accent-pressed); }
+
+/* Hero: the primary action is aqua now, not ink. */
+.hero-cta .btn-primary,
+.hero-cta .btn-primary:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.hero-cta .btn-primary:hover { opacity: 1; background: var(--accent-hover); }
+
+/* ---- Highlight mark: one aqua word per headline, like a lit tile behind the type. ---- */
+.hl {
+  color: inherit;
+  background: linear-gradient(var(--accent), var(--accent)) 0 88% / 100% 0.34em no-repeat;
+  padding: 0 0.04em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ---- Tile rule: a row of ink tiles with one lit tile, used as a section divider. ---- */
+.tile-rule {
+  --n: 12;
+  --cell: 10px;
+  --gap: 10px;
+  position: relative;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: clamp(56px, 8vw, 96px) auto;
+  height: var(--cell);
+  display: grid;
+  grid-template-columns: repeat(var(--n), var(--cell));
+  gap: var(--gap);
+  pointer-events: none;
+}
+.tile-rule i {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 3px;
+  background: var(--tile);
+}
+.tile-rule .lit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--tile-lit);
+  transform: translateX(calc(var(--lit) * (var(--cell) + var(--gap))));
+}
+/* The lit tile slides into its place as the rule scrolls into view. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tile-rule .lit {
+      animation: tile-travel linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+@keyframes tile-travel {
+  from { transform: translateX(0); }
+}
+.tile-rule.is-wide { --cell: 8px; --gap: 8px; }
+
+/* ---- Inlet band: a full-bleed ink strip with words moving across it. ---- */
+.lit-band {
+  position: relative;
+  overflow: hidden;
+  background: var(--text);
+  color: var(--base);
+  margin: clamp(48px, 7vw, 88px) 0;
+  padding: 18px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.lit-band .lit-band-track {
+  display: flex;
+  width: max-content;
+  animation: band-run var(--band-speed) linear infinite;
+}
+.lit-band:hover .lit-band-track { animation-play-state: paused; }
+.lit-band ul {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lit-band li {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+  font-size: clamp(22px, 3.2vw, 36px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.lit-band li::after {
+  content: "";
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 0.09em;
+  background: var(--accent);
+  flex: none;
+}
+.lit-band li:nth-child(3n)::after { background: transparent; box-shadow: inset 0 0 0 0.09em var(--base); }
+@keyframes band-run {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+/* Reduced motion: no movement. The band keeps one line, readable from the start. */
+@media (prefers-reduced-motion: reduce) {
+  .lit-band .lit-band-track { animation: none; }
+  .lit-band ul[aria-hidden="true"] { display: none; }
+  .lit-band { -webkit-mask-image: none; mask-image: none; }
+}
+
+/* ---- Eyebrow: a small lit tile before the label. ---- */
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+  margin-right: 10px;
+  vertical-align: 1px;
+}
+
+/* ---- Closing call to action: the one full aqua panel on the site. ---- */
+.get .get-box {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+  box-shadow: none;
+}
+.get .get-box h2,
+.get .get-box .lede,
+.get .get-box .get-lede,
+.get .get-box .dl-meta,
+.get .get-box .dl-gk { color: var(--accent-ink); }
+.get .get-box .btn-primary { background: var(--accent-ink); color: var(--accent); }
+.get .get-box .btn-primary:hover { background: #000; color: var(--accent); }
+.get .get-box .btn-ghost { color: var(--accent-ink); border-color: var(--accent-ink); background: transparent; }
+.get .get-box .btn-ghost:hover { background: var(--accent-ink); color: var(--accent); }
+.get .get-box kbd {
+  background: rgba(23, 21, 15, 0.10);
+  border-color: rgba(23, 21, 15, 0.22);
+  color: var(--accent-ink);
+  box-shadow: none;
+}
+.get .get-box .reqs span {
+  color: var(--accent-ink);
+  background: rgba(23, 21, 15, 0.10);
+  border-color: transparent;
+}
+.get .get-box .dl-gk a { color: var(--accent-ink); }

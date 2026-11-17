@@ -6,11 +6,31 @@
   <title>Features · Inlet</title>
   <meta name="description" content="How Inlet's grid, search, quick panel, shortcuts and settings work. Everything runs on your Mac.">
   <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/pages.css">
   <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/features.html">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
@@ -49,12 +69,6 @@
       <a href="changelog.html">Changelog</a>
       <a href="faq.html">FAQ</a>
       <div class="menu-extra">
-        <p class="menu-label" id="menuAppLbl">Appearance</p>
-        <div class="seg" role="group" aria-labelledby="menuAppLbl">
-        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
-        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
-        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
-        </div>
         <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
       </div>
     </nav>
@@ -63,12 +77,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
         <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
       </button>
-      <div class="seg" role="group" aria-label="Appearance">
-        <button type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
-        <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
-        <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
-      </div>
-      <a class="btn btn-primary btn-sm" href="index.html#get">Get Inlet</a>
+      <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
     </div>
   </div>
@@ -81,7 +90,7 @@
     <ul class="on-page" aria-label="On this page">
       <li><a href="#grid">Full-screen grid</a></li>
       <li><a href="#search">Search</a></li>
-      <li><a href="#arrange">Edit mode and folders</a></li>
+      <li><a href="#arrange">Edit mode, folders and groups</a></li>
       <li><a href="#quick-panel">Quick panel</a></li>
       <li><a href="#shortcuts">Shortcuts</a></li>
       <li><a href="#settings">Settings</a></li>
@@ -90,6 +99,12 @@
   </section>
 
   <!-- Full-screen grid -->
+  <div class="lit-band" role="note" aria-label="Open. Search. Arrange. Launch. Keep it on your Mac.">
+    <div class="lit-band-track">
+      <ul><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
+      <ul aria-hidden="true"><li>Open</li><li>Search</li><li>Arrange</li><li>Launch</li><li>Peek at a file</li><li>Keep it on your Mac</li><li>Press Option Space</li></ul>
+    </div>
+  </div>
   <section class="wrap band" id="grid">
     <div class="split">
       <div class="copy">
@@ -124,6 +139,10 @@
       <article class="card">
         <h3>Folders</h3>
         <p>Group related apps into a folder. A folder holds up to nine apps, and folders can't sit inside other folders.</p>
+      </article>
+      <article class="card">
+        <h3>Groups</h3>
+        <p>Inlet starts with six groups, one for each kind of app. Add your own, rename them, pick a color and an icon, and reorder them. Right-click an app to move it to another group. Each app is in one group, and the group bar filters the grid to it.</p>
       </article>
       <article class="card">
         <h3>Pages</h3>
@@ -241,6 +260,7 @@
   </section>
 
   <!-- Privacy and next step -->
+  <div class="tile-rule" aria-hidden="true" style="--lit:9"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <section class="wrap band" id="privacy">
     <div class="still">
       <div>
@@ -283,11 +303,15 @@
     </div>
   </nav>
   <div class="foot-bar">
-    <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    <div class="foot-tools">
+      <button class="theme-cycle" type="button" data-theme-cycle data-mode="auto" aria-label="Appearance: Auto. Switch to Light" title="Appearance: Auto"><svg class="ic-auto" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg><svg class="ic-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg><svg class="ic-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg></button>
+      <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    </div>
   </div>
 </footer>
 
 <script src="js/pages.js" defer></script>
 <script src="js/nav.js" defer></script>
+<script src="js/motion.js" defer></script>
 </body>
 </html>

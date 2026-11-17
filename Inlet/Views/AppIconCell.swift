@@ -2,7 +2,8 @@
 //  AppIconCell.swift
 //  Inlet
 //
-//  One app in the grid: its icon and name. Click to launch.
+//  One app in the grid: its icon and name. Click to launch. Right-click for
+//  quick actions. While searching, the first nine results show a ⌘1 to ⌘9 hint.
 //
 
 import SwiftUI
@@ -15,6 +16,8 @@ struct AppIconCell: View {
     var isTopHit = false
     /// True when arrow keys have moved keyboard focus onto this icon.
     var isKeyboardFocused = false
+    /// The number shown as a ⌘ hint, 1 to 9, or nil for no hint.
+    var shortcutNumber: Int?
     /// Where this cell starts and when its open animation begins.
     let placement: OpenPlacement
     /// True once the overlay is open.
@@ -23,6 +26,9 @@ struct AppIconCell: View {
     /// `@State` is private memory that belongs to this one cell.
     @State private var isHovered = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorSchemeContrast) private var contrast
+    /// Closes the overlay. Used by "Show in Finder", which opens another window.
+    @Environment(\.dismissOverlay) private var dismissOverlay
 
     var body: some View {
         Button {
@@ -34,12 +40,14 @@ struct AppIconCell: View {
                     .interpolation(.high)
                     .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
 
-                Text(app.name)
-                    .font(InletFont.iconLabel)
-                    .foregroundStyle(InletColor.text)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: InletSize.gridCell.width - InletSpace.l)
+                if ThemeRuntime.showsLabels {
+                    Text(app.name)
+                        .font(ThemeRuntime.labelFont)
+                        .foregroundStyle(InletColor.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: InletSize.gridCell.width - InletSpace.l)
+                }
             }
             .padding(.vertical, InletSpace.s + InletSpace.xxs)
             .frame(width: InletSize.gridCell.width - InletSpace.s)
@@ -61,6 +69,20 @@ struct AppIconCell: View {
                         .strokeBorder(InletColor.accent, lineWidth: 2)
                 }
             }
+            // ⌘1 to ⌘9 hint, in the top-left corner. Hidden for VoiceOver:
+            // the shortcut is announced by the keyboard, not read aloud.
+            .overlay(alignment: .topLeading) {
+                if let shortcutNumber {
+                    Text("⌘\(shortcutNumber)")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(InletText.secondary(contrast))
+                        .padding(.horizontal, InletSpace.xs)
+                        .padding(.vertical, InletSpace.xxs)
+                        .background(Capsule().fill(InletColor.hover))
+                        .padding(InletSpace.xs)
+                        .accessibilityHidden(true)
+                }
+            }
             .inletAnimation(.inletSnap, value: isHovered)
             .inletAnimation(.inletSnap, value: isTopHit)
             .inletAnimation(.inletSnap, value: isKeyboardFocused)
@@ -71,6 +93,7 @@ struct AppIconCell: View {
         .onHover { isHovered = $0 }
         .help(app.name) // tooltip with the full name if it's cut off
         .accessibilityLabel("Open \(app.name)")
+        .contextMenu { quickActions }
         // Open choreography (theme spec, "Grid opens"). Before opening, each
         // cell sits 22% toward the center at 0.78 scale. Opening springs it
         // into place with `open`, delayed by distance so the grid ripples.
@@ -84,6 +107,25 @@ struct AppIconCell: View {
                 : .spring(InletMotion.open).delay(placement.delay),
             value: isOpen
         )
+    }
+
+    /// The right-click menu. Quit only appears while the app is running.
+    @ViewBuilder
+    private var quickActions: some View {
+        Button("Open") { onLaunch(app) }
+        Button("Show in Finder") {
+            dismissOverlay()
+            AppActions.showInFinder(app)
+        }
+        Divider()
+        Button("Copy Path") { AppActions.copyPath(app) }
+        if app.bundleIdentifier != nil {
+            Button("Copy Bundle ID") { AppActions.copyBundleIdentifier(app) }
+        }
+        if AppActions.runningApplication(for: app) != nil {
+            Divider()
+            Button("Quit \(app.name)") { AppActions.quit(app) }
+        }
     }
 }
 
