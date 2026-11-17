@@ -40,7 +40,10 @@ struct OverlayView: View {
                 .onTapGesture { onDismiss() }
                 .animation(reduceMotion ? .inletFade : .inletSnap, value: motion.isOpen)
 
+            // Keyed by session: each open builds a fresh grid, so the search
+            // field takes focus again and no state carries over.
             AppGridView(isOpen: motion.isOpen)
+                .id(motion.session)
         }
         .ignoresSafeArea()
         .environment(\.dismissOverlay, onDismiss)

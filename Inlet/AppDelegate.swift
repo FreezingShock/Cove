@@ -47,7 +47,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Menu bar icon, shown or hidden by Settings > General.
         MenuBarController.shared.start()
 
-        OverlayController.shared.show()
+        // Opened by Open at Login: stay quiet and let the hotkey, Dock icon or
+        // menu bar icon open the grid. A normal launch still shows it.
+        if !Self.wasLaunchedAsLoginItem {
+            OverlayController.shared.show()
+        }
 
         // First-run setup opens once, until the user finishes it. It is also
         // reachable from Help > Inlet Setup…
@@ -65,6 +69,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showGrid()
         }
         return false
+    }
+
+    /// True when macOS started Inlet as a login item, not because the user opened it.
+    /// The launch Apple Event carries the keyAELaunchedAsLogInItem flag: 'prdt' is
+    /// keyAEPropData and 'lgit' is the flag value.
+    private static var wasLaunchedAsLoginItem: Bool {
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        return event?.paramDescriptor(forKeyword: 0x70726474)?.enumCodeValue == 0x6C676974
     }
 
     /// Keep running with the overlay hidden.

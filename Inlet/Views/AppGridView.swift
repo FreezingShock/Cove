@@ -397,7 +397,7 @@ struct AppGridView: View {
     /// next open starts fresh.
     private func launch(_ app: AppItem) {
         closeAfterAction()
-        AppLauncher.launch(app)
+        AppLauncher.launch(app, closesOverlay: closeAfterLaunch)
     }
 
     /// A tap on a file row: open the file with its default app.
