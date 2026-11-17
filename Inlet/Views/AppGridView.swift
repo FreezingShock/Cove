@@ -82,6 +82,8 @@ struct AppGridView: View {
     @State private var category: AppCategory? = InletSettings.startingCategory
     /// Spotlight file matches for the query, shown under the search field.
     @State private var fileSearch = FileSearch()
+    /// True once the sum in the search field has been copied. Resets when the query changes.
+    @State private var calculationCopied = false
 
     /// Edit mode: icons wobble, drag to reorder, minus badges hide apps.
     /// Only the paged grid has it (no search, no category).
@@ -132,7 +134,38 @@ struct AppGridView: View {
     /// Matches come back best-first.
     private var shownApps: [AppItem] {
         let pool = isSearching ? library.apps : AppCategory.filter(library.apps, by: category)
-        return AppSearch.results(for: query, in: pool)
+        return AppSearch.results(for: query, in: pool, usage: launchCounts)
+    }
+
+    /// How often each app was launched through Inlet, keyed by app ID (its path).
+    /// Counts the launches still kept in recents, so it breaks ties between
+    /// equally good matches.
+    private var launchCounts: [String: Int] {
+        RecentsStore.shared.apps.reduce(into: [:]) { counts, recent in
+            counts[recent.path, default: 0] += 1
+        }
+    }
+
+    /// The sum for the query, formatted, or nil when the query is not a sum.
+    private var calculation: String? {
+        guard isSearching, let value = QuickCalc.evaluate(query) else { return nil }
+        return QuickCalc.format(value)
+    }
+
+    /// System Settings panes that match the query. Up to three.
+    private var panes: [SystemPane] {
+        isSearching ? SystemPane.matches(for: query, limit: 3) : []
+    }
+
+    /// The ⌘1 to ⌘9 hints for the first nine shown apps. Only in search and
+    /// category views, where the apps are not in an editable order.
+    private var shortcutNumbers: [AppItem.ID: Int] {
+        guard !isPaged else { return [:] }
+        var result: [AppItem.ID: Int] = [:]
+        for (index, app) in shownApps.prefix(9).enumerated() {
+            result[app.id] = index + 1
+        }
+        return result
     }
 
     /// The apps in the order the grid draws them, which arrow keys follow.
@@ -176,6 +209,11 @@ struct AppGridView: View {
                     topHit: topHit,
                     matchCount: shownApps.count,
                     files: fileSearch.results,
+                    calculation: calculation,
+                    calculationCopied: calculationCopied,
+                    onCopyCalculation: copyCalculation,
+                    panes: panes,
+                    onOpenPane: openPane,
                     onOpenTopHit: openTopHit,
                     onOpenFile: openFile,
                     onRevealFile: revealFile,
@@ -204,6 +242,7 @@ struct AppGridView: View {
         // Typing again returns keyboard focus to the field from the grid.
         .onChange(of: query) { _, newQuery in
             focusedApp = nil
+            calculationCopied = false
             // Searching and editing don't mix, since search isn't paged.
             if isSearching { isEditing = false }
             // Zero when the setting is off, which clears the file rows.
@@ -233,6 +272,7 @@ struct AppGridView: View {
         .onKeyPress(.upArrow, phases: .down) { arrow($0, by: -gridColumns) }
         .onKeyPress(.downArrow, phases: .down) { arrow($0, by: gridColumns) }
         .onKeyPress(.delete, phases: .down) { _ in deleteFocusedApp() }
+        .onKeyPress(characters: .decimalDigits, phases: .down) { openShortcut($0) }
         // No scan here: the app scans once at launch (spec: never scan on open).
     }
 
@@ -325,6 +365,7 @@ struct AppGridView: View {
     /// The search results and category views: one scrolling grid, keyboard-navigable.
     private var scrollGrid: some View {
         let placements = openPlacements
+        let numbers = shortcutNumbers
         return ScrollView {
             // `LazyVGrid` only builds the cells that are on screen,
             // so icons load as you scroll instead of all at once.
@@ -335,6 +376,7 @@ struct AppGridView: View {
                         onLaunch: launch,
                         isTopHit: app.id == topHit?.id,
                         isKeyboardFocused: focusedApp == app.id,
+                        shortcutNumber: numbers[app.id],
                         placement: placements[app.id] ?? .none,
                         isOpen: isOpen
                     )
@@ -412,10 +454,38 @@ struct AppGridView: View {
         file.revealInFinder()
     }
 
-    /// Return in the field, or a tap on the top-hit row: open the top hit.
+    /// Return in the field, or a tap on the top-hit row. Order: a sum is copied,
+    /// then the top app opens, then the top System Settings pane opens.
     private func openTopHit() {
-        guard let app = topHit else { return }
-        launch(app)
+        if let calculation {
+            copyCalculation(calculation)
+        } else if let app = topHit {
+            launch(app)
+        } else if let pane = panes.first {
+            openPane(pane)
+        }
+    }
+
+    /// Copies a sum to the clipboard. The overlay stays open, so the row can say "Copied".
+    private func copyCalculation(_ text: String) {
+        AppActions.copy(text)
+        withAnimation(motion(.inletSnap)) { calculationCopied = true }
+    }
+
+    /// Opens a System Settings pane. Closes the overlay first, like an app launch.
+    private func openPane(_ pane: SystemPane) {
+        closeAfterAction()
+        pane.open()
+    }
+
+    /// ⌘1 to ⌘9 while searching or in a category: open the matching shown app.
+    /// Plain digits are not handled here, so they still type into the field.
+    private func openShortcut(_ press: KeyPress) -> KeyPress.Result {
+        guard press.modifiers.contains(.command), !isPaged,
+              let digit = Int(press.characters), (1...9).contains(digit),
+              digit <= shownApps.count else { return .ignored }
+        launch(shownApps[digit - 1])
+        return .handled
     }
 
     /// Return while an icon has keyboard focus: open that icon.
