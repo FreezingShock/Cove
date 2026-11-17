@@ -1,98 +1,131 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="website/assets/inlet-wordmark-dark.svg">
-    <img src="website/assets/inlet-wordmark-light.svg" alt="Inlet" height="48">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/icon-dark.png">
+    <img src="docs/readme/icon-light.png" alt="Inlet app icon" width="112">
   </picture>
 </p>
 
-# Inlet
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/wordmark-dark.svg">
+    <img src="docs/readme/wordmark-light.svg" alt="Inlet" height="56">
+  </picture>
+</p>
 
-A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no accounts and no tracking. The only network call is an update check, which you can turn off.
+<p align="center">
+  <strong>Every app, one keystroke away.</strong><br>
+  A full-screen app grid and search for your Mac, built to replace Launchpad.
+</p>
 
-**Current version: 0.1 (Skeleton).** Inlet scans your app folders and shows every installed app in a plain grid of real icons. Click an icon to open the app. The glass overlay, hotkey, search and Dock panel come in later versions (see the roadmap below).
+<p align="center">
+  <a href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg">
+    <img src="https://img.shields.io/badge/Download_for_Mac-Inlet.dmg-0B5D51?style=for-the-badge&logo=apple&logoColor=white" alt="Download Inlet for Mac">
+  </a>
+</p>
 
-## Requirements
+<p align="center">
+  macOS 26 or later &nbsp;·&nbsp; MIT licensed &nbsp;·&nbsp; No accounts, no tracking
+</p>
 
-- macOS 26 or later
-- Xcode 26 or later (free from the Mac App Store)
-- No paid Apple Developer account. The build is signed "to run locally", which is fine for your own Mac.
+<p align="center">
+  <img src="docs/readme/hero-grid.png" alt="Inlet's full-screen grid over a macOS desktop, with the search field at the top" width="100%">
+</p>
 
-## Open and run it in Xcode
+Apple removed Launchpad in macOS 26 Tahoe. Inlet brings the full-screen grid back and adds one search field for apps and files. Your apps, files and layout stay on your Mac.
 
-1. Clone the repo, or in GitHub click **Code > Download ZIP** and unzip it.
-2. Double-click `Inlet.xcodeproj`. Xcode opens the project.
-3. At the top of the window, make sure the scheme says **Inlet** and the destination says **My Mac**.
-4. Press **Command-R** (or click the triangle Play button). Xcode builds the app and launches it.
-5. The Inlet window shows every app. Click one to open it.
+<p align="center">
+  <img src="docs/readme/quick-panel.png" alt="The Inlet quick panel above the Dock, showing recent apps and recent files" width="49%">
+  <img src="docs/readme/search.png" alt="Searching for note in Inlet, with matching apps and files" width="49%">
+</p>
 
-To stop Inlet, press **Command-.** in Xcode or quit Inlet normally.
+## Features
 
-### If something goes wrong
+**Grid.** Every app in `/Applications`, `~/Applications` and `/System/Applications` shows up with its own macOS icon. Click one to open it. Escape or a click outside closes the grid. Swipe between pages on the trackpad, or pinch to open the grid. Pinch and F4 are on by default.
 
-- **"Signing for Inlet requires a development team."** Click the blue Inlet project in the left sidebar, choose the **Inlet** target, open **Signing & Capabilities**, and either pick your Personal Team (sign in with your Apple ID under Xcode > Settings > Accounts) or set Signing Certificate to **Sign to Run Locally**.
-- **Build fails with "Cannot find type ... in scope".** Make sure you opened `Inlet.xcodeproj`, not a single Swift file, and that Xcode is version 26 or newer.
-- **An app is missing.** Inlet looks in `/Applications`, `~/Applications` and `/System/Applications`, including subfolders like Utilities. Apps stored elsewhere won't show yet. Press **Command-R inside Inlet** (File > Reload Apps) to rescan; it also rescans every time you switch back to Inlet.
+**Search.** Start typing and the grid filters as you go. The best match is highlighted, and matching files from Spotlight appear underneath. Inlet keeps no index of its own, so anything Spotlight can find, Inlet can find.
 
-### Running it without Xcode
+**Edit mode.** Press and hold an icon to rearrange the grid. Group related apps into folders, up to nine apps each. Tap the minus badge to hide a third-party app. Apple's built-in apps can't be hidden. Undo is one tap away, and hidden apps come back from the Hidden list.
 
-After one successful run, choose **Product > Show Build Folder in Finder** in Xcode, open `Products/Debug`, and drag `Inlet.app` into your Applications folder. You can then open it like any other app and keep it in the Dock.
+**Groups.** Six presets (Create, Build, School, Everyday, Games and Other) sit in a bar above the grid. Tap one to filter the grid to it. Add your own, then rename, recolor, re-icon and reorder them. Right-click an app to move it to another group.
 
-## How the code is organized
+**Quick panel.** Click Inlet's Dock icon, or press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>Space</kbd>, for a small panel with recent apps, recent files and a Show All Apps button. Show 4, 8 or 12 recent apps and 0 to 5 recent files. A Dock click can open the full grid instead if you prefer.
 
-| File | What it does |
-|---|---|
-| `Inlet/InletApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
-| `Inlet/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
-| `Inlet/Models/AppCategory.swift` | Maps each app's category to a preset: Create, Build, School, Everyday, Games, Other. |
-| `Inlet/Models/AppGroup.swift` | A group on the group bar: name, color, icon, apps. Presets come from the categories. |
-| `Inlet/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
-| `Inlet/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
-| `Inlet/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
-| `Inlet/Services/AppLauncher.swift` | Opens an app through macOS and shows an alert if it fails. |
-| `Inlet/Views/AppGridView.swift` | The window: header and 7-column grid. |
-| `Inlet/Views/AppIconCell.swift` | One grid cell: icon, name, hover and press effects. |
-| `Inlet/AppDelegate.swift` | Handles Dock clicks (reopen) and opens the quick panel or grid. |
-| `Inlet/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
-| `Inlet/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
-| `Inlet/InletTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
-| `Inlet/Views/Groups/GroupBar.swift` | The All-plus-groups bar above the grid. Tap to filter. Fades out while search has text. |
-| `Inlet/Views/Groups/GroupsPanel.swift` | The Groups panel: add, rename, recolor, re-icon, reorder and delete groups. |
-| `Inlet/Views/Groups/GroupStyle.swift` | Group colors and the Move to Group context menu. |
-| `Inlet/Theme.swift` | Colors and sizes from the design system. |
+**Accessibility.** Inlet follows Reduce Motion, Reduce Transparency and Increase Contrast from your Mac's settings. Nothing needs to be set up inside Inlet.
 
-New files you add inside the `Inlet` folder appear in Xcode automatically.
+## Keyboard
 
-### Apple APIs used
+| Keys | What it does |
+| --- | --- |
+| <kbd>⌥</kbd> <kbd>Space</kbd> | Open the full grid. Change it in Settings › Keyboard. |
+| <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>Space</kbd> | Open the quick panel. |
+| <kbd>F4</kbd> | Open the grid. On by default. |
+| <kbd>Return</kbd> | Open the top match. |
+| <kbd>⌘</kbd> <kbd>Return</kbd> | Show the top file in Finder. |
+| <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> | Move through results. |
+| <kbd>Esc</kbd> | Clear the search first, then close. |
 
-Each was checked against Apple's current documentation.
+While Inlet is running, <kbd>⌥</kbd><kbd>Space</kbd> belongs to Inlet everywhere, so it won't type a non-breaking space in text fields. Change the shortcut if that gets in your way.
 
-- [`FileManager.enumerator(at:includingPropertiesForKeys:options:errorHandler:)`](https://developer.apple.com/documentation/foundation/filemanager/enumerator(at:includingpropertiesforkeys:options:errorhandler:)) with `.skipsPackageDescendants` to find `.app` bundles without looking inside them
-- [`URLResourceKey.localizedNameKey`](https://developer.apple.com/documentation/foundation/urlresourcekey/localizednamekey) for the name Finder shows
-- [`NSWorkspace.icon(forFile:)`](https://developer.apple.com/documentation/appkit/nsworkspace/icon(forfile:)) for the real app icon
-- [`NSWorkspace.openApplication(at:configuration:completionHandler:)`](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) to launch
-- [`LazyVGrid`](https://developer.apple.com/documentation/swiftui/lazyvgrid) for the grid
+## Settings
 
-## Decisions made in 0.1
+Open Settings with <kbd>⌘</kbd><kbd>,</kbd>. It uses standard macOS controls, so it works the way the rest of your Mac does.
 
-- **No App Sandbox.** A sandboxed app can't freely read app folders or launch other apps. This matches the plan to skip the App Store.
-- **Swift 5 language mode.** Swift 6's strict concurrency checks produce errors that are confusing when you're new to Swift. Moving to Swift 6 later is a one-line build setting change.
-- **Deployment target macOS 26.0.** Matches "macOS 26 or later". Can be raised to 27 if that open question lands there.
-- **Duplicates removed by bundle ID.** If the same app sits in two folders, the copy in `/Applications` wins, then `~/Applications`, then `/System/Applications`.
-- **Background-only helpers are hidden** (apps marked `LSBackgroundOnly`), since opening them would look like nothing happened. Menu bar apps still show.
-- **Rescan on focus** instead of watching the folders. Simpler for now, and fast because it runs in the background and only redraws when the list changed. Folder watching can replace it in 0.2 when Inlet stays resident.
-- **App icon is in the asset catalog but not checked on a Mac yet.** The Crescent set is in `Inlet/Assets.xcassets/AppIcon.appiconset`. Check it in Xcode 26 and at 16 and 32 pt in the Dock.
+| Pane | Controls |
+| --- | --- |
+| General | Open at login, menu bar icon, close after launch, Escape behavior |
+| Keyboard | The grid and quick panel shortcuts. Press the keys you want, or Esc to cancel. |
+| Appearance | Light, Dark, or Auto (follows your Mac) |
+| Grid | Columns, 5 to 9 (7 by default) |
+| Search | Include files, and how many (0 to 8) |
+| Quick Panel | Dock click action, recent apps and recent files |
+| Privacy | Erase launch history |
+| About | Version, apps found, last scan, update checks |
 
-## Roadmap
+## Install
 
-| Version | What ships | Done when |
-|---|---|---|
-| **0.1 Skeleton** | Xcode project, app scan, plain grid of real icons, click to launch | Every installed app appears and opens |
-| 0.2 Overlay | Full-screen glass overlay, instant show/hide, Escape, global hotkey | Opening feels instant |
-| 0.3 Search | App filtering, Spotlight file results, top hit, keyboard nav | An app or file opens without the mouse |
-| 0.4 Dock panel | Quick panel on Dock icon click, recent apps and files | Dock click toggles it reliably |
-| 0.5 Polish | Full design pass, app icon, animations, settings | Screens match the mockup |
-| 1.0 Daily driver | Bug fixes from real use | A week of daily use with no crash |
+Requires macOS 26 or later.
+
+1. Click **Download for Mac**. You get `Inlet.dmg`.
+2. Open the disk image and drag **Inlet** into **Applications**.
+3. Open Inlet. macOS says it can't verify the app, because Inlet isn't notarized by Apple. Click **Done**.
+4. Open **System Settings › Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to Inlet. Confirm with your password, then open Inlet again.
+
+The Open Anyway button stays available for a short time after the first attempt. If it's gone, try opening Inlet again.
+
+Prefer Terminal? Run this once, then open Inlet normally:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/Inlet.app
+```
+
+Inlet is free and open source. Notarizing it needs a paid Apple Developer account, and the project doesn't use one.
+
+## Build from source
+
+Requires macOS 26 and Xcode 26.
+
+```sh
+git clone https://github.com/FreezingShock/Inlet.git
+cd Inlet
+open Inlet.xcodeproj
+```
+
+In Xcode, choose the **Inlet** scheme and **My Mac**, then press <kbd>⌘</kbd><kbd>R</kbd>. If Xcode asks for a development team, open **Signing & Capabilities** for the Inlet target and choose **Sign to Run Locally**. Press <kbd>⌘</kbd><kbd>U</kbd> to run the tests.
+
+## Supporter
+
+Inlet is free, and the whole app is included with no sign-in. Supporter is **$5 a month** through [GitHub Sponsors](https://github.com/sponsors/FreezingShock). It pays for the customization tools (custom themes and zones) and for early builds. Supporter opens with the 1.0 release. Building from source is always free.
+
+## Privacy
+
+Inlet has no accounts, analytics or tracking. Your recent items, groups, layout and settings are saved on your Mac, and Inlet doesn't upload your files or your app list.
+
+The only network call is an update check to GitHub, once a day. You can turn it off in Settings. Inlet never sends a crash or feedback report on its own. Those open a GitHub issue in your browser, and you decide what to post.
 
 ## License
 
-Inlet is released under the MIT License. See [LICENSE](LICENSE).
+Inlet is released under the [MIT License](LICENSE). Read it, change it, and build it for any purpose.
+
+---
+
+Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.
