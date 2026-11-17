@@ -78,6 +78,14 @@ final class AppUpdater: ObservableObject {
                 self?.lastCheckDate = value
             }
             .store(in: &cancellables)
+
+        // Sparkle's schedule alone checks about once a day. Inlet also checks on
+        // every launch, as long as automatic checks are on. Skipped in unit tests
+        // and without a real signing key, the same as the scheduled checks.
+        if !AppUpdater.isRunningUnitTests, AppUpdater.hasPublicKey,
+           controller.updater.automaticallyChecksForUpdates {
+            controller.updater.checkForUpdatesInBackground()
+        }
     }
 
     /// A user-started check. Sparkle shows "You're up to date" or the update window.
