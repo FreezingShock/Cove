@@ -97,6 +97,7 @@
   ]
 }
 </script>
+  <link rel="stylesheet" href="css/icons.css">
 </head>
 <body>
 <div class="progress" aria-hidden="true"></div>
@@ -119,7 +120,7 @@
     </nav>
     <div class="nav-right">
       <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>
         <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
       </button>
       <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
@@ -155,7 +156,7 @@
           </div>
           <div class="win-body">
             <label class="win-search">
-              <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+              <svg class="sm-ico kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>
               <input id="heroQ" type="search" placeholder="Search apps and files" aria-label="Search sample apps" autocomplete="off" spellcheck="false">
               <kbd class="win-enter" aria-hidden="true">↩</kbd>
             </label>
@@ -167,7 +168,7 @@
                 <div class="sheet-panel" id="heroSheetPanel" role="dialog" aria-labelledby="heroSheetTitle">
                   <div class="sheet-head">
                     <span class="sheet-title" id="heroSheetTitle">Create</span>
-                    <button class="sheet-close" type="button" id="heroSheetClose" aria-label="Close folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+                    <button class="sheet-close" type="button" id="heroSheetClose" aria-label="Close folder"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" class="k-m"/></svg></button>
                   </div>
                   <div class="grid sheet-grid" id="heroSheetGrid"></div>
                 </div>
@@ -237,7 +238,7 @@
     <div class="stage search-stage" role="region" aria-label="Search demo">
       <div class="scrim">
         <div class="glass capsule searchbar">
-          <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+          <svg class="sm-ico kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>
           <input id="q" type="search" placeholder="Search apps and files" aria-label="Search sample apps and files" autocomplete="off" spellcheck="false">
         </div>
         <div class="chips" role="group" aria-label="Try a search">
@@ -271,7 +272,7 @@
         <div class="qp-wrap" id="qpWrap">
           <div class="qp glass" id="qp">
             <div class="qp-search glass capsule">
-              <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+              <svg class="sm-ico kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>
               <span>Search</span>
             </div>
             <div class="grid qp-apps" id="qpApps"></div>
@@ -374,7 +375,7 @@
       <article class="recipe">
         <h3>Open an app you have not used in a week</h3>
         <div class="recipe-ui" aria-hidden="true">
-          <div class="recipe-search glass capsule"><svg class="sm-ico" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>not</span></div>
+          <div class="recipe-search glass capsule"><svg class="sm-ico kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg><span>not</span></div>
           <div class="recipe-hit"><span class="ico" style="--tile:36px;--a:#FFD36E;--b:#F0A020"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4" /><path d="M2 6h4" /><path d="M2 10h4" /><path d="M2 14h4" /><path d="M2 18h4" /><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" /></svg></span><span><b>Notes</b><small>Top hit · Open</small></span></div>
         </div>
         <div class="keyline" role="img" aria-label="Option Space, then type not, then Return">
@@ -385,8 +386,8 @@
       <article class="recipe">
         <h3>Find a file without remembering its folder</h3>
         <div class="recipe-ui" aria-hidden="true">
-          <div class="recipe-search glass capsule"><svg class="sm-ico" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>budget</span></div>
-          <div class="recipe-hit"><span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /></svg></span><span><b>Budget 2026.csv</b><small>Documents / Money</small></span></div>
+          <div class="recipe-search glass capsule"><svg class="sm-ico kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg><span>budget</span></div>
+          <div class="recipe-hit"><span class="fi"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3h10l4 4v14H5zM15 3v4h4M8 11h8M8 14h8"/><rect class="k-a" x="8" y="17" width="5" height="2"/></svg></span><span><b>Budget 2026.csv</b><small>Documents / Money</small></span></div>
         </div>
         <div class="keyline" role="img" aria-label="Option Space, then type budget, then Return">
           <kbd aria-hidden="true">⌥</kbd><kbd aria-hidden="true">Space</kbd><i class="arr" aria-hidden="true">→</i><span class="typed" aria-hidden="true">budget</span><i class="arr" aria-hidden="true">→</i><kbd aria-hidden="true">Return</kbd>
@@ -468,19 +469,19 @@
     </div>
     <ol class="aud-list">
       <li><a class="aud" href="developers.html">
-        <span class="aud-ico" style="--a:#8E98FF;--b:#3340A8;--ico:#FFFFFF" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></span>
+        <span class="aud-ico" aria-hidden="true"><svg class="kit" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><g class="k-m"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></g><rect class="k-a" x="11" y="11" width="2" height="2"/></svg></span>
         <span class="aud-who">Developers</span>
         <span class="aud-main"><b>Your tools, one keystroke away.</b><span>Open Xcode or Terminal by typing a few letters. Find project files through Spotlight.</span></span>
         <span class="aud-go">Developer page</span>
       </a></li>
       <li><a class="aud" href="designers.html">
-        <span class="aud-ico" style="--a:#9BE8A6;--b:#2C9E5C;--ico:#FFFFFF" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><circle cx="11" cy="11" r="2"/></svg></span>
+        <span class="aud-ico" aria-hidden="true"><svg class="kit" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M12 2l7 8-7 12-7-12z"/><path d="M12 12v4"/><rect class="k-a" x="10" y="8" width="4" height="4"/></svg></span>
         <span class="aud-who">Designers</span>
         <span class="aud-main"><b>Real icons and fixed springs.</b><span>Each app shows its own icon. Motion runs on seven springs with values you can read.</span></span>
         <span class="aud-go">Designer page</span>
       </a></li>
       <li><a class="aud" href="students.html">
-        <span class="aud-ico" style="--a:#FFD36E;--b:#F0A020;--ico:#17150F" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span>
+        <span class="aud-ico" aria-hidden="true"><svg class="kit" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M12 4L2 9l10 5 10-5zM6 11.5V16l6 3 6-3v-4.5M22 9v6"/><rect class="k-a" x="10" y="7" width="4" height="4"/></svg></span>
         <span class="aud-who">Students</span>
         <span class="aud-main"><b>Every class app in one place.</b><span>Sort apps into School, Create and Build. Find an essay or a PDF by its name.</span></span>
         <span class="aud-go">Student page</span>
@@ -523,15 +524,15 @@
 <footer class="wrap foot">
   <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><g class="k-m"><path d="M12 3v12M7 10l5 5 5-5"/></g><path d="M3 15v6h18v-6"/><rect class="k-a" x="3" y="18" width="18" height="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
     </a>
     <a class="foot-card" href="features.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><rect class="k-a" x="3" y="3" width="8" height="8"/><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></span>
       <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
     </a>
     <a class="foot-card" href="compare.html">
-      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span class="foot-tile"><svg class="kit" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><rect class="k-a" x="3" y="3" width="6" height="18"/><path d="M3 3h18v18H3zM9 3v18"/></svg></span>
       <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
     </a>
   </div>
@@ -577,8 +578,8 @@
   </nav>
   <div class="foot-bar">
     <div class="foot-tools">
-      <button class="theme-cycle" type="button" data-theme-cycle data-mode="auto" aria-label="Appearance: Auto. Switch to Light" title="Appearance: Auto"><svg class="ic-auto" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg><svg class="ic-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg><svg class="ic-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg></button>
-      <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+      <button class="theme-cycle" type="button" data-theme-cycle data-mode="auto" aria-label="Appearance: Auto. Switch to Light" title="Appearance: Auto"><svg class="ic-auto kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2" y="3" width="20" height="14"/><path d="M8 21h8M12 17v4"/><rect class="k-a" x="6" y="7" width="5" height="6"/></svg><svg class="ic-light kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="7" y="7" width="10" height="10"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/><rect class="k-a" x="10" y="10" width="4" height="4"/></svg><svg class="ic-dark kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 3L5 8v8l5 5h6l5-5h-5.5l-4-4V8z"/><rect class="k-a" x="16" y="4" width="4" height="4"/></svg></button>
+      <a class="foot-top" href="#top"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g class="k-m"><path d="M12 20V4M5 11l7-7 7 7"/></g><rect class="k-a" x="10" y="20" width="4" height="2"/></svg>Back to top</a>
     </div>
   </div>
 </footer>
