@@ -3,22 +3,22 @@
 
   /* ---------- Data: sample apps drawn in original glyphs, and sample files ---------- */
   var GLYPH = {
-    note: '<path d="M6 4h8l4 4v12H6z"/><path d="M9.5 12h5M9.5 15.5h5"/>',
-    calendar: '<rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M4 10h16M9 3.5v4M15 3.5v4"/>',
-    music: '<path d="M9.5 17.5V6.2l9-2v11.3"/><circle cx="6.8" cy="17.5" r="2.6"/><circle cx="15.8" cy="15.3" r="2.6"/>',
-    photos: '<rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="9" cy="9.8" r="1.7"/><path d="M4.5 16.5l4.8-4 3.4 2.8 2.6-2 4.2 3.2"/>',
-    terminal: '<rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M7.5 10l2.8 2.4-2.8 2.4M12.5 15.2h4"/>',
-    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="M5 8.2l7 5 7-5"/>',
-    maps: '<path d="M12 20.5s-6-5.4-6-10.1a6 6 0 1 1 12 0c0 4.7-6 10.1-6 10.1z"/><circle cx="12" cy="10.4" r="2.2"/>',
-    weather: '<circle cx="12" cy="12" r="3.8"/><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6L18 18M6 18l1.4-1.4M16.6 7.4L18 6"/>',
-    books: '<path d="M4.5 6.2c0-1 .8-1.7 1.8-1.7H11v14.6H6.3c-1 0-1.8.7-1.8 1.6z"/><path d="M19.5 6.2c0-1-.8-1.7-1.8-1.7H13v14.6h4.7c1 0 1.8.7 1.8 1.6z"/>',
-    reminders: '<circle cx="12" cy="12" r="8"/><path d="M8.3 12.2l2.5 2.4 4.9-5"/>',
-    files: '<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h3.1l2 2.2h5.9A2.5 2.5 0 0 1 20 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5z"/>',
-    chart: '<path d="M5 19V10M12 19V5M19 19v-6"/>',
-    code: '<path d="M9 8l-4 4 4 4M15 8l4 4-4 4M13.5 5.5l-3 13"/>',
-    messages: '<path d="M5 7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-6l-4 3v-3a3 3 0 0 1-1-3z"/>',
-    lens: '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3"/>',
-    journal: '<path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7z"/><path d="M9.5 9h5M9.5 12.5h5"/>'
+    note: '<path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4" /><path d="M2 6h4" /><path d="M2 10h4" /><path d="M2 14h4" /><path d="M2 18h4" /><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />',
+    calendar: '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" />',
+    music: '<path d="M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19" /><circle cx="18" cy="16" r="3" /><circle cx="6" cy="19" r="3" />',
+    photos: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />',
+    terminal: '<path d="M12 19h8" /><path d="m4 17 6-6-6-6" />',
+    mail: '<path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" />',
+    maps: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" />',
+    weather: '<path d="M12 2v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="M20 12h2" /><path d="m19.07 4.93-1.41 1.41" /><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128" /><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z" />',
+    books: '<path d="M12 5v16" /><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />',
+    reminders: '<path d="M13 5h8" /><path d="M13 12h8" /><path d="M13 19h8" /><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" />',
+    files: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />',
+    chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />',
+    code: '<path d="m16 18 6-6-6-6" /><path d="m8 6-6 6 6 6" />',
+    messages: '<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />',
+    lens: '<circle cx="12" cy="12" r="10" /><path d="m14.31 8 5.74 9.94" /><path d="M9.69 8h11.48" /><path d="m7.38 12 5.74-9.94" /><path d="M9.69 16 3.95 6.06" /><path d="M14.31 16H2.83" /><path d="m16.62 12-5.74 9.94" />',
+    journal: '<path d="M2 6h4" /><path d="M2 10h4" /><path d="M2 14h4" /><path d="M2 18h4" /><rect width="16" height="20" x="4" y="2" rx="2" /><path d="M16 2v20" />'
   };
   var APPS = [
     { n: "Notes", g: "note", a: "#FFD36E", b: "#F0A020" },
@@ -46,7 +46,7 @@
     { n: "Budget 2026.csv", p: "Documents / Money" },
     { n: "Trip photos, May.pdf", p: "Downloads" }
   ];
-  var DOC_GLYPH = '<path d="M7 3.5h7l4.5 4.5v12.5H7z"/><path d="M14 3.5V8h4.5"/>';
+  var DOC_GLYPH = '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" />';
   /* Shared with home.js (folders and edit mode demo). */
   window.InletSamples = { APPS: APPS, GLYPH: GLYPH };
 
