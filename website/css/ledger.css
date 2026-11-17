@@ -205,3 +205,26 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
   main .stage:hover, main .fact:hover, main .plan:hover, main .btn:hover, footer .foot-card:hover { transform: none; }
   #ld-wipe { display: none !important; }
 }
+
+/* ---------- Folded in from the parallel pass: inputs, spec ledger, proof rows, dark buttons ---------- */
+.faq-search input, .faq-search label, .win-search, input[type="search"], input[type="text"], input[type="email"], select, textarea,
+.seg, .seg button, .badge, .rm-status, .table-wrap, .zone, .hero-window { border-radius: 0; }
+.table-wrap { border: 1px solid var(--rule); }
+.foot-h { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 700; color: var(--text-2); }
+.spec { display: grid; grid-template-columns: repeat(3, 1fr); margin: 44px 0 0; max-width: 640px; border-top: 1px solid var(--rule); text-align: left; }
+.spec > div { padding: 16px 16px 0 14px; border-right: 1px solid var(--hair); transition: background .3s; }
+.spec > div:first-child { padding-left: 0; }
+.spec > div:last-child { border-right: 0; }
+.spec dt { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin: 0 0 4px; }
+.spec dd { margin: 0; font-size: 14px; color: var(--text-2); }
+@media (hover: hover) { .spec > div:hover { background: var(--accent-soft); } }
+@media (max-width: 480px) { .spec dt { font-size: 18px; } .spec dd { font-size: 13px; } .spec > div { padding-right: 8px; } }
+.proof-list { border-top: 1px solid var(--rule); }
+.proof-item { border-bottom: 1px solid var(--hair); transition: padding-left .4s var(--snap), background .3s; }
+@media (hover: hover) { .proof-item:hover { padding-left: 14px; background: linear-gradient(90deg, var(--accent-soft), transparent 70%); } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) main .btn-primary { border-color: var(--accent); }
+  :root:not([data-theme="light"]) main .btn-primary:hover { background: var(--base); color: var(--accent); }
+}
+:root[data-theme="dark"] main .btn-primary { border-color: var(--accent); }
+:root[data-theme="dark"] main .btn-primary:hover { background: var(--base); color: var(--accent); }
