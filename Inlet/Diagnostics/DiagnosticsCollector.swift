@@ -19,7 +19,7 @@ final class DiagnosticsCollector: NSObject, MXMetricManagerSubscriber {
 
     /// UserDefaults key for the opt-in. Off by default.
     /// The Privacy pane's toggle writes this key (see InletSettings).
-    static let enabledKey = "inlet.diagnostics.enabled"
+    static let enabledKey = InletSettings.Key.diagnosticsEnabled.rawValue
 
     private let log = Logger(subsystem: "com.freezingshock.Inlet", category: "Diagnostics")
     private var isSubscribed = false

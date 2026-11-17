@@ -44,6 +44,9 @@ enum InletSettings {
         case dockClickOpens           = "inlet.quickPanel.dockClickOpens"        // String, "quickPanel" or "grid"
         case quickPanelRecentApps     = "inlet.quickPanel.recentApps"            // Int, 4, 8 or 12, 8
         case quickPanelRecentFiles    = "inlet.quickPanel.recentFiles"           // Int, 0...5, 3
+
+        // Privacy
+        case diagnosticsEnabled       = "inlet.diagnostics.enabled"              // Bool, false
     }
 
     /// Values for `Appearance`. Stored as the raw string.
@@ -71,6 +74,7 @@ enum InletSettings {
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
             Key.quickPanelRecentApps.rawValue: 8,
             Key.quickPanelRecentFiles.rawValue: 3,
+            Key.diagnosticsEnabled.rawValue: false,
         ])
     }
 
@@ -121,6 +125,11 @@ enum InletSettings {
 
     static var escapeClearsSearchFirst: Bool {
         UserDefaults.standard.bool(forKey: Key.escapeClearsSearchFirst.rawValue)
+    }
+
+    /// Crash reporting is opt-in. Read at launch by DiagnosticsCollector.
+    static var diagnosticsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: Key.diagnosticsEnabled.rawValue)
     }
 
     static var appearance: AppearanceMode {

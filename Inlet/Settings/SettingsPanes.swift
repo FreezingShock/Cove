@@ -2,13 +2,41 @@
 //  SettingsPanes.swift
 //  Inlet
 //
-//  The eight Settings panes from the v1 spec (Q9). Each one is a grouped
-//  Form. Every control writes to the shared InletSettings keys, so the grid,
-//  search and quick panel read the same values.
+//  One view per Settings pane. Each is a grouped Form. Every control writes
+//  to an InletSettings key (or, for login, to the system), so the grid,
+//  search and quick panel read the same values the moment they change.
 //
 
+import AppKit
+import KeyboardShortcuts
 import ServiceManagement
 import SwiftUI
+
+// MARK: - Login item
+
+/// Inlet's login item is owned by macOS, so it is read live and never
+/// stored in UserDefaults.
+enum LoginItem {
+    static var status: SMAppService.Status { SMAppService.mainApp.status }
+
+    /// Registers or unregisters Inlet as a login item. Throws if macOS refuses.
+    static func setEnabled(_ enabled: Bool) throws {
+        if enabled {
+            try SMAppService.mainApp.register()
+        } else {
+            try SMAppService.mainApp.unregister()
+        }
+    }
+
+    /// The words shown for the current state.
+    static func label(for status: SMAppService.Status) -> String {
+        switch status {
+        case .enabled:          return "On"
+        case .requiresApproval: return "Needs approval"
+        default:                return "Off"
+        }
+    }
+}
 
 // MARK: - General
 
@@ -18,22 +46,20 @@ struct GeneralPane: View {
     @AppStorage(InletSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
     @AppStorage(InletSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
 
-    /// The login item state comes from the system, so it is read live and never stored.
-    @State private var loginStatus: SMAppService.Status = SMAppService.mainApp.status
+    @State private var loginStatus = LoginItem.status
     @State private var loginError: String?
 
     var body: some View {
         Form {
             Section {
                 Toggle("Open at login", isOn: openAtLogin)
-            } footer: {
-                if let loginError {
-                    Text(loginError)
-                } else if loginStatus == .requiresApproval {
-                    Text("Allow Inlet in System Settings > General > Login Items.")
-                } else {
-                    Text("Inlet opens when you log in to your Mac.")
+                if loginStatus == .requiresApproval {
+                    Button("Open Login Items Settings…") {
+                        SMAppService.openSystemSettingsLoginItems()
+                    }
                 }
+            } footer: {
+                Text(loginFooter)
             }
 
             Section {
@@ -48,44 +74,38 @@ struct GeneralPane: View {
         }
         .formStyle(.grouped)
         .navigationTitle("General")
-        .onAppear { loginStatus = SMAppService.mainApp.status }
+        .onAppear(perform: refreshLoginStatus)
+        // The user may approve the login item in System Settings and come back.
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            refreshLoginStatus()
+        }
     }
 
-    /// Registers or unregisters Inlet as a login item.
+    private var loginFooter: String {
+        if let loginError { return loginError }
+        if loginStatus == .requiresApproval {
+            return "Allow Inlet in System Settings > General > Login Items."
+        }
+        return "Inlet opens when you log in to your Mac."
+    }
+
+    private func refreshLoginStatus() {
+        loginStatus = LoginItem.status
+    }
+
     private var openAtLogin: Binding<Bool> {
         Binding(
             get: { loginStatus == .enabled },
             set: { wantsOn in
                 do {
-                    if wantsOn {
-                        try SMAppService.mainApp.register()
-                    } else {
-                        try SMAppService.mainApp.unregister()
-                    }
+                    try LoginItem.setEnabled(wantsOn)
                     loginError = nil
                 } catch {
                     loginError = "Couldn't change the login item: \(error.localizedDescription)"
                 }
-                loginStatus = SMAppService.mainApp.status
+                refreshLoginStatus()
             }
         )
-    }
-}
-
-// MARK: - Keyboard
-
-struct KeyboardPane: View {
-    var body: some View {
-        Form {
-            Section {
-                HotkeyRecorderRow(title: "Show all apps", name: .showGrid)
-                HotkeyRecorderRow(title: "Quick panel", name: .showQuickPanel)
-            } footer: {
-                Text("Press a new shortcut to change it. Esc cancels. A shortcut that another app uses is refused.")
-            }
-        }
-        .formStyle(.grouped)
-        .navigationTitle("Keyboard")
     }
 }
 
@@ -105,11 +125,34 @@ struct AppearancePane: View {
                 }
                 .pickerStyle(.segmented)
             } footer: {
-                Text("Auto follows Appearance in System Settings.")
+                Text("Auto follows Appearance in System Settings. Applies to the grid and this window.")
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Appearance")
+    }
+}
+
+// MARK: - Shortcuts
+
+struct ShortcutsPane: View {
+    var body: some View {
+        Form {
+            Section {
+                HotkeyRecorderRow(title: "Show all apps", name: .showGrid)
+                HotkeyRecorderRow(title: "Quick panel", name: .showQuickPanel)
+            } footer: {
+                Text("Press a new shortcut to change it. Esc cancels. A shortcut that another app uses is refused.")
+            }
+
+            Section {
+                Button("Restore Default Shortcuts") {
+                    KeyboardShortcuts.reset(.showGrid, .showQuickPanel)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Shortcuts")
     }
 }
 
@@ -125,11 +168,59 @@ struct GridPane: View {
                     LabeledContent("Columns", value: "\(gridColumns)")
                 }
             } footer: {
-                Text("The grid changes as soon as you adjust this.")
+                Text("The grid changes as soon as you adjust this, including the opening animation.")
             }
         }
         .formStyle(.grouped)
         .navigationTitle("Grid")
+    }
+}
+
+// MARK: - Hidden Apps
+
+struct HiddenAppsPane: View {
+    @Environment(AppLibrary.self) private var library
+    @Environment(LayoutStore.self) private var layoutStore
+
+    var body: some View {
+        Form {
+            Section {
+                if layoutStore.layout.hidden.isEmpty {
+                    Text("No hidden apps")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(layoutStore.layout.hidden, id: \.appID) { hidden in
+                        LabeledContent {
+                            Button("Restore") {
+                                layoutStore.update { $0.restoreApp(hidden.appID) }
+                            }
+                        } label: {
+                            HStack(spacing: 8) {
+                                if let app = app(for: hidden.appID) {
+                                    Image(nsImage: IconCache.shared.icon(for: app))
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                }
+                                Text(name(for: hidden.appID))
+                            }
+                        }
+                    }
+                }
+            } footer: {
+                Text("Hide an app from the grid in Edit mode. Restore puts it back where it was. Apple's own apps can't be hidden.")
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Hidden Apps")
+    }
+
+    private func app(for appID: String) -> AppItem? {
+        library.apps.first { $0.id == appID }
+    }
+
+    /// Falls back to the file name when the app is no longer installed.
+    private func name(for appID: String) -> String {
+        app(for: appID)?.name ?? URL(fileURLWithPath: appID).deletingPathExtension().lastPathComponent
     }
 }
 
@@ -191,37 +282,132 @@ struct QuickPanelPane: View {
     }
 }
 
-// MARK: - Privacy
+// MARK: - Privacy & Permissions
 
 struct PrivacyPane: View {
-    @State private var confirmErase = false
+    @AppStorage(InletSettings.Key.diagnosticsEnabled.rawValue) private var diagnostics = false
+
+    @State private var loginStatus = LoginItem.status
+    @State private var reportCount = DiagnosticStore.shared.all().count
+    @State private var confirmEraseHistory = false
+    @State private var confirmEraseReports = false
 
     var body: some View {
         Form {
+            // Permission rows. Inlet currently requests no privacy permission
+            // (no Accessibility, Screen Recording, Input Monitoring or Full Disk
+            // Access prompt in the code), so only the login item is shown.
             Section {
-                Button("Erase Launch History", role: .destructive) {
-                    confirmErase = true
+                LabeledContent("Open at login", value: LoginItem.label(for: loginStatus))
+                if loginStatus == .requiresApproval {
+                    Button("Open Login Items Settings…") {
+                        SMAppService.openSystemSettingsLoginItems()
+                    }
                 }
+            } header: {
+                Text("Permissions")
             } footer: {
-                Text("Clears Recent Apps and Recent Files. Inlet sends nothing anywhere, so this is the only history it keeps.")
+                Text("Inlet asks for no privacy permissions. Everything runs on this Mac.")
+            }
+
+            Section {
+                Toggle("Collect crash reports", isOn: $diagnostics)
+                LabeledContent("Saved reports", value: "\(reportCount)")
+                Button("Erase Reports…", role: .destructive) {
+                    confirmEraseReports = true
+                }
+                .disabled(reportCount == 0)
+            } header: {
+                Text("Crash Reports")
+            } footer: {
+                Text("Off by default. Reports stay on this Mac, up to 20, and nothing is uploaded. A change takes effect the next time Inlet opens.")
+            }
+
+            Section {
+                Button("Erase Launch History…", role: .destructive) {
+                    confirmEraseHistory = true
+                }
+            } header: {
+                Text("History")
+            } footer: {
+                Text("Clears Recent Apps and Recent Files. This is the only history Inlet keeps.")
             }
         }
         .formStyle(.grouped)
-        .navigationTitle("Privacy")
+        .navigationTitle("Privacy & Permissions")
+        .onAppear(perform: refresh)
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            refresh()
+        }
         .confirmationDialog(
             "Erase launch history?",
-            isPresented: $confirmErase,
+            isPresented: $confirmEraseHistory,
             titleVisibility: .visible
         ) {
             Button("Erase", role: .destructive) {
-                // The recents store listens for this and clears itself. Keeping it
-                // a notification means this PR doesn't depend on the quick panel PR.
+                // The recents store listens for this and clears itself.
                 NotificationCenter.default.post(name: .inletEraseLaunchHistory, object: nil)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Recent apps and files will be cleared. This can't be undone.")
         }
+        .confirmationDialog(
+            "Erase all crash reports?",
+            isPresented: $confirmEraseReports,
+            titleVisibility: .visible
+        ) {
+            Button("Erase", role: .destructive) {
+                DiagnosticStore.shared.eraseAll()
+                refresh()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Every saved report on this Mac will be deleted. This can't be undone.")
+        }
+    }
+
+    private func refresh() {
+        loginStatus = LoginItem.status
+        reportCount = DiagnosticStore.shared.all().count
+    }
+}
+
+// MARK: - Updates
+
+struct UpdatesPane: View {
+    @EnvironmentObject private var updater: AppUpdater
+
+    var body: some View {
+        Form {
+            UpdatesSettingsSection(updater: updater)
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Updates")
+    }
+}
+
+// MARK: - Inlet Pro (placeholder)
+
+/// A placeholder for the planned paid tier. It has no controls and no price
+/// yet, because the price is not decided.
+struct AccountPane: View {
+    var body: some View {
+        Form {
+            Section {
+                LabeledContent("Account", value: "Not needed")
+            } footer: {
+                Text("Inlet has no accounts. Nothing you do in Inlet is sent anywhere.")
+            }
+
+            Section {
+                LabeledContent("Inlet Pro", value: "Planned")
+            } footer: {
+                Text("A paid tier is planned and isn't available yet. Nothing is charged.")
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Inlet Pro")
     }
 }
 
@@ -229,7 +415,6 @@ struct PrivacyPane: View {
 
 struct AboutPane: View {
     @Environment(AppLibrary.self) private var library
-    @EnvironmentObject private var updater: AppUpdater
 
     var body: some View {
         Form {
@@ -239,8 +424,13 @@ struct AboutPane: View {
                 LabeledContent("Last scan", value: lastScanText)
             }
 
-            // Automatic-check toggle, last check time and a manual check button.
-            UpdatesSettingsSection(updater: updater)
+            Section {
+                Button("Send Feedback…") {
+                    FeedbackWindow.shared.show()
+                }
+            } footer: {
+                Text("Feedback opens a form that leads to a GitHub issue in your browser.")
+            }
         }
         .formStyle(.grouped)
         .navigationTitle("About")

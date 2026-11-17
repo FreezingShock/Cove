@@ -31,8 +31,7 @@ struct OpenPlacement {
     private static let startFraction: CGFloat = 0.22
 
     /// Placement for the cell at `index` in a grid of `total` cells.
-    static func forCell(at index: Int, total: Int) -> OpenPlacement {
-        let columns = InletSize.gridColumns
+    static func forCell(at index: Int, total: Int, columns: Int) -> OpenPlacement {
         let rows = Int((Double(total) / Double(columns)).rounded(.up))
 
         // Center of the grid, in cell units (column and row indexes).
@@ -160,7 +159,7 @@ struct AppGridView: View {
         let total = shownApps.count
         var result: [AppItem.ID: OpenPlacement] = [:]
         for (index, app) in shownApps.enumerated() {
-            result[app.id] = OpenPlacement.forCell(at: index, total: total)
+            result[app.id] = OpenPlacement.forCell(at: index, total: total, columns: gridColumns)
         }
         return result
     }
