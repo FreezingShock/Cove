@@ -2,8 +2,9 @@
 """Generate the radius and motion tokens for the app and the website from design/tokens.json.
 
 Writes two marked blocks:
-  - website/css/tokens.css        between /* BEGIN GENERATED */ and /* END GENERATED */
-  - Inlet/InletTheme.swift        radius and motion, and colors, between their // BEGIN/END GENERATED markers
+  - website/css/tokens.css        colors between /* BEGIN GENERATED: color */ and /* END GENERATED: color */
+                                  radius and motion between /* BEGIN GENERATED: radius */ and /* END GENERATED */
+  - Inlet/InletTheme.swift        radius and motion between // BEGIN GENERATED and // END GENERATED
 
 Usage:
   python3 scripts/build-tokens.py          rewrite the blocks
@@ -12,6 +13,7 @@ Usage:
 import json
 import math
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -19,7 +21,8 @@ SOURCE = ROOT / "design" / "tokens.json"
 CSS_FILE = ROOT / "website" / "css" / "tokens.css"
 SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
 
-CSS_BEGIN, CSS_END = "/* BEGIN GENERATED", "/* END GENERATED */"
+CSS_COLOR_BEGIN, CSS_COLOR_END = "/* BEGIN GENERATED: color", "/* END GENERATED: color */"
+CSS_BEGIN, CSS_END = "/* BEGIN GENERATED: radius", "/* END GENERATED */"
 SWIFT_BEGIN, SWIFT_END = "// BEGIN GENERATED: radius and motion.", "// END GENERATED: radius and motion"
 COLOR_BEGIN, COLOR_END = "// BEGIN GENERATED: colors.", "// END GENERATED: colors"
 
@@ -102,6 +105,33 @@ def build_css(cfg):
     return "\n".join(lines) + "\n"
 
 
+def build_color(cfg):
+    """Light, system dark, forced dark and forced light color sets for the website."""
+    c = cfg["color"]
+
+    def rules(selector, vals, scheme):
+        body = [f"  --{k}: {v};" for k, v in vals.items()]
+        body.append(f"  color-scheme: {scheme};")
+        return [f"{selector} {{", *body, "}"]
+
+    lines = [
+        "/* BEGIN GENERATED: color. Source: design/tokens.json, built by scripts/build-tokens.py.",
+        "   Edit the JSON and rerun the script; do not hand-edit this block. */",
+        "/* Light */",
+        *rules(":root", c["light"], "light"),
+        "/* Dark (system) */",
+        "@media (prefers-color-scheme: dark) {",
+        *["  " + l for l in rules(':root:not([data-theme="light"])', c["dark"], "dark")],
+        "}",
+        "/* Dark (forced) */",
+        *rules(':root[data-theme="dark"], .t-dark', c["dark"], "dark"),
+        "/* Light (forced, for side-by-side sheets) */",
+        *rules(".t-light", c["light"], "light"),
+        "/* END GENERATED: color */",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def build_swift(cfg):
     r, m = cfg["radius"], cfg["motion"]
     s = r["scale"]
@@ -175,29 +205,60 @@ def build_swift(cfg):
     return "\n".join(out) + "\n"
 
 
-def num(v):
-    """Swift Double literal: 0.902 -> '0.902', 1.0 -> '1', 0.02 -> '0.02'."""
-    return f"{v:g}"
+# App colors. Each name here is an InletColor token in Inlet/InletTheme.swift.
+# The website's CSS name is the same name in kebab case: glowA -> glow-a, base2 -> base-2.
+# Values are parsed from the website's color section, so one edit changes both.
+APP_COLOR_NAMES = [
+    "base", "base2", "glowA", "glowB", "glowC", "window", "grouped", "text", "text2", "text3",
+    "hair", "accent", "accentInk", "accentSoft", "logoAqua", "gFill", "gSolid", "gSheenTop",
+    "gSheenBot", "gHl", "gLow", "gRimA", "gRimB", "gRimC", "gRimD", "gEdge", "gShadow", "gSpec",
+    "cFill", "selTop", "selBot", "selHl", "selRing", "selShadow", "hover", "scrim", "track",
+    "knob", "field", "iconShadow", "accentHover", "accentPressed", "pressed",
+]
 
 
-def rgba_init(vals):
-    parts = [f"r: {num(vals[0])}", f"g: {num(vals[1])}", f"b: {num(vals[2])}"]
+def css_name(swift_name):
+    return re.sub(r"([A-Z]|\d+)", lambda m: "-" + m.group(1).lower(), swift_name)
+
+
+def parse_css_color(value):
+    """'#RRGGBB', 'rgb(...)' or 'rgba(...)' to [r, g, b] or [r, g, b, a] in 0...1."""
+    v = value.strip()
+    if v.startswith("#"):
+        h = v[1:]
+        return [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    m = re.fullmatch(r"rgba?\(([^)]*)\)", v)
+    if not m:
+        raise ValueError(f"not a color: {value!r}")
+    parts = [x.strip() for x in m.group(1).split(",")]
+    out = [float(parts[i]) / 255 for i in range(3)]
+    if len(parts) == 4:
+        out.append(float(parts[3]))
+    return out
+
+
+def swift_num(v):
+    return f"{round(v, 4):g}"
+
+
+def swift_rgba(vals):
+    parts = [f"r: {swift_num(vals[0])}", f"g: {swift_num(vals[1])}", f"b: {swift_num(vals[2])}"]
     if len(vals) == 4:
-        parts.append(f"a: {num(vals[3])}")
+        parts.append(f"a: {swift_num(vals[3])}")
     return ".init(" + ", ".join(parts) + ")"
 
 
 def build_swift_colors(cfg):
-    """The InletColor tokens. Written inside `enum InletColor { ... }` in InletTheme.swift."""
+    c = cfg["color"]
     out = [
         "// BEGIN GENERATED: colors. Source: design/tokens.json (color), built by scripts/build-tokens.py.",
         "// Edit the JSON and rerun the script; do not hand-edit this block.",
     ]
-    for name, tok in cfg["color"]["tokens"].items():
-        if tok.get("note"):
-            out.append(f"    /// {tok['note']}")
-        light, dark = rgba_init(tok["light"]), rgba_init(tok["dark"])
-        out.append(f"    static let {name} = Color.inlet(light: {light}, dark: {dark})")
+    for name in APP_COLOR_NAMES:
+        key = css_name(name)
+        light, dark = c["light"][key], c["dark"][key]
+        out.append(f"    /// {light} / {dark}")
+        out.append(f"    static let {name} = Color.inlet(light: {swift_rgba(parse_css_color(light))}, dark: {swift_rgba(parse_css_color(dark))})")
     out.append("// END GENERATED: colors")
     return "\n".join(out) + "\n"
 
@@ -216,14 +277,16 @@ def main():
     check = "--check" in sys.argv
     cfg = json.loads(SOURCE.read_text())
     css_block = build_css(cfg)
+    color_block = build_color(cfg)
     swift_block = build_swift(cfg)
-    color_block = build_swift_colors(cfg)
+    swift_color_block = build_swift_colors(cfg)
 
     css_now = CSS_FILE.read_text()
     swift_now = SWIFT_FILE.read_text()
-    css_new = splice(css_now, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
+    css_new = splice(css_now, CSS_COLOR_BEGIN, CSS_COLOR_END, color_block, CSS_FILE)
+    css_new = splice(css_new, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
     swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
-    swift_new = splice(swift_new, COLOR_BEGIN, COLOR_END, color_block, SWIFT_FILE)
+    swift_new = splice(swift_new, COLOR_BEGIN, COLOR_END, swift_color_block, SWIFT_FILE)
 
     if check:
         stale = [str(p.relative_to(ROOT)) for p, now, new in
