@@ -191,6 +191,49 @@ final class GroupsTests: XCTestCase {
         XCTAssertEqual(layout.groups.map(\.id), ["solo"])
     }
 
+    // MARK: - Setup choices
+
+    private var allPresets: Set<AppCategory> { Set(AppCategory.allCases) }
+
+    func testTurningOffAPresetMovesItsAppsToOther() {
+        var layout = GridLayout.makeDefault(for: sampleApps)
+        layout.setPresetGroups(allPresets.subtracting([.games]), apps: sampleApps)
+        XCTAssertNil(group(layout, "games"))
+        XCTAssertEqual(group(layout, "other")?.appIDs, [appID("Mystery Tool"), appID("Chess")])
+    }
+
+    func testTurningAPresetBackOnPullsItsAppsOutOfOther() {
+        var layout = GridLayout.makeDefault(for: sampleApps)
+        layout.setPresetGroups(allPresets.subtracting([.games]), apps: sampleApps)
+        layout.setPresetGroups(allPresets, apps: sampleApps)
+        XCTAssertEqual(layout.groups.map(\.id), ["create", "build", "school", "everyday", "other", "games"])
+        XCTAssertEqual(group(layout, "games")?.appIDs, [appID("Chess")])
+        XCTAssertEqual(group(layout, "other")?.appIDs, [appID("Mystery Tool")])
+    }
+
+    func testEveryAppStaysInExactlyOneGroupWhenPresetsChange() {
+        var layout = GridLayout.makeDefault(for: sampleApps)
+        layout.setPresetGroups([.create, .games], apps: sampleApps)
+        let grouped = layout.groups.flatMap(\.appIDs)
+        XCTAssertEqual(grouped.count, sampleApps.count)
+        XCTAssertEqual(Set(grouped), Set(sampleApps.map { appID($0.name) }))
+    }
+
+    func testAtLeastOneGroupStaysWhenEveryPresetIsOff() {
+        var layout = GridLayout.makeDefault(for: sampleApps)
+        let before = layout
+        layout.setPresetGroups([], apps: sampleApps)
+        XCTAssertEqual(layout, before)
+    }
+
+    func testCustomGroupsSurviveAPresetChange() {
+        var layout = GridLayout.makeDefault(for: sampleApps)
+        layout.groups.append(AppGroup(id: "custom-work", name: "Work", color: .blue, symbol: "star", suggestedCategory: nil, appIDs: []))
+        layout.setPresetGroups([], apps: sampleApps)
+        XCTAssertEqual(layout.groups.map(\.id), ["custom-work"])
+        XCTAssertEqual(Set(layout.groups.flatMap(\.appIDs)), Set(sampleApps.map { appID($0.name) }))
+    }
+
     // MARK: - Saved files
 
     func testVersion1FileWithoutGroupsDecodesAndGainsPresets() throws {
