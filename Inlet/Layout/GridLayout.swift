@@ -2,9 +2,10 @@
 //  GridLayout.swift
 //  Inlet
 //
-//  The saved order of the grid: which apps sit where, which folders exist,
-//  and which third-party apps the user hid. This file is plain data with no
-//  UI, so the rules here can be checked without opening a window.
+//  The saved state of the grid: the order of icons and folders, which
+//  third-party apps the user hid, and the groups the group bar filters by.
+//  This file is plain data with no UI, so the rules here can be checked
+//  without opening a window.
 //
 
 import Foundation
@@ -47,18 +48,48 @@ struct HiddenApp: Codable, Hashable, Sendable {
 /// The whole saved layout. Written to disk by `LayoutStore`.
 struct GridLayout: Codable, Equatable, Sendable {
     /// Bump this when the file format changes.
-    static let currentVersion = 1
+    /// 1: order, folders, hidden apps. 2: adds `groups`.
+    static let currentVersion = 2
 
-    var version: Int = GridLayout.currentVersion
+    var version: Int
     /// Grid order, first item first.
-    var entries: [GridEntry] = []
+    var entries: [GridEntry]
     /// Apps the user hid, in the order they were hidden.
-    var hidden: [HiddenApp] = []
+    var hidden: [HiddenApp]
+    /// Groups in bar order. After reconciling, every installed app is in exactly one.
+    var groups: [AppGroup]
 
-    /// The layout a new user sees: every app A to Z, nothing hidden or grouped.
+    init(
+        version: Int = GridLayout.currentVersion,
+        entries: [GridEntry] = [],
+        hidden: [HiddenApp] = [],
+        groups: [AppGroup] = []
+    ) {
+        self.version = version
+        self.entries = entries
+        self.hidden = hidden
+        self.groups = groups
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case version, entries, hidden, groups
+    }
+
+    /// Version 1 files have no `groups` key, so every key except `version`
+    /// is optional on disk. Missing keys decode as empty.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
+        entries = try container.decodeIfPresent([GridEntry].self, forKey: .entries) ?? []
+        hidden = try container.decodeIfPresent([HiddenApp].self, forKey: .hidden) ?? []
+        groups = try container.decodeIfPresent([AppGroup].self, forKey: .groups) ?? []
+    }
+
+    /// The layout a new user sees: every app A to Z on the grid, nothing hidden,
+    /// and the preset groups with each app in its suggested group.
     /// `apps` must already be sorted by name, as `AppLibrary` sorts them.
     static func makeDefault(for apps: [AppItem]) -> GridLayout {
-        GridLayout(entries: apps.map { GridEntry.app($0.id) })
+        GridLayout().reconciled(with: apps)
     }
 
     /// Brings a saved layout in line with the apps installed right now.
@@ -68,11 +99,14 @@ struct GridLayout: Codable, Equatable, Sendable {
     /// - A folder that somehow holds more than `maxApps` keeps its first nine;
     ///   the rest go on the grid as plain apps, so none disappear.
     /// - Newly installed apps are added at the end, in the order given.
+    /// - Groups: the presets are created when there are none (new installs and
+    ///   version 1 files), uninstalled apps leave their group, and each app
+    ///   that is in no group joins the group its category suggests.
     func reconciled(with apps: [AppItem]) -> GridLayout {
         let installed = Set(apps.map(\.id))
         // Hidden apps are never on the grid, so treat them as already placed.
         var placed = Set(hidden.map(\.appID))
-        var result = GridLayout(version: version)
+        var result = GridLayout()
 
         for entry in entries {
             switch entry {
@@ -106,6 +140,31 @@ struct GridLayout: Codable, Equatable, Sendable {
         }
 
         result.hidden = hidden.filter { installed.contains($0.appID) }
+        result.groups = reconciledGroups(with: apps)
+        result.version = GridLayout.currentVersion
+        return result
+    }
+
+    /// Groups after a scan. Seeds the presets when there are none, drops
+    /// uninstalled apps, and puts each app that has no group into the group
+    /// its category suggests. Hidden apps keep their group, so Restore returns
+    /// them to it.
+    private func reconciledGroups(with apps: [AppItem]) -> [AppGroup] {
+        var result = groups.isEmpty ? AppGroup.presets : groups
+        let installed = Set(apps.map(\.id))
+        var seen = Set<String>()
+
+        for index in result.indices {
+            result[index].appIDs = result[index].appIDs.filter { appID in
+                installed.contains(appID) && seen.insert(appID).inserted
+            }
+        }
+
+        for app in apps where !seen.contains(app.id) {
+            guard let index = AppGroup.suggestedIndex(for: app.category, in: result) else { break }
+            result[index].appIDs.append(app.id)
+            seen.insert(app.id)
+        }
         return result
     }
 
@@ -129,5 +188,76 @@ struct GridLayout: Codable, Equatable, Sendable {
         hidden.removeAll { $0.appID == appID }
         let index = min(max(saved.position, 0), entries.count)
         entries.insert(.app(appID), at: index)
+    }
+
+    // MARK: - Groups
+
+    /// The id of the group that holds `appID`, if any.
+    func groupID(containing appID: String) -> String? {
+        groups.first(where: { $0.appIDs.contains(appID) })?.id
+    }
+
+    /// Adds a custom group at the end of the bar. Returns its id, or nil when
+    /// the name is empty.
+    @discardableResult
+    mutating func addGroup(name: String, color: GroupColor, symbol: String) -> String? {
+        guard let clean = AppGroup.cleanName(name) else { return nil }
+        let group = AppGroup(
+            id: UUID().uuidString,
+            name: clean,
+            color: color,
+            symbol: symbol,
+            suggestedCategory: nil,
+            appIDs: []
+        )
+        groups.append(group)
+        return group.id
+    }
+
+    /// Changes a group's name, color or symbol. Only the fields passed are
+    /// changed. An empty name is ignored.
+    mutating func editGroup(
+        withID id: String,
+        name: String? = nil,
+        color: GroupColor? = nil,
+        symbol: String? = nil
+    ) {
+        guard let index = groups.firstIndex(where: { $0.id == id }) else { return }
+        if let name, let clean = AppGroup.cleanName(name) {
+            groups[index].name = clean
+        }
+        if let color {
+            groups[index].color = color
+        }
+        if let symbol {
+            groups[index].symbol = symbol
+        }
+    }
+
+    /// Moves a group to `index` on the bar, clamped to the list.
+    mutating func moveGroup(withID id: String, to index: Int) {
+        guard let from = groups.firstIndex(where: { $0.id == id }) else { return }
+        let group = groups.remove(at: from)
+        groups.insert(group, at: min(max(index, 0), groups.count))
+    }
+
+    /// Deletes a group. Its apps move to the Other group, or to the first group
+    /// left if there is no Other. The last group can't be deleted, so every app
+    /// always has a group.
+    mutating func deleteGroup(withID id: String) {
+        guard groups.count > 1, let index = groups.firstIndex(where: { $0.id == id }) else { return }
+        let removed = groups.remove(at: index)
+        let target = groups.firstIndex(where: { $0.suggestedCategory == .other }) ?? 0
+        groups[target].appIDs.append(contentsOf: removed.appIDs)
+    }
+
+    /// Moves an app to the end of a group, taking it out of whichever group it
+    /// was in. Does nothing for an unknown group.
+    mutating func moveApp(_ appID: String, toGroup groupID: String) {
+        guard let target = groups.firstIndex(where: { $0.id == groupID }) else { return }
+        for index in groups.indices {
+            groups[index].appIDs.removeAll { $0 == appID }
+        }
+        groups[target].appIDs.append(appID)
     }
 }

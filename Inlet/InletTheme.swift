@@ -298,7 +298,7 @@ private struct InletPanelGlass: ViewModifier {
     }
 }
 
-/// Capsule glass for a single control (search field, category bar).
+/// Capsule glass for a single control (search field, group bar).
 private struct InletCapsuleGlass: ViewModifier {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     let interactive: Bool
@@ -320,7 +320,7 @@ extension View {
         modifier(InletPanelGlass(cornerRadius: cornerRadius))
     }
 
-    /// Capsule glass: search field, category bar, small toolbars.
+    /// Capsule glass: search field, group bar, small toolbars.
     func inletCapsuleGlass(interactive: Bool = true) -> some View {
         modifier(InletCapsuleGlass(interactive: interactive))
     }
