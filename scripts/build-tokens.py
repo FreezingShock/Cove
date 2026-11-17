@@ -3,7 +3,7 @@
 
 Writes two marked blocks:
   - website/css/tokens.css        between /* BEGIN GENERATED */ and /* END GENERATED */
-  - Inlet/InletTheme.swift        between // BEGIN GENERATED and // END GENERATED
+  - Inlet/InletTheme.swift        radius and motion, and colors, between their // BEGIN/END GENERATED markers
 
 Usage:
   python3 scripts/build-tokens.py          rewrite the blocks
@@ -20,7 +20,8 @@ CSS_FILE = ROOT / "website" / "css" / "tokens.css"
 SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
 
 CSS_BEGIN, CSS_END = "/* BEGIN GENERATED", "/* END GENERATED */"
-SWIFT_BEGIN, SWIFT_END = "// BEGIN GENERATED", "// END GENERATED"
+SWIFT_BEGIN, SWIFT_END = "// BEGIN GENERATED: radius and motion.", "// END GENERATED: radius and motion"
+COLOR_BEGIN, COLOR_END = "// BEGIN GENERATED: colors.", "// END GENERATED: colors"
 
 
 def fmt(v):
@@ -169,15 +170,42 @@ def build_swift(cfg):
         "        .interpolatingSpring(InletMotion.rise, initialVelocity: velocity)",
         "    }",
         "}",
-        "// END GENERATED",
+        "// END GENERATED: radius and motion",
     ]
+    return "\n".join(out) + "\n"
+
+
+def num(v):
+    """Swift Double literal: 0.902 -> '0.902', 1.0 -> '1', 0.02 -> '0.02'."""
+    return f"{v:g}"
+
+
+def rgba_init(vals):
+    parts = [f"r: {num(vals[0])}", f"g: {num(vals[1])}", f"b: {num(vals[2])}"]
+    if len(vals) == 4:
+        parts.append(f"a: {num(vals[3])}")
+    return ".init(" + ", ".join(parts) + ")"
+
+
+def build_swift_colors(cfg):
+    """The InletColor tokens. Written inside `enum InletColor { ... }` in InletTheme.swift."""
+    out = [
+        "// BEGIN GENERATED: colors. Source: design/tokens.json (color), built by scripts/build-tokens.py.",
+        "// Edit the JSON and rerun the script; do not hand-edit this block.",
+    ]
+    for name, tok in cfg["color"]["tokens"].items():
+        if tok.get("note"):
+            out.append(f"    /// {tok['note']}")
+        light, dark = rgba_init(tok["light"]), rgba_init(tok["dark"])
+        out.append(f"    static let {name} = Color.inlet(light: {light}, dark: {dark})")
+    out.append("// END GENERATED: colors")
     return "\n".join(out) + "\n"
 
 
 def splice(text, begin, end, block, path):
     start = text.find(begin)
-    stop = text.find(end)
-    if start == -1 or stop == -1 or stop < start:
+    stop = text.find(end, start)
+    if start == -1 or stop == -1:
         sys.exit(f"{path}: missing {begin!r} ... {end!r} markers")
     stop += len(end)
     # Keep everything after the END marker as it was, so reruns are stable.
@@ -189,11 +217,13 @@ def main():
     cfg = json.loads(SOURCE.read_text())
     css_block = build_css(cfg)
     swift_block = build_swift(cfg)
+    color_block = build_swift_colors(cfg)
 
     css_now = CSS_FILE.read_text()
     swift_now = SWIFT_FILE.read_text()
     css_new = splice(css_now, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
     swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
+    swift_new = splice(swift_new, COLOR_BEGIN, COLOR_END, color_block, SWIFT_FILE)
 
     if check:
         stale = [str(p.relative_to(ROOT)) for p, now, new in

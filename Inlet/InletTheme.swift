@@ -39,14 +39,16 @@ extension Color {
 /// Each token's comment gives the light value / dark value.
 /// Accent is a fill, never text: use `text` for any text that was aqua.
 enum InletColor {
+// BEGIN GENERATED: colors. Source: design/tokens.json (color), built by scripts/build-tokens.py.
+// Edit the JSON and rerun the script; do not hand-edit this block.
     /// #E6ECF2 / #05070C
-    static let base = Color.inlet(light: .init(r: 0.902, g: 0.925, b: 0.949), dark: .init(r: 0.020, g: 0.027, b: 0.047))
+    static let base = Color.inlet(light: .init(r: 0.902, g: 0.925, b: 0.949), dark: .init(r: 0.02, g: 0.027, b: 0.047))
     /// #F6F8FB / #0B0F18
     static let base2 = Color.inlet(light: .init(r: 0.965, g: 0.973, b: 0.984), dark: .init(r: 0.043, g: 0.059, b: 0.094))
     /// rgba(70,230,214,0.42) / rgba(48,196,186,0.36)
     static let glowA = Color.inlet(light: .init(r: 0.275, g: 0.902, b: 0.839, a: 0.42), dark: .init(r: 0.188, g: 0.769, b: 0.729, a: 0.36))
     /// rgba(122,138,255,0.34) / rgba(70,90,200,0.34)
-    static let glowB = Color.inlet(light: .init(r: 0.478, g: 0.541, b: 1.000, a: 0.34), dark: .init(r: 0.275, g: 0.353, b: 0.784, a: 0.34))
+    static let glowB = Color.inlet(light: .init(r: 0.478, g: 0.541, b: 1, a: 0.34), dark: .init(r: 0.275, g: 0.353, b: 0.784, a: 0.34))
     /// rgba(255,255,255,0.85) / rgba(120,90,220,0.16)
     static let glowC = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.85), dark: .init(r: 0.471, g: 0.353, b: 0.863, a: 0.16))
     /// #F4F6F9 / #161A22
@@ -54,13 +56,13 @@ enum InletColor {
     /// #FFFFFF / rgba(255,255,255,0.055)
     static let grouped = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 1, g: 1, b: 1, a: 0.055))
     /// #0B111C / #FFFFFF
-    static let text = Color.inlet(light: .init(r: 0.043, g: 0.067, b: 0.110), dark: .init(r: 1, g: 1, b: 1))
+    static let text = Color.inlet(light: .init(r: 0.043, g: 0.067, b: 0.11), dark: .init(r: 1, g: 1, b: 1))
     /// rgba(16,24,40,0.66) / rgba(235,240,255,0.78)
-    static let text2 = Color.inlet(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.66), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.78))
+    static let text2 = Color.inlet(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.66), dark: .init(r: 0.922, g: 0.941, b: 1, a: 0.78))
     /// rgba(16,24,40,0.62) / rgba(235,240,255,0.56). Hints, counts and placeholders only.
-    static let text3 = Color.inlet(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.62), dark: .init(r: 0.922, g: 0.941, b: 1.000, a: 0.56))
+    static let text3 = Color.inlet(light: .init(r: 0.063, g: 0.094, b: 0.157, a: 0.62), dark: .init(r: 0.922, g: 0.941, b: 1, a: 0.56))
     /// rgba(12,22,44,0.10) / rgba(255,255,255,0.12)
-    static let hair = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.10), dark: .init(r: 1, g: 1, b: 1, a: 0.12))
+    static let hair = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.1), dark: .init(r: 1, g: 1, b: 1, a: 0.12))
     /// #0A7F74 / #3FD9C9. Fills and controls: cursor, Dock dot, switches, sliders, selected segment.
     static let accent = Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455), dark: .init(r: 0.247, g: 0.851, b: 0.788))
     /// #FFFFFF / #022522
@@ -68,9 +70,9 @@ enum InletColor {
     /// rgba(10,127,116,0.14) / rgba(63,217,201,0.16)
     static let accentSoft = Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455, a: 0.14), dark: .init(r: 0.247, g: 0.851, b: 0.788, a: 0.16))
     /// #46E6D6 in both appearances. The logo keeps the brighter aqua.
-    static let logoAqua = Color(red: 0.275, green: 0.902, blue: 0.839)
+    static let logoAqua = Color.inlet(light: .init(r: 0.275, g: 0.902, b: 0.839), dark: .init(r: 0.275, g: 0.902, b: 0.839))
     /// rgba(250,252,255,0.50) / rgba(12,16,26,0.55)
-    static let gFill = Color.inlet(light: .init(r: 0.980, g: 0.988, b: 1.000, a: 0.50), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.55))
+    static let gFill = Color.inlet(light: .init(r: 0.98, g: 0.988, b: 1, a: 0.5), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.55))
     /// #FFFFFF / #242A35. Replaces glass under Reduce Transparency and Increase Contrast.
     static let gSolid = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.141, g: 0.165, b: 0.208))
     /// rgba(255,255,255,0.62) / rgba(255,255,255,0.13)
@@ -82,43 +84,50 @@ enum InletColor {
     /// rgba(255,255,255,0.35) / rgba(255,255,255,0.08)
     static let gLow = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.35), dark: .init(r: 1, g: 1, b: 1, a: 0.08))
     /// rgba(255,255,255,0.95) / rgba(255,255,255,0.50)
-    static let gRimA = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.95), dark: .init(r: 1, g: 1, b: 1, a: 0.50))
+    static let gRimA = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.95), dark: .init(r: 1, g: 1, b: 1, a: 0.5))
     /// rgba(255,255,255,0.35) / rgba(255,255,255,0.14)
     static let gRimB = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.35), dark: .init(r: 1, g: 1, b: 1, a: 0.14))
     /// rgba(12,22,44,0.06) / rgba(255,255,255,0.06)
     static let gRimC = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.06), dark: .init(r: 1, g: 1, b: 1, a: 0.06))
     /// rgba(255,255,255,0.70) / rgba(255,255,255,0.22)
-    static let gRimD = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.70), dark: .init(r: 1, g: 1, b: 1, a: 0.22))
+    static let gRimD = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.7), dark: .init(r: 1, g: 1, b: 1, a: 0.22))
     /// rgba(12,22,44,0.10) / rgba(0,0,0,0.40)
-    static let gEdge = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.10), dark: .init(r: 0, g: 0, b: 0, a: 0.40))
+    static let gEdge = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.1), dark: .init(r: 0, g: 0, b: 0, a: 0.4))
     /// rgba(28,44,80,0.16) / rgba(0,0,0,0.55)
-    static let gShadow = Color.inlet(light: .init(r: 0.110, g: 0.173, b: 0.314, a: 0.16), dark: .init(r: 0, g: 0, b: 0, a: 0.55))
+    static let gShadow = Color.inlet(light: .init(r: 0.11, g: 0.173, b: 0.314, a: 0.16), dark: .init(r: 0, g: 0, b: 0, a: 0.55))
     /// rgba(255,255,255,0.55) / rgba(255,255,255,0.16)
     static let gSpec = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.55), dark: .init(r: 1, g: 1, b: 1, a: 0.16))
     /// rgba(250,252,255,0.38) / rgba(12,16,26,0.35)
-    static let cFill = Color.inlet(light: .init(r: 0.980, g: 0.988, b: 1.000, a: 0.38), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.35))
+    static let cFill = Color.inlet(light: .init(r: 0.98, g: 0.988, b: 1, a: 0.38), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.35))
     /// rgba(255,255,255,0.92) / rgba(255,255,255,0.24)
     static let selTop = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.92), dark: .init(r: 1, g: 1, b: 1, a: 0.24))
     /// rgba(255,255,255,0.62) / rgba(255,255,255,0.10)
-    static let selBot = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.62), dark: .init(r: 1, g: 1, b: 1, a: 0.10))
+    static let selBot = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.62), dark: .init(r: 1, g: 1, b: 1, a: 0.1))
     /// rgba(255,255,255,1.00) / rgba(255,255,255,0.55)
-    static let selHl = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 1.00), dark: .init(r: 1, g: 1, b: 1, a: 0.55))
+    static let selHl = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 1), dark: .init(r: 1, g: 1, b: 1, a: 0.55))
     /// rgba(12,22,44,0.08) / rgba(255,255,255,0.16)
     static let selRing = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.08), dark: .init(r: 1, g: 1, b: 1, a: 0.16))
     /// rgba(28,44,80,0.14) / rgba(0,0,0,0.30)
-    static let selShadow = Color.inlet(light: .init(r: 0.110, g: 0.173, b: 0.314, a: 0.14), dark: .init(r: 0, g: 0, b: 0, a: 0.30))
+    static let selShadow = Color.inlet(light: .init(r: 0.11, g: 0.173, b: 0.314, a: 0.14), dark: .init(r: 0, g: 0, b: 0, a: 0.3))
     /// rgba(12,22,44,0.05) / rgba(255,255,255,0.07)
     static let hover = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.05), dark: .init(r: 1, g: 1, b: 1, a: 0.07))
     /// rgba(236,241,246,0.42) / rgba(4,6,10,0.44)
     static let scrim = Color.inlet(light: .init(r: 0.925, g: 0.945, b: 0.965, a: 0.42), dark: .init(r: 0.016, g: 0.024, b: 0.039, a: 0.44))
     /// rgba(12,22,44,0.50) / rgba(255,255,255,0.40). Meets 3:1 for control state on Light (3.3:1 on base).
-    static let track = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.50), dark: .init(r: 1, g: 1, b: 1, a: 0.40))
+    static let track = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.5), dark: .init(r: 1, g: 1, b: 1, a: 0.4))
     /// #FFFFFF / #F4F6FA
-    static let knob = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.957, g: 0.965, b: 0.980))
+    static let knob = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.957, g: 0.965, b: 0.98))
     /// rgba(12,22,44,0.05) / rgba(255,255,255,0.07)
     static let field = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.05), dark: .init(r: 1, g: 1, b: 1, a: 0.07))
     /// rgba(28,44,80,0.22) / rgba(0,0,0,0.45)
-    static let iconShadow = Color.inlet(light: .init(r: 0.110, g: 0.173, b: 0.314, a: 0.22), dark: .init(r: 0, g: 0, b: 0, a: 0.45))
+    static let iconShadow = Color.inlet(light: .init(r: 0.11, g: 0.173, b: 0.314, a: 0.22), dark: .init(r: 0, g: 0, b: 0, a: 0.45))
+    /// Accent fill on hover: a step darker on Light, a step brighter on Dark.
+    static let accentHover = Color.inlet(light: .init(r: 0.031, g: 0.455, b: 0.416), dark: .init(r: 0.337, g: 0.89, b: 0.824))
+    /// Accent fill while pressed.
+    static let accentPressed = Color.inlet(light: .init(r: 0.024, g: 0.416, b: 0.384), dark: .init(r: 0.165, g: 0.769, b: 0.718))
+    /// Row and tile fill while the mouse is down. Stronger than hover.
+    static let pressed = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.1), dark: .init(r: 1, g: 1, b: 1, a: 0.12))
+// END GENERATED: colors
 }
 
 // MARK: - Text roles with Increase Contrast
@@ -204,7 +213,7 @@ extension Animation {
         .interpolatingSpring(InletMotion.rise, initialVelocity: velocity)
     }
 }
-// END GENERATED
+// END GENERATED: radius and motion
 
 // MARK: - Spacing (points). One 4 pt based scale: 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 84
 
@@ -264,6 +273,7 @@ enum InletFont {
     static let label = Font.system(size: 11, weight: .semibold)    // Label: use with textCase(.uppercase)
     static let search = Font.system(size: 18)                      // Launcher search input
     static let iconLabel = Font.system(size: 12, weight: .medium)  // One line under each icon
+    static let rowTitle = Font.system(size: 15, weight: .medium)   // File row titles in the search panel and quick panel
 }
 
 /// Tracking values from the spec, converted from em to points.
