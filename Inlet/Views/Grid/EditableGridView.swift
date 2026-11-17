@@ -146,25 +146,33 @@ struct EditableGridView: View {
         let track = -CGFloat(current) * geo.pageWidth + swipeOffset
         return ZStack(alignment: .topLeading) {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, app in
+                // Each value is named on its own line, so the type-checker
+                // handles every expression separately.
+                let isDragged: Bool = drag?.id == app.id
+                let isHoveredTile: Bool = drag == nil && hoveredID == app.id
+                let showsBadge: Bool = isEditing && app.isHideable
+                let placement: OpenPlacement = openPlacement(forIndex: index, total: items.count, geo: geo)
+                let center: CGPoint = tilePosition(for: app, index: index, geo: geo, track: track)
+
                 GridTile(
                     app: app,
-                    placement: openPlacement(forIndex: index, total: items.count, geo: geo),
+                    placement: placement,
                     isOpen: isOpen,
                     isEditing: isEditing,
-                    showsBadge: isEditing && app.isHideable,
-                    isLifted: drag?.id == app.id,
+                    showsBadge: showsBadge,
+                    isLifted: isDragged,
                     isPressed: isPressed(app),
                     isKeyboardFocused: app.id == focusedID,
-                    isHovered: drag == nil && hoveredID == app.id,
+                    isHovered: isHoveredTile,
                     onOpen: { onLaunch(app) },
                     onHide: { if app.isHideable { onHide(app) } },
                     onMove: { onMove(app, $0) }
                 )
                 .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
-                .position(tilePosition(for: app, index: index, geo: geo, track: track))
+                .position(center)
                 // The dragged icon follows the pointer exactly, so it doesn't animate.
                 .transaction { transaction in
-                    if drag?.id == app.id { transaction.animation = nil }
+                    if isDragged { transaction.animation = nil }
                 }
             }
         }
