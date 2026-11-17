@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  /* Site chrome: the mobile menu, the ⌘K command palette, the magnetic primary buttons
-     and the cursor glow. Works on every page. Each part is skipped when its markup or
-     its input is missing, and nothing here changes the page's content. */
+  /* Site chrome: the mobile menu, the ⌘K command palette and the magnetic primary buttons.
+     Works on every page. Each part is skipped when its markup or its input is missing,
+     and nothing here changes the page's content. */
 
   var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var fineQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -102,7 +102,7 @@
     { group: "Actions", label: "Appearance: Auto", hint: "Theme", icon: ICON.theme, action: themeAction("auto"), keys: "theme appearance auto system" },
     { group: "Actions", label: "Appearance: Light", hint: "Theme", icon: ICON.theme, action: themeAction("light"), keys: "theme appearance light" },
     { group: "Actions", label: "Appearance: Dark", hint: "Theme", icon: ICON.theme, action: themeAction("dark"), keys: "theme appearance dark" },
-    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Cove", keys: "github source code repository" }
+    { group: "Actions", label: "GitHub repository", hint: "External", icon: ICON.external, href: "https://github.com/FreezingShock/Inlet", keys: "github source code repository" }
   ];
   if (onHome) {
     ITEMS.splice(7, 0, {
@@ -302,33 +302,6 @@
         b.style.setProperty("--mx", "0px");
         b.style.setProperty("--my", "0px");
       });
-    });
-  }
-
-  /* ---------- Cursor glow: a soft spot of the accent follows the pointer, eased ---------- */
-  if (fineQuery.matches && !reduceQuery.matches) {
-    var glow = document.createElement("div");
-    glow.className = "cursor-glow";
-    glow.setAttribute("aria-hidden", "true");
-    document.body.appendChild(glow);
-
-    var tx = 0, ty = 0, cx = 0, cy = 0, frame = false, live = false;
-    function step() {
-      cx += (tx - cx) * 0.16;
-      cy += (ty - cy) * 0.16;
-      glow.style.transform = "translate3d(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px,0) translate(-50%,-50%)";
-      if (Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4) requestAnimationFrame(step);
-      else frame = false;
-    }
-    document.addEventListener("pointermove", function (e) {
-      tx = e.clientX;
-      ty = e.clientY;
-      if (!live) { live = true; glow.classList.add("is-on"); cx = tx; cy = ty; }
-      if (!frame) { frame = true; requestAnimationFrame(step); }
-    }, { passive: true });
-    document.documentElement.addEventListener("pointerleave", function () {
-      live = false;
-      glow.classList.remove("is-on");
     });
   }
 })();
