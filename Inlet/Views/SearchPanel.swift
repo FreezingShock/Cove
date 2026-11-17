@@ -238,7 +238,7 @@ struct SearchPanel: View {
                 } label: {
                     FileResultRow(item: file)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(InletRowButtonStyle(cornerRadius: InletRadius.row))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
