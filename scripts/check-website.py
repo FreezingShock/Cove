@@ -12,7 +12,8 @@ Checks, in order:
   5. Every <img> has width, height and alt. Every srcset candidate exists.
   6. SEO and sharing: each indexable page has a title, a description, a canonical
      URL on the site, Open Graph and Twitter tags, and valid JSON-LD. A FAQPage's
-     questions match the visible <summary> text.
+     questions match the visible <summary> text. The home page's SoftwareApplication
+     has offers and a license.
   7. sitemap.xml lists every indexable page and only existing pages. robots.txt
      points at the sitemap and does not block the site. 404.html is noindex.
   8. site.webmanifest parses and its icons exist. favicon.ico and
@@ -255,6 +256,26 @@ def check_seo(root: Path, pages: dict, errors: list[str]) -> None:
                 questions = [q.get("name", "") for q in data.get("mainEntity", [])]
                 if sorted(questions) != sorted(scan.summaries):
                     errors.append(f"{name}: FAQPage questions do not match the visible <summary> text")
+
+    # The home page describes the app for search engines. Google needs an offer on a
+    # SoftwareApplication before it can show it as an app result.
+    index_scan = by_name.get("index.html")
+    if index_scan is not None:
+        nodes = []
+        for block in index_scan.jsonld:
+            try:
+                data = json.loads(block)
+            except json.JSONDecodeError:
+                continue
+            nodes.extend(data.get("@graph", [data]))
+        apps = [n for n in nodes if n.get("@type") == "SoftwareApplication"]
+        if not apps:
+            errors.append("index.html: JSON-LD needs a SoftwareApplication")
+        for app in apps:
+            if not app.get("offers"):
+                errors.append("index.html: SoftwareApplication needs offers")
+            if not app.get("license"):
+                errors.append("index.html: SoftwareApplication needs a license")
 
     sitemap = root / "sitemap.xml"
     if not sitemap.is_file():
