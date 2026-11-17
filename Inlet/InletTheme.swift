@@ -3,7 +3,7 @@
 //  Inlet
 //
 //  Design tokens from the Inlet design system, v1.2 (theme-spec.md section 12;
-//  values from design-system/inlet-tokens.css). Colors, shape, spacing, type,
+//  values from design-system/cove-tokens.css). Colors, shape, spacing, type,
 //  spring motion, glass, and the accessibility fallbacks.
 //  Target: macOS 26. Written against Apple's docs (checked 2026-11-16) but
 //  not compiled yet: build in Xcode 26 and fix anything the compiler flags.

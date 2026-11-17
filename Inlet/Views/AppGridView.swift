@@ -244,6 +244,14 @@ struct AppGridView: View {
         .onChange(of: layoutStore.layout.groups.map(\.id)) { _, ids in
             if let groupID, !ids.contains(groupID) { self.groupID = nil }
         }
+        // Every open starts clean: no leftover search text, no half-finished
+        // Edit mode. The group filter is kept on purpose (see Remember the last group).
+        .onChange(of: isOpen) { _, open in
+            guard open else { return }
+            query = ""
+            isEditing = false
+            focusedApp = nil
+        }
         // Keep the saved layout in step with what is installed.
         .onChange(of: library.apps) { _, apps in reconcileLayout(apps) }
         .onChange(of: library.hasScanned) { _, _ in reconcileLayout(library.apps) }

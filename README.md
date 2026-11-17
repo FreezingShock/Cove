@@ -7,7 +7,7 @@
 
 # Inlet
 
-A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no network calls, tracking or accounts.
+A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no accounts and no tracking. The only network call is an update check, which you can turn off.
 
 **Current version: 0.1 (Skeleton).** Inlet scans your app folders and shows every installed app in a plain grid of real icons. Click an icon to open the app. The glass overlay, hotkey, search and Dock panel come in later versions (see the roadmap below).
 
@@ -92,3 +92,7 @@ Each was checked against Apple's current documentation.
 | 0.4 Dock panel | Quick panel on Dock icon click, recent apps and files | Dock click toggles it reliably |
 | 0.5 Polish | Full design pass, app icon, animations, settings | Screens match the mockup |
 | 1.0 Daily driver | Bug fixes from real use | A week of daily use with no crash |
+
+## License
+
+Inlet is released under the MIT License. See [LICENSE](LICENSE).

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://freezingshock.github.io/Cove/sitemap.xml
+Sitemap: https://freezingshock.github.io/Inlet/sitemap.xml

@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://freezingshock.github.io/Cove/</loc>
+    <loc>https://freezingshock.github.io/Inlet/</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/features.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/features.html</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/download.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/download.html</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/changelog.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/changelog.html</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/faq.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/faq.html</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/privacy.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/privacy.html</loc>
     <lastmod>2026-11-16</lastmod>
   </url>
   <url>
-    <loc>https://freezingshock.github.io/Cove/support.html</loc>
+    <loc>https://freezingshock.github.io/Inlet/support.html</loc>
     <lastmod>2026-11-16</lastmod>
+  </url>
+  <url>
+    <loc>https://freezingshock.github.io/Inlet/pricing.html</loc>
+    <lastmod>2026-11-17</lastmod>
   </url>
 </urlset>

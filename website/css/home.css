@@ -233,21 +233,26 @@
 /* ---------- Everyday recipes ---------- */
 .uses { padding: var(--sec-y) 0; border-top: 1px solid var(--hair); }
 .uses-head { max-width: 640px; margin-bottom: 48px; }
-.recipes {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
+/* Three recipes as a ruled list: number, what you do, and the live UI, one row each. */
+.recipes { border-top: 1px solid var(--hair); }
 .recipe {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-areas:
+    "n h ui"
+    "n p ui"
+    "n k ui";
+  column-gap: 24px;
+  align-items: start;
   min-width: 0;
-  padding: 28px;
-  border-radius: var(--r-panel);
-  background: var(--field);
-  border: 1px solid var(--hair);
+  padding: 40px 0;
+  border-bottom: 1px solid var(--hair);
 }
+.recipe-n { grid-area: n; padding-top: 4px; }
+.recipe h3 { grid-area: h; }
+.recipe > p { grid-area: p; margin-top: 10px; }
+.recipe .keyline { grid-area: k; margin-top: 20px; }
+.recipe-ui { grid-area: ui; align-self: center; }
 .recipe-n {
   font-size: 13px;
   font-weight: 600;
@@ -255,9 +260,9 @@
   font-variant-numeric: tabular-nums;
 }
 .recipe h3 {
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1.2;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   font-weight: 650;
   text-wrap: balance;
 }
@@ -267,7 +272,6 @@
   color: var(--text-2);
   text-wrap: pretty;
 }
-.recipe .keyline { margin-top: auto; }
 
 /* A keystroke line: keys, then what you type, then the result. */
 .keyline {
@@ -312,17 +316,10 @@
 
 /* ---------- Built on the Mac ---------- */
 .proof {
-  margin-top: 56px;
+  margin-top: 96px;
   display: grid;
-  gap: 22px;
-  padding: 28px 32px;
-  border-radius: var(--r-panel);
-  border: 1px solid var(--hair);
-  background:
-    radial-gradient(40% 120% at 0% 0%, var(--glow-a), transparent 70%),
-    var(--field);
+  gap: 40px;
 }
-.proof .eyebrow { margin: 0; }
 .proof-list {
   list-style: none;
   margin: 0;
@@ -353,8 +350,11 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
-  .recipes { grid-template-columns: 1fr; }
-  .proof-list { grid-template-columns: 1fr; gap: 18px; }
+  .recipe { grid-template-columns: minmax(0, 1fr); grid-template-areas: "h" "p" "k" "ui"; row-gap: 0; }
+  .recipe-n { display: none; }
+  .recipe-ui { margin-top: 24px; }
+  .proof-list { grid-template-columns: 1fr; gap: 0; }
+  .proof-item { padding: 20px 0; }
   .org-stage, .org-stage .scrim { min-height: 560px; }
   .get-box .get-actions { min-width: 0; width: 100%; }
 }
@@ -364,8 +364,7 @@
   .org-folder { left: 12px; right: 12px; top: 92px; bottom: 74px; padding: 14px; border-radius: var(--r-window); }
   .org-folder-grid { --tile: 52px; gap: 16px 6px; }
   .org-toast { bottom: 14px; padding-left: 14px; gap: 10px; }
-  .recipe { padding: 22px; border-radius: var(--r-window); }
-  .proof { padding: 22px; border-radius: var(--r-window); }
+  .recipe { padding: 32px 0; }
   .uses { padding: 64px 0; }
   .keyline { padding: 12px; }
   .get-box .keyline { width: 100%; }
@@ -404,4 +403,10 @@
 .recipe-dock .ico { width: 36px; height: 36px; border-radius: calc(36px * var(--r-icon)); }
 .recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: var(--icon-stroke); }
 
-.hero-status { margin: 0 0 20px; font-size: var(--fs-caption); color: var(--text-2); }
+.hero-status {
+  margin: 0 0 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hair);
+  font-size: var(--fs-caption);
+  color: var(--text-2);
+}

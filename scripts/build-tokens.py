@@ -2,8 +2,9 @@
 """Generate the radius and motion tokens for the app and the website from design/tokens.json.
 
 Writes two marked blocks:
-  - website/css/tokens.css        between /* BEGIN GENERATED */ and /* END GENERATED */
-  - Inlet/InletTheme.swift        between // BEGIN GENERATED and // END GENERATED
+  - website/css/tokens.css        colors between /* BEGIN GENERATED: color */ and /* END GENERATED: color */
+                                  radius and motion between /* BEGIN GENERATED: radius */ and /* END GENERATED */
+  - Inlet/InletTheme.swift        radius and motion between // BEGIN GENERATED and // END GENERATED
 
 Usage:
   python3 scripts/build-tokens.py          rewrite the blocks
@@ -19,7 +20,8 @@ SOURCE = ROOT / "design" / "tokens.json"
 CSS_FILE = ROOT / "website" / "css" / "tokens.css"
 SWIFT_FILE = ROOT / "Inlet" / "InletTheme.swift"
 
-CSS_BEGIN, CSS_END = "/* BEGIN GENERATED", "/* END GENERATED */"
+CSS_COLOR_BEGIN, CSS_COLOR_END = "/* BEGIN GENERATED: color", "/* END GENERATED: color */"
+CSS_BEGIN, CSS_END = "/* BEGIN GENERATED: radius", "/* END GENERATED */"
 SWIFT_BEGIN, SWIFT_END = "// BEGIN GENERATED", "// END GENERATED"
 
 
@@ -98,6 +100,33 @@ def build_css(cfg):
         lines.append(f"  --spring-{name}: {linear_fn(pts)};")
         lines.append(f"  --spring-{name}-dur: {settle:.3f}s;")
     lines += ["}", "/* END GENERATED */"]
+    return "\n".join(lines) + "\n"
+
+
+def build_color(cfg):
+    """Light, system dark, forced dark and forced light color sets for the website."""
+    c = cfg["color"]
+
+    def rules(selector, vals, scheme):
+        body = [f"  --{k}: {v};" for k, v in vals.items()]
+        body.append(f"  color-scheme: {scheme};")
+        return [f"{selector} {{", *body, "}"]
+
+    lines = [
+        "/* BEGIN GENERATED: color. Source: design/tokens.json, built by scripts/build-tokens.py.",
+        "   Edit the JSON and rerun the script; do not hand-edit this block. */",
+        "/* Light */",
+        *rules(":root", c["light"], "light"),
+        "/* Dark (system) */",
+        "@media (prefers-color-scheme: dark) {",
+        *["  " + l for l in rules(':root:not([data-theme="light"])', c["dark"], "dark")],
+        "}",
+        "/* Dark (forced) */",
+        *rules(':root[data-theme="dark"], .t-dark', c["dark"], "dark"),
+        "/* Light (forced, for side-by-side sheets) */",
+        *rules(".t-light", c["light"], "light"),
+        "/* END GENERATED: color */",
+    ]
     return "\n".join(lines) + "\n"
 
 
@@ -188,11 +217,13 @@ def main():
     check = "--check" in sys.argv
     cfg = json.loads(SOURCE.read_text())
     css_block = build_css(cfg)
+    color_block = build_color(cfg)
     swift_block = build_swift(cfg)
 
     css_now = CSS_FILE.read_text()
     swift_now = SWIFT_FILE.read_text()
-    css_new = splice(css_now, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
+    css_new = splice(css_now, CSS_COLOR_BEGIN, CSS_COLOR_END, color_block, CSS_FILE)
+    css_new = splice(css_new, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
     swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
 
     if check:
