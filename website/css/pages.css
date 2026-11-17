@@ -585,7 +585,8 @@ html { scroll-behavior: smooth; }
 }
 .plan-cta { margin-top: auto; align-self: flex-start; min-height: 44px; }
 .plan-supporter { border-color: var(--sel-ring, var(--hair)); }
-.plan-cta.is-disabled { background: var(--field); color: var(--text-2); border-color: var(--hair); cursor: default; pointer-events: none; }
+.plan-status { display: inline-flex; align-items: center; gap: 10px; margin: 32px 0 0; min-height: 44px; font: 600 15px/1.3 var(--font-ui); color: var(--text-2); }
+.plan-status-mark { width: 10px; height: 10px; border-radius: 2px; background: var(--accent); flex: none; }
 .plan .plan-cta { margin-top: 32px; }
 @media (max-width: 900px) {
   .cards.plans { grid-template-columns: 1fr; }
