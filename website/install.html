@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Install · Inlet</title>
+  <meta name="description" content="Install Inlet on your Mac step by step, with pictures: drag it to Applications, get past the first-launch warning, and choose its permissions.">
+  <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/type.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/explore.css">
+  <link rel="stylesheet" href="css/download.css">
+  <link rel="stylesheet" href="css/install.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/brand.css">
+  <link rel="canonical" href="https://freezingshock.github.io/Inlet/install.html">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0B110F" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inlet">
+  <meta property="og:title" content="Install Inlet on your Mac">
+  <meta property="og:description" content="Drag Inlet to Applications, get past the first-launch warning, and choose its permissions. Step by step, with pictures.">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/install.html">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Install Inlet on your Mac">
+  <meta name="twitter:description" content="Drag Inlet to Applications, get past the first-launch warning, and choose its permissions. Step by step, with pictures.">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
+  <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/inlet-icon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+<header class="nav" id="top">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <img class="mark" src="assets/inlet-icon-light.svg" width="28" height="28" alt="">
+      <span>Inlet</span>
+    </a>
+    <nav class="links" id="siteLinks" aria-label="Site">
+      <a href="features.html">Features</a>
+      <a href="download.html" aria-current="page">Download</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="faq.html">FAQ</a>
+      <div class="menu-extra">
+        <a class="btn btn-primary menu-get" href="index.html#get">Get Inlet</a>
+      </div>
+    </nav>
+    <div class="nav-right">
+      <button class="search-btn" type="button" aria-label="Search the site" aria-keyshortcuts="Meta+K Control+K">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
+        <span>Search</span><kbd data-mod>⌘</kbd><kbd>K</kbd>
+      </button>
+      <a class="btn btn-primary btn-sm dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="siteLinks" aria-label="Open menu"><i></i><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="wrap page-hero install-hero">
+    <p class="eyebrow">Install guide</p>
+    <h1>Install Inlet, one step at a time.</h1>
+    <p class="lede">Inlet is not notarized by Apple yet, so macOS stops the first launch. This guide shows what you will see at each step, so you know what to click. It takes about two minutes.</p>
+    <div class="download-row">
+      <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download for Mac</a>
+      <a class="btn btn-ghost" href="download.html">Back to Download</a>
+    </div>
+    <div class="chips-row" aria-label="Requirements">
+      <span>macOS 26 or later</span>
+      <span>Apple silicon and Intel</span>
+      <span>No account needed</span>
+    </div>
+    <ul class="on-page" aria-label="On this page">
+      <li><a href="#install">1. Install</a></li>
+      <li><a href="#first-open">2. First open</a></li>
+      <li><a href="#allow">3. Allow it</a></li>
+      <li><a href="#permissions">4. Permissions</a></li>
+      <li><a href="#updates">Updates</a></li>
+      <li><a href="#trouble">Problems</a></li>
+    </ul>
+  </section>
+
+  <section class="wrap band" id="install">
+    <div class="ig-step">
+      <div class="ig-text">
+        <p class="ig-num">Step 1 of 4</p>
+        <h3>Drag Inlet into Applications</h3>
+        <ol class="ig-list">
+          <li>Click <strong>Download for Mac</strong>. Your browser saves <code>Inlet.dmg</code> to Downloads.</li>
+          <li>Double-click <code>Inlet.dmg</code> to open it. A window appears.</li>
+          <li>Drag the Inlet icon onto the <strong>Applications</strong> folder in the same window.</li>
+          <li>When the copy finishes, eject the disk image in Finder.</li>
+        </ol>
+        <p>Want to check the download first? Compare its checksum with <code>SHA256SUMS.txt</code> on the release page. Run <code>shasum -a 256 ~/Downloads/Inlet.dmg</code> in Terminal.</p>
+      </div>
+      <figure class="ig-fig">
+        <div class="mw" role="img" aria-label="A disk image window. The Inlet app icon on the left is dragged toward the Applications folder on the right.">
+          <div class="mw-bar"><i></i><i></i><i></i><span class="mw-title">Inlet</span></div>
+          <div class="dmg-stage">
+            <div class="dmg-item">
+              <img class="mw-app" src="assets/inlet-icon-light.svg" width="74" height="74" alt="">
+              <span class="mw-app-name">Inlet</span>
+            </div>
+            <div class="dmg-arrow" aria-hidden="true">
+              <svg viewBox="0 0 110 40" preserveAspectRatio="none"><path d="M6 20 H92" fill="none" stroke="#1D1D1F" stroke-opacity=".45" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/><path d="M84 11 L100 20 L84 29" fill="none" stroke="#1D1D1F" stroke-opacity=".6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="dmg-item">
+              <div class="dmg-folder"></div>
+              <span class="mw-app-name">Applications</span>
+            </div>
+          </div>
+        </div>
+        <figcaption><b>Drop Inlet on the Applications folder.</b> The disk image window looks like this. Drag the icon, then eject the disk image.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="first-open">
+    <div class="ig-step is-flip">
+      <div class="ig-text">
+        <p class="ig-num">Step 2 of 4</p>
+        <h3>Open Inlet. macOS blocks it once.</h3>
+        <ol class="ig-list">
+          <li>Open <strong>Applications</strong> and double-click <strong>Inlet</strong>.</li>
+          <li>macOS says it cannot check the app. Click <strong>Done</strong>.</li>
+        </ol>
+        <p>This is the expected first-launch warning, not damage to the app. Right-click and Open does not get past it on recent macOS, so go on to step 3.</p>
+      </div>
+      <figure class="ig-fig">
+        <div class="mw" style="background:#E9E8E6" role="img" aria-label="A macOS warning that says Inlet cannot be opened because Apple cannot check it for malicious software. The buttons are Move to Trash and Done.">
+          <div class="mw-body" style="padding:44px 22px 40px">
+            <div class="gk-dialog">
+              <div class="gk-head">
+                <img class="mw-app" src="assets/inlet-icon-light.svg" width="52" height="52" alt="">
+                <div>
+                  <h4>“Inlet” can’t be opened.</h4>
+                  <p>Apple could not check “Inlet” for malicious software, so macOS stopped it.</p>
+                </div>
+              </div>
+              <div class="gk-buttons">
+                <span class="mw-btn">Move to Trash</span>
+                <span class="mw-btn is-default ig-hl">Done<span class="ig-badge" aria-hidden="true">1</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption><b>Click Done, not Move to Trash.</b> The exact wording depends on your macOS version. If the button says Move to Bin, it is the same button.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="allow">
+    <div class="ig-step">
+      <div class="ig-text">
+        <p class="ig-num">Step 3 of 4</p>
+        <h3>Allow Inlet in Privacy &amp; Security</h3>
+        <ol class="ig-list">
+          <li>Open <strong>System Settings</strong> from the Apple menu, then choose <strong>Privacy &amp; Security</strong> in the sidebar.</li>
+          <li>Scroll to the <strong>Security</strong> section. Next to “Inlet was blocked”, click <strong>Open Anyway</strong>.</li>
+          <li>Type your Mac password, or use Touch ID, when macOS asks.</li>
+          <li>If macOS asks once more, click <strong>Open</strong>. Inlet starts.</li>
+        </ol>
+        <p>The <strong>Open Anyway</strong> button stays for a short time after your first try. If it has gone, open Inlet once more, and it comes back.</p>
+
+        <div class="ig-alt" id="terminal">
+          <h4>Prefer Terminal?</h4>
+          <p>This removes the download flag, so macOS stops blocking the app. Use it instead of step 3 if the button does not show up.</p>
+          <div class="cmd-row">
+            <code>xattr -dr com.apple.quarantine /Applications/Inlet.app</code>
+            <button class="btn btn-ghost dl-copy" type="button" data-copy="xattr -dr com.apple.quarantine /Applications/Inlet.app">Copy command</button>
+          </div>
+          <p>Then open Inlet from Applications as usual.</p>
+        </div>
+      </div>
+      <figure class="ig-fig">
+        <div class="mw" role="img" aria-label="System Settings showing Privacy and Security. Under Security, the Inlet row says it was blocked to protect the Mac, with an Open Anyway button.">
+          <div class="mw-bar"><i></i><i></i><i></i><span class="mw-title">Privacy &amp; Security</span></div>
+          <div class="ss-window">
+            <div class="ss-side" aria-hidden="true">
+              <div class="ss-item"><i style="background:#8E8E93"></i>Wi-Fi</div>
+              <div class="ss-item"><i style="background:#0A7AFF"></i>Bluetooth</div>
+              <div class="ss-item"><i style="background:#FF3B30"></i>Notifications</div>
+              <div class="ss-item"><i style="background:#8E8E93"></i>Displays</div>
+              <div class="ss-item is-active"><i style="background:#FFFFFF;opacity:.9"></i>Privacy &amp; Security</div>
+              <div class="ss-item"><i style="background:#0A7AFF"></i>Accessibility</div>
+            </div>
+            <div class="ss-main">
+              <h4>Security</h4>
+              <div class="ss-card">
+                <div class="ss-blocked">
+                  <b>“Inlet” was blocked to protect your Mac.</b>
+                  <span>It is not from an identified developer.</span>
+                </div>
+                <div class="ss-open">
+                  <div class="ss-app"><img class="mw-app" src="assets/inlet-icon-light.svg" width="30" height="30" alt=""><span>Inlet</span></div>
+                  <span class="mw-btn ig-hl">Open Anyway<span class="ig-badge" aria-hidden="true">2</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption><b>Find Inlet under Security.</b> Click Open Anyway, then enter your password. Wording and layout vary between macOS releases.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="permissions">
+    <div class="ig-step">
+      <div class="ig-text">
+        <p class="ig-num">Step 4 of 4</p>
+        <h3>Choose what Inlet can see</h3>
+        <p>Inlet asks for very little. It works without either permission below, and you can change both later.</p>
+        <ul class="ig-list">
+          <li><strong>Files and Folders (optional).</strong> Lets Inlet find documents in Desktop, Documents and Downloads through Spotlight. Inlet reads only the search results. Set it in the welcome window on first launch, or later under Privacy &amp; Security, Files and Folders.</li>
+          <li><strong>Open at login (optional).</strong> Starts Inlet when you sign in. Turn it on in Inlet’s Settings, General, under <strong>Open at login</strong>.</li>
+        </ul>
+        <p>Inlet does not ask for Accessibility or Screen Recording access in this version, so you should never see those prompts.</p>
+      </div>
+      <figure class="ig-fig">
+        <div class="mw" role="img" aria-label="Privacy and Security, Files and Folders. Inlet is listed, with Desktop, Documents and Downloads switched on.">
+          <div class="mw-bar"><i></i><i></i><i></i><span class="mw-title">Files and Folders</span></div>
+          <div class="mw-body" style="padding:14px 20px 10px">
+            <div class="ff-list">
+              <div class="mw-row">
+                <img class="mw-app" src="assets/inlet-icon-light.svg" width="26" height="26" alt="">
+                <div class="mw-row-text"><b>Inlet</b></div>
+              </div>
+              <ul class="ff-sub">
+                <li>Desktop Folder <span class="mw-switch is-on" aria-label="On"></span></li>
+                <li>Documents Folder <span class="mw-switch is-on" aria-label="On"></span></li>
+                <li>Downloads Folder <span class="mw-switch is-on" aria-label="On"></span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <figcaption><b>Files and Folders, optional.</b> Each folder has its own switch. Inlet works with all three off. It just will not find documents in those folders.</figcaption>
+      </figure>
+    </div>
+
+    <div class="ig-step is-flip">
+      <div class="ig-text">
+        <p class="ig-num">Also in Settings</p>
+        <h3>Start Inlet at login</h3>
+        <p>Open Inlet, choose <strong>Settings</strong>, then <strong>General</strong>. Switch on <strong>Open at login</strong> if you want Inlet ready as soon as you sign in. You can also see the switch under Login Items in System Settings.</p>
+        <p>Inlet opens from anywhere with <strong>Option Space</strong> by default. Change the shortcut in Settings, Keyboard.</p>
+      </div>
+      <figure class="ig-fig">
+        <div class="mw" role="img" aria-label="Inlet Settings, General pane, with the Open at login switch turned on.">
+          <div class="mw-bar"><i></i><i></i><i></i><span class="mw-title">General</span></div>
+          <div class="mw-body">
+            <p class="mw-label">Startup</p>
+            <div class="gen-group">
+              <div class="mw-row">
+                <div class="mw-row-text"><b>Open at login</b><span>Start Inlet when you sign in.</span></div>
+                <span class="mw-switch is-on ig-hl" aria-label="On"></span>
+              </div>
+            </div>
+            <p class="gen-note">Turn it off here to stop Inlet from starting at login.</p>
+          </div>
+        </div>
+        <figcaption><b>Settings, General.</b> Switch on Open at login, and Inlet starts when you sign in.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap band" id="updates">
+    <div class="ig-step">
+      <div class="ig-text">
+        <p class="ig-num">After install</p>
+        <h3>Updates arrive on their own</h3>
+        <p>Inlet checks GitHub about once a day for a newer release. When it finds one, it offers the update through Sparkle, the standard Mac updater. The check asks only for release information. It never sends your files, your searches or your app list.</p>
+        <p>To turn the automatic check off, open Settings, then About, and switch off <strong>Check for updates automatically</strong>. You can still check by hand from the Inlet menu, with <strong>Check for Updates…</strong>.</p>
+        <p>You go through steps 2 and 3 once, on the first install. Updates are meant to install without them. If macOS blocks an update, open an issue on GitHub so it can be fixed.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap band" id="trouble">
+    <h2 class="h-section">If something looks different.</h2>
+    <p class="lede">Most first-launch problems come down to one of these. Open the one that matches what you see.</p>
+    <div class="ig-faq">
+      <details>
+        <summary>Inlet is “damaged” and can’t be opened</summary>
+        <div>
+          <p>The app is not damaged. macOS shows this message for apps that are not notarized and still carry the download flag. Use the Terminal command in step 3:</p>
+          <p><code>xattr -dr com.apple.quarantine /Applications/Inlet.app</code></p>
+          <p>Then open Inlet again. Only the Terminal route gets past this message, so do not move the app to the Trash.</p>
+        </div>
+      </details>
+      <details>
+        <summary>The Open Anyway button is gone</summary>
+        <div>
+          <p>macOS keeps the button for a short time after the first attempt. Open Inlet once more from Applications, then go back to Privacy &amp; Security, and it returns. If it still does not show, use the Terminal command.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Option Space does nothing</summary>
+        <div>
+          <p>Another app may already use Option Space. Open Inlet’s Settings, then Keyboard, and record a different shortcut.</p>
+        </div>
+      </details>
+      <details>
+        <summary>I don’t see Inlet in the Security section</summary>
+        <div>
+          <p>Open Inlet from Applications once. The attempt puts it in the list. If you have already clicked Done, that is enough. Then check Privacy &amp; Security again. If it still is not there, use the Terminal command.</p>
+        </div>
+      </details>
+    </div>
+    <div class="ig-next">
+      <a class="btn btn-ghost" href="download.html#uninstall">Remove Inlet</a>
+      <a class="btn btn-ghost" href="faq.html">Read the FAQ</a>
+      <a class="btn btn-ghost" href="support.html">Get support</a>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <div class="foot-products" aria-label="Start here">
+    <a class="foot-card" href="download.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
+      <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
+    </a>
+    <a class="foot-card" href="features.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+      <span><b>Features</b><small>The grid, search, quick panel, settings and accessibility.</small></span>
+    </a>
+    <a class="foot-card" href="compare.html">
+      <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg></span>
+      <span><b>Compare</b><small>Inlet next to Spotlight and Launchpad, with what each one is for.</small></span>
+    </a>
+  </div>
+  <div class="foot-brand">
+    <a class="brand" href="index.html" aria-label="Inlet, home">
+      <img class="mark" src="assets/inlet-icon-light.svg" width="28" height="28" alt="">
+      <span>Inlet</span>
+    </a>
+    <p>Inlet is an independent project by FreezingShock. It is not made by, endorsed by, or affiliated with Apple Inc.</p>
+  </div>
+  <nav class="foot-cols" aria-label="Footer">
+    <div class="foot-col">
+      <p class="foot-h">Product</p>
+      <a href="features.html">Features</a>
+      <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="changelog.html">Changelog</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Who it's for</p>
+      <a href="use-cases.html">All use cases</a>
+      <a href="developers.html">Developers</a>
+      <a href="designers.html">Designers</a>
+      <a href="students.html">Students</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Compare</p>
+      <a href="compare.html#spotlight">Spotlight</a>
+      <a href="compare.html#launchpad">Launchpad</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Help</p>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div class="foot-col">
+      <p class="foot-h">Project</p>
+      <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+  <div class="foot-bar">
+    <div class="foot-tools">
+      <button class="theme-cycle" type="button" data-theme-cycle data-mode="auto" aria-label="Appearance: Auto. Switch to Light" title="Appearance: Auto"><svg class="ic-auto" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg><svg class="ic-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></svg><svg class="ic-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg></button>
+      <a class="foot-top" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/pages.js" defer></script>
+<script src="js/download.js" defer></script>
+<script src="js/nav.js" defer></script>
+<script src="js/jump.js" defer></script>
+<script src="js/motion.js" defer></script>
+</body>
+</html>
