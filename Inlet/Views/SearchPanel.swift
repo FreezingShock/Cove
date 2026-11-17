@@ -22,6 +22,9 @@ struct SearchPanel: View {
     let matchCount: Int
     /// Spotlight file matches for the query, best first. Shown under the top hit.
     let files: [FileItem]
+    /// True while Spotlight is still gathering file matches for the query.
+    /// Shows a "Searching files" line, so a slow query never looks like no results.
+    let isLoadingFiles: Bool
     /// The value of the query as a sum, formatted, e.g. "8". Nil when the query is not a sum.
     let calculation: String?
     /// True after the sum has been copied, so the row can say so.
@@ -49,7 +52,7 @@ struct SearchPanel: View {
     private var isSearching: Bool { !AppSearch.normalize(query).isEmpty }
     /// The panel opens when there is an app or a file to show.
     private var isExpanded: Bool {
-        isSearching && (calculation != nil || topHit != nil || !panes.isEmpty || !files.isEmpty)
+        isSearching && (calculation != nil || topHit != nil || !panes.isEmpty || !files.isEmpty || isLoadingFiles)
     }
     /// The field widens a little when it has focus, per the spec (500 -> 560).
     private var width: CGFloat {
@@ -82,6 +85,11 @@ struct SearchPanel: View {
                             .padding(.horizontal, InletSpace.s)
                             .padding(.bottom, InletSpace.s)
                     }
+                    if isLoadingFiles {
+                        fileStatusRow
+                            .padding(.horizontal, InletSpace.s)
+                            .padding(.bottom, InletSpace.s)
+                    }
                 }
             }
             .frame(width: width)
@@ -92,8 +100,10 @@ struct SearchPanel: View {
                 interactive: !isExpanded
             ))
             .glassEffectID("search", in: glassNamespace)
-            .inletAnimation(.inletMorph, value: isExpanded)
-            .inletAnimation(.inletMorph, value: width)
+            // Growing (results appear, or focus) springs with `morph`. Shrinking
+            // uses `dismiss`, so the panel never bounces on the way closed.
+            .inletAnimation(isExpanded ? .inletMorph : .inletDismiss, value: isExpanded)
+            .inletAnimation(isFocused.wrappedValue ? .inletMorph : .inletDismiss, value: width)
         }
     }
 
@@ -242,6 +252,24 @@ struct SearchPanel: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// A quiet line under the results while Spotlight is still gathering.
+    /// Spotlight can be slow on a busy disk or while it is re-indexing. The
+    /// query stops after `FileSearch.searchTimeout`, and this line goes away.
+    private var fileStatusRow: some View {
+        HStack(spacing: InletSpace.s) {
+            ProgressView()
+                .controlSize(.small)
+            Text("Searching files…")
+                .font(InletFont.caption)
+                .foregroundStyle(InletText.secondary(contrast))
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, InletSpace.m)
+        .padding(.vertical, InletSpace.xs)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: Top hit

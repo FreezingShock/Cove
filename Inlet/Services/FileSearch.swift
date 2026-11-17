@@ -73,7 +73,7 @@ final class FileSearch {
     /// File rows for the current query, best match first. Empty when the query is empty.
     private(set) var results: [FileItem] = []
 
-    /// True while a Spotlight query for the current text is still gathering.
+    /// True while a Spotlight query for the current text is pending or still gathering.
     private(set) var isSearching = false
 
     /// Wait this long after the last keystroke before querying (spec T3.2 proposes 150 ms).
@@ -110,7 +110,13 @@ final class FileSearch {
             results = []
             return
         }
+        // Rows that still match the new text stay up while Spotlight catches
+        // up. Rows that no longer match leave at once, so nothing stale shows.
+        results = Self.keeping(results, matching: terms)
 
+        // Pending counts as searching too, so the "Searching files" line does not
+        // flicker off during the debounce between keystrokes.
+        isSearching = true
         debounceTask = Task { [weak self] in
             try? await Task.sleep(for: self?.debounceInterval ?? .milliseconds(150))
             guard !Task.isCancelled, let self else { return }
@@ -210,6 +216,13 @@ final class FileSearch {
         NSPredicate(format: "NOT (%K == %@)", NSMetadataItemContentTypeTreeKey, "com.apple.application-bundle"),
         NSPredicate(format: "NOT (%K == %@)", NSMetadataItemContentTypeTreeKey, "public.folder"),
     ]
+
+    /// The rows whose name still contains every typed word, in their current order.
+    static func keeping(_ items: [FileItem], matching terms: [String]) -> [FileItem] {
+        items.filter { item in
+            terms.allSatisfy { item.name.localizedCaseInsensitiveContains($0) }
+        }
+    }
 
     /// Orders matches so exact names come first, then names that start with the query,
     /// then everything else. Ties keep Spotlight's last-used order.

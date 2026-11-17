@@ -53,4 +53,16 @@ final class FileSearchTests: XCTestCase {
 
         XCTAssertEqual(item.displayPath, "~/Documents")
     }
+
+    func testRowsThatStopMatchingAreDropped() {
+        let rows = [file("Report.pdf"), file("Reading List.txt"), file("Budget.xlsx")]
+
+        XCTAssertEqual(FileSearch.keeping(rows, matching: ["rep"]).map(\.name), ["Report.pdf"])
+    }
+
+    func testEveryTypedWordMustAppearInTheRow() {
+        let rows = [file("Tax Return 2025.pdf"), file("Tax Notes.pdf")]
+
+        XCTAssertEqual(FileSearch.keeping(rows, matching: ["tax", "return"]).map(\.name), ["Tax Return 2025.pdf"])
+    }
 }

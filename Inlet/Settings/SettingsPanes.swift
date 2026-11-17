@@ -57,7 +57,7 @@ struct GeneralPane: View {
             Section {
                 Toggle("Open at login", isOn: openAtLogin)
                 if loginStatus == .requiresApproval {
-                    Button("Open Login Items Settings…") {
+                    Button("Open Login Items in System Settings") {
                         SMAppService.openSystemSettingsLoginItems()
                     }
                 }
@@ -103,8 +103,9 @@ struct GeneralPane: View {
 
     private var loginFooter: String {
         if let loginError { return loginError }
+        // macOS holds the login item until the user allows it. This is the fix-it step.
         if loginStatus == .requiresApproval {
-            return "Allow Inlet in System Settings > General > Login Items."
+            return "Allow Inlet in System Settings > General > Login Items. This pane updates when you come back."
         }
         return "Inlet opens when you log in to your Mac."
     }

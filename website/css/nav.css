@@ -219,8 +219,8 @@ main p a:hover,
   display: none;
   position: relative;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--hair);
   border-radius: var(--r-pill);
@@ -323,13 +323,18 @@ main p a:hover,
 @media (max-width: 560px) {
   .menu-extra {
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
     margin-top: 6px;
     padding: 10px 8px 0;
     border-top: 1px solid var(--hair);
   }
   .links .menu-get { display: flex; flex: 1; justify-content: center; min-height: 48px; font-size: 16px; color: var(--accent-ink); box-shadow: none; }
   .links .menu-get:hover { background: var(--accent); filter: brightness(1.07); box-shadow: none; }
-  .nav-right .search-btn { width: 36px; padding: 0; justify-content: center; }
+  .nav-right .search-btn { width: 44px; height: 44px; padding: 0; justify-content: center; }
   .nav-right .search-btn span,
   .nav-right .search-btn kbd,
   .nav-right .dl-mac { display: none; }
@@ -537,7 +542,7 @@ main p a:hover,
   text-transform: uppercase;
   color: var(--text-2);
 }
-.foot-col { display: grid; justify-items: start; gap: 10px; }
+.foot-col { display: grid; justify-items: start; align-content: start; gap: 10px; }
 .foot-col a {
   font-size: 15px;
   color: var(--text-2);
@@ -643,3 +648,10 @@ main p a:hover,
 .theme-cycle[data-mode="auto"] .ic-auto,
 .theme-cycle[data-mode="light"] .ic-light,
 .theme-cycle[data-mode="dark"] .ic-dark { display: block; }
+
+/* Very narrow phones (320 to 359 px): the header buttons drop to 40 px so the header stays inside the screen. 40 px is still above the 24 px minimum. */
+@media (max-width: 359px) {
+  .nav-right { gap: 6px; }
+  .nav-right .search-btn,
+  .menu-btn { width: 40px; height: 40px; }
+}

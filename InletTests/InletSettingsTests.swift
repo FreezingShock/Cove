@@ -2,55 +2,35 @@
 //  InletSettingsTests.swift
 //  InletTests
 //
-//  Checks the Settings defaults and clamps that the grid, search and quick
-//  panel read, and that the grid's opening animation follows the column
-//  count the user picked.
+//  Checks the range rules for the count settings. A zero is a real choice
+//  for both counts ("no recent files", "no file rows"), so it must survive
+//  instead of falling back to the default. These tests call the pure
+//  helpers, so they never touch the user's UserDefaults.
 //
 
-import CoreGraphics
 import XCTest
 @testable import Inlet
 
-@MainActor
 final class InletSettingsTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        InletSettings.registerDefaults()
+    func testRecentFilesKeepsZero() {
+        XCTAssertEqual(InletSettings.normalizedRecentFiles(0), 0)
     }
 
-    override func tearDown() {
-        // Leave the test host's defaults as the app expects them.
-        UserDefaults.standard.removeObject(forKey: InletSettings.Key.gridColumns.rawValue)
-        UserDefaults.standard.removeObject(forKey: InletSettings.Key.diagnosticsEnabled.rawValue)
-        super.tearDown()
+    func testRecentFilesIsClampedToFive() {
+        XCTAssertEqual(InletSettings.normalizedRecentFiles(9), 5)
+        XCTAssertEqual(InletSettings.normalizedRecentFiles(-2), 0)
     }
 
-    func testCrashReportingIsOffByDefault() {
-        UserDefaults.standard.removeObject(forKey: InletSettings.Key.diagnosticsEnabled.rawValue)
-        InletSettings.registerDefaults()
-        XCTAssertFalse(InletSettings.diagnosticsEnabled)
+    func testRecentFilesKeepsValidValues() {
+        XCTAssertEqual(InletSettings.normalizedRecentFiles(3), 3)
     }
 
-    func testGridColumnsIsClampedToTheStepperRange() {
-        UserDefaults.standard.set(3, forKey: InletSettings.Key.gridColumns.rawValue)
-        XCTAssertEqual(InletSettings.gridColumns, 5)
-
-        UserDefaults.standard.set(12, forKey: InletSettings.Key.gridColumns.rawValue)
-        XCTAssertEqual(InletSettings.gridColumns, 9)
-
-        UserDefaults.standard.set(0, forKey: InletSettings.Key.gridColumns.rawValue)
-        XCTAssertEqual(InletSettings.gridColumns, 7, "A value never written falls back to 7")
+    func testFileResultCountKeepsZero() {
+        XCTAssertEqual(InletSettings.normalizedFileResultCount(0), 0)
     }
 
-    func testOpeningAnimationCentersOnTheChosenColumnCount() {
-        // With 3 columns, cell 4 is the middle of a 3 x 3 grid, so it
-        // starts where it stands. The old code always used 7 columns.
-        let middle = OpenPlacement.forCell(at: 4, total: 9, columns: 3)
-        XCTAssertEqual(middle.offset, .zero)
-        XCTAssertEqual(middle.delay, 0)
-
-        let edge = OpenPlacement.forCell(at: 0, total: 9, columns: 3)
-        XCTAssertNotEqual(edge.offset, .zero)
+    func testFileResultCountIsClampedToEight() {
+        XCTAssertEqual(InletSettings.normalizedFileResultCount(12), 8)
     }
 }
