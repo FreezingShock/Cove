@@ -69,6 +69,15 @@ final class AppUpdater: ObservableObject {
                 self?.canCheckForUpdates = value
             }
             .store(in: &cancellables)
+
+        // The same KVO route for the last check date. The publisher emits the
+        // current value on subscribe, so the row starts with the right date.
+        controller.updater.publisher(for: \.lastUpdateCheckDate)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] value in
+                self?.lastCheckDate = value
+            }
+            .store(in: &cancellables)
     }
 
     /// A user-started check. Sparkle shows "You're up to date" or the update window.
@@ -77,7 +86,6 @@ final class AppUpdater: ObservableObject {
     }
 
     /// When Sparkle last checked for an update. nil before the first check.
-    var lastCheckDate: Date? {
-        controller.updater.lastUpdateCheckDate
-    }
+    /// Published, so the Settings row redraws after a check finishes.
+    @Published private(set) var lastCheckDate: Date?
 }
