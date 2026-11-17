@@ -1,0 +1,64 @@
+{
+ "ui": {
+  "search": ["Search", "<rect x=\"3\" y=\"3\" width=\"13\" height=\"13\"/><path d=\"M16 16l5 5\" class=\"k-m\"/><rect class=\"k-a\" x=\"6.5\" y=\"6.5\" width=\"6\" height=\"6\"/>"],
+  "close": ["Close", "<path d=\"M5 5l14 14M19 5L5 19\" class=\"k-m\"/>"],
+  "arrow-up": ["Back to top", "<g class=\"k-m\"><path d=\"M12 20V4M5 11l7-7 7 7\"/></g><rect class=\"k-a\" x=\"10\" y=\"20\" width=\"4\" height=\"2\"/>"],
+  "arrow-right": ["Arrow right", "<g class=\"k-m\"><path d=\"M4 12h16M13 5l7 7-7 7\"/></g>"],
+  "check": ["Check", "<path d=\"M4 12l5 5L20 6\" class=\"k-m\"/>"],
+  "plus": ["Add", "<path d=\"M12 4v16M4 12h16\"/><rect class=\"k-a\" x=\"10\" y=\"10\" width=\"4\" height=\"4\"/>"],
+  "menu": ["Menu", "<path d=\"M3 6h18M3 12h18M3 18h18\"/><rect class=\"k-a\" x=\"15\" y=\"4\" width=\"5\" height=\"4\"/>"],
+  "sun": ["Light", "<rect x=\"7\" y=\"7\" width=\"10\" height=\"10\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2\"/><rect class=\"k-a\" x=\"10\" y=\"10\" width=\"4\" height=\"4\"/>"],
+  "moon": ["Dark", "<path d=\"M10 3L5 8v8l5 5h6l5-5h-5.5l-4-4V8z\"/><rect class=\"k-a\" x=\"16\" y=\"4\" width=\"4\" height=\"4\"/>"],
+  "auto": ["Auto appearance", "<rect x=\"2\" y=\"3\" width=\"20\" height=\"14\"/><path d=\"M8 21h8M12 17v4\"/><rect class=\"k-a\" x=\"6\" y=\"7\" width=\"5\" height=\"6\"/>"],
+  "copy": ["Copy", "<path d=\"M8 8h13v13H8z\"/><path d=\"M16 8V3H3v13h5\"/><rect class=\"k-a\" x=\"11.5\" y=\"11.5\" width=\"6\" height=\"6\"/>"],
+  "external": ["Open link", "<path d=\"M10 4H4v16h16v-6\"/><g class=\"k-m\"><path d=\"M14 3h7v7M21 3l-9 9\"/></g>"]
+ },
+ "install": {
+  "download": ["Download", "<g class=\"k-m\"><path d=\"M12 3v12M7 10l5 5 5-5\"/></g><path d=\"M3 15v6h18v-6\"/><rect class=\"k-a\" x=\"3\" y=\"18\" width=\"18\" height=\"3\"/>"],
+  "drag-app": ["Drag to Applications", "<rect class=\"k-a\" x=\"3\" y=\"3\" width=\"9\" height=\"9\"/><path d=\"M3 3h9v9H3z\"/><g class=\"k-m\"><path d=\"M12 12l8 8M20 13v7h-7\"/></g>"],
+  "shield": ["Gatekeeper", "<path d=\"M12 2l8 3v7l-8 10-8-10V5z\"/><rect class=\"k-a\" x=\"9.5\" y=\"8.5\" width=\"5\" height=\"5\"/>"],
+  "unlock": ["Open Anyway", "<rect x=\"4\" y=\"11\" width=\"16\" height=\"10\"/><path d=\"M8 11V4h8v3\"/><rect class=\"k-a\" x=\"10.5\" y=\"14.5\" width=\"3\" height=\"3.5\"/>"],
+  "key": ["Permission", "<rect x=\"2\" y=\"8\" width=\"9\" height=\"9\"/><path d=\"M11 12h11M18 12v4M22 12v3\"/><rect class=\"k-a\" x=\"4.5\" y=\"10.5\" width=\"4\" height=\"4\"/>"],
+  "refresh": ["Update", "<g class=\"k-m\"><path d=\"M20 11V5h-6M4 13v6h6\"/><path d=\"M20 5l-3 2.5A8 8 0 0 0 4.5 10M4 19l3-2.5A8 8 0 0 0 19.5 14\"/></g>"],
+  "terminal": ["Terminal", "<rect x=\"2\" y=\"4\" width=\"20\" height=\"16\"/><path d=\"M6 9l3 3-3 3\"/><rect class=\"k-a\" x=\"12\" y=\"15\" width=\"6\" height=\"2\"/>"],
+  "package": ["Homebrew", "<path d=\"M12 2l9 5v10l-9 5-9-5V7z\"/><path d=\"M3 7l9 5 9-5M12 12v10\"/><rect class=\"k-a\" x=\"14\" y=\"13\" width=\"4\" height=\"4\"/>"]
+ },
+ "feature": {
+  "grid": ["Grid", "<rect class=\"k-a\" x=\"3\" y=\"3\" width=\"8\" height=\"8\"/><path d=\"M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z\"/>"],
+  "folder": ["Folders", "<path d=\"M3 5h7l2 3h9v13H3z\"/><rect class=\"k-a\" x=\"6\" y=\"12\" width=\"6\" height=\"5\"/>"],
+  "sidebar": ["Panels", "<rect class=\"k-a\" x=\"3\" y=\"3\" width=\"6\" height=\"18\"/><path d=\"M3 3h18v18H3zM9 3v18\"/>"],
+  "command": ["Shortcuts", "<path d=\"M9 9V3H3v6zM15 9V3h6v6zM9 15v6H3v-6zM15 15v6h6v-6z\"/><rect class=\"k-a\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/><path d=\"M9 9h6v6H9z\"/>"],
+  "pages": ["Pages", "<rect class=\"k-a\" x=\"3\" y=\"3\" width=\"11\" height=\"11\"/><path d=\"M3 3h11v11H3zM18 9h3v12H9v-3\"/>"],
+  "eye": ["Hold to peek", "<path d=\"M2 12l5-6h10l5 6-5 6H7z\"/><rect class=\"k-a\" x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\"/>"],
+  "hidden": ["Hidden apps", "<path d=\"M2 12l5-6h10l5 6-5 6H7z\"/><rect class=\"k-a\" x=\"9.5\" y=\"9.5\" width=\"5\" height=\"5\"/><g class=\"k-m\"><path d=\"M3 3l18 18\"/></g>"],
+  "edit": ["Edit mode", "<path d=\"M4 20l1-5L16 4l4 4L9 19zM13 7l4 4\"/><rect class=\"k-a\" x=\"3\" y=\"17\" width=\"4\" height=\"4\"/>"],
+  "recent": ["Recent files", "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><path d=\"M12 7v5l4 3\"/><rect class=\"k-a\" x=\"10.5\" y=\"10.5\" width=\"3\" height=\"3\"/>"],
+  "tag": ["Groups", "<path d=\"M3 3h9l9 9-9 9-9-9z\"/><rect class=\"k-a\" x=\"6\" y=\"6\" width=\"4\" height=\"4\"/>"],
+  "contrast": ["Appearance", "<path class=\"k-a\" d=\"M3 3h18v18z\"/><path d=\"M3 3h18v18H3z\"/>"],
+  "window": ["Quick panel", "<rect x=\"3\" y=\"4\" width=\"18\" height=\"16\"/><path d=\"M3 9h18\"/><rect class=\"k-a\" x=\"6\" y=\"12\" width=\"5\" height=\"5\"/>"],
+  "bolt": ["Speed", "<path d=\"M14 2L4 14h7l-1 8 10-12h-7z\"/><rect class=\"k-a\" x=\"3\" y=\"20\" width=\"4\" height=\"2\"/>"],
+  "sliders": ["Customize", "<path d=\"M3 6h18M3 12h18M3 18h18\"/><rect class=\"k-a\" x=\"14\" y=\"3.5\" width=\"4\" height=\"5\"/><rect class=\"k-a\" x=\"6\" y=\"9.5\" width=\"4\" height=\"5\"/><rect class=\"k-a\" x=\"15\" y=\"15.5\" width=\"4\" height=\"5\"/>"],
+  "layers": ["Search results", "<path d=\"M3 4h18v4H3zM3 10h18v4H3zM3 16h12v4H3z\"/><rect class=\"k-a\" x=\"3\" y=\"4\" width=\"5\" height=\"4\"/>"],
+  "lock": ["Private", "<rect x=\"4\" y=\"11\" width=\"16\" height=\"10\"/><path d=\"M8 11V4h8v7\"/><rect class=\"k-a\" x=\"10.5\" y=\"14.5\" width=\"3\" height=\"3.5\"/>"],
+  "heart": ["Supporter", "<path d=\"M12 21L3 11V5h6l3 3 3-3h6v6z\"/><rect class=\"k-a\" x=\"6\" y=\"8\" width=\"3\" height=\"3\"/>"],
+  "verified": ["Open source", "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><path d=\"M7 12l4 4 6-8\"/><rect class=\"k-a\" x=\"3\" y=\"3\" width=\"5\" height=\"5\"/>"]
+ },
+ "audience": {
+  "code": ["Developers", "<g class=\"k-m\"><path d=\"M16 18l6-6-6-6M8 6l-6 6 6 6\"/></g><rect class=\"k-a\" x=\"11\" y=\"11\" width=\"2\" height=\"2\"/>"],
+  "pen": ["Designers", "<path d=\"M12 2l7 8-7 12-7-12z\"/><path d=\"M12 12v4\"/><rect class=\"k-a\" x=\"10\" y=\"8\" width=\"4\" height=\"4\"/>"],
+  "cap": ["Students", "<path d=\"M12 4L2 9l10 5 10-5zM6 11.5V16l6 3 6-3v-4.5M22 9v6\"/><rect class=\"k-a\" x=\"10\" y=\"7\" width=\"4\" height=\"4\"/>"],
+  "doc": ["Writers", "<path d=\"M5 3h10l4 4v14H5zM15 3v4h4M8 11h8M8 14h8\"/><rect class=\"k-a\" x=\"8\" y=\"17\" width=\"5\" height=\"2\"/>"],
+  "image": ["Images", "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><path d=\"M3 17l5-5 4 4 3-3 6 6\"/><rect class=\"k-a\" x=\"14\" y=\"7\" width=\"3.5\" height=\"3.5\"/>"],
+  "mail": ["Contact", "<rect x=\"2\" y=\"4\" width=\"20\" height=\"16\"/><path d=\"M2 4l10 9 10-9\"/><rect class=\"k-a\" x=\"10.5\" y=\"10.5\" width=\"3\" height=\"3\"/>"],
+  "pin": ["Places", "<path d=\"M12 22L5 12V3h14v9z\"/><rect class=\"k-a\" x=\"10\" y=\"7\" width=\"4\" height=\"4\"/>"],
+  "chat": ["Feedback", "<path d=\"M3 3h18v14h-9l-4 4v-4H3z\"/><rect class=\"k-a\" x=\"7\" y=\"8\" width=\"10\" height=\"2\"/>"]
+ },
+ "group": {
+  "work": ["Work", "<rect x=\"3\" y=\"8\" width=\"18\" height=\"13\"/><path d=\"M8 8V4h8v4\"/><rect class=\"k-a\" x=\"10\" y=\"12\" width=\"4\" height=\"3\"/>"],
+  "play": ["Play", "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\"/><path class=\"k-a\" d=\"M10 7.5l6 4.5-6 4.5z\"/>"],
+  "learn": ["Learn", "<path d=\"M3 4h8v16H3zM13 4h8v16h-8z\"/><rect class=\"k-a\" x=\"15\" y=\"7\" width=\"4\" height=\"3\"/>"],
+  "social": ["Social", "<rect x=\"3\" y=\"3\" width=\"12\" height=\"12\"/><path d=\"M9 9h12v12H9z\"/><rect class=\"k-a\" x=\"12\" y=\"12\" width=\"6\" height=\"6\"/>"],
+  "tools": ["Utilities", "<path d=\"M14 3h7v7l-9 9-7-7z\"/><path d=\"M5 12l-2 2 7 7 2-2\"/><rect class=\"k-a\" x=\"16\" y=\"5\" width=\"3\" height=\"3\"/>"],
+  "home": ["Home", "<path d=\"M3 11l9-8 9 8v10H3z\"/><rect class=\"k-a\" x=\"10\" y=\"14\" width=\"4\" height=\"7\"/>"]
+ }
+}

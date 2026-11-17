@@ -38,6 +38,7 @@ struct InletApp: App {
         Settings {
             SettingsView()
                 .environment(appDelegate.library)
+                .environment(appDelegate.layoutStore)
                 .environmentObject(updater)
         }
         .commands {

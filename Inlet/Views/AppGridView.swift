@@ -245,7 +245,7 @@ struct AppGridView: View {
         let total = shownApps.count
         var result: [AppItem.ID: OpenPlacement] = [:]
         for (index, app) in shownApps.enumerated() {
-            result[app.id] = OpenPlacement.forCell(at: index, total: total)
+            result[app.id] = OpenPlacement.forCell(at: index, total: total, columns: gridColumns)
         }
         return result
     }

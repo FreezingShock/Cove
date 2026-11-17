@@ -60,14 +60,14 @@
 
   /* ---------- Command palette: ⌘K on Mac, Ctrl K elsewhere ---------- */
   var ICON = {
-    home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />',
-    doc: '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" />',
-    arrow: '<path d="M5 12h14" /><path d="m12 5 7 7-7 7" />',
-    grid: '<rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" />',
-    theme: '<path d="M12 2v2" /><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715" /><path d="M16 12a4 4 0 0 0-4-4" /><path d="m19 5-1.256 1.256" /><path d="M20 12h2" />',
-    replay: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" />',
-    lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />',
-    external: '<path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />'
+    home: '<path d="M3 11l9-8 9 8v10H3z"/><rect class="k-a" x="10" y="14" width="4" height="7"/>',
+    doc: '<path d="M5 3h10l4 4v14H5zM15 3v4h4M8 11h8M8 14h8"/><rect class="k-a" x="8" y="17" width="5" height="2"/>',
+    arrow: '<g class="k-m"><path d="M4 12h16M13 5l7 7-7 7"/></g>',
+    grid: '<rect class="k-a" x="3" y="3" width="8" height="8"/><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/>',
+    theme: '<path class="k-a" d="M3 3h18v18z"/><path d="M3 3h18v18H3z"/>',
+    replay: '<g class="k-m"><path d="M20 11V5h-6M4 13v6h6"/><path d="M20 5l-3 2.5A8 8 0 0 0 4.5 10M4 19l3-2.5A8 8 0 0 0 19.5 14"/></g>',
+    lock: '<rect x="4" y="11" width="16" height="10"/><path d="M8 11V4h8v7"/><rect class="k-a" x="10.5" y="14.5" width="3" height="3.5"/>',
+    external: '<path d="M10 4H4v16h16v-6"/><g class="k-m"><path d="M14 3h7v7M21 3l-9 9"/></g>'
   };
 
   // Each item is a page, a section of the home page, or an action. Keywords help the filter.
@@ -137,7 +137,7 @@
     dlg.innerHTML =
       '<div class="glass cmdk-panel">' +
         '<div class="cmdk-search">' +
-          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>' +
+          '<svg class="kit" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="13" height="13"/><path d="M16 16l5 5" class="k-m"/><rect class="k-a" x="6.5" y="6.5" width="6" height="6"/></svg>' +
           '<input type="text" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="cmdkList" aria-label="Jump to a page, section or action" placeholder="Jump to a page, section or action" autocomplete="off" spellcheck="false">' +
           '<kbd>esc</kbd>' +
         '</div>' +
@@ -208,7 +208,7 @@
       li.setAttribute("role", "option");
       li.setAttribute("aria-selected", "false");
       li.dataset.i = String(i);
-      li.innerHTML = '<span class="fi"><svg viewBox="0 0 24 24" aria-hidden="true">' + it.icon + '</svg></span>' +
+      li.innerHTML = '<span class="fi"><svg class="kit" viewBox="0 0 24 24" aria-hidden="true">' + it.icon + '</svg></span>' +
         '<span class="cmdk-label"></span><span class="cmdk-hint"></span>';
       li.querySelector(".cmdk-label").textContent = it.label;
       li.querySelector(".cmdk-hint").textContent = it.hint;

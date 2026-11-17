@@ -94,13 +94,12 @@ main .uc-home--rows .aud { border-bottom: 1px solid var(--hair); transition: pad
 main .uc-home--rows .aud:hover { padding-left: 24px; background: linear-gradient(90deg, var(--accent) 0 6px, var(--accent-soft) 6px); }
 main .aud-ico { border-radius: 0; }
 
-/* ---------- Ticker bands: aqua, outlined words, speed follows scroll ---------- */
-.lit-band { background: var(--accent); color: var(--ink); border-block: 1px solid var(--ink); -webkit-mask-image: none; mask-image: none; }
-.lit-band li { color: var(--ink); font-weight: 800; letter-spacing: -0.04em; }
-.lit-band li:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
-.lit-band li::after { background: var(--ink); border-radius: 0; box-shadow: none; }
-.lit-band li:nth-child(3n)::after { background: transparent; box-shadow: inset 0 0 0 0.09em var(--ink); }
-.lit-band-track { will-change: transform; }
+/* ---------- Ticker bands (markup and speed come from the kit): display type, outlined words ---------- */
+.ticker { padding: 18px 0; border-block: 1px solid var(--ink); font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+.ticker-track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); }
+.ticker-track span::after { border-radius: 0; }
+.ld-ink .ticker, .ticker + .ld-ink { border-color: var(--accent); }
+.kit-host > .ld-inner { position: relative; }
 
 /* ---------- Ink bands (privacy, closing): dark tile walls with aqua flicker ---------- */
 .bg-ink, .ld-ink, .get-box { background: var(--ink); color: var(--ink-text); border: 1px solid var(--ink); }
@@ -114,10 +113,6 @@ main .aud-ico { border-radius: 0; }
 .ld-ink h2 em, .ld-ink .hl { color: var(--accent); }
 .ld-full { padding: 0; border-top: 1px solid var(--ink-hair); position: relative; isolation: isolate; width: 100%; max-width: none; padding-inline: 0; }
 .ld-full > .ld-inner { width: min(1120px, 100%); margin-inline: auto; padding: var(--sec-y) max(16px, env(safe-area-inset-left, 0px)); }
-.ld-wall { position: absolute; inset: 0; z-index: -1; display: grid; grid-template-columns: repeat(var(--wc, 16), 1fr); grid-auto-rows: 1fr; gap: 1px; background: var(--ink-hair); opacity: .3; overflow: hidden; pointer-events: none; }
-.ld-wall i { background: var(--ink); transition: background .7s var(--snap); }
-.ld-wall i.on { background: var(--accent); }
-.ld-wall i.dim { background: rgba(244, 239, 230, .08); }
 .get-box { position: relative; isolation: isolate; overflow: hidden; box-shadow: 12px 12px 0 var(--accent); }
 .get-box .btn-primary { border-color: var(--accent); }
 .get-box .btn-primary:hover { background: var(--ink-text); color: var(--ink); border-color: var(--ink-text); box-shadow: 4px 4px 0 var(--accent); }
@@ -154,14 +149,6 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
 .hero { border-bottom: 1px solid var(--rule); }
 .hero .hero-stage-wrap { padding-top: 40px; }
 
-/* Tile field: random tiles sit behind the hero and light up on a beat that speeds up with scroll */
-.ld-field { position: absolute; inset: 0; z-index: -1; display: grid; grid-template-columns: repeat(var(--fc, 14), 1fr); grid-auto-rows: 1fr; gap: 1px; background: var(--hair); overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent 38%, #000 100%); mask-image: linear-gradient(90deg, transparent 38%, #000 100%); }
-.ld-field i { background: var(--base); transition: background .9s var(--snap); }
-.ld-field i.dim { background: var(--field, rgba(23, 21, 15, .06)); }
-.ld-field i.on { background: var(--accent); transition-duration: .15s; }
-.hero { position: relative; isolation: isolate; }
-@media (max-width: 760px) { .ld-field { -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%); mask-image: linear-gradient(180deg, #000, transparent 70%); opacity: .8; } .hero .hero-title { max-width: none; } }
-
 /* ---------- Home feature sections: ledger layout with a margin rule ---------- */
 .feature .copy { border-top: 1px solid var(--rule); padding-top: 18px; }
 .feature .h-feature { max-width: 14ch; font-size: clamp(36px, 4.6vw, 58px); }
@@ -173,12 +160,6 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
 /* ---------- Reveal on scroll (js adds .ld-rv; without JS everything shows) ---------- */
 .ld-rv { opacity: 0; transform: translateY(22px); transition: opacity .8s var(--snap), transform .8s var(--snap); transition-delay: var(--d, 0ms); }
 .ld-rv.on { opacity: 1; transform: none; }
-
-/* ---------- Page transition: tiles wipe in from the clicked link ---------- */
-#ld-wipe { position: fixed; inset: 0; z-index: 200; display: none; pointer-events: none; grid-auto-rows: 1fr; }
-#ld-wipe i { background: var(--ink); transform: scale(0); transition: transform .28s var(--snap); }
-#ld-wipe i.l { background: var(--accent); }
-#ld-wipe i.on { transform: scale(1.02); }
 
 /* ---------- Phone ---------- */
 @media (max-width: 760px) {
@@ -193,7 +174,7 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) main .stage, :root:not([data-theme="light"]) main .shot, :root:not([data-theme="light"]) main .win, :root:not([data-theme="light"]) main .demo-frame { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
   :root:not([data-theme="light"]) main .plan-supporter { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
-  :root:not([data-theme="light"]) .lit-band { border-color: var(--accent); }
+  :root:not([data-theme="light"]) .ticker { border-color: var(--accent); }
   :root:not([data-theme="light"]) .ld-tiles i { background: var(--text); }
 }
 :root[data-theme="dark"] main .stage, :root[data-theme="dark"] main .shot, :root[data-theme="dark"] main .win, :root[data-theme="dark"] main .demo-frame { box-shadow: var(--lift) var(--lift) 0 rgba(70, 230, 214, .28); }
@@ -203,7 +184,6 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
   .ld-rv { opacity: 1; transform: none; transition: none; }
   .hl { animation: none; background-size: 100% 0.42em; }
   main .stage:hover, main .fact:hover, main .plan:hover, main .btn:hover, footer .foot-card:hover { transform: none; }
-  #ld-wipe { display: none !important; }
 }
 
 /* ---------- Folded in from the parallel pass: inputs, spec ledger, proof rows, dark buttons ---------- */
