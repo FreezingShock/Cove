@@ -25,7 +25,7 @@ main .glass.capsule, main .search-stage .searchbar { border-radius: 0; }
 
 /* ---------- Type: heavier, tighter, readable ---------- */
 main { --text-3: var(--text-2); }
-main .h-display, main .page-hero h1 { letter-spacing: -0.05em; line-height: 0.98; font-weight: 700; }
+main .page-hero h1 { letter-spacing: -0.05em; line-height: 0.98; font-weight: 700; }
 main .h-section, main .h-feature { letter-spacing: -0.045em; font-weight: 700; }
 main .lede, main .body-2 { color: var(--text-2); }
 main .h-display .soft { color: var(--text-2); }
@@ -34,8 +34,7 @@ main p a, main li a:not(.btn):not(.aud):not(.foot-card), main .answer a {
   color: var(--text); padding-bottom: 1px; transition: background-size .35s var(--snap), color .2s;
 }
 main p a:hover, main li a:not(.btn):not(.aud):not(.foot-card):hover { background-size: 100% 100%; color: var(--accent-ink); }
-.hl, main .h-section .hl, main .h-feature .hl { background: linear-gradient(var(--accent), var(--accent)) left 88% / 0% 0.42em no-repeat; color: inherit; text-decoration: none; padding: 0 .06em; animation: ld-hl 1s var(--snap) .5s forwards; }
-@keyframes ld-hl { to { background-size: 100% 0.42em; } }
+.hl, main .h-section .hl, main .h-feature .hl { background: linear-gradient(var(--accent), var(--accent)) left 88% / 100% 0.42em no-repeat; color: inherit; text-decoration: none; padding: 0 .06em; }
 .hl { color: var(--text); }
 
 /* ---------- Buttons: square, ruled, they flip on hover ---------- */
@@ -60,11 +59,9 @@ main .eyebrow::after { content: ""; flex: 0 1 120px; height: 1px; background: va
 .ld-tiles i:first-child { background: var(--accent); }
 
 /* ---------- Stages and shots: hard-edged panels with an offset shadow ---------- */
-main .stage, main .shot, main .win, main .demo-frame { border: 1px solid var(--rule); box-shadow: var(--lift) var(--lift) 0 var(--ink); background: var(--grouped, var(--base-2)); }
+main .stage, main .shot, main .demo-frame { border: 1px solid var(--rule); box-shadow: var(--lift) var(--lift) 0 var(--ink); background: var(--grouped, var(--base-2)); }
 main .demo-frame, main .demo-frame video { border-radius: 0; }
 main .scrim { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
-main .stage { transition: transform .4s var(--snap), box-shadow .4s var(--snap); }
-main .stage:hover { transform: translate(-3px, -3px); box-shadow: calc(var(--lift) + 3px) calc(var(--lift) + 3px) 0 var(--accent); }
 
 /* ---------- Cards and rows: ledger lines that light up ---------- */
 main .cards { border-top: 1px solid var(--rule); }
@@ -95,7 +92,7 @@ main .uc-home--rows .aud:hover { padding-left: 24px; background: linear-gradient
 main .aud-ico { border-radius: 0; }
 
 /* ---------- Ticker bands (markup and speed come from the kit): display type, outlined words ---------- */
-.ticker { padding: 18px 0; border-block: 1px solid var(--ink); font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+.ticker { padding: 18px 0; border-block: 1px solid var(--ink); font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; --tk: clamp(30px, 4.4vw, 54px); height: calc(var(--tk) * 1.05 + 38px); box-sizing: border-box; display: flex; align-items: center; }
 .ticker-track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); }
 .ticker-track span::after { border-radius: 0; }
 .ld-ink .ticker, .ticker + .ld-ink { border-color: var(--accent); }
@@ -139,7 +136,7 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
 /* ---------- Home hero: left-aligned ledger, window as the plate ---------- */
 .hero .hero-inner { text-align: left; align-items: flex-start; justify-items: start; }
 .hero .hero-icon img { width: 88px; height: 88px; }
-.hero .hero-title { font-size: clamp(44px, 6.4vw, 88px); max-width: none; }
+.hero .hero-title { max-width: none; }
 .hero .hero-lede { max-width: 34ch; font-size: clamp(19px, 2vw, 24px); color: var(--text-2); }
 .hero .hero-cta { justify-content: flex-start; }
 .hero .hero-link { font-weight: 650; border-bottom: 2px solid var(--accent); text-decoration: none; }
@@ -152,7 +149,6 @@ footer .foot-tile { border-radius: 0; background: var(--ink); color: var(--accen
 /* ---------- Home feature sections: ledger layout with a margin rule ---------- */
 .feature .copy { border-top: 1px solid var(--rule); padding-top: 18px; }
 .feature .h-feature { max-width: 14ch; font-size: clamp(36px, 4.6vw, 58px); }
-.showcase .h-section { font-size: clamp(40px, 5vw, 64px); }
 .scrub-steps li { border-radius: 0; }
 .scrub-steps li.is-active { background: var(--accent); color: var(--accent-ink); }
 .scrub-steps li.is-active span { background: var(--ink); color: var(--accent); }
