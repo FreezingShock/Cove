@@ -83,49 +83,156 @@
     <p class="lede">Inlet is still in development, so no release is out yet. Each version gets an entry here when it ships, newest first. Until then, the plan is below.</p>
   </section>
 
-  <section class="wrap band" id="plan">
-    <h2 class="h-section">From a plain grid to a daily driver.</h2>
-    <ol class="timeline">
-      <li>
-        <div class="ver">0.1<small>Skeleton</small><span class="status">In progress</span></div>
-        <div>
-          <h3>A working grid of your apps</h3>
-          <p>An Xcode project that scans your app folders and shows every installed app with its real icon. Click an icon to open the app.</p>
+  <section class="wrap band roadmap-band" id="plan" aria-labelledby="plan-title">
+    <div class="roadmap-head">
+      <p class="eyebrow">Roadmap to 1.0</p>
+      <h2 class="h-section" id="plan-title">Four milestones are built. Two remain before 1.0.</h2>
+      <p class="lede">Each status is checked against the code on the integration branch, as of 17 November 2026. Nothing has shipped yet, so every entry below is work in the code, not a release.</p>
+      <ul class="legend" aria-label="Status key">
+        <li><span class="rm-status is-built">Built</span></li>
+        <li><span class="rm-status is-progress">In progress</span></li>
+        <li><span class="rm-status is-wait">Waiting on a key</span></li>
+        <li><span class="rm-status is-next">Not started</span></li>
+      </ul>
+    </div>
+
+    <ol class="roadmap">
+      <li class="ms is-built" style="--i:0">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">0.1</span><span class="ms-name">Skeleton</span><span class="rm-status is-built">Built</span></div>
+            <h3>A working grid of your apps</h3>
+            <p>Scans your app folders and shows every installed app with its real icon. Click an icon to open the app.</p>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i class="hit"></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
         </div>
       </li>
-      <li>
-        <div class="ver">0.2<small>Overlay</small><span class="status status-next">Planned</span></div>
-        <div>
-          <h3>Full-screen, instant, and on a shortcut</h3>
-          <p>A full-screen glass overlay that appears at once and closes on Escape. A global hotkey opens it from any app.</p>
+
+      <li class="ms is-built" style="--i:1">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">0.2</span><span class="ms-name">Overlay</span><span class="rm-status is-built">Built</span></div>
+            <h3>Full-screen, instant, and on a shortcut</h3>
+            <p>A full-screen glass overlay that appears at once. A global hotkey opens it from any app, and Escape closes it.</p>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-overlay">
+              <div class="ov-panel"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="rm-keys"><kbd>Hotkey</kbd><kbd>Esc</kbd></div>
+            </div>
+          </div>
         </div>
       </li>
-      <li>
-        <div class="ver">0.3<small>Search</small><span class="status status-next">Planned</span></div>
-        <div>
-          <h3>Find an app or a file by typing</h3>
-          <p>Filter apps as you type, with a highlighted top match, Spotlight file results, and keyboard navigation.</p>
+
+      <li class="ms is-built" style="--i:2">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">0.3</span><span class="ms-name">Search</span><span class="rm-status is-built">Built</span></div>
+            <h3>Find an app or a file by typing</h3>
+            <p>Apps filter as you type. Spotlight adds file results, and the top match is highlighted.</p>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-search">
+              <div class="sf"><span class="sf-glass"></span><span class="sf-q">cal</span><span class="sf-caret"></span></div>
+              <ul class="sf-res">
+                <li class="top"><i></i><span>Calendar</span><em>Top hit</em></li>
+                <li><i></i><span>Calendar invite.pdf</span></li>
+                <li><i></i><span>Calculator</span></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </li>
-      <li>
-        <div class="ver">0.4<small>Dock panel</small><span class="status status-next">Planned</span></div>
-        <div>
-          <h3>A quick panel from the Dock</h3>
-          <p>Click the Dock icon to open a compact panel with recent apps and recent files.</p>
+
+      <li class="ms is-built" style="--i:3">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">0.4</span><span class="ms-name">Dock panel</span><span class="rm-status is-built">Built</span></div>
+            <h3>A quick panel from the Dock</h3>
+            <p>Click the Dock icon to open a compact panel with recent apps and recent files. Recent files come from Spotlight.</p>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-dock">
+              <div class="rm-qp">
+                <p class="rm-qp-h">Recent apps</p>
+                <div class="rm-qp-apps"><i></i><i></i><i></i><i></i></div>
+                <p class="rm-qp-h">Recent files</p>
+                <div class="rm-qp-line"></div>
+                <div class="rm-qp-line short"></div>
+              </div>
+              <div class="rm-dock"><i></i><i></i><i class="on"></i><i></i><i></i></div>
+            </div>
+          </div>
         </div>
       </li>
-      <li>
-        <div class="ver">0.5<small>Polish</small><span class="status status-next">Planned</span></div>
-        <div>
-          <h3>The finished look</h3>
-          <p>A full design pass, the final app icon, the animations, and the Settings window.</p>
+
+      <li class="ms is-now is-progress" style="--i:4">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">0.5</span><span class="ms-name">Polish</span><span class="rm-status is-progress">In progress</span><span class="now-tag">You are here</span></div>
+            <h3>The finished look</h3>
+            <p>The last design pass, the final app icon, the motion, and the Settings window.</p>
+            <ul class="ms-items">
+              <li><span>Settings window, eight panes</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Final app icon</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Accessibility pass: Reduce Motion, Reduce Transparency, contrast</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Design pass on the grid and panels</span><span class="rm-status is-progress">In progress</span></li>
+              <li><span>Motion polish</span><span class="rm-status is-progress">In progress</span></li>
+            </ul>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-settings">
+              <div class="rm-set">
+                <div class="set-row"><span></span><b class="tg on"></b></div>
+                <div class="set-row"><span></span><b class="tg"></b></div>
+                <div class="set-row"><span></span><b class="tg on"></b></div>
+                <div class="set-row"><span></span><b class="tg"></b></div>
+              </div>
+              <img class="set-icon" src="assets/inlet-app-icon-light.png" width="72" height="72" alt="">
+            </div>
+          </div>
         </div>
       </li>
-      <li>
-        <div class="ver">1.0<small>Daily driver</small><span class="status status-next">Planned</span></div>
-        <div>
-          <h3>Ready for everyday use</h3>
-          <p>Fixes from a week of daily use with no crashes. Edit mode, folders, pages and hidden apps are part of this release. Each release lists what it leaves out.</p>
+
+      <li class="ms is-next" style="--i:5">
+        <div class="ms-node" aria-hidden="true"></div>
+        <div class="ms-card">
+          <div class="ms-text">
+            <div class="ms-top"><span class="ms-ver">1.0</span><span class="ms-name">Daily driver</span><span class="rm-status is-next">Not started</span></div>
+            <h3>Ready for everyday use</h3>
+            <p>Fixes from a week of daily use with no crashes. Supporter adds your own themes and zones.</p>
+            <ul class="ms-items">
+              <li><span>Folders</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Edit mode, pages, and reordering</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Editable groups</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Hidden apps, with Undo</span><span class="rm-status is-built">Built</span></li>
+              <li><span>Update checks</span><span class="rm-status is-wait">Waiting on a key</span></li>
+              <li><span>Folder merge effect</span><span class="rm-status is-next">Not started</span></li>
+              <li><span>Bug fixes from daily use</span><span class="rm-status is-next">Not started</span></li>
+              <li><span>Supporter: custom themes</span><span class="rm-status is-next">Not started</span></li>
+              <li><span>Supporter: custom zones</span><span class="rm-status is-next">Not started</span></li>
+            </ul>
+          </div>
+          <div class="ms-art" aria-hidden="true">
+            <div class="art-1-0">
+              <div class="zones">
+                <div class="zone wide"><span>Work</span></div>
+                <div class="zone"><span>Games</span></div>
+                <div class="zone"><span>Tools</span></div>
+              </div>
+              <div class="swatches-row">
+                <span class="sw-label">Themes</span>
+                <div class="swatches"><i></i><i></i><i></i><i></i></div>
+              </div>
+            </div>
+          </div>
         </div>
       </li>
     </ol>
