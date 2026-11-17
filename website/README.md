@@ -2,20 +2,23 @@
 
 A static, one-page site for Inlet. It has no build step and no dependencies. Open it locally to preview it before it is published.
 
-## Run it on Windows
+## Preview it locally
 
-1. Install Node.js (LTS) from https://nodejs.org. Accept the defaults.
-2. Open PowerShell in the repository folder and run:
+From the repository root, run:
 
-   ```powershell
-   cd website
-   npx serve .
-   ```
+```sh
+python3 scripts/preview
+```
 
-3. Open http://localhost:3000 in your browser. If port 3000 is taken, `serve` prints the port it picked.
+Then open **http://localhost:4321**. Press Control-C to stop.
+
+- It serves `website/` on port 4321, on this machine only. The port never changes between runs.
+- It uses only Python's standard library. There is nothing to install, and no Node or `npx`.
+- On Windows, run `python scripts/preview` (or `py scripts/preview`) in PowerShell instead.
+- If port 4321 is already in use, the script stops and says so. It does not switch ports on its own. To use another port, set `INLET_PREVIEW_PORT`, for example `INLET_PREVIEW_PORT=8080 python3 scripts/preview`.
+- On a Mac without Xcode Command Line Tools, the first `python3` run may ask to install them. Accept, or use the double-click option below.
 
 You can also double-click `index.html` to open it straight from the folder. It works that way too, because the page uses no modules and no network requests.
-
 ## Files
 
 - `index.html` is the page and its markup.

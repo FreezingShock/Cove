@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+"""Preview the Inlet website on your own machine.
+
+Usage (from the repository root):
+
+    python3 scripts/preview
+
+Then open http://localhost:4321 in your browser. Press Control-C to stop.
+
+It serves the static site in website/ on a fixed port, bound to this machine
+only. It uses only the Python standard library, so there is nothing to install
+and no Node or npx. If port 4321 is already in use, it stops with a message
+that says what is using the port. It never picks another port silently.
+
+Set INLET_PREVIEW_PORT to use a different port, for example:
+
+    INLET_PREVIEW_PORT=8080 python3 scripts/preview
+"""
+
+import functools
+import os
+import sys
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from pathlib import Path
+
+DEFAULT_PORT = 4321
+HOST = "127.0.0.1"
+SITE_DIR = Path(__file__).resolve().parent.parent / "website"
+
+
+def port_from_env() -> int:
+    raw = os.environ.get("INLET_PREVIEW_PORT", "").strip()
+    if not raw:
+        return DEFAULT_PORT
+    try:
+        port = int(raw)
+    except ValueError:
+        sys.exit(f"INLET_PREVIEW_PORT must be a number, not {raw!r}.")
+    if not 1 <= port <= 65535:
+        sys.exit(f"INLET_PREVIEW_PORT must be between 1 and 65535, not {port}.")
+    return port
+
+
+def main() -> int:
+    if not (SITE_DIR / "index.html").is_file():
+        print(f"Cannot find the site at {SITE_DIR}. Run this from a full copy of the repository.")
+        return 1
+
+    port = port_from_env()
+
+    handler = functools.partial(SimpleHTTPRequestHandler, directory=str(SITE_DIR))
+    try:
+        server = ThreadingHTTPServer((HOST, port), handler)
+    except OSError as error:
+        print(f"Port {port} is already in use, so the preview cannot start on it.")
+        print(f"  ({error})")
+        print("Stop the other program using that port, or pick another one:")
+        print("  INLET_PREVIEW_PORT=8080 python3 scripts/preview")
+        print("On a Mac, `lsof -nP -iTCP:{0} -sTCP:LISTEN` shows what is holding it.".format(port))
+        return 1
+
+    print(f"Inlet website preview: http://localhost:{port}")
+    print(f"Serving {SITE_DIR}")
+    print("Press Control-C to stop.")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nPreview stopped.")
+    finally:
+        server.server_close()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
