@@ -27,6 +27,8 @@ struct EditableGridView: View {
     let onHide: (AppItem) -> Void
     /// Moves an app by a number of slots in the layout. Keyboard and VoiceOver reorder.
     let onMove: (AppItem, Int) -> Void
+    /// Moves an app into another group. Offered from the icon's context menu.
+    let onMoveToGroup: (AppItem, String) -> Void
 
     @Environment(LayoutStore.self) private var layoutStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -143,6 +145,13 @@ struct EditableGridView: View {
                     onHide: { if app.isHideable { onHide(app) } },
                     onMove: { onMove(app, $0) }
                 )
+                .contextMenu {
+                    MoveToGroupMenu(
+                        groups: layoutStore.layout.groups,
+                        currentGroupID: layoutStore.layout.groupID(containing: app.id),
+                        onSelect: { onMoveToGroup(app, $0) }
+                    )
+                }
                 .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
                 .position(tilePosition(for: app, index: index, geo: geo, track: track))
                 // The dragged icon follows the pointer exactly, so it doesn't animate.
