@@ -108,6 +108,12 @@ struct AppGridView: View {
     @AppStorage(InletSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(InletSettings.Key.searchIncludesFiles.rawValue) private var searchIncludesFiles = true
     @AppStorage(InletSettings.Key.searchFileResultCount.rawValue) private var fileResultCount = 5
+    /// Supporter zones. Read here so the grid updates when the switch changes.
+    @AppStorage(InletSettings.Key.supporterActive.rawValue) private var supporterOn = false
+    /// The saved zones. Only drawn for a Supporter.
+    private let zoneStore = ZoneStore.shared
+    /// The zone open in the editor sheet, if any.
+    @State private var zoneDraft: ZoneDraft?
 
     /// Fixed-width columns. Cell width is unchanged, so the count sets the grid width.
     private var columns: [GridItem] {
@@ -153,14 +159,48 @@ struct AppGridView: View {
         isPaged ? layoutApps : shownApps
     }
 
+    /// Zones to draw. Only a Supporter sees them; the saved zones stay on disk either way.
+    private var visibleZones: [GridZone] {
+        guard supporterOn else { return [] }
+        return zoneStore.zones.map { $0.fitted(columns: gridColumns) }
+    }
+
+    /// The group each app belongs to, from the saved groups. Zones pick apps by group.
+    private var groupIDByApp: [String: String] {
+        var result: [String: String] = [:]
+        for group in layoutStore.layout.groups {
+            for appID in group.appIDs { result[appID] = group.id }
+        }
+        return result
+    }
+
+    /// The apps each zone holds. Hidden apps are left out.
+    private var zoneContents: [String: [AppItem]] {
+        let hidden = Set(layoutStore.layout.hidden.map(\.appID))
+        return ZoneLayout.contents(
+            of: visibleZones,
+            apps: library.apps,
+            hidden: hidden,
+            groupOf: { groupIDByApp[$0.id] ?? "" }
+        )
+    }
+
+    /// Every app that sits in a zone. The paged grid leaves these out.
+    private var zoneClaimedIDs: Set<String> {
+        Set(zoneContents.values.joined().map(\.id))
+    }
+
     /// Apps from the saved layout, in grid order. Hidden apps are not here.
+    /// Apps that sit in a zone are not here either; the zone shows them.
     /// Until the folders change lands, every entry in the layout is an app.
     private var layoutApps: [AppItem] {
         let byID = Dictionary(library.apps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let claimed = zoneClaimedIDs
         return layoutStore.layout.entries.compactMap { entry -> AppItem? in
             guard case .app(let appID) = entry else { return nil }
             return byID[appID]
         }
+        .filter { !claimed.contains($0.id) }
     }
 
     /// The best match. Return opens it. Only exists while searching.
@@ -223,6 +263,17 @@ struct AppGridView: View {
         .overlay(alignment: .topTrailing) { hiddenPanel }
         .overlay(alignment: .topTrailing) { groupsPanel }
         .overlay(alignment: .bottom) { undoToast }
+        .sheet(item: $zoneDraft) { draft in
+            ZoneEditor(
+                zone: draft.zone,
+                isNew: draft.isNew,
+                columns: gridColumns,
+                groups: layoutStore.layout.groups,
+                others: zoneStore.zones.filter { $0.id != draft.zone.id },
+                onSave: { zoneStore.save($0, columns: gridColumns) },
+                onDelete: { zoneStore.remove(draft.zone.id) }
+            )
+        }
         // The field has focus when the overlay opens, so you can type at once.
         .defaultFocus($searchFocused, true)
         // Typing again returns keyboard focus to the field from the grid.
@@ -310,6 +361,12 @@ struct AppGridView: View {
                 }
             }
 
+            if isPaged, isEditing, supporterOn {
+                headerButton("Add Zone") {
+                    let row = ZoneLayout.bandRows(zoneStore.zones)
+                    zoneDraft = ZoneDraft(zone: GridZone.new(columns: gridColumns, row: row), isNew: true)
+                }
+            }
             if isPaged, library.hasScanned, !library.apps.isEmpty {
                 headerButton(isEditing ? "Done" : "Edit") {
                     withAnimation(motion(.inletOpen)) { isEditing.toggle() }
@@ -364,18 +421,33 @@ struct AppGridView: View {
         } else if isPaged {
             // Paged and editable, in the saved layout order.
             // Arrow keys still move the focus ring here.
-            EditableGridView(
-                apps: library.apps,
-                columns: gridColumns,
-                focusedID: focusedApp,
-                isEditing: $isEditing,
-                isOpen: isOpen,
-                onLaunch: launch,
-                onHide: hide,
-                onMove: move,
-                onBlankTap: dismissOnBlankTap,
-                onMoveToGroup: moveToGroup
-            )
+            VStack(spacing: 0) {
+                if !visibleZones.isEmpty {
+                    ZoneCanvas(
+                        zones: visibleZones,
+                        contents: zoneContents,
+                        columns: gridColumns,
+                        isEditing: isEditing,
+                        onLaunch: launch,
+                        onEdit: { zone in zoneDraft = ZoneDraft(zone: zone, isNew: false) }
+                    )
+                    .padding(.bottom, InletSpace.xl)
+                }
+                EditableGridView(
+                    apps: library.apps.filter { !zoneClaimedIDs.contains($0.id) },
+                    columns: gridColumns,
+                    focusedID: focusedApp,
+                    isEditing: $isEditing,
+                    isOpen: isOpen,
+                    onLaunch: launch,
+                    onHide: hide,
+                    onMove: move,
+                    onBlankTap: dismissOnBlankTap,
+                    onMoveToGroup: moveToGroup
+                )
+                .frame(maxHeight: .infinity)
+            }
+            .frame(maxHeight: .infinity)
         } else {
             scrollGrid
         }

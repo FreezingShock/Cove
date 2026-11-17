@@ -311,6 +311,16 @@ def swift_rgba(vals):
     return ".init(" + ", ".join(parts) + ")"
 
 
+# Tokens a Supporter theme can change. They are emitted as computed
+# properties that call ThemeRuntime.color(role, ...), which applies the theme.
+# Everything else is a plain `static let`.
+THEMABLE_ROLES = {
+    "base": "background", "base2": "background", "window": "background",
+    "gFill": "glass", "scrim": "veil",
+    "accent": "accent", "accentInk": "accentInk", "accentSoft": "accentSoft",
+}
+
+
 def build_swift_colors(cfg):
     c = cfg["color"]
     out = [
@@ -320,8 +330,12 @@ def build_swift_colors(cfg):
     for name in APP_COLOR_NAMES:
         key = css_name(name)
         light, dark = c["light"][key], c["dark"][key]
+        l_rgba, d_rgba = swift_rgba(parse_css_color(light)), swift_rgba(parse_css_color(dark))
         out.append(f"    /// {light} / {dark}")
-        out.append(f"    static let {name} = Color.inlet(light: {swift_rgba(parse_css_color(light))}, dark: {swift_rgba(parse_css_color(dark))})")
+        if name in THEMABLE_ROLES:
+            out.append(f"    static var {name}: Color {{ ThemeRuntime.color(.{THEMABLE_ROLES[name]}, light: {l_rgba}, dark: {d_rgba}) }}")
+        else:
+            out.append(f"    static let {name} = Color.inlet(light: {l_rgba}, dark: {d_rgba})")
     out.append("// END GENERATED: colors")
     return "\n".join(out) + "\n"
 
