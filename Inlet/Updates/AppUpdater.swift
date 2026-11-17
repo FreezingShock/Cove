@@ -40,11 +40,20 @@ final class AppUpdater: ObservableObject {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
 
+    /// True once the real Sparkle public key is in Config/Info.plist. Until
+    /// then the placeholder is still there, and Sparkle refuses every update,
+    /// so the updater stays off instead of failing on each launch.
+    static var hasPublicKey: Bool {
+        let key = Bundle.main.object(forInfoDictionaryKey: "SUPublicEDKey") as? String ?? ""
+        return !key.isEmpty && !key.hasPrefix("REPLACE_WITH")
+    }
+
     init() {
-        // startingUpdater: true starts scheduled checks right away.
-        // Both delegates are nil because Inlet doesn't customise behaviour yet.
+        // startingUpdater: true starts scheduled checks right away, but only
+        // with a real signing key (see hasPublicKey). Both delegates are nil
+        // because Inlet doesn't customise behaviour yet.
         let controller = SPUStandardUpdaterController(
-            startingUpdater: !AppUpdater.isRunningUnitTests,
+            startingUpdater: !AppUpdater.isRunningUnitTests && AppUpdater.hasPublicKey,
             updaterDelegate: nil,
             userDriverDelegate: nil
         )
