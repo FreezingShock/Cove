@@ -59,6 +59,12 @@ final class HotkeyManager {
     /// Called on every press of the quick panel hotkey.
     var onQuickPanelHotkey: (() -> Void)?
 
+    /// Called when the grid hotkey is let go. Only Hold mode uses it.
+    var onGridHotkeyReleased: (() -> Void)?
+
+    /// Called when the quick panel hotkey is let go. Only Hold mode uses it.
+    var onQuickPanelHotkeyReleased: (() -> Void)?
+
     private var isStarted = false
 
     private init() {}
@@ -83,6 +89,19 @@ final class HotkeyManager {
         KeyboardShortcuts.onKeyDown(for: .showGridF4) { [weak self] in
             self?.onGridHotkey?()
         }
+
+        // keyUp is only used by Hold mode, which closes a surface on release.
+        // Tap mode ignores these handlers because the owner's release closure
+        // does nothing unless it opened the surface by holding.
+        KeyboardShortcuts.onKeyUp(for: .showGrid) { [weak self] in
+            self?.onGridHotkeyReleased?()
+        }
+        KeyboardShortcuts.onKeyUp(for: .showQuickPanel) { [weak self] in
+            self?.onQuickPanelHotkeyReleased?()
+        }
+        KeyboardShortcuts.onKeyUp(for: .showGridF4) { [weak self] in
+            self?.onGridHotkeyReleased?()
+        }
         setF4Enabled(InletSettings.f4Opens)
     }
 
@@ -93,6 +112,20 @@ final class HotkeyManager {
         } else {
             KeyboardShortcuts.disable(.showGridF4)
         }
+    }
+
+    /// True when the hotkey for `surface` should peek: open while held, close
+    /// on release. Onboarding stores one press mode and one surface. Hold
+    /// applies only to the surface that onboarding set up, and the other
+    /// hotkey stays a tap.
+    static func isHoldMode(for surface: OnboardingSurface) -> Bool {
+        let defaults = UserDefaults.standard
+        guard defaults.string(forKey: OnboardingKeys.pressMode) == OnboardingPress.hold.rawValue else {
+            return false
+        }
+        let chosen = defaults.string(forKey: OnboardingKeys.surface)
+            .flatMap(OnboardingSurface.init(rawValue:)) ?? .grid
+        return chosen == surface
     }
 
     /// Puts both hotkeys back to their defaults.

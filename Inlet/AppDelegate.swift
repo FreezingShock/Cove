@@ -16,6 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let library = AppLibrary()
     /// The saved grid layout (order, hidden apps), saved to Application Support.
     let layoutStore = LayoutStore()
+    /// True while a Hold-mode press has the grid open, so the release closes it.
+    /// A tap never sets these, so a release after a tap does nothing.
+    private var gridHeldOpen = false
+    private var quickHeldOpen = false
 
     override init() {
         super.init()
@@ -33,15 +37,46 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Grid hotkey (Option+Space) toggles the full grid overlay: the first
         // press opens it, the second closes it.
-        HotkeyManager.shared.onGridHotkey = {
+        // In Hold mode (set in onboarding) the press opens it and the release
+        // closes it instead. See HotkeyManager.isHoldMode.
+        HotkeyManager.shared.onGridHotkey = { [weak self] in
             MainActor.assumeIsolated {
-                InletSignpost.beginHotkeyToVisible()
-                OverlayController.shared.toggle()
+                guard let self else { return }
+                if HotkeyManager.isHoldMode(for: .grid) {
+                    self.gridHeldOpen = true
+                    OverlayController.shared.show()
+                } else {
+                    InletSignpost.beginHotkeyToVisible()
+                    OverlayController.shared.toggle()
+                }
             }
         }
-        // Quick panel hotkey (Control+Option+Space) toggles the quick panel.
-        HotkeyManager.shared.onQuickPanelHotkey = {
-            MainActor.assumeIsolated { QuickPanelController.shared.toggle() }
+        HotkeyManager.shared.onGridHotkeyReleased = { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.gridHeldOpen else { return }
+                self.gridHeldOpen = false
+                OverlayController.shared.dismiss()
+            }
+        }
+        // Quick panel hotkey (Control+Option+Space) toggles the quick panel,
+        // or peeks while held in Hold mode.
+        HotkeyManager.shared.onQuickPanelHotkey = { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if HotkeyManager.isHoldMode(for: .quick) {
+                    self.quickHeldOpen = true
+                    QuickPanelController.shared.show()
+                } else {
+                    QuickPanelController.shared.toggle()
+                }
+            }
+        }
+        HotkeyManager.shared.onQuickPanelHotkeyReleased = { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.quickHeldOpen else { return }
+                self.quickHeldOpen = false
+                QuickPanelController.shared.dismiss()
+            }
         }
 
         // Menu bar icon, shown or hidden by Settings > General.
