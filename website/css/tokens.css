@@ -60,7 +60,7 @@
   --sel-shadow: rgba(70,50,20,0.14);
   --hover: rgba(60,45,20,0.06);
   --scrim: rgba(244,239,230,0.46);
-  --track: rgba(23,21,15,0.45);
+  --track: rgba(23,21,15,0.50);
   --knob: #FFFFFF;
   --field: rgba(60,45,20,0.06);
   --icon-shadow: rgba(70,50,20,0.22);
@@ -68,6 +68,23 @@
   --accent-hover: #3FDCCB;
   --accent-pressed: #2CC9B8;
   --pressed: rgba(60,45,20,0.10);
+  --rule: #17150F;
+  --rule-2: rgba(60,45,20,0.24);
+  --ink: #17150F;
+  --ink-on: #F4EFE6;
+  --band: #17150F;
+  --band-text: #F4EFE6;
+  --band-text-2: rgba(244,239,230,0.80);
+  --band-text-3: rgba(244,239,230,0.68);
+  --band-hair: rgba(244,239,230,0.16);
+  --band-rule: rgba(244,239,230,0.40);
+  --card: #FBF8F2;
+  --tile-dim: rgba(23,21,15,0.07);
+  --tile-cell: #F4EFE6;
+  --tile-lit: #46E6D6;
+  --hand: #17150F;
+  --shadow-offset: #17150F;
+  --selection: rgba(70,230,214,0.45);
   color-scheme: light;
 }
 /* Dark (system) */
@@ -82,8 +99,8 @@
     --grouped: rgba(244,239,230,0.05);
     --text: #F4EFE6;
     --text-2: rgba(244,239,230,0.78);
-    --text-3: rgba(244,239,230,0.60);
-    --hair: rgba(244,239,230,0.12);
+    --text-3: rgba(244,239,230,0.66);
+    --hair: rgba(244,239,230,0.14);
     --accent: #46E6D6;
     --accent-soft: rgba(70,230,214,0.16);
     --accent-ink: #101211;
@@ -117,6 +134,23 @@
     --accent-hover: #6BEADB;
     --accent-pressed: #34C7B6;
     --pressed: rgba(255,250,240,0.12);
+    --rule: rgba(244,239,230,0.72);
+    --rule-2: rgba(244,239,230,0.22);
+    --ink: #F4EFE6;
+    --ink-on: #101211;
+    --band: #181D1B;
+    --band-text: #F4EFE6;
+    --band-text-2: rgba(244,239,230,0.80);
+    --band-text-3: rgba(244,239,230,0.68);
+    --band-hair: rgba(244,239,230,0.14);
+    --band-rule: rgba(244,239,230,0.34);
+    --card: #171C1A;
+    --tile-dim: rgba(244,239,230,0.07);
+    --tile-cell: #101211;
+    --tile-lit: #46E6D6;
+    --hand: #46E6D6;
+    --shadow-offset: rgba(70,230,214,0.38);
+    --selection: rgba(70,230,214,0.35);
     color-scheme: dark;
   }
 }
@@ -131,8 +165,8 @@
   --grouped: rgba(244,239,230,0.05);
   --text: #F4EFE6;
   --text-2: rgba(244,239,230,0.78);
-  --text-3: rgba(244,239,230,0.60);
-  --hair: rgba(244,239,230,0.12);
+  --text-3: rgba(244,239,230,0.66);
+  --hair: rgba(244,239,230,0.14);
   --accent: #46E6D6;
   --accent-soft: rgba(70,230,214,0.16);
   --accent-ink: #101211;
@@ -166,6 +200,23 @@
   --accent-hover: #6BEADB;
   --accent-pressed: #34C7B6;
   --pressed: rgba(255,250,240,0.12);
+  --rule: rgba(244,239,230,0.72);
+  --rule-2: rgba(244,239,230,0.22);
+  --ink: #F4EFE6;
+  --ink-on: #101211;
+  --band: #181D1B;
+  --band-text: #F4EFE6;
+  --band-text-2: rgba(244,239,230,0.80);
+  --band-text-3: rgba(244,239,230,0.68);
+  --band-hair: rgba(244,239,230,0.14);
+  --band-rule: rgba(244,239,230,0.34);
+  --card: #171C1A;
+  --tile-dim: rgba(244,239,230,0.07);
+  --tile-cell: #101211;
+  --tile-lit: #46E6D6;
+  --hand: #46E6D6;
+  --shadow-offset: rgba(70,230,214,0.38);
+  --selection: rgba(70,230,214,0.35);
   color-scheme: dark;
 }
 /* Light (forced, for side-by-side sheets) */
@@ -206,7 +257,7 @@
   --sel-shadow: rgba(70,50,20,0.14);
   --hover: rgba(60,45,20,0.06);
   --scrim: rgba(244,239,230,0.46);
-  --track: rgba(23,21,15,0.45);
+  --track: rgba(23,21,15,0.50);
   --knob: #FFFFFF;
   --field: rgba(60,45,20,0.06);
   --icon-shadow: rgba(70,50,20,0.22);
@@ -214,6 +265,23 @@
   --accent-hover: #3FDCCB;
   --accent-pressed: #2CC9B8;
   --pressed: rgba(60,45,20,0.10);
+  --rule: #17150F;
+  --rule-2: rgba(60,45,20,0.24);
+  --ink: #17150F;
+  --ink-on: #F4EFE6;
+  --band: #17150F;
+  --band-text: #F4EFE6;
+  --band-text-2: rgba(244,239,230,0.80);
+  --band-text-3: rgba(244,239,230,0.68);
+  --band-hair: rgba(244,239,230,0.16);
+  --band-rule: rgba(244,239,230,0.40);
+  --card: #FBF8F2;
+  --tile-dim: rgba(23,21,15,0.07);
+  --tile-cell: #F4EFE6;
+  --tile-lit: #46E6D6;
+  --hand: #17150F;
+  --shadow-offset: #17150F;
+  --selection: rgba(70,230,214,0.45);
   color-scheme: light;
 }
 /* END GENERATED: color */
@@ -303,3 +371,63 @@
   --spring-dismiss-dur: 0.382s;
 }
 /* END GENERATED */
+
+/* BEGIN GENERATED: ledger. Source: design/tokens.json (ledger), built by scripts/build-tokens.py.
+   Edit the JSON and rerun the script; do not hand-edit this block. */
+:root {
+  /* Rules (px). base = strong ink rule, hair = quiet divider, offset = hard shadow, no blur. */
+  --rule-hair: 1px;
+  --rule-base: 1px;
+  --rule-heavy: 2px;
+  --rule-offset: 10px;
+
+  /* Square tiles (px). */
+  --tile-xs: 8px;
+  --tile-sm: 14px;
+  --tile-md: 30px;
+  --tile-inset: 9px;
+  --tile-gap: 1px;
+
+  /* Tile field columns. Use the Tablet value at 900px and below. */
+  --field-cols: 6;
+  --field-cols-tablet: 8;
+  --field-wall: 16;
+  --field-wall-tablet: 10;
+  --field-wipe: 20;
+  --field-wipe-tablet: 10;
+
+  /* Page frame (px). Breakpoints: tablet 900, phone 420. */
+  --layout-wrap: 1120px;
+  --layout-gutter: 16px;
+  --layout-margin: 200px;
+  --layout-nav-height: 60px;
+  --layout-section-y: 112px;
+  --layout-section-y-tablet: 84px;
+
+  --hl-height: 0.34em;
+  --hl-offset: 88%;
+  --ul-weight: 4;
+  --ul-draw: 1.2s;
+  --ul-delay: 0.6s;
+
+  /* Ledger motion. Durations in seconds, unitless numbers are for scripts (read with getComputedStyle). */
+  --led-ease: cubic-bezier(0.22, 0.9, 0.24, 1);
+  --led-reveal: 0.8s;
+  --led-rise: 18px;
+  --led-tile: 0.3s;
+  --led-tile-stagger: 0.018s;
+  --led-wipe-step: 0.018s;
+  --led-ticker: 28s;
+  --led-ticker-fast: 9s;
+  --led-flip: 7s;
+  --led-row-shift: 14px;
+  --led-scroll-boost: 6;
+  --led-scroll-decay: 0.92;
+  --led-lit-chance: 0.08;
+}
+
+/* Reduced motion: every ledger animation stops and its end state shows. Authors should follow this
+   by gating motion on (prefers-reduced-motion: no-preference) and by reading --led-motion in scripts. */
+:root { --led-motion: 1; }
+@media (prefers-reduced-motion: reduce) { :root { --led-motion: 0; } }
+/* END GENERATED: ledger */

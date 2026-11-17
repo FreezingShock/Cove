@@ -59,10 +59,10 @@ enum InletColor {
     static let text = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588), dark: .init(r: 0.9569, g: 0.9373, b: 0.902))
     /// rgba(23,21,15,0.76) / rgba(244,239,230,0.78)
     static let text2 = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.76), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.78))
-    /// rgba(23,21,15,0.64) / rgba(244,239,230,0.60)
-    static let text3 = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.64), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.6))
-    /// rgba(60,45,20,0.13) / rgba(244,239,230,0.12)
-    static let hair = Color.inlet(light: .init(r: 0.2353, g: 0.1765, b: 0.0784, a: 0.13), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.12))
+    /// rgba(23,21,15,0.64) / rgba(244,239,230,0.66)
+    static let text3 = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.64), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.66))
+    /// rgba(60,45,20,0.13) / rgba(244,239,230,0.14)
+    static let hair = Color.inlet(light: .init(r: 0.2353, g: 0.1765, b: 0.0784, a: 0.13), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.14))
     /// #46E6D6 / #46E6D6
     static var accent: Color { ThemeRuntime.color(.accent, light: .init(r: 0.2745, g: 0.902, b: 0.8392), dark: .init(r: 0.2745, g: 0.902, b: 0.8392)) }
     /// #17150F / #101211
@@ -113,8 +113,8 @@ enum InletColor {
     static let hover = Color.inlet(light: .init(r: 0.2353, g: 0.1765, b: 0.0784, a: 0.06), dark: .init(r: 1, g: 0.9804, b: 0.9412, a: 0.07))
     /// rgba(244,239,230,0.46) / rgba(5,9,8,0.46)
     static var scrim: Color { ThemeRuntime.color(.veil, light: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.46), dark: .init(r: 0.0196, g: 0.0353, b: 0.0314, a: 0.46)) }
-    /// rgba(23,21,15,0.45) / rgba(244,239,230,0.40)
-    static let track = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.45), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.4))
+    /// rgba(23,21,15,0.50) / rgba(244,239,230,0.40)
+    static let track = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.5), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.4))
     /// #FFFFFF / #F4EFE6
     static let knob = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.9569, g: 0.9373, b: 0.902))
     /// rgba(60,45,20,0.06) / rgba(255,250,240,0.07)

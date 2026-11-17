@@ -143,6 +143,109 @@ def build_color(cfg):
     return "\n".join(lines) + "\n"
 
 
+CSS_LEDGER_BEGIN, CSS_LEDGER_END = "/* BEGIN GENERATED: ledger", "/* END GENERATED: ledger */"
+
+
+def build_ledger(cfg):
+    """Structure tokens for the Ledger Tiles site style (rules, tiles, layout, web motion)."""
+    g = cfg["ledger"]
+    m = g["motion"]
+    lines = [
+        "/* BEGIN GENERATED: ledger. Source: design/tokens.json (ledger), built by scripts/build-tokens.py.",
+        "   Edit the JSON and rerun the script; do not hand-edit this block. */",
+        ":root {",
+        "  /* Rules (px). base = strong ink rule, hair = quiet divider, offset = hard shadow, no blur. */",
+    ]
+    for k, v in g["rule"].items():
+        if not k.startswith("_"):
+            lines.append(f"  --rule-{k}: {v}px;")
+    lines += ["", "  /* Square tiles (px). */"]
+    for k, v in g["tile"].items():
+        if not k.startswith("_"):
+            lines.append(f"  --tile-{k}: {v}px;")
+    lines += ["", "  /* Tile field columns. Use the Tablet value at 900px and below. */"]
+    for k, v in g["field"].items():
+        if not k.startswith("_"):
+            lines.append(f"  --field-{re.sub(r'([A-Z])', lambda m: '-' + m.group(1).lower(), k)}: {v};")
+    lines += ["", "  /* Page frame (px). Breakpoints: tablet 900, phone 420. */"]
+    for k, v in g["layout"].items():
+        if not k.startswith("_") and k not in ("tablet", "phone"):
+            lines.append(f"  --layout-{re.sub(r'([A-Z])', lambda m: '-' + m.group(1).lower(), k)}: {v}px;")
+    lines += [
+        "",
+        f"  --hl-height: {g['highlight']['height']};",
+        f"  --hl-offset: {g['highlight']['offset']};",
+        f"  --ul-weight: {g['underline']['weight']};",
+        f"  --ul-draw: {fmt(g['underline']['draw'])}s;",
+        f"  --ul-delay: {fmt(g['underline']['delay'])}s;",
+        "",
+        "  /* Ledger motion. Durations in seconds, unitless numbers are for scripts (read with getComputedStyle). */",
+        f"  --led-ease: cubic-bezier({', '.join(fmt(x) for x in m['ease'])});",
+        f"  --led-reveal: {fmt(m['reveal'])}s;",
+        f"  --led-rise: {m['rise']}px;",
+        f"  --led-tile: {fmt(m['tile'])}s;",
+        f"  --led-tile-stagger: {fmt(m['tileStagger'])}s;",
+        f"  --led-wipe-step: {fmt(m['wipeStep'])}s;",
+        f"  --led-ticker: {fmt(m['ticker'])}s;",
+        f"  --led-ticker-fast: {fmt(m['tickerFast'])}s;",
+        f"  --led-flip: {fmt(m['flip'])}s;",
+        f"  --led-row-shift: {m['rowShift']}px;",
+        f"  --led-scroll-boost: {fmt(m['scrollBoost'])};",
+        f"  --led-scroll-decay: {fmt(m['scrollDecay'])};",
+        f"  --led-lit-chance: {fmt(m['litChance'])};",
+        "}",
+        "",
+        "/* Reduced motion: every ledger animation stops and its end state shows. Authors should follow this",
+        "   by gating motion on (prefers-reduced-motion: no-preference) and by reading --led-motion in scripts. */",
+        ":root { --led-motion: 1; }",
+        "@media (prefers-reduced-motion: reduce) { :root { --led-motion: 0; } }",
+        "/* END GENERATED: ledger */",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def luminance(rgba, over):
+    """Relative luminance of rgba composited over the opaque rgb 'over' (all 0...1)."""
+    a = rgba[3] if len(rgba) == 4 else 1.0
+    ch = [rgba[i] * a + over[i] * (1 - a) for i in range(3)]
+    f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = (f(c) for c in ch)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(fg, bg, behind):
+    """WCAG ratio of fg over bg, where bg itself may be translucent over the opaque 'behind'."""
+    a = bg[3] if len(bg) == 4 else 1.0
+    solid = [bg[i] * a + behind[i] * (1 - a) for i in range(3)]
+    l1, l2 = luminance(fg, solid), luminance(solid + [1.0], solid)
+    hi, lo = max(l1, l2), min(l1, l2)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+# (foreground token, surface token, minimum ratio). Text is 4.5; rules and graphic marks are 3.
+LEDGER_PAIRS = [
+    ("text", "base", 4.5), ("text-2", "base", 4.5), ("text-3", "base", 4.5),
+    ("text", "card", 4.5), ("text-2", "card", 4.5), ("text-3", "card", 4.5),
+    ("text", "grouped", 4.5), ("text-3", "grouped", 4.5),
+    ("band-text", "band", 4.5), ("band-text-2", "band", 4.5), ("band-text-3", "band", 4.5),
+    ("accent", "band", 4.5), ("accent-ink", "accent", 4.5), ("ink-on", "ink", 4.5),
+    ("rule", "base", 3.0), ("hand", "base", 3.0), ("track", "base", 3.0),
+]
+
+
+def check_contrast(cfg):
+    problems = []
+    for theme in ("light", "dark"):
+        c = cfg["color"][theme]
+        base = parse_css_color(c["base"])[:3]
+        for fg, bg, need in LEDGER_PAIRS:
+            r = contrast(parse_css_color(c[fg]), parse_css_color(c[bg]), base)
+            if r < need:
+                problems.append(f"{theme}: {fg} on {bg} is {r:.2f}:1, needs {need}:1")
+    if problems:
+        sys.exit("Contrast check failed:\n  " + "\n  ".join(problems))
+
+
 def build_swift(cfg):
     r, m = cfg["radius"], cfg["motion"]
     s = r["scale"]
@@ -502,6 +605,50 @@ def build_design_page(cfg):
         f'<div><p class="ds-sub">Easing</p><table class="ds-table"><tbody>\n{eases}\n</tbody></table></div>\n'
         '</div>\n<p class="ds-sub">Springs</p>\n<div class="ds-springs">\n' + "\n".join(springs) + "\n</div>")
 
+    # Ledger: the structure tokens of the Ledger Tiles style, as a live specimen on both themes.
+    g = cfg["ledger"]
+    led_keys = ["rule", "rule-2", "ink", "ink-on", "band", "band-text", "band-text-2", "band-text-3",
+                "band-hair", "band-rule", "card", "tile-dim", "tile-cell", "tile-lit", "hand",
+                "shadow-offset", "selection"]
+    specimens = []
+    for mode, label, cls in (("light", "Light", "t-light"), ("dark", "Dark", "t-dark")):
+        chips = "\n".join(
+            f'<li class="ds-sw"><span class="ds-chip" style="background:var(--{k})"></span>'
+            f'<span class="ds-sw-name">{e(k)}</span><code>{e(c[mode][k])}</code></li>'
+            for k in led_keys)
+        cells = "".join('<i class="lit"></i>' if i in (3, 14) else ('<i class="dim"></i>' if i in (6, 9, 17, 20) else "<i></i>")
+                        for i in range(24))
+        specimens.append(
+            f'<div class="ds-theme {cls}">\n<p class="ds-theme-name">{label}</p>\n'
+            f'<div class="ds-led-spec">\n'
+            f'<p class="ds-led-fig">Fig. 1.0 · Search</p>\n'
+            f'<p class="ds-led-h">Type a few letters, <span class="ds-led-ul">done.</span></p>\n'
+            f'<div class="ds-led-field" aria-hidden="true">{cells}</div>\n'
+            f'<p class="ds-led-tick" aria-hidden="true"><span>Type</span> · <span class="o">Return</span> · <span>Escape</span></p>\n'
+            f'<div class="ds-led-band"><p>Nothing leaves your Mac.</p><p class="ds-led-band-3">Quiet text on the band.</p></div>\n'
+            f'<div class="ds-led-card"><b>Screen</b> with a hard offset shadow.</div>\n'
+            f'</div>\n<ul class="ds-swatches">\n{chips}\n</ul>\n</div>')
+    rows = []
+    for mode in ("light", "dark"):
+        for fg, bg, need in LEDGER_PAIRS:
+            ratio = contrast(parse_css_color(c[mode][fg]), parse_css_color(c[mode][bg]), parse_css_color(c[mode]["base"])[:3])
+            rows.append(f'<tr><th scope="row">{e(fg)} on {e(bg)}</th><td>{e(mode)}</td>'
+                        f'<td>{ratio:.1f}:1 (needs {need:g})</td></tr>')
+    def kv(section, skip=()):
+        return "\n".join(f'<tr><th scope="row">{e(k)}</th><td>{e(v)}</td></tr>'
+                         for k, v in section.items() if not k.startswith("_") and k not in skip)
+    blocks["ledger"] = wrap("ledger",
+        '<div class="ds-theme-grid">\n' + "\n".join(specimens) + "\n</div>\n"
+        '<div class="ds-motion-grid">\n'
+        f'<div><p class="ds-sub">Rules (px)</p><table class="ds-table"><tbody>\n{kv(g["rule"])}\n</tbody></table>'
+        f'<p class="ds-sub">Tiles (px)</p><table class="ds-table"><tbody>\n{kv(g["tile"])}\n</tbody></table>'
+        f'<p class="ds-sub">Tile field columns</p><table class="ds-table"><tbody>\n{kv(g["field"])}\n</tbody></table></div>\n'
+        f'<div><p class="ds-sub">Layout (px)</p><table class="ds-table"><tbody>\n{kv(g["layout"])}\n</tbody></table>'
+        f'<p class="ds-sub">Ledger motion</p><table class="ds-table"><tbody>\n{kv(g["motion"], ("ease",))}\n</tbody></table></div>\n'
+        '</div>\n<p class="ds-sub">Contrast</p>\n'
+        '<table class="ds-table">\n<thead><tr><th scope="col">Pair</th><th scope="col">Mode</th>'
+        '<th scope="col">Ratio</th></tr></thead>\n<tbody>\n' + "\n".join(rows) + "\n</tbody>\n</table>")
+
     return blocks
 
 
@@ -509,6 +656,7 @@ def build_design_page(cfg):
 def main():
     check = "--check" in sys.argv
     cfg = json.loads(SOURCE.read_text())
+    check_contrast(cfg)
     css_block = build_css(cfg)
     color_block = build_color(cfg)
     swift_block = build_swift(cfg)
@@ -523,6 +671,7 @@ def main():
     swift_now = SWIFT_FILE.read_text()
     css_new = splice(css_now, CSS_COLOR_BEGIN, CSS_COLOR_END, color_block, CSS_FILE)
     css_new = splice(css_new, CSS_BEGIN, CSS_END, css_block, CSS_FILE)
+    css_new = splice(css_new, CSS_LEDGER_BEGIN, CSS_LEDGER_END, build_ledger(cfg), CSS_FILE)
     swift_new = splice(swift_now, SWIFT_BEGIN, SWIFT_END, swift_block, SWIFT_FILE)
     swift_new = splice(swift_new, COLOR_BEGIN, COLOR_END, swift_color_block, SWIFT_FILE)
     swift_new = splice(swift_new, SWIFT_TYPE_BEGIN, SWIFT_TYPE_END, build_type_swift(cfg), SWIFT_FILE)
