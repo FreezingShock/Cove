@@ -12,6 +12,26 @@
 import AppKit
 import SwiftUI
 
+/// Keeps the last search result, so the many reads of `shownApps` in one redraw
+/// share a single search instead of folding every app name each time.
+private final class ShownAppsMemo {
+    private var query: String?
+    private var pool: [AppItem] = []
+    private var usage: [String: Int] = [:]
+    private var matches: [AppItem] = []
+
+    func results(query: String, pool: [AppItem], usage: [String: Int]) -> [AppItem] {
+        if self.query == query, self.pool == pool, self.usage == usage {
+            return matches
+        }
+        self.query = query
+        self.pool = pool
+        self.usage = usage
+        matches = AppSearch.results(for: query, in: pool, usage: usage)
+        return matches
+    }
+}
+
 /// Where one grid cell starts and when it begins its open animation.
 /// The grid ripples outward from the middle: cells farther from the
 /// center wait longer, up to a cap.
@@ -71,6 +91,8 @@ struct AppGridView: View {
 
     /// What the user typed. Empty means "show every app".
     @State private var query = ""
+    /// Shares the last search across the reads of `shownApps` in one redraw.
+    @State private var shownMemo = ShownAppsMemo()
     /// True while the search field has keyboard focus.
     @FocusState private var searchFocused: Bool
     /// The icon that has keyboard focus, if any. Arrow keys move it.
@@ -141,7 +163,7 @@ struct AppGridView: View {
     /// Matches come back best-first.
     private var shownApps: [AppItem] {
         let pool = isSearching ? library.apps : groupApps
-        return AppSearch.results(for: query, in: pool, usage: launchCounts)
+        return shownMemo.results(query: query, pool: pool, usage: launchCounts)
     }
 
     /// How often each app was launched through Inlet, keyed by app ID (its path).

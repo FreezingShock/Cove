@@ -56,7 +56,7 @@ To check the feed format by hand, run `generate_appcast -h` from the Sparkle `bi
 
 1. Build an old version, for example `CURRENT_PROJECT_VERSION = 1`, and run it.
 2. Publish a newer build with a higher build number to a test feed, or temporarily lower the old build's number.
-3. Quit and relaunch the old build. Sparkle asks for permission only on the second launch by default, but Inlet sets `SUEnableAutomaticChecks` to true, so it checks in the background once a day.
+3. Quit and relaunch the old build. Sparkle asks for permission only on the second launch by default, but Inlet sets `SUEnableAutomaticChecks` to true, so it checks in the background about once a day. Inlet also runs a background check on every launch, while automatic checks are on.
 4. To force a check now, use **Inlet › Check for Updates…**. To reset the daily timer, run `defaults delete com.freezingshock.Inlet SULastCheckTime` before launching.
 5. Watch **Console.app** and filter for `Sparkle` if something goes wrong.
 

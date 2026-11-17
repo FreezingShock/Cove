@@ -69,6 +69,23 @@ final class AppUpdater: ObservableObject {
                 self?.canCheckForUpdates = value
             }
             .store(in: &cancellables)
+
+        // The same KVO route for the last check date. The publisher emits the
+        // current value on subscribe, so the row starts with the right date.
+        controller.updater.publisher(for: \.lastUpdateCheckDate)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] value in
+                self?.lastCheckDate = value
+            }
+            .store(in: &cancellables)
+
+        // Sparkle's schedule alone checks about once a day. Inlet also checks on
+        // every launch, as long as automatic checks are on. Skipped in unit tests
+        // and without a real signing key, the same as the scheduled checks.
+        if !AppUpdater.isRunningUnitTests, AppUpdater.hasPublicKey,
+           controller.updater.automaticallyChecksForUpdates {
+            controller.updater.checkForUpdatesInBackground()
+        }
     }
 
     /// A user-started check. Sparkle shows "You're up to date" or the update window.
@@ -77,7 +94,6 @@ final class AppUpdater: ObservableObject {
     }
 
     /// When Sparkle last checked for an update. nil before the first check.
-    var lastCheckDate: Date? {
-        controller.updater.lastUpdateCheckDate
-    }
+    /// Published, so the Settings row redraws after a check finishes.
+    @Published private(set) var lastCheckDate: Date?
 }
