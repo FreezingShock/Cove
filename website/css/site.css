@@ -311,7 +311,7 @@ kbd {
   font-weight: 600;
   letter-spacing: -0.03em;
 }
-.mark { width: 28px; height: 28px; color: var(--text); flex: none; }
+.mark { width: 28px; height: 28px; color: var(--text); flex: none; border-radius: 22.37%; }
 .links { display: flex; gap: 2px; margin-left: auto; }
 .links a {
   font-size: 14px;
