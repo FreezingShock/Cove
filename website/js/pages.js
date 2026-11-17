@@ -58,6 +58,7 @@
     var items = Array.prototype.slice.call(document.querySelectorAll(".faq details"));
     var groups = Array.prototype.slice.call(document.querySelectorAll(".faq-group"));
     var empty = document.getElementById("faqEmpty");
+    var count = document.getElementById("faqCount");
     filter.addEventListener("input", function () {
       var q = filter.value.trim().toLowerCase();
       var shown = 0;
@@ -72,6 +73,11 @@
         g.hidden = !any;
       });
       if (empty) empty.hidden = shown !== 0;
+      // Live count under the field: "Showing 3 of 24 questions", so the reader sees the filter work.
+      if (count) {
+        count.hidden = !q;
+        count.textContent = "Showing " + shown + " of " + items.length + (shown === 1 ? " question" : " questions");
+      }
     });
   }
 })();

@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/faq.html">
   <meta name="color-scheme" content="light dark">
@@ -91,7 +92,7 @@
       "name": "macOS says it cannot verify Inlet. What do I do?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Some builds are not notarized yet, so macOS blocks them the first time. Open System Settings , then Privacy & Security , and click Open Anyway next to Inlet. Or run xattr -dr com.apple.quarantine /Applications/Inlet.app in Terminal. Both steps are on the Download page ."
+        "text": "Some builds are not notarized yet, so macOS blocks them the first time. Open System Settings , then Privacy & Security , and click Open Anyway next to Inlet. Or run xattr -dr com.apple.quarantine /Applications/Inlet.app in Terminal. Both steps are in the install guide ."
       }
     },
     {
@@ -248,6 +249,7 @@
   <div class="wrap faq-search" role="search">
     <label class="sr-only" for="faqFilter">Search questions</label>
     <input id="faqFilter" type="search" placeholder="Search questions" autocomplete="off" spellcheck="false">
+    <p class="faq-count" id="faqCount" aria-live="polite" hidden></p>
     <p class="faq-empty" id="faqEmpty" hidden>No questions match that. Try a shorter word, or see <a href="support.html">Support</a>.</p>
   </div>
   <section class="wrap band faq-section" aria-labelledby="faq-about">
@@ -283,7 +285,7 @@
           <details>
             <summary>macOS says it cannot verify Inlet. What do I do?</summary>
             <div class="answer">
-              <p>Some builds are not notarized yet, so macOS blocks them the first time. Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>, and click <strong>Open Anyway</strong> next to Inlet. Or run <code>xattr -dr com.apple.quarantine /Applications/Inlet.app</code> in Terminal. Both steps are on the <a href="download.html#first-launch">Download page</a>.</p>
+              <p>Some builds are not notarized yet, so macOS blocks them the first time. Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>, and click <strong>Open Anyway</strong> next to Inlet. Or run <code>xattr -dr com.apple.quarantine /Applications/Inlet.app</code> in Terminal. Both steps are in the <a href="install.html#allow">install guide</a>.</p>
             </div>
           </details>
           <details>
@@ -398,7 +400,7 @@
 </main>
 
 <footer class="wrap foot">
-  <div class="foot-products" aria-label="Start here">
+  <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
       <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>

@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/nav.css">
@@ -137,15 +138,13 @@
       <p class="lede hero-lede">Inlet is a full-screen grid of your apps, with search.</p>
       <div class="hero-cta">
         <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download Inlet</a>
-        <a class="btn btn-primary dl-phone-only" href="#get">Get Inlet</a>
+        <a class="btn btn-primary dl-phone-only" href="#get">Download Inlet</a>
         <a class="hero-link" href="#demo">See it in action</a>
       </div>
-      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span data-release="version">Version 0.1</span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
-      <p class="dl-gk"><strong>First launch:</strong> Inlet is not notarized by Apple, so macOS blocks it the first time. Open System Settings, go to Privacy &amp; Security, and click Open Anyway. <a href="download.html#first-launch">Step by step</a></p>
     </div>
 
     <div class="wrap hero-stage-wrap">
-      <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, animated sample">
+      <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, interactive sample">
         <div class="win" id="heroWin">
           <div class="win-bar">
             <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -159,10 +158,20 @@
               <kbd class="win-enter" aria-hidden="true">↩</kbd>
             </label>
             <div class="win-tape" id="heroTape" aria-hidden="true"></div>
-            <div class="seg win-seg" aria-hidden="true">
-              <span class="on">All</span><span>Create</span><span>Everyday</span><span>Build</span>
+            <div class="win-view" id="heroView">
+              <div class="win-track" id="heroTrack"></div>
+              <div class="folder-sheet" id="heroSheet" hidden>
+                <div class="sheet-scrim" id="heroSheetScrim"></div>
+                <div class="sheet-panel" id="heroSheetPanel" role="dialog" aria-labelledby="heroSheetTitle">
+                  <div class="sheet-head">
+                    <span class="sheet-title" id="heroSheetTitle">Create</span>
+                    <button class="sheet-close" type="button" id="heroSheetClose" aria-label="Close folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+                  </div>
+                  <div class="grid sheet-grid" id="heroSheetGrid"></div>
+                </div>
+              </div>
             </div>
-            <div class="grid" id="heroGrid"></div>
+            <div class="pager" id="heroPager"></div>
           </div>
           <div class="win-foot">
             <span class="win-status" id="heroStatus" aria-live="polite">16 apps</span>
@@ -170,8 +179,12 @@
           </div>
           <span class="glint" aria-hidden="true"></span>
         </div>
-        <p class="win-caption">Sample apps. Inlet shows the icons already on your Mac.</p>
+        <p class="win-caption">Try it: type to search, open Create, or swipe between pages. Sample apps only.</p>
       </div>
+    </div>
+    <div class="wrap hero-foot">
+      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span data-release="version">Version 0.1</span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
+      <p class="dl-gk"><strong>First launch:</strong> Inlet is not notarized by Apple, so macOS blocks it the first time. Open System Settings, go to Privacy &amp; Security, and click Open Anyway. <a href="install.html#allow">Step by step</a></p>
     </div>
   </section>
 
@@ -210,7 +223,7 @@
   </section>
 
   <!-- Feature: search -->
-  <section class="wrap feature" id="features">
+  <section class="wrap feature feature--wide" id="features">
     <div class="copy">
       <h2 class="h-feature">Search finds <span class="hl">apps and files</span> together.</h2>
       <p class="body-2">The grid filters as you type. The best match is highlighted, and matching files appear below it.</p>
@@ -241,7 +254,7 @@
   </section>
 
   <!-- Feature: quick panel -->
-  <section class="wrap feature" id="quick">
+  <section class="wrap feature feature--flip" id="quick">
     <div class="copy">
       <h2 class="h-feature">A quick panel from your Dock.</h2>
       <p class="body-2">Click the Inlet icon in the Dock for a compact panel with recent apps, recent files, and a button for the full grid.</p>
@@ -276,7 +289,7 @@
   </section>
 
   <!-- Feature: folders and edit mode -->
-  <section class="wrap feature" id="organize" aria-labelledby="organize-title">
+  <section class="wrap feature feature--sticky" id="organize" aria-labelledby="organize-title">
     <div class="copy">
       <h2 class="h-feature" id="organize-title">Arrange the grid your way.</h2>
       <p class="body-2">Group apps into folders, reorder the grid, and hide the ones you never open. Your layout is saved on your Mac and survives a relaunch.</p>
@@ -314,7 +327,7 @@
   </section>
 
   <!-- Feature: settings -->
-  <section class="wrap feature" id="settings">
+  <section class="wrap feature feature--stack" id="settings">
     <div class="copy">
       <h2 class="h-feature">Two settings. Changes apply right away.</h2>
       <p class="body-2">Pick how many columns the grid shows, and whether Inlet is light, dark, or follows your Mac.</p>
@@ -357,7 +370,6 @@
     </div>
     <div class="recipes">
       <article class="recipe">
-        <span class="recipe-n" aria-hidden="true">01</span>
         <h3>Open an app you have not used in a week</h3>
         <div class="recipe-ui" aria-hidden="true">
           <div class="recipe-search glass capsule"><svg class="sm-ico" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>not</span></div>
@@ -369,7 +381,6 @@
         <p>Notes is the top hit, so Return opens it.</p>
       </article>
       <article class="recipe">
-        <span class="recipe-n" aria-hidden="true">02</span>
         <h3>Find a file without remembering its folder</h3>
         <div class="recipe-ui" aria-hidden="true">
           <div class="recipe-search glass capsule"><svg class="sm-ico" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>budget</span></div>
@@ -381,7 +392,6 @@
         <p>Files from Spotlight show up next to your apps. When a file is the top hit, Return opens it in its default app.</p>
       </article>
       <article class="recipe">
-        <span class="recipe-n" aria-hidden="true">03</span>
         <h3>Start the day from the Dock</h3>
         <div class="recipe-ui" aria-hidden="true">
           <div class="recipe-hit recipe-dock"><span class="ico" style="--tile:36px;--a:#9BE8A6;--b:#2C9E5C"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg></span><span class="ico" style="--tile:36px;--a:#8CC8FF;--b:#2F6FE0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></svg></span><span class="ico" style="--tile:36px;--a:#A8E9B4;--b:#1E8C6E"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg></span><span class="ico" style="--tile:36px;--a:#FFB9CC;--b:#C4456B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h4" /><path d="M2 10h4" /><path d="M2 14h4" /><path d="M2 18h4" /><rect width="16" height="20" x="4" y="2" rx="2" /><path d="M16 2v20" /></svg></span></div>
@@ -412,35 +422,6 @@
     </div>
   </section>
 
-  <!-- Feature: motion -->
-  <div class="tile-rule" aria-hidden="true" style="--lit:5"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
-  <section class="wrap feature" id="motion">
-    <div class="copy">
-      <h2 class="h-feature">Springs with fixed rules.</h2>
-      <p class="body-2">Every animation uses one of seven springs, each with a fixed duration and bounce. Things that open bounce slightly. Things that close don't. With Reduce Motion on, everything becomes a short fade.</p>
-      <ul class="specs">
-        <li>Open: 0.46 s, bounce 0.24</li>
-        <li>Press: 0.26 s, bounce 0.42</li>
-        <li>Dismiss: 0.26 s, no bounce</li>
-      </ul>
-    </div>
-    <div class="stage motion-stage" role="region" aria-label="Spring demo">
-      <div class="scrim">
-        <div class="mcard glass" data-spring="open" data-from="0" data-to="1">
-          <div class="mhead"><b>Open</b><span>0.46 s · bounce 0.24</span></div>
-          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
-        </div>
-        <div class="mcard glass" data-spring="press" data-from="0" data-to="1">
-          <div class="mhead"><b>Press</b><span>0.26 s · bounce 0.42</span></div>
-          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
-        </div>
-        <div class="mcard glass" data-spring="dismiss" data-from="1" data-to="0">
-          <div class="mhead"><b>Dismiss</b><span>0.26 s · no bounce</span></div>
-          <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Privacy -->
   <section class="wrap privacy" id="privacy">
@@ -478,34 +459,31 @@
   <div class="tile-rule is-wide" aria-hidden="true" style="--lit:17"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <!-- Get Inlet: closing call to action -->
     <!-- Who it's for -->
-  <section class="wrap band uc-home" id="for" aria-labelledby="for-title">
+  <section class="wrap band uc-home uc-home--rows" id="for" aria-labelledby="for-title">
     <div class="uc-head">
       <h2 class="h-section" id="for-title">Built for how you work.</h2>
       <p class="lede">Developers, designers and students each use Inlet a little differently. Each page below lists only what the app does today.</p>
     </div>
-    <div class="uc-cards">
-      <a class="uc-card" href="developers.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></span>
-        <span class="uc-kicker">Developers</span>
-        <h3>Your tools, one keystroke away.</h3>
-        <p>Open Xcode or Terminal by typing a few letters. Find project files through Spotlight.</p>
-        <span class="uc-go">Developer page</span>
-      </a>
-      <a class="uc-card" href="designers.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><circle cx="11" cy="11" r="2"/></svg></span>
-        <span class="uc-kicker">Designers</span>
-        <h3>Real icons and fixed springs.</h3>
-        <p>Each app shows its own icon. Motion runs on seven springs with values you can read.</p>
-        <span class="uc-go">Designer page</span>
-      </a>
-      <a class="uc-card" href="students.html">
-        <span class="uc-tile"><svg class="" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span>
-        <span class="uc-kicker">Students</span>
-        <h3>Every class app in one place.</h3>
-        <p>Sort apps into School, Create and Build. Find an essay or a PDF by its name.</p>
-        <span class="uc-go">Student page</span>
-      </a>
-    </div>
+    <ol class="aud-list">
+      <li><a class="aud" href="developers.html">
+        <span class="aud-ico" style="--a:#8E98FF;--b:#3340A8;--ico:#FFFFFF" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></span>
+        <span class="aud-who">Developers</span>
+        <span class="aud-main"><b>Your tools, one keystroke away.</b><span>Open Xcode or Terminal by typing a few letters. Find project files through Spotlight.</span></span>
+        <span class="aud-go">Developer page</span>
+      </a></li>
+      <li><a class="aud" href="designers.html">
+        <span class="aud-ico" style="--a:#9BE8A6;--b:#2C9E5C;--ico:#FFFFFF" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><circle cx="11" cy="11" r="2"/></svg></span>
+        <span class="aud-who">Designers</span>
+        <span class="aud-main"><b>Real icons and fixed springs.</b><span>Each app shows its own icon. Motion runs on seven springs with values you can read.</span></span>
+        <span class="aud-go">Designer page</span>
+      </a></li>
+      <li><a class="aud" href="students.html">
+        <span class="aud-ico" style="--a:#FFD36E;--b:#F0A020;--ico:#17150F" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg></span>
+        <span class="aud-who">Students</span>
+        <span class="aud-main"><b>Every class app in one place.</b><span>Sort apps into School, Create and Build. Find an essay or a PDF by its name.</span></span>
+        <span class="aud-go">Student page</span>
+      </a></li>
+    </ol>
     <p class="uc-more"><a href="use-cases.html">All use cases</a> &nbsp;·&nbsp; <a href="compare.html">Compare with Spotlight and Launchpad</a></p>
   </section>
 
@@ -531,15 +509,15 @@
         </div>
         <a class="btn btn-ghost" href="download.html">Install steps</a>
         <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">View source on GitHub</a>
-        <p class="dl-meta" aria-label="Download details"><span data-release="version">Version 0.1</span><span>Disk image (.dmg)</span><span data-release="size" hidden></span><span>macOS 26 or later</span></p>
-        <p class="dl-gk"><strong>First launch:</strong> macOS blocks Inlet once because it is not notarized by Apple. Click Open Anyway in System Settings, Privacy &amp; Security. <a href="download.html#first-launch">Step by step</a></p>
+        <p class="dl-meta" role="group" aria-label="Download details"><span data-release="version">Version 0.1</span><span>Disk image (.dmg)</span><span data-release="size" hidden></span><span>macOS 26 or later</span></p>
+        <p class="dl-gk"><strong>First launch:</strong> macOS blocks Inlet once because it is not notarized by Apple. Click Open Anyway in System Settings, Privacy &amp; Security. <a href="install.html#allow">Step by step</a></p>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="wrap foot">
-  <div class="foot-products" aria-label="Start here">
+  <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
       <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
@@ -608,6 +586,7 @@
 <script src="js/download.js" defer></script>
 <script src="js/nav.js" defer></script>
 <script src="js/jump.js" defer></script>
+<script src="js/feedback.js" defer></script>
 <script src="js/motion.js" defer></script>
 </body>
 </html>
