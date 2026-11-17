@@ -33,13 +33,20 @@ enum AppSearch {
 
     /// The rank of a normalized name against a normalized query, or nil if
     /// the name does not match at all.
+    ///
+    /// Every typed word has to match. Words can come in any order, so
+    /// "mail apple" finds "Apple Mail".
     private static func rank(of name: String, query: String) -> Rank? {
         if name == query { return .exact }
         if name.hasPrefix(query) { return .prefix }
-        // Split "Apple Mail" into ["Apple", "Mail"] so any word can match.
-        let words = name.split { !$0.isLetter && !$0.isNumber }
-        if words.contains(where: { $0.hasPrefix(query) }) { return .wordPrefix }
-        if name.contains(query) { return .contains }
+        let terms = query.split(whereSeparator: \.isWhitespace).map(String.init)
+        // Split "Apple Mail" into ["apple", "mail"] so any word can match.
+        let words = name.split { !$0.isLetter && !$0.isNumber }.map(String.init)
+        if terms.allSatisfy({ term in words.contains { $0.hasPrefix(term) } }) {
+            return .wordPrefix
+        }
+        // Otherwise each word may sit anywhere inside the name.
+        if terms.allSatisfy({ name.contains($0) }) { return .contains }
         return nil
     }
 
