@@ -101,10 +101,12 @@
     var id = a.getAttribute("href").slice(1);
     var target = id && document.getElementById(id);
     if (!target) return;
-    if (!reduceQuery.matches) {
+    /* The header is the top of the page, so #top lands at 0. Other targets land under the sticky header. */
+    var y = id === "top" ? 0 : landingY(target);
+    if (!reduceQuery.matches || id === "top") {
       e.preventDefault();
       history.pushState(null, "", "#" + id);
-      glideTo(landingY(target));
+      if (reduceQuery.matches) window.scrollTo(0, y); else glideTo(y);
     }
     if (!target.hasAttribute("tabindex")) {
       target.setAttribute("tabindex", "-1");
