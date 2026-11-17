@@ -58,7 +58,7 @@ struct FeedbackView: View {
                 .scrollContentBackground(.hidden)
                 .frame(minHeight: 96)
                 .padding(6)
-                .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: InletRadius.sm))
+                .background(InletColor.field, in: RoundedRectangle(cornerRadius: InletRadius.sm, style: .continuous))
         }
     }
 
