@@ -31,6 +31,8 @@ struct EditableGridView: View {
     let onMove: (AppItem, Int) -> Void
     /// A tap on empty space outside Edit mode. Closes the overlay.
     let onBlankTap: () -> Void
+    /// Moves an app into another group. Offered from the icon's context menu.
+    let onMoveToGroup: (AppItem, String) -> Void
 
     @Environment(LayoutStore.self) private var layoutStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -189,6 +191,13 @@ struct EditableGridView: View {
             placement: placement,
             isOpen: isOpen
         )
+        .contextMenu {
+            MoveToGroupMenu(
+                groups: layoutStore.layout.groups,
+                currentGroupID: layoutStore.layout.groupID(containing: app.id),
+                onSelect: { onMoveToGroup(app, $0) }
+            )
+        }
         .frame(width: InletSize.gridCell.width, height: GridMetrics.cellHeight, alignment: .top)
         .position(center)
         // The dragged icon follows the pointer exactly, so it doesn't animate.

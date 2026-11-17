@@ -7,7 +7,7 @@
 
 # Inlet
 
-A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no network calls, tracking or accounts.
+A personal Mac launcher that replaces Launchpad, which Apple removed in macOS 26 Tahoe. Native Swift, SwiftUI and AppKit. Everything stays on your Mac: no accounts and no tracking. The only network call is an update check, which you can turn off.
 
 **Current version: 0.1 (Skeleton).** Inlet scans your app folders and shows every installed app in a plain grid of real icons. Click an icon to open the app. The glass overlay, hotkey, search and Dock panel come in later versions (see the roadmap below).
 
@@ -43,7 +43,8 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 |---|---|
 | `Inlet/InletApp.swift` | Entry point. Creates the window and the File > Reload Apps menu item. |
 | `Inlet/Models/AppItem.swift` | One installed app: name, location, bundle ID, category. |
-| `Inlet/Models/AppCategory.swift` | Maps each app's category to the six buckets: Create, Build, School, Everyday, Games, Other. |
+| `Inlet/Models/AppCategory.swift` | Maps each app's category to a preset: Create, Build, School, Everyday, Games, Other. |
+| `Inlet/Models/AppGroup.swift` | A group on the group bar: name, color, icon, apps. Presets come from the categories. |
 | `Inlet/Models/AppLibrary.swift` | Holds the app list and rescans it in the background. |
 | `Inlet/Services/AppScanner.swift` | Walks the app folders and builds the sorted list. |
 | `Inlet/Services/IconCache.swift` | Gets each app's real icon from macOS and caches it. |
@@ -54,7 +55,9 @@ After one successful run, choose **Product > Show Build Folder in Finder** in Xc
 | `Inlet/Services/RecentsStore.swift` | Recent apps, saved as JSON in Application Support. Recent files stub. |
 | `Inlet/Views/QuickPanel/` | Quick panel window (controller) and its SwiftUI view. |
 | `Inlet/InletTheme.swift` | Design tokens from `theme-spec.md`: colors, radii, spacing, type, spring motion, glass, and the Reduce Motion, Reduce Transparency and Increase Contrast helpers. |
-| `Inlet/Views/CategoryBar.swift` | The All-plus-buckets bar above the grid. Tap to filter. Fades out while search has text. |
+| `Inlet/Views/Groups/GroupBar.swift` | The All-plus-groups bar above the grid. Tap to filter. Fades out while search has text. |
+| `Inlet/Views/Groups/GroupsPanel.swift` | The Groups panel: add, rename, recolor, re-icon, reorder and delete groups. |
+| `Inlet/Views/Groups/GroupStyle.swift` | Group colors and the Move to Group context menu. |
 | `Inlet/Theme.swift` | Colors and sizes from the design system. |
 
 New files you add inside the `Inlet` folder appear in Xcode automatically.
@@ -89,3 +92,7 @@ Each was checked against Apple's current documentation.
 | 0.4 Dock panel | Quick panel on Dock icon click, recent apps and files | Dock click toggles it reliably |
 | 0.5 Polish | Full design pass, app icon, animations, settings | Screens match the mockup |
 | 1.0 Daily driver | Bug fixes from real use | A week of daily use with no crash |
+
+## License
+
+Inlet is released under the MIT License. See [LICENSE](LICENSE).

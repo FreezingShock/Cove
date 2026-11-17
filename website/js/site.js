@@ -175,15 +175,6 @@
     animate(c, "press", 0.9, 1, "press", function (v) { s.ps = v; cellRender(c); });
   });
 
-  /* ---------- Bloom: a soft highlight follows the pointer on glass ---------- */
-  document.addEventListener("pointermove", function (e) {
-    var el = e.target.closest && e.target.closest(".bloom");
-    if (!el) return;
-    var r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", (e.clientX - r.left) + "px");
-    el.style.setProperty("--my", (e.clientY - r.top) + "px");
-  });
-
   /* ---------- Search: filter with a reflow, top hit, files ---------- */
   function filterGrid(grid, test, withTop) {
     var cells = Array.prototype.slice.call(grid.querySelectorAll(".cell"));
