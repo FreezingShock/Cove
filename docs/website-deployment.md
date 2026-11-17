@@ -18,6 +18,7 @@ Vercel was the alternative. It gives a live preview for every branch, but it nee
 | Push to `integration` that touches `website/` | Same `check` job |
 | Push to `main` that touches `website/` (nate's release merge) | `check`, then `deploy` publishes `website/` to Pages |
 | Manual run from `main` (Actions tab, Run workflow) | Same as the push to `main`, even with no site change |
+| A release is published, edited, unpublished or deleted | Redeploys the site, so the release notes stay current |
 
 To preview a PR's site, open the run in the Actions tab, download the `inlet-website` artifact, unzip it, and open `index.html`.
 
@@ -33,6 +34,19 @@ To preview a PR's site, open the run in the Actions tab, download the `inlet-web
 2. **Custom domain (optional, after you buy one).** Go to **Settings > Pages > Custom domain**, enter the domain, and save. Then follow the DNS steps below.
 
 Nothing else is needed. The first deploy happens the next time `website/` changes on `main`, or when you run the workflow by hand.
+
+## Release notes on the changelog page
+
+The changelog page lists every published GitHub Release, newest first. `scripts/release/render-changelog.py` builds that list from `gh api repos/<repo>/releases` and writes it into `changelog.html` between the `release-notes` markers. It runs in two places:
+
+- **PR previews** (the check job) render the page on the runner, so the `inlet-website` artifact shows what goes live.
+- **Deploy** (the deploy job) renders the staged copy of the site, so the live page never asks GitHub from a visitor's browser.
+
+Drafts are skipped. Pre-releases are listed and marked. The newest full release is marked Latest.
+
+The site redeploys when a release is published, edited, unpublished or deleted, so fixing a release's notes on GitHub updates the page. Release notes should be plain Markdown. Images in them are dropped, so the page never loads anything from another site.
+
+Run the renderer tests with `python3 scripts/release/test_render_changelog.py`.
 
 ## Pointing "Get Inlet" at the release
 
