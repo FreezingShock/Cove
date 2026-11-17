@@ -31,8 +31,7 @@ struct OpenPlacement {
     private static let startFraction: CGFloat = 0.22
 
     /// Placement for the cell at `index` in a grid of `total` cells.
-    static func forCell(at index: Int, total: Int) -> OpenPlacement {
-        let columns = InletSize.gridColumns
+    static func forCell(at index: Int, total: Int, columns: Int = InletSize.gridColumns) -> OpenPlacement {
         let rows = Int((Double(total) / Double(columns)).rounded(.up))
 
         // Center of the grid, in cell units (column and row indexes).
@@ -250,6 +249,10 @@ struct AppGridView: View {
 
                 content
             }
+            // A tap on empty space closes the overlay, as classic Launchpad did.
+            // Buttons, the field and icons take their own taps first.
+            .contentShape(Rectangle())
+            .onTapGesture { dismissOnBlankTap() }
             // Keep the keyboard-focused icon on screen as arrows move it.
             .onChange(of: focusedApp) { _, id in
                 guard let id else { return }
@@ -435,9 +438,11 @@ struct AppGridView: View {
                     columns: gridColumns,
                     focusedID: focusedApp,
                     isEditing: $isEditing,
+                    isOpen: isOpen,
                     onLaunch: launch,
                     onHide: hide,
                     onMove: move,
+                    onBlankTap: dismissOnBlankTap,
                     onMoveToGroup: moveToGroup
                 )
                 .frame(maxHeight: .infinity)
@@ -624,8 +629,9 @@ struct AppGridView: View {
         }
         guard target < apps.count else { return .handled }
 
-        // Left and Right must stay on the same row.
-        if abs(offset) == 1 && target / columns != index / columns {
+        // In the search and category grids, Left and Right stay on the same row.
+        // The paged grid runs on across pages, as classic Launchpad did.
+        if abs(offset) == 1 && !isPaged && target / columns != index / columns {
             return .handled
         }
         focusedApp = apps[target].id
@@ -672,6 +678,15 @@ struct AppGridView: View {
         let remaining = navApps
         focusedApp = remaining.isEmpty ? nil : remaining[min(index, remaining.count - 1)].id
         return .handled
+    }
+
+    /// A tap on empty space. Leaves Edit mode first, otherwise closes the overlay.
+    private func dismissOnBlankTap() {
+        if isEditing {
+            withAnimation(motion(.inletDismiss)) { isEditing = false }
+        } else {
+            dismissOverlay()
+        }
     }
 
     /// Escape leaves Edit mode first. Then it clears the field when the setting
