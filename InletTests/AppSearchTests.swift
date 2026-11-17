@@ -2,18 +2,16 @@
 //  AppSearchTests.swift
 //  InletTests
 //
-//  Checks how the search field matches app names: case and accents are
-//  ignored, better matches come first, and every typed word has to match
-//  with the words in any order.
+//  Checks the rules behind the search field: accents and case are ignored,
+//  exact names beat prefixes, prefixes beat word matches, and an empty query
+//  keeps the grid as it was.
 //
 
-import Foundation
 import XCTest
 @testable import Inlet
 
 final class AppSearchTests: XCTestCase {
 
-    /// An app whose ID is `/Applications/<name>.app`, matching `AppItem.id`.
     private func app(_ name: String) -> AppItem {
         AppItem(
             name: name,
@@ -23,37 +21,50 @@ final class AppSearchTests: XCTestCase {
         )
     }
 
-    private func names(_ query: String, in apps: [String]) -> [String] {
-        AppSearch.results(for: query, in: apps.map { self.app($0) }).map(\.name)
-    }
+    func testEmptyQueryReturnsEveryAppInOrder() {
+        let apps = [app("Mail"), app("Maps"), app("Notes")]
 
-    func testEmptyQueryKeepsEveryAppInOrder() {
-        XCTAssertEqual(names("  ", in: ["Mail", "Notes"]), ["Mail", "Notes"])
+        XCTAssertEqual(AppSearch.results(for: "   ", in: apps), apps)
     }
 
     func testExactThenPrefixThenWordThenContains() {
-        let found = names("mail", in: ["Gmail Archive", "Apple Mail", "Mail Merge", "Mail"])
-        XCTAssertEqual(found, ["Mail", "Mail Merge", "Apple Mail", "Gmail Archive"])
+        let apps = [app("Gmail Archive"), app("Apple Mail"), app("Mail Merge"), app("Mail")]
+
+        let names = AppSearch.results(for: "mail", in: apps).map(\.name)
+
+        XCTAssertEqual(names, ["Mail", "Mail Merge", "Apple Mail", "Gmail Archive"])
     }
 
     func testIgnoresCaseAndAccents() {
-        XCTAssertEqual(names("cafe", in: ["Café"]), ["Café"])
-        XCTAssertEqual(names("SAFARI", in: ["Safari"]), ["Safari"])
+        let apps = [app("Café"), app("Safari")]
+
+        XCTAssertEqual(AppSearch.results(for: "CAFE", in: apps).map(\.name), ["Café"])
+        XCTAssertEqual(AppSearch.results(for: "safari", in: apps).map(\.name), ["Safari"])
     }
 
-    func testWordsMatchInAnyOrder() {
-        XCTAssertEqual(names("mail apple", in: ["Apple Mail"]), ["Apple Mail"])
+    func testNoMatchReturnsNothing() {
+        let apps = [app("Mail"), app("Notes")]
+
+        XCTAssertTrue(AppSearch.results(for: "zzz", in: apps).isEmpty)
     }
 
-    func testEveryWordMustMatch() {
-        XCTAssertEqual(names("photo zzz", in: ["Adobe Photoshop"]), [])
+    func testTiesKeepGridOrder() {
+        // Both names are word matches for "pro", so the input order must hold.
+        let apps = [app("Adobe Pro"), app("Xcode Pro")]
+
+        XCTAssertEqual(AppSearch.results(for: "pro", in: apps).map(\.name), ["Adobe Pro", "Xcode Pro"])
+    }
+
+    func testEveryTypedWordMatchesInAnyOrder() {
+        let apps = [app("Apple Mail")]
+
+        XCTAssertEqual(AppSearch.results(for: "mail apple", in: apps).map(\.name), ["Apple Mail"])
+        XCTAssertTrue(AppSearch.results(for: "photo zzz", in: [app("Adobe Photoshop")]).isEmpty)
     }
 
     func testWordsCanSitInsideAWord() {
-        XCTAssertEqual(names("photo shop", in: ["Adobe Photoshop"]), ["Adobe Photoshop"])
-    }
+        let apps = [app("Adobe Photoshop")]
 
-    func testNoMatchReturnsEmpty() {
-        XCTAssertEqual(names("xyz", in: ["Mail", "Notes"]), [])
+        XCTAssertEqual(AppSearch.results(for: "photo shop", in: apps).map(\.name), ["Adobe Photoshop"])
     }
 }

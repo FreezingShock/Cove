@@ -27,14 +27,17 @@ enum InletSettings {
         case showMenuBarIcon          = "inlet.general.showMenuBarIcon"          // Bool, true
         case closeAfterLaunch         = "inlet.general.closeAfterLaunch"         // Bool, true
         case escapeClearsSearchFirst  = "inlet.general.escapeClearsSearchFirst"  // Bool, true
-        case rememberLastCategory     = "inlet.general.rememberLastCategory"     // Bool, true
+        case rememberLastGroup        = "inlet.general.rememberLastCategory"     // Bool, true (key kept from v1)
 
         // Appearance: "auto", "light" or "dark"
         case appearance               = "inlet.appearance.mode"                  // String, "auto"
 
         // Grid
         case gridColumns              = "inlet.grid.columns"                     // Int, 5...9, 7
-        case lastCategory             = "inlet.grid.lastCategory"                // String, an AppCategory raw value, "" for All
+        case lastGroup                = "inlet.grid.lastCategory"                // String, a group id, "" for All (key kept from v1)
+        case pinchToOpen              = "inlet.grid.pinchToOpen"                 // Bool, true
+        case hotCorner                = "inlet.grid.hotCorner"                   // String, a HotCorner raw value, "off"
+        case f4Opens                  = "inlet.grid.f4Opens"                     // Bool, true
 
         // Search
         case searchIncludesFiles      = "inlet.search.includeFiles"              // Bool, true
@@ -44,6 +47,12 @@ enum InletSettings {
         case dockClickOpens           = "inlet.quickPanel.dockClickOpens"        // String, "quickPanel" or "grid"
         case quickPanelRecentApps     = "inlet.quickPanel.recentApps"            // Int, 4, 8 or 12, 8
         case quickPanelRecentFiles    = "inlet.quickPanel.recentFiles"           // Int, 0...5, 3
+
+        // Supporter: custom themes and zones. Honor-based gate, see Supporter.swift
+        case supporterActive          = "inlet.supporter.active"                 // Bool, false
+        case activeTheme              = "inlet.themes.active"                    // String, an AppTheme id, "inlet"
+        case customThemes             = "inlet.themes.custom"                    // Data, JSON [AppTheme]
+        case zones                    = "inlet.zones"                            // Data, JSON [GridZone]
     }
 
     /// Values for `Appearance`. Stored as the raw string.
@@ -62,16 +71,24 @@ enum InletSettings {
             Key.showMenuBarIcon.rawValue: true,
             Key.closeAfterLaunch.rawValue: true,
             Key.escapeClearsSearchFirst.rawValue: true,
-            Key.rememberLastCategory.rawValue: true,
+            Key.rememberLastGroup.rawValue: true,
             Key.appearance.rawValue: AppearanceMode.auto.rawValue,
             Key.gridColumns.rawValue: 7,
-            Key.lastCategory.rawValue: "",
+            Key.lastGroup.rawValue: "",
+            Key.pinchToOpen.rawValue: true,
+            Key.hotCorner.rawValue: HotCorner.off.rawValue,
+            Key.f4Opens.rawValue: true,
             Key.searchIncludesFiles.rawValue: true,
             Key.searchFileResultCount.rawValue: 5,
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
             Key.quickPanelRecentApps.rawValue: 8,
             Key.quickPanelRecentFiles.rawValue: 3,
+            Key.supporterActive.rawValue: false,
+            Key.activeTheme.rawValue: AppTheme.standard.id,
         ])
+        // Theme colors and sizes are read by the tokens on every draw, so the
+        // saved theme has to be loaded before the first window opens.
+        ThemeRuntime.loadFromDefaults()
     }
 
     // MARK: - Typed reads for non-view code
@@ -80,17 +97,18 @@ enum InletSettings {
         clamp(UserDefaults.standard.integer(forKey: Key.gridColumns.rawValue), 5...9, fallback: 7)
     }
 
-    /// The bucket to open the grid on: the last one the user picked, when
-    /// "Remember last category" is on. Nil means All.
-    static var startingCategory: AppCategory? {
-        guard UserDefaults.standard.bool(forKey: Key.rememberLastCategory.rawValue) else { return nil }
-        let raw = UserDefaults.standard.string(forKey: Key.lastCategory.rawValue) ?? ""
-        return AppCategory(rawValue: raw)
+    /// The group to open the grid on: the last one the user picked, when
+    /// "Remember the last group" is on. Nil means All. The grid checks that
+    /// the group still exists.
+    static var startingGroupID: String? {
+        guard UserDefaults.standard.bool(forKey: Key.rememberLastGroup.rawValue) else { return nil }
+        let raw = UserDefaults.standard.string(forKey: Key.lastGroup.rawValue) ?? ""
+        return raw.isEmpty ? nil : raw
     }
 
-    /// Saves the bucket the user picked. Nil (All) is stored as an empty string.
-    static func saveLastCategory(_ category: AppCategory?) {
-        UserDefaults.standard.set(category?.rawValue ?? "", forKey: Key.lastCategory.rawValue)
+    /// Saves the group the user picked. Nil (All) is stored as an empty string.
+    static func saveLastGroup(_ groupID: String?) {
+        UserDefaults.standard.set(groupID ?? "", forKey: Key.lastGroup.rawValue)
     }
 
     static var searchIncludesFiles: Bool {
@@ -124,6 +142,19 @@ enum InletSettings {
     /// Keeps the file-row count in 0...8. Zero hides the Files section.
     static func normalizedFileResultCount(_ value: Int) -> Int {
         min(max(value, 0), 8)
+    }
+
+    static var pinchToOpen: Bool {
+        UserDefaults.standard.bool(forKey: Key.pinchToOpen.rawValue)
+    }
+
+    static var hotCorner: HotCorner {
+        let raw = UserDefaults.standard.string(forKey: Key.hotCorner.rawValue) ?? ""
+        return HotCorner(rawValue: raw) ?? .off
+    }
+
+    static var f4Opens: Bool {
+        UserDefaults.standard.bool(forKey: Key.f4Opens.rawValue)
     }
 
     static var closeAfterLaunch: Bool {

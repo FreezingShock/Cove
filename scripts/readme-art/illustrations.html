@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>README feature illustrations (render-only)</title>
+  <link rel="stylesheet" href="../../website/css/tokens.css">
+  <link rel="stylesheet" href="../../website/css/brand.css">
+  <style>
+    /* Render-only. Each .card is 2400 x 1350 and is screenshotted by build-illustrations.cjs.
+       Cream ground, ink type, aqua for the single accent. The frames are drawn UI states. */
+    @font-face { font-family: "Figtree"; src: url("../../website/fonts/figtree-latin-wght.woff2") format("woff2"); font-weight: 300 900; font-display: block; }
+    html, body { margin: 0; background: var(--base); }
+    body { font-family: Figtree, sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+    .card { position: relative; width: 2400px; height: 1350px; overflow: hidden; background: var(--base); }
+    .copy { position: absolute; left: 150px; top: 230px; width: 880px; }
+    .eyebrow { display: flex; align-items: center; gap: 18px; font-size: 30px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+    .eyebrow::before { content: ""; width: 20px; height: 20px; border-radius: 5px; background: var(--accent); }
+    h2 { margin: 44px 0 0; font-size: 116px; line-height: 1.02; font-weight: 700; letter-spacing: -0.04em; }
+    p { margin: 56px 0 0; font-size: 42px; line-height: 1.42; color: var(--text-2); max-width: 22ch; text-wrap: pretty; }
+    .hl { background: linear-gradient(var(--accent), var(--accent)) 0 88% / 100% 0.32em no-repeat; padding: 0 0.04em; }
+    .band { position: absolute; left: 0; right: 0; bottom: 0; height: 110px; background: var(--text); color: var(--base); display: flex; align-items: center; gap: 48px; padding: 0 150px; font-size: 40px; font-weight: 650; letter-spacing: -0.02em; white-space: nowrap; }
+    .band span + span::before { content: ""; display: inline-block; width: 18px; height: 18px; border-radius: 4px; background: var(--accent); margin-right: 48px; vertical-align: 2px; }
+
+    /* Drawn UI frame: a paper window on the right. */
+    .win { position: absolute; right: 120px; top: 230px; width: 1080px; height: 720px; border-radius: 56px; background: #FBF8F2; box-shadow: 0 0 0 2px var(--hair), 0 60px 120px -40px rgba(23, 21, 15, .45); overflow: hidden; box-sizing: border-box; padding: 64px; }
+    .label { font-size: 26px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); }
+    .ic { border-radius: 22%; box-shadow: inset 0 0 0 1px rgba(23,21,15,.10); }
+    .app { display: grid; justify-items: center; gap: 14px; font-size: 26px; font-weight: 500; color: var(--text); }
+    .app .ic { width: 150px; height: 150px; }
+    .kc { display: inline-grid; place-items: center; min-width: 96px; height: 96px; padding: 0 26px; box-sizing: border-box; border-radius: 22px; background: #FFFFFF; box-shadow: inset 0 -6px 0 rgba(23,21,15,.14), inset 0 0 0 2px rgba(23,21,15,.10); font-size: 40px; font-weight: 650; color: var(--text); }
+    .row { display: flex; align-items: center; gap: 22px; }
+    .pill { display: inline-flex; align-items: center; height: 72px; padding: 0 34px; border-radius: 999px; font-size: 32px; font-weight: 600; box-shadow: inset 0 0 0 2px var(--hair); }
+    .pill.on { background: var(--accent); box-shadow: none; color: var(--accent-ink); }
+    .tog { position: relative; width: 104px; height: 60px; border-radius: 30px; background: var(--tile); flex: none; }
+    .tog::after { content: ""; position: absolute; top: 6px; left: 6px; width: 48px; height: 48px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 2px 6px rgba(23,21,15,.25); }
+    .tog.on { background: var(--accent); }
+    .tog.on::after { left: 50px; }
+    .set { display: grid; grid-template-columns: 1fr auto; align-items: center; height: 118px; border-top: 2px solid var(--hair); font-size: 38px; font-weight: 500; }
+    .set:first-of-type { border-top: 0; }
+    .set small { display: block; font-size: 26px; color: var(--text-2); margin-top: 6px; }
+    .lit { background: var(--accent); }
+    .ink { background: var(--text); }
+  </style>
+</head>
+<body>
+
+  <!-- Install -->
+  <section class="card" id="install">
+    <div class="copy">
+      <div class="eyebrow">Install</div>
+      <h2>Drag it to <span class="hl">Applications.</span></h2>
+      <p>Open the disk image and drag Inlet into Applications. Open it once from there.</p>
+    </div>
+    <div class="win" style="display:grid;grid-template-columns:1fr 150px 1fr;align-items:center;justify-items:center;padding:120px 64px">
+      <div class="app"><div class="ic lit" style="width:200px;height:200px;border-radius:44px;display:grid;place-items:center"><svg width="130" height="130" viewBox="0 0 1024 1024"><path d="M716.4 328.0 A275 275 0 1 0 716.4 696.0" fill="none" stroke="#17150F" stroke-width="172" stroke-linecap="round"/><circle cx="512" cy="512" r="96" fill="#17150F"/></svg></div>Inlet</div>
+      <svg width="120" height="60" viewBox="0 0 120 60"><path d="M4 30h100M84 8l26 22-26 22" fill="none" stroke="#17150F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="app"><div style="width:200px;height:200px;border-radius:44px;background:var(--tile);display:grid;place-items:center"><svg width="120" height="110" viewBox="0 0 120 110"><path d="M6 14h42l10 12h56v74H6z" fill="#17150F" opacity=".85"/><path d="M6 36h108v64H6z" fill="#17150F"/></svg></div>Applications</div>
+    </div>
+    <div class="band"><span>Download</span><span>Drag</span><span>Open once</span><span>Keep it on your Mac</span></div>
+  </section>
+
+  <!-- Groups -->
+  <section class="card" id="groups">
+    <div class="copy">
+      <div class="eyebrow">Groups</div>
+      <h2>Sort your apps into <span class="hl">groups.</span></h2>
+      <p>Tap a group to see only its apps. Make your own, name them, and put them in order.</p>
+    </div>
+    <div class="win" style="padding:72px 64px">
+      <div class="row" style="gap:16px;flex-wrap:wrap">
+        <span class="pill on">All</span><span class="pill">Create</span><span class="pill">Build</span><span class="pill">Everyday</span><span class="pill">School</span><span class="pill">Other</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:44px 30px;margin-top:80px;justify-items:center">
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#FFD58A,#E8A24B)"></div>Notes</div>
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#9FD8FF,#3B82C4)"></div>Mail</div>
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#2C2E35,#0E0F12)"></div>Terminal</div>
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#FFD6E8,#C06BB5)"></div>Music</div>
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#D7F5F0,#4FB3A6)"></div>Maps</div>
+        <div class="app"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#F8E7B8,#D9A35A)"></div>Books</div>
+      </div>
+    </div>
+    <div class="band"><span>Create</span><span>Build</span><span>School</span><span>Everyday</span><span>Your own groups</span></div>
+  </section>
+
+  <!-- Arrange (edit mode) -->
+  <section class="card" id="edit">
+    <div class="copy">
+      <div class="eyebrow">Arrange</div>
+      <h2>Arrange it <span class="hl">your way.</span></h2>
+      <p>Press and hold an icon to move it. Put related apps in a folder, up to nine each.</p>
+    </div>
+    <div class="win" style="padding:80px 64px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:56px 40px;justify-items:center">
+        <div class="app" style="transform:rotate(-1.4deg)"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#9FD8FF,#3B82C4)"></div>Mail<span style="position:absolute"></span></div>
+        <div class="app" style="transform:rotate(1.2deg)"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#F2F2F5,#C9CBD3)"></div>Photos</div>
+        <div class="app" style="transform:rotate(-0.8deg)"><div style="width:132px;height:132px;border-radius:30px;background:var(--tile);display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px;box-sizing:border-box"><i class="lit" style="border-radius:6px"></i><i style="background:#9FD8FF;border-radius:6px"></i><i style="background:#FFD58A;border-radius:6px"></i><i style="background:#FFD6E8;border-radius:6px"></i><i style="background:#D7F5F0;border-radius:6px"></i><i style="background:#F8E7B8;border-radius:6px"></i></div>Folder</div>
+        <div class="app" style="transform:rotate(1.6deg)"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#2C2E35,#0E0F12)"></div>Terminal</div>
+        <div class="app" style="transform:rotate(-1.1deg)"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#FFB38A,#E0557A)"></div>Calendar</div>
+        <div class="app" style="transform:rotate(0.9deg)"><div class="ic" style="width:132px;height:132px;background:linear-gradient(180deg,#BFE9D0,#5DAA86)"></div>Notes</div>
+      </div>
+      <div class="pill" style="position:absolute;left:64px;bottom:64px;height:64px;font-size:28px;padding:0 30px">Undo</div>
+    </div>
+    <div class="band"><span>Hold to move</span><span>Folders of nine</span><span>Hide what you don't use</span></div>
+  </section>
+
+  <!-- Keyboard -->
+  <section class="card" id="keys">
+    <div class="copy">
+      <div class="eyebrow">Keyboard</div>
+      <h2>Keyboard <span class="hl">first.</span></h2>
+      <p>Option Space opens the grid from anywhere. Control Option Space opens the quick panel.</p>
+    </div>
+    <div class="win" style="padding:90px 80px;display:grid;gap:84px;align-content:center">
+      <div class="row"><span class="kc">⌥</span><span class="kc" style="min-width:300px">Space</span><span class="label" style="margin-left:20px">Open the grid</span></div>
+      <div class="row"><span class="kc">⌃</span><span class="kc">⌥</span><span class="kc" style="min-width:300px">Space</span><span class="label" style="margin-left:20px">Quick panel</span></div>
+      <div class="row"><span class="kc" style="min-width:260px">Return</span><span class="label" style="margin-left:20px">Open the top match</span></div>
+      <div class="row"><span class="kc">⌘</span><span class="kc" style="min-width:260px">Return</span><span class="label" style="margin-left:20px">Show in Finder</span></div>
+    </div>
+    <div class="band"><span>Option Space</span><span>Control Option Space</span><span>Return</span><span>Command Return</span></div>
+  </section>
+
+  <!-- Settings -->
+  <section class="card" id="settings">
+    <div class="copy">
+      <div class="eyebrow">Settings</div>
+      <h2>Settings that feel <span class="hl">like a Mac.</span></h2>
+      <p>Appearance, grid columns, search files and updates. Changes apply right away.</p>
+    </div>
+    <div class="win" style="padding:56px 72px">
+      <div class="set"><div>Appearance<small>Light, Dark or Auto</small></div><div class="row" style="gap:0;background:var(--tile);border-radius:999px;padding:6px"><span class="pill on" style="height:60px;font-size:26px;padding:0 26px">Auto</span><span class="pill" style="height:60px;font-size:26px;padding:0 26px;box-shadow:none">Light</span><span class="pill" style="height:60px;font-size:26px;padding:0 26px;box-shadow:none">Dark</span></div></div>
+      <div class="set"><div>Grid columns<small>5 to 9 columns</small></div><div style="font-size:38px;font-weight:600">7</div></div>
+      <div class="set"><div>Search files<small>Include files in search</small></div><div class="tog on"></div></div>
+      <div class="set"><div>Check for updates<small>About once a day, from GitHub</small></div><div class="tog on"></div></div>
+    </div>
+    <div class="band"><span>Light</span><span>Dark</span><span>Auto</span><span>5 to 9 columns</span></div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="card" id="privacy">
+    <div class="copy">
+      <div class="eyebrow">Privacy</div>
+      <h2>Stays on <span class="hl">your Mac.</span></h2>
+      <p>No account and no analytics. Your files and your app list never leave your Mac.</p>
+    </div>
+    <div class="win" style="padding:72px 80px;display:grid;grid-template-rows:auto 1fr;gap:48px">
+      <div style="display:flex;align-items:center;gap:36px">
+        <div class="lit" style="width:180px;height:180px;border-radius:44px;display:grid;place-items:center;flex:none"><svg width="96" height="110" viewBox="0 0 96 110"><path d="M20 48V34a28 28 0 0 1 56 0v14" fill="none" stroke="#17150F" stroke-width="12" stroke-linecap="round"/><rect x="6" y="46" width="84" height="60" rx="16" fill="#17150F"/><circle cx="48" cy="72" r="8" fill="#46E6D6"/></svg></div>
+        <div style="font-size:64px;font-weight:700;letter-spacing:-0.03em;line-height:1.05">Stays on<br>your Mac</div>
+      </div>
+      <div style="display:grid;gap:0">
+        <div class="set" style="height:96px"><div>No account</div><span class="label">Never</span></div>
+        <div class="set" style="height:96px"><div>No analytics</div><span class="label">Never</span></div>
+        <div class="set" style="height:96px"><div>Files and app list</div><span class="label">Never leave</span></div>
+      </div>
+    </div>
+    <div class="band"><span>No account</span><span>No analytics</span><span>Files stay put</span><span>Your Mac</span></div>
+  </section>
+
+  <!-- Supporter -->
+  <section class="card" id="supporter">
+    <div class="copy">
+      <div class="eyebrow">Supporter</div>
+      <h2>Support <span class="hl">Inlet.</span></h2>
+      <p>Five dollars a month. Custom themes and zones, unlimited groups, and early builds.</p>
+    </div>
+    <div class="win" style="padding:72px 80px">
+      <div class="label">Supporter</div>
+      <div style="display:flex;align-items:baseline;gap:14px;margin-top:20px"><span style="font-size:150px;font-weight:700;letter-spacing:-0.05em;line-height:1">$5</span><span style="font-size:42px;color:var(--text-2)">per month</span></div>
+      <div style="display:grid;gap:26px;margin-top:56px;font-size:38px;font-weight:500">
+        <div class="row" style="gap:24px"><i class="lit" style="width:22px;height:22px;border-radius:5px;display:inline-block"></i>Custom themes and zones</div>
+        <div class="row" style="gap:24px"><i class="lit" style="width:22px;height:22px;border-radius:5px;display:inline-block"></i>Unlimited groups</div>
+        <div class="row" style="gap:24px"><i class="lit" style="width:22px;height:22px;border-radius:5px;display:inline-block"></i>Early builds, and the 1.0 release</div>
+      </div>
+    </div>
+    <div class="band"><span>Custom themes</span><span>Unlimited groups</span><span>Early builds</span><span>1.0</span></div>
+  </section>
+
+</body>
+</html>

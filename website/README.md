@@ -19,7 +19,8 @@ You can also double-click `index.html` to open it straight from the folder. It w
 ## Files
 
 - `index.html` is the page and its markup.
-- `css/tokens.css` is a copy of the Inlet design tokens (v1.2) from `design-system/inlet-tokens.css`. Edit the source, then copy it here again.
+- `css/tokens.css` is generated. Edit `design/tokens.json` at the repo root, then run `python3 scripts/build-tokens.py`. Do not hand-edit the generated block. CI runs the script with `--check`.
+- `css/type.css` loads the self-hosted Figtree face and sets the type roles. Its scale comes from `design/tokens.json` under `type`.
 - `css/site.css` holds the page styles.
 - `css/motion.css` holds the scroll and motion styles: the sticky header, reveal on scroll, parallax on stages, and the pinned demo. Each rule either works without JavaScript or is off under `prefers-reduced-motion`.
 - `js/site.js` runs the demos: the grid, search, quick panel, settings, and spring motion. It has no dependencies.
@@ -44,6 +45,6 @@ You can also double-click `index.html` to open it straight from the folder. It w
 
 ## Notes
 
-- The page uses the SF Pro system stack. On Windows it falls back to Segoe UI, so it still looks native there.
-- The page has no analytics, no tracking, and no external requests. Fonts are system fonts, and every asset is local.
+- The site sets its type in Figtree, self-hosted from `fonts/figtree-latin-wght.woff2` (OFL). It looks the same on every system. The app itself keeps SF Pro.
+- The site has no analytics, no tracking, and no external requests. The font and every other asset are local.
 - The "Appearance" control on the page is for this demo only. It saves to the browser's local storage and does not change the app.

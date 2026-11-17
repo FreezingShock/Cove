@@ -1,0 +1,77 @@
+/* Download flow: the Mac download button, phone hand-off, version line and first-launch note.
+   Used by index.html and download.html. Phones (touch, no hover) get the email and copy
+   controls instead of the .dl-mac button, because a phone cannot install a disk image. */
+
+/* Phone-only and Mac-only pieces. Default: a Mac or a desktop browser. */
+.dl-phone-only,
+.dl-phone-cta { display: none; }
+
+/* Phones: no hover, coarse pointer. */
+@media (hover: none) and (pointer: coarse) {
+  .dl-mac { display: none !important; }
+  .dl-phone-only { display: inline-flex !important; }
+  .dl-phone-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .dl-phone-cta .btn { min-height: 52px; padding: 0 24px; font-size: 17px; }
+  .get-box .dl-phone-cta { flex-direction: column; }
+  .get-box .dl-phone-cta .btn { width: 100%; }
+}
+
+/* The version, format and platform line under the download buttons. */
+.dl-meta {
+  margin: 16px 0 0;
+  font-size: var(--fs-caption);
+  color: var(--text-2);
+  letter-spacing: 0.01em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.dl-meta span + span::before {
+  content: "·";
+  margin-right: 10px;
+  color: var(--text-3);
+}
+
+/* On phones the metadata wraps, so the dot separators are dropped and the gap does the work. */
+@media (hover: none) and (pointer: coarse) {
+  .dl-meta { gap: 6px 16px; }
+  .dl-meta span + span::before { content: none; }
+}
+
+/* Phone explanation, shown only on phones. */
+.dl-phone-note {
+  display: none;
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-2);
+  max-width: 44ch;
+}
+@media (hover: none) and (pointer: coarse) {
+  .dl-phone-note { display: block; }
+}
+
+/* Copy confirmation: the label changes inside the button, so keep its width steady. */
+.dl-copy { min-width: 132px; }
+
+/* First-launch note: a permanent part of the flow, since the app is not notarized. */
+.dl-gk {
+  margin: 22px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  background: var(--field);
+  border: 1px solid var(--hair);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-2);
+  max-width: 52ch;
+}
+.dl-gk strong { color: var(--text); font-weight: 600; }
+.dl-gk a { color: var(--text); text-decoration: underline; text-decoration-color: var(--text-3); text-underline-offset: 3px; }
+.dl-gk a:hover { text-decoration-color: var(--text); }
+
+/* The closing box: keep the Mac and phone actions in one column. */
+.get-box .get-actions .dl-meta { justify-content: center; margin-top: 4px; }
+.get-box .get-actions .dl-gk { margin-top: 6px; font-size: 14px; }
+.get-box .get-actions .btn { min-height: 52px; }
+

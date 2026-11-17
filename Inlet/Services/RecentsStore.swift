@@ -169,9 +169,13 @@ struct RecentFile: Identifiable, Hashable, Sendable {
     let url: URL
 }
 
-/// Recent files for the quick panel, from Spotlight's last-used dates.
+/// Recent files for the quick panel. Backed by Spotlight through
+/// `FileSearch.recentFiles(limit:)`, so it only returns files Spotlight knows
+/// were opened recently.
+@MainActor
 enum RecentFiles {
     static func recent(limit: Int) async -> [RecentFile] {
+        guard limit > 0 else { return [] }
         let items = await FileSearch.recentFiles(limit: limit)
         return items.map { RecentFile(name: $0.name, url: $0.url) }
     }

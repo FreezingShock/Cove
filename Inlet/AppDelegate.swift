@@ -47,6 +47,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Menu bar icon, shown or hidden by Settings > General.
         MenuBarController.shared.start()
 
+        // Pinch in on the desktop, and a hot corner, also open the grid.
+        OpenTriggers.shared.start()
+
         // Opened by Open at Login: stay quiet and let the hotkey, Dock icon or
         // menu bar icon open the grid. A normal launch still shows it.
         if !Self.wasLaunchedAsLoginItem {

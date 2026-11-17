@@ -3,7 +3,7 @@
 //  Inlet
 //
 //  Loads and saves the grid layout as JSON in Application Support, so the
-//  order, folders and hidden apps survive a relaunch.
+//  order, folders, hidden apps and groups survive a relaunch.
 //
 
 import Foundation
@@ -73,7 +73,8 @@ final class LayoutStore {
         do {
             let data = try Data(contentsOf: url)
             let decoded = try JSONDecoder().decode(GridLayout.self, from: data)
-            guard decoded.version == GridLayout.currentVersion else {
+            // Version 1 files load too: reconciling adds the groups they lack.
+            guard (1...GridLayout.currentVersion).contains(decoded.version) else {
                 throw CocoaError(.fileReadUnknown)
             }
             return decoded

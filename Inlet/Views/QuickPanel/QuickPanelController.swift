@@ -154,7 +154,7 @@ final class QuickPanelController {
         panel.isReleasedWhenClosed = false
         panel.animationBehavior = .none
         panel.onCancel = { [weak self] in self?.dismiss() }
-        panel.contentView = NSHostingView(rootView: QuickPanelView(model: model))
+        panel.contentView = NSHostingView(rootView: QuickPanelView(model: model).inletThemeRefresh())
 
         NotificationCenter.default.addObserver(
             forName: NSWindow.didResignKeyNotification,

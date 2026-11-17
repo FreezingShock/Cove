@@ -28,6 +28,8 @@ final class OverlayController {
 
     /// Created once in `configure(library:)`, then reused.
     private var panel: OverlayPanel?
+    /// Frosted desktop behind the grid, as classic Launchpad had. Fades in on open.
+    private var blurView: NSVisualEffectView?
 
     private init() {}
 
@@ -65,7 +67,27 @@ final class OverlayController {
         .environment(library)
         .environment(layoutStore)
 
-        panel.contentView = NSHostingView(rootView: root)
+        // Classic Launchpad blurs what is behind it. The blur is a sibling
+        // under the SwiftUI view, so the scrim and icons stay crisp on top.
+        let blur = NSVisualEffectView()
+        blur.material = .fullScreenUI
+        blur.blendingMode = .behindWindow
+        blur.state = .active
+        blur.alphaValue = 0
+        // Reduce Transparency: keep only the scrim, with no blur behind it.
+        blur.isHidden = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+
+        let host = NSHostingView(rootView: root)
+        let container = NSView()
+        let layers: [NSView] = [blur, host]
+        for layer in layers {
+            layer.frame = container.bounds
+            layer.autoresizingMask = [.width, .height]
+            container.addSubview(layer)
+        }
+
+        panel.contentView = container
+        self.blurView = blur
         self.panel = panel
     }
 
@@ -99,13 +121,21 @@ final class OverlayController {
         // Edit mode, Hidden panel or Undo toast from the last time.
         motion.isOpen = false
         motion.session += 1
+        blurView?.alphaValue = 0
         NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
         // The panel is on screen now; close the hotkey timing interval.
         InletSignpost.endHotkeyToVisible()
 
         DispatchQueue.main.async {
-            MainActor.assumeIsolated { self.motion.isOpen = true }
+            MainActor.assumeIsolated {
+                self.motion.isOpen = true
+                // The blur fades in with the icons' spring.
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.25
+                    self.blurView?.animator().alphaValue = 1
+                }
+            }
         }
     }
 
@@ -115,6 +145,7 @@ final class OverlayController {
         guard let panel, panel.isVisible else { return }
         panel.orderOut(nil)
         motion.isOpen = false
+        blurView?.alphaValue = 0
     }
 }
 

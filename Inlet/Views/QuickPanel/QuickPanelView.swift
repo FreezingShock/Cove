@@ -114,7 +114,7 @@ struct QuickPanelView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(RoundedRectangle(cornerRadius: InletRadius.md, style: .continuous))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(InletRowButtonStyle(cornerRadius: InletRadius.md))
                 .accessibilityLabel("Open \(file.name)")
             }
         }
@@ -127,15 +127,9 @@ struct QuickPanelView: View {
         Button(action: model.onShowAll) {
             Text("Show All Apps")
                 .font(InletFont.headline)
-                .foregroundStyle(InletColor.accentInk)
                 .frame(maxWidth: .infinity)
-                .frame(height: 40)
-                .background(
-                    RoundedRectangle(cornerRadius: InletRadius.md, style: .continuous)
-                        .fill(InletColor.accent)
-                )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(InletAccentButtonStyle(cornerRadius: InletRadius.md, fillsWidth: true, height: 40))
         .accessibilityHint("Opens the full grid of apps")
     }
 
@@ -148,12 +142,10 @@ struct QuickPanelView: View {
     }
 }
 
-/// One recent app: icon over name, with a soft hover highlight.
+/// One recent app: icon over name. Hover and press use the shared row states.
 private struct QuickAppTile: View {
     let app: AppItem
     let action: () -> Void
-
-    @State private var isHovered = false
 
     var body: some View {
         Button(action: action) {
@@ -171,15 +163,8 @@ private struct QuickAppTile: View {
             }
             .padding(.vertical, InletSpace.xs)
             .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous)
-                    .fill(isHovered ? InletColor.hover : Color.clear)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous))
-            .inletAnimation(.inletSnap, value: isHovered)
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+        .buttonStyle(InletRowButtonStyle(cornerRadius: InletRadius.row))
         .help(app.name)
         .accessibilityLabel("Open \(app.name)")
     }

@@ -48,5 +48,6 @@ struct OverlayView: View {
         .ignoresSafeArea()
         .environment(\.dismissOverlay, onDismiss)
         .inletAppearance()  // Light, Dark or Auto, from Settings > Appearance
+        .inletThemeRefresh()  // Redraws when the Supporter theme changes
     }
 }
