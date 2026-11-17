@@ -17,6 +17,14 @@ enum GridMetrics {
     static let dotsHeight: CGFloat = 56
     /// How close to a window edge a drag has to get before the page flips.
     static let edgeZone: CGFloat = 48
+
+    /// Which window edge a drag point is in: -1 for the left edge, 1 for the
+    /// right edge, and 0 anywhere else.
+    static func edgeDirection(x: CGFloat, pageWidth: CGFloat) -> Int {
+        if x < edgeZone { return -1 }
+        if x > pageWidth - edgeZone { return 1 }
+        return 0
+    }
 }
 
 /// Slot positions for a grid that holds `columns` x `rows` icons per page.
