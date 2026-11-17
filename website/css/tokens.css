@@ -9,6 +9,16 @@
    - Spacing uses one 4 pt based scale. Nothing sits on 14 or 10 any more.
 */
 
+/* ---------- Icons ----------
+   One stroke weight in the 24-unit grid (Lucide style, close to SF Symbols Regular), so rendered
+   weight scales with size. Three sizes only: sm 16, md 18, lg 20. Tiles size their glyph as a share of the tile. */
+:root {
+  --icon-stroke: 1.75;
+  --icon-sm: 16px;
+  --icon-md: 18px;
+  --icon-lg: 20px;
+}
+
 /* ---------- Light ---------- */
 :root {
   --base: #E6ECF2;

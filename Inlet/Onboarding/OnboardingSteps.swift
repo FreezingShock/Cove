@@ -132,8 +132,8 @@ struct OnboardingAppTile: View {
     var size: CGFloat = 46
 
     var body: some View {
-        Text(app.glyph)
-            .font(.system(size: size * 0.36, weight: .bold))
+        Image(systemName: app.symbol)
+            .font(.system(size: size * 0.44, weight: .semibold))
             .foregroundStyle(.white)
             .frame(width: size, height: size)
             .background(
@@ -347,7 +347,7 @@ struct DoneStep: View {
             ZStack {
                 Circle().fill(InletColor.accent)
                 Image(systemName: "checkmark")
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.system(size: 30, weight: .semibold))
                     .foregroundStyle(InletColor.accentInk)
             }
             .frame(width: 74, height: 74)

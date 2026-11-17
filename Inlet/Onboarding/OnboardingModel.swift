@@ -140,21 +140,21 @@ struct OnboardingSummaryRow: Identifiable {
 /// Stand-in apps for the practice desk. The real grid shows the user's own apps.
 struct OnboardingSampleApp: Identifiable {
     let name: String
-    let glyph: String
+    let symbol: String
     let top: Color
     let bottom: Color
 
     var id: String { name }
 
     static let all: [OnboardingSampleApp] = [
-        OnboardingSampleApp(name: "Safari", glyph: "S", top: .onboardingHex(0x5AB0FF), bottom: .onboardingHex(0x2563EB)),
-        OnboardingSampleApp(name: "Notes", glyph: "N", top: .onboardingHex(0xFFE27A), bottom: .onboardingHex(0xF5B82E)),
-        OnboardingSampleApp(name: "Music", glyph: "♪", top: .onboardingHex(0xFF7B93), bottom: .onboardingHex(0xE23D68)),
-        OnboardingSampleApp(name: "Photos", glyph: "P", top: .onboardingHex(0xB38CFF), bottom: .onboardingHex(0x7C3AED)),
-        OnboardingSampleApp(name: "Calendar", glyph: "C", top: .onboardingHex(0xFF9B8A), bottom: .onboardingHex(0xEF5B4C)),
-        OnboardingSampleApp(name: "Mail", glyph: "M", top: .onboardingHex(0x6FD3FF), bottom: .onboardingHex(0x1CA7E0)),
-        OnboardingSampleApp(name: "Maps", glyph: "A", top: .onboardingHex(0x6EE7B7), bottom: .onboardingHex(0x10B981)),
-        OnboardingSampleApp(name: "Terminal", glyph: ">_", top: .onboardingHex(0x4B5563), bottom: .onboardingHex(0x111827)),
+        OnboardingSampleApp(name: "Safari", symbol: "safari", top: .onboardingHex(0x5AB0FF), bottom: .onboardingHex(0x2563EB)),
+        OnboardingSampleApp(name: "Notes", symbol: "note.text", top: .onboardingHex(0xFFE27A), bottom: .onboardingHex(0xF5B82E)),
+        OnboardingSampleApp(name: "Music", symbol: "music.note", top: .onboardingHex(0xFF7B93), bottom: .onboardingHex(0xE23D68)),
+        OnboardingSampleApp(name: "Photos", symbol: "photo", top: .onboardingHex(0xB38CFF), bottom: .onboardingHex(0x7C3AED)),
+        OnboardingSampleApp(name: "Calendar", symbol: "calendar", top: .onboardingHex(0xFF9B8A), bottom: .onboardingHex(0xEF5B4C)),
+        OnboardingSampleApp(name: "Mail", symbol: "envelope.fill", top: .onboardingHex(0x6FD3FF), bottom: .onboardingHex(0x1CA7E0)),
+        OnboardingSampleApp(name: "Maps", symbol: "map.fill", top: .onboardingHex(0x6EE7B7), bottom: .onboardingHex(0x10B981)),
+        OnboardingSampleApp(name: "Terminal", symbol: "terminal.fill", top: .onboardingHex(0x4B5563), bottom: .onboardingHex(0x111827)),
     ]
 }
 
