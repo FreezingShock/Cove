@@ -899,7 +899,7 @@ kbd {
   border-radius: var(--r-row);
   overflow: hidden;
   border: 1px solid var(--hair);
-  background: #05070C;
+  background: var(--base);
   box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.5);
 }
 .demo-video { display: block; width: 100%; height: auto; }
