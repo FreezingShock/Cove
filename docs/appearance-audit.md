@@ -49,7 +49,7 @@ Run on macOS 26 with a build from this branch.
 3. **Page dots and onboarding progress.** The current dot and the filled progress bars must be clearly darker or brighter than the track in Light.
 4. **Calculator row.** Type `2+2` in search in both themes. The `=` must read clearly.
 5. **Settings controls.** Light: toggles, the segmented Appearance picker and the sidebar selection should show ink. Dark: toggles and selection should show aqua.
-6. **Known risk: white label on aqua in Dark.** The sidebar's selected row and the Feedback "Send" button use white labels on the system accent. Check they are readable. If they are not, use a darker Dark accent for the system tint only, or custom rows.
+6. **Sidebar and Feedback in Dark.** The Settings sidebar is now custom rows with an ink label on the glass lozenge, and the Feedback button is `InletAccentButtonStyle` (ink on aqua, about 12:1). Check that the selected row reads in both themes, and that clicking a row still switches the pane.
 7. **Delete chip.** Armed delete should be red in both themes, with white text readable.
 8. **Supporter themes.** Pick Ember and Harbor. Accent fills follow the theme, and the focus ring stays ink or aqua.
 9. **Accessibility toggles.** Increase Contrast and Reduce Transparency, one at a time, in both themes.
