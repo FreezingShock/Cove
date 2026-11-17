@@ -494,3 +494,34 @@
 }
 /* On wide screens the nav mark carries the icon, so the window can start above the fold. */
 @media (min-width: 900px) { .hero-icon { display: none; } }
+
+/* ---------- Audience icons: each sample app's own colors, with a 3D tilt on hover ---------- */
+.uc-home--rows .aud { grid-template-columns: 56px 130px minmax(0, 1fr) auto; }
+.aud-ico {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: var(--ico);
+  background: linear-gradient(160deg, var(--a), var(--b));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 14px 22px -14px var(--b);
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s ease;
+}
+.aud-ico svg { width: 24px; height: 24px; transform: translateZ(14px); }
+.uc-home--rows .aud:hover .aud-ico,
+.uc-home--rows .aud:focus-visible .aud-ico {
+  transform: perspective(520px) rotateX(16deg) rotateY(-20deg) translateY(-4px) scale(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 26px 26px 30px -16px var(--b);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aud-ico, .aud-ico svg { transition: none; transform: none; }
+  .uc-home--rows .aud:hover .aud-ico, .uc-home--rows .aud:focus-visible .aud-ico { transform: none; }
+}
+/* The old number label is replaced by the icon. */
+.aud-no { display: none; }
+@media (max-width: 760px) {
+  .uc-home--rows .aud { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+}
