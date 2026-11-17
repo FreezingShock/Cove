@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/download.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/feedback.css">
   <link rel="stylesheet" href="css/brand.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/download.html">
   <meta name="color-scheme" content="light dark">
@@ -92,13 +93,14 @@
     <p class="lede">Download the disk image, drag Inlet into Applications, and open it. Inlet needs macOS 26 or later. It is not notarized by Apple, so the first launch takes one extra step.</p>
     <div class="download-row">
       <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download for Mac</a>
+      <a class="btn btn-ghost dl-mac" href="install.html">Install guide, with pictures</a>
       <div class="dl-phone-cta">
         <a class="btn btn-primary" href="mailto:?subject=Inlet%20for%20Mac&amp;body=Install%20Inlet%20on%20your%20Mac.%20Open%20this%20link%20there%3A%0A%0Ahttps%3A%2F%2Fgithub.com%2FFreezingShock%2FInlet%2Freleases%2Flatest%2Fdownload%2FInlet.dmg">Email me the link</a>
         <button class="btn btn-ghost dl-copy" type="button" data-copy="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg">Copy link</button>
       </div>
       <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet/releases" target="_blank" rel="noopener">All releases on GitHub</a>
     </div>
-    <p class="dl-meta" aria-label="Download details"><span data-release="version">Version 0.1</span><span>Disk image (.dmg)</span><span data-release="size" hidden></span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
+    <p class="dl-meta" role="group" aria-label="Download details"><span data-release="version">Version 0.1</span><span>Disk image (.dmg)</span><span data-release="size" hidden></span><span>macOS 26 or later</span><span>Apple silicon and Intel</span></p>
     <p class="dl-phone-note">Inlet installs on a Mac, not on a phone. Email the link to yourself, then open it on your Mac.</p>
     <div class="chips-row" aria-label="Requirements">
       <span>macOS 26 or later</span>
@@ -107,6 +109,7 @@
     <p class="note"><strong>No release is out yet?</strong> The download button points to the newest published release on GitHub. If it shows a GitHub 404 page, no release has been published yet. Until one is, you can <a href="#build">build Inlet from source</a>.</p>
     <ul class="on-page" aria-label="On this page">
       <li><a href="#install">Install</a></li>
+      <li><a href="install.html">Install guide</a></li>
       <li><a href="#first-launch">First launch</a></li>
       <li><a href="#build">Build from source</a></li>
       <li><a href="#updates">Updates</a></li>
@@ -146,34 +149,11 @@
 
   <section class="wrap band bg-grain" id="first-launch">
     <h2 class="h-section">Get past the first-launch warning.</h2>
-    <p class="lede">Inlet is not notarized by Apple, so macOS blocks it the first time you open it. Allow it once after you install, then it opens like any other app. Use either method below.</p>
-    <ol class="steps">
-      <li>
-        <div>
-          <h3>In Finder</h3>
-          <ol>
-            <li>Open Inlet. macOS says it cannot verify the app. Click <strong>Done</strong>.</li>
-            <li>Open <strong>System Settings</strong>, then <strong>Privacy &amp; Security</strong>.</li>
-            <li>Scroll to the Security section and click <strong>Open Anyway</strong> next to Inlet. Confirm with your password.</li>
-          </ol>
-          <p>macOS keeps the Open Anyway button for a short time after the first attempt. If it is gone, open Inlet again and it will return.</p>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>In Terminal</h3>
-          <p>Remove the download flag from the app, then open Inlet as usual:</p>
-          <pre class="cmd">xattr -dr com.apple.quarantine /Applications/Inlet.app</pre>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>Choose what Inlet starts with</h3>
-          <p>Open at login is a setting, not a requirement. Turn it on in Settings, General if you want Inlet to start when you log in. Inlet doesn't ask for Accessibility or Screen Recording access in version 1.</p>
-          <p>Right-click does not bypass this check on recent macOS releases, so use one of the two methods above.</p>
-        </div>
-      </li>
-    </ol>
+    <p class="lede">Inlet is not notarized by Apple, so macOS blocks it the first time you open it. You allow it once, in Privacy &amp; Security, and then it opens like any other app.</p>
+    <div class="download-row">
+      <a class="btn btn-primary" href="install.html#allow">Show me the Open Anyway step</a>
+      <a class="btn btn-ghost" href="install.html">Full install guide</a>
+    </div>
   </section>
 
   <section class="wrap band" id="build">
@@ -235,7 +215,7 @@
 </main>
 
 <footer class="wrap foot">
-  <div class="foot-products" aria-label="Start here">
+  <div class="foot-products" role="group" aria-label="Start here">
     <a class="foot-card" href="download.html">
       <span class="foot-tile"><svg class="" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
       <span><b>Inlet for Mac</b><small>Download the build, or build it yourself with Xcode.</small></span>
@@ -299,6 +279,7 @@
 <script src="js/download.js" defer></script>
 <script src="js/nav.js" defer></script>
 <script src="js/jump.js" defer></script>
+<script src="js/feedback.js" defer></script>
 <script src="js/motion.js" defer></script>
 </body>
 </html>

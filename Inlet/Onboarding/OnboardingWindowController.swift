@@ -21,6 +21,17 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
 
     private var window: NSWindow?
     private var model: OnboardingModel?
+    /// The app's installed apps and saved layout. Set once at launch, so
+    /// the groups step can show counts and write the choice.
+    private var library: AppLibrary?
+    private var layoutStore: LayoutStore?
+
+    /// Hands over the app's shared objects. AppDelegate calls this before
+    /// the first-launch check.
+    func configure(library: AppLibrary, layoutStore: LayoutStore) {
+        self.library = library
+        self.layoutStore = layoutStore
+    }
 
     /// Opens setup on launch, unless the user already finished it.
     static func showOnFirstLaunch() {
@@ -36,7 +47,7 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         }
 
         // A new model each time, so reopening from Help starts over at Welcome.
-        let model = OnboardingModel()
+        let model = OnboardingModel(layoutStore: layoutStore, library: library)
         model.onRequestFront = { [weak self] in
             self?.bringToFront()
         }

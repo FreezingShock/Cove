@@ -26,6 +26,7 @@ You can also double-click `index.html` to open it straight from the folder. It w
 - `js/site.js` runs the demos: the grid, search, quick panel, settings, and spring motion. It has no dependencies.
 - `js/scroll.js` runs the scroll behavior: header state, reveal, the section highlight in the nav, focus on anchor jumps, and the pinned demo, where the video scrubs with scroll. The pin turns on only when motion is allowed and the section fits in the window.
 - `404.html` is the page for a missing address. GitHub Pages serves it for any unknown path. It is `noindex`.
+- `changelog.html` has the roadmap and the release notes. The notes sit between the `release-notes:start` and `release-notes:end` markers. `scripts/release/render-changelog.py` fills them from the published GitHub Releases when the site is built, so the page never calls the API in a visitor's browser. With no release it shows the empty state. Styles are in `css/changelog.css`.
 - `robots.txt`, `sitemap.xml` and `site.webmanifest` sit at the site root. The sitemap lists every indexable page. Keep it in step when you add a page.
 - `favicon.ico` and `apple-touch-icon.png` are at the root. `assets/icons/` holds the 16, 32, 192 and 512 px PNGs for the browser tab and the web app manifest.
 - `assets/` holds the Inlet app icon as SVG and PNG.

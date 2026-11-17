@@ -200,7 +200,7 @@ struct HabitStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(
-                eyebrow: "Step 1 of 4",
+                eyebrow: "Step 1 of 5",
                 title: "How do you open apps today?",
                 lead: "This sets the shortcut we suggest later. You can change everything in Settings."
             )
@@ -247,7 +247,7 @@ struct AccessStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(
-                eyebrow: "Step 2 of 4",
+                eyebrow: "Step 2 of 5",
                 title: "Two choices, no permissions",
                 lead: "Inlet doesn't ask macOS for any permission, so there are no prompts to approve. These two settings only change what Inlet does, and you can change both later."
             )

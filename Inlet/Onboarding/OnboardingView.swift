@@ -4,7 +4,8 @@
 //
 //  The setup window's frame: the progress bars, the current screen, and the
 //  footer with Back, Skip and Continue. The screens are in
-//  OnboardingSteps.swift and OnboardingShortcutSteps.swift.
+//  OnboardingSteps.swift, OnboardingGroupsStep.swift and
+//  OnboardingShortcutSteps.swift.
 //
 
 import SwiftUI
@@ -71,6 +72,8 @@ struct OnboardingView: View {
             HabitStep(model: model)
         case .access:
             AccessStep(model: model)
+        case .groups:
+            GroupsStep(model: model)
         case .shortcut:
             ShortcutStep(model: model)
         case .tryIt:
