@@ -443,23 +443,6 @@ main p a:hover,
 }
 .foot-hint kbd { height: 20px; min-width: 20px; padding: 0 5px; font-size: 11px; box-shadow: none; }
 
-/* ---------- Page transitions ----------
-   Same-origin links cross-fade where the View Transitions API is supported. Elsewhere,
-   a short fade-in on load does the same job. Both are off under Reduce Motion. */
-@view-transition { navigation: auto; }
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) { animation: vt-out var(--dur-fast) var(--ease-exit) both; }
-  ::view-transition-new(root) { animation: vt-in 0.36s var(--ease-standard) both; }
-}
-@keyframes vt-out { to { opacity: 0; } }
-@keyframes vt-in { from { opacity: 0; } }
-@supports not (view-transition-name: none) {
-  @media (prefers-reduced-motion: no-preference) {
-    body { animation: page-in var(--dur-slow) var(--ease-fade) both; }
-  }
-}
-@keyframes page-in { from { opacity: 0; } }
-
 /* ---------- Responsive footer ---------- */
 @media (max-width: 900px) {
   .foot { grid-template-columns: minmax(0, 1fr); }

@@ -17,26 +17,14 @@
     });
   }
   window.addEventListener("scroll", requestFrame, { passive: true });
-  window.addEventListener("resize", function () { layoutScrub(); requestFrame(); });
+  window.addEventListener("resize", function () { measureScroll(); layoutScrub(); requestFrame(); });
 
   /* ---------- Sticky header: a hairline and blur once the page has moved ---------- */
   frameHooks.push(function () {
     if (nav) nav.classList.toggle("is-scrolled", window.scrollY > 8);
   });
 
-  /* ---------- Anchor jumps: move focus to the target so keyboard users land there ---------- */
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest && e.target.closest('a[href^="#"]');
-    if (!a) return;
-    var id = a.getAttribute("href").slice(1);
-    var target = id && document.getElementById(id);
-    if (!target) return;
-    if (!target.hasAttribute("tabindex")) {
-      target.setAttribute("tabindex", "-1");
-      target.addEventListener("blur", function () { target.removeAttribute("tabindex"); }, { once: true });
-    }
-    setTimeout(function () { target.focus({ preventScroll: true }); }, 0);
-  });
+  /* Anchor jumps and reading progress live in js/jump.js, which every page loads. */
 
   /* ---------- Scroll-spy: the nav link for the section in view gets aria-current ---------- */
   var links = Array.prototype.slice.call(document.querySelectorAll('.links a[href^="#"]'));
