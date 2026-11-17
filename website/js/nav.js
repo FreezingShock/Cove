@@ -94,7 +94,7 @@
     { group: "Sections", label: "Quick panel", hint: "Section", icon: ICON.arrow, href: toHome("#quick"), keys: "quick panel dock" },
     { group: "Sections", label: "Settings", hint: "Section", icon: ICON.arrow, href: toHome("#settings"), keys: "settings columns appearance" },
     { group: "Sections", label: "Privacy facts", hint: "Section", icon: ICON.arrow, href: toHome("#privacy"), keys: "privacy data accounts tracking" },
-    { group: "Sections", label: "Motion", hint: "Section", icon: ICON.arrow, href: toHome("#motion"), keys: "motion spring animation reduce" },
+    { group: "Sections", label: "Motion", hint: "Section", icon: ICON.arrow, href: "designers.html", keys: "motion spring animation reduce" },
     { group: "Sections", label: "Get Inlet", hint: "Section", icon: ICON.arrow, href: toHome("#get"), keys: "get inlet download github" },
 
     { group: "Actions", label: "Appearance: Auto", hint: "Theme", icon: ICON.theme, action: themeAction("auto"), keys: "theme appearance auto system" },
