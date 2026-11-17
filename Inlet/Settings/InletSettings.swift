@@ -53,6 +53,8 @@ enum InletSettings {
         case activeTheme              = "inlet.themes.active"                    // String, an AppTheme id, "inlet"
         case customThemes             = "inlet.themes.custom"                    // Data, JSON [AppTheme]
         case zones                    = "inlet.zones"                            // Data, JSON [GridZone]
+        // Privacy
+        case crashReports             = "inlet.privacy.crashReports"             // Bool, false
     }
 
     /// Values for `Appearance`. Stored as the raw string.
@@ -85,6 +87,7 @@ enum InletSettings {
             Key.quickPanelRecentFiles.rawValue: 3,
             Key.supporterActive.rawValue: false,
             Key.activeTheme.rawValue: AppTheme.standard.id,
+            Key.crashReports.rawValue: false,
         ])
         // Theme colors and sizes are read by the tokens on every draw, so the
         // saved theme has to be loaded before the first window opens.
@@ -155,6 +158,11 @@ enum InletSettings {
 
     static var f4Opens: Bool {
         UserDefaults.standard.bool(forKey: Key.f4Opens.rawValue)
+    }
+
+    /// Whether crash reports are collected. Off unless the user turns it on.
+    static var crashReportsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: Key.crashReports.rawValue)
     }
 
     static var closeAfterLaunch: Bool {
