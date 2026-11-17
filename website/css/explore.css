@@ -64,7 +64,7 @@ section[id] { scroll-margin-top: 88px; }
     border-color var(--dur-base) var(--ease-fade),
     background-color var(--dur-base) var(--ease-fade);
 }
-.uc-card:hover { transform: translate3d(0, -3px, 0); border-color: var(--accent); }
+.uc-card:hover { transform: translate3d(0, -3px, 0); border-color: var(--text); }
 .uc-card:active { transform: scale(0.99); }
 .uc-card:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 .uc-tile {
@@ -197,4 +197,8 @@ section[id] { scroll-margin-top: 88px; }
   .uc-hero { padding-block: 48px 32px; }
   .uc-item { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .uc-item .n { padding-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-card, .uc-card:hover { transform: none; transition: none; }
 }
