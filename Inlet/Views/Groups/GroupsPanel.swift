@@ -190,7 +190,8 @@ struct GroupsPanel: View {
                 )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Icon \(symbol)")
+        .help(AppGroup.name(forSymbol: symbol))
+        .accessibilityLabel("\(AppGroup.name(forSymbol: symbol)) icon")
         .accessibilityAddTraits(chosen ? .isSelected : [])
     }
 

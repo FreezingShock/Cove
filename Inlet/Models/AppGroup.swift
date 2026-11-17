@@ -55,13 +55,46 @@ struct AppGroup: Codable, Hashable, Identifiable, Sendable {
         }
     }
 
-    /// Icons the Groups panel offers. Each one is a standard SF Symbol.
+    /// Icons the Groups panel offers, six to a row. Each one is a standard
+    /// SF Symbol. The six preset icons come first, so every preset's starting
+    /// icon is in the picker. The rest are grouped by what people file apps under.
     static let symbolChoices: [String] = [
-        "star", "heart", "bolt", "flame", "leaf", "moon",
+        // Presets
         "paintbrush.pointed", "hammer", "book", "house", "gamecontroller", "square.grid.2x2",
-        "music.note", "camera", "film", "briefcase", "cart", "airplane",
-        "globe", "envelope", "bubble.left", "creditcard", "gift", "terminal",
+        // Work and study
+        "briefcase", "graduationcap", "pencil.and.ruler", "chart.bar", "doc.text", "terminal",
+        // Media
+        "music.note", "camera", "photo", "film", "headphones", "tv",
+        // Everyday life
+        "heart", "figure.run", "fork.knife", "cart", "airplane", "car",
+        // Communication and money
+        "globe", "envelope", "bubble.left", "creditcard", "gift", "star",
+        // Extras
+        "bolt", "flame", "leaf", "moon", "sparkles", "trophy",
     ]
+
+    /// The plain name for each icon choice. VoiceOver reads it, and the picker
+    /// shows it as a tooltip, so a user hears "Games" rather than a symbol name.
+    private static let symbolNames: [String: String] = [
+        "paintbrush.pointed": "Drawing", "hammer": "Tools", "book": "Reading",
+        "house": "Home", "gamecontroller": "Games", "square.grid.2x2": "Grid",
+        "briefcase": "Work", "graduationcap": "School", "pencil.and.ruler": "Design",
+        "chart.bar": "Charts", "doc.text": "Documents", "terminal": "Terminal",
+        "music.note": "Music", "camera": "Camera", "photo": "Photos",
+        "film": "Video", "headphones": "Audio", "tv": "TV",
+        "heart": "Favorites", "figure.run": "Fitness", "fork.knife": "Food",
+        "cart": "Shopping", "airplane": "Travel", "car": "Car",
+        "globe": "Web", "envelope": "Mail", "bubble.left": "Chat",
+        "creditcard": "Money", "gift": "Gifts", "star": "Starred",
+        "bolt": "Quick", "flame": "Hot", "leaf": "Nature",
+        "moon": "Night", "sparkles": "Fun", "trophy": "Awards",
+    ]
+
+    /// The readable name for an icon. Falls back to the symbol's own name for
+    /// one this table does not know.
+    static func name(forSymbol symbol: String) -> String {
+        symbolNames[symbol] ?? symbol.replacingOccurrences(of: ".", with: " ")
+    }
 
     /// Trims the name and caps its length. Returns nil when nothing is left,
     /// so an empty name is never saved.
