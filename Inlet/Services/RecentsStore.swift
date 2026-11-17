@@ -169,12 +169,14 @@ struct RecentFile: Identifiable, Hashable, Sendable {
     let url: URL
 }
 
-/// Recent files for the quick panel.
-/// TEMPORARY STUB: returns nothing until the Spotlight service (PR #5,
-/// `FileSearch.recentFiles(limit:)`) merges. Then this body is replaced by a call to it.
+/// Recent files for the quick panel. Backed by Spotlight through
+/// `FileSearch.recentFiles(limit:)`, so it only returns files Spotlight knows
+/// were opened recently.
+@MainActor
 enum RecentFiles {
     static func recent(limit: Int) async -> [RecentFile] {
-        _ = limit
-        return []
+        guard limit > 0 else { return [] }
+        let items = await FileSearch.recentFiles(limit: limit)
+        return items.map { RecentFile(name: $0.name, url: $0.url) }
     }
 }
