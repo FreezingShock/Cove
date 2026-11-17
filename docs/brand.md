@@ -14,9 +14,12 @@ The model is the Grid icon. It is one aqua tile among ink tiles. The brand takes
 | Aqua (accent) | `#46E6D6` | `#46E6D6` | The one accent. Fills only. |
 | Ink tile | ink at 10% | cream at 12% | Unlit tiles, placeholders |
 | Hairline | ink at 13% | cream at 12% | Borders and dividers |
+| Focus | ink `#17150F` | aqua `#46E6D6` | Keyboard focus rings, drop targets, the current page dot, progress. Aqua is 1.35:1 on cream, so Light uses ink. |
 
 Rules:
 - Aqua is a fill, never text. Aqua on cream is a 1.3:1 contrast, so it can't carry a label.
+- Anything that must stand out from cream (a ring, a marker, a state) uses `focus`, not `accent`. In Dark it is the same aqua.
+- The macOS system accent (`AccentColor` in the asset catalog) is ink in Light, so system toggles, sidebar selection and prominent buttons carry white or ink labels with contrast. It is aqua in Dark, the same as the brand accent.
 - Ink sits on aqua for every label. Ink on aqua is about 12:1.
 - Text stays at 4.5:1 or better on its surface. The check is in `scripts/check-website.py` and the token build.
 - There are no secondary hues. The old lilac, citrus, sage and clay tints and the glow colors are gone. Glows are aqua at low alpha.

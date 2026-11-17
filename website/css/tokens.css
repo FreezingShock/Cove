@@ -60,7 +60,7 @@
   --sel-shadow: rgba(70,50,20,0.14);
   --hover: rgba(60,45,20,0.06);
   --scrim: rgba(244,239,230,0.46);
-  --track: rgba(23,21,15,0.45);
+  --track: rgba(23,21,15,0.50);
   --knob: #FFFFFF;
   --field: rgba(60,45,20,0.06);
   --icon-shadow: rgba(70,50,20,0.22);
@@ -68,6 +68,7 @@
   --accent-hover: #3FDCCB;
   --accent-pressed: #2CC9B8;
   --pressed: rgba(60,45,20,0.10);
+  --focus: #17150F;
   color-scheme: light;
 }
 /* Dark (system) */
@@ -117,6 +118,7 @@
     --accent-hover: #6BEADB;
     --accent-pressed: #34C7B6;
     --pressed: rgba(255,250,240,0.12);
+    --focus: #46E6D6;
     color-scheme: dark;
   }
 }
@@ -166,6 +168,7 @@
   --accent-hover: #6BEADB;
   --accent-pressed: #34C7B6;
   --pressed: rgba(255,250,240,0.12);
+  --focus: #46E6D6;
   color-scheme: dark;
 }
 /* Light (forced, for side-by-side sheets) */
@@ -206,7 +209,7 @@
   --sel-shadow: rgba(70,50,20,0.14);
   --hover: rgba(60,45,20,0.06);
   --scrim: rgba(244,239,230,0.46);
-  --track: rgba(23,21,15,0.45);
+  --track: rgba(23,21,15,0.50);
   --knob: #FFFFFF;
   --field: rgba(60,45,20,0.06);
   --icon-shadow: rgba(70,50,20,0.22);
@@ -214,6 +217,7 @@
   --accent-hover: #3FDCCB;
   --accent-pressed: #2CC9B8;
   --pressed: rgba(60,45,20,0.10);
+  --focus: #17150F;
   color-scheme: light;
 }
 /* END GENERATED: color */

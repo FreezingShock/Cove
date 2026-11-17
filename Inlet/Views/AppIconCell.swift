@@ -62,11 +62,11 @@ struct AppIconCell: View {
                         .opacity(isTopHit ? 1 : 0)
                 }
             }
-            // Keyboard focus ring (T3.5). Accent is a fill or control state, never text.
+            // Keyboard focus ring (T3.5). Uses `focus`, so it reads on cream in Light.
             .overlay {
                 if isKeyboardFocused {
                     RoundedRectangle(cornerRadius: InletRadius.row, style: .continuous)
-                        .strokeBorder(InletColor.accent, lineWidth: 2)
+                        .strokeBorder(InletColor.focus, lineWidth: 2)
                 }
             }
             // ⌘1 to ⌘9 hint, in the top-left corner. Hidden for VoiceOver:

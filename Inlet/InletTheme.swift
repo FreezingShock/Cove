@@ -113,8 +113,8 @@ enum InletColor {
     static let hover = Color.inlet(light: .init(r: 0.2353, g: 0.1765, b: 0.0784, a: 0.06), dark: .init(r: 1, g: 0.9804, b: 0.9412, a: 0.07))
     /// rgba(244,239,230,0.46) / rgba(5,9,8,0.46)
     static var scrim: Color { ThemeRuntime.color(.veil, light: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.46), dark: .init(r: 0.0196, g: 0.0353, b: 0.0314, a: 0.46)) }
-    /// rgba(23,21,15,0.45) / rgba(244,239,230,0.40)
-    static let track = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.45), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.4))
+    /// rgba(23,21,15,0.50) / rgba(244,239,230,0.40)
+    static let track = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588, a: 0.5), dark: .init(r: 0.9569, g: 0.9373, b: 0.902, a: 0.4))
     /// #FFFFFF / #F4EFE6
     static let knob = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.9569, g: 0.9373, b: 0.902))
     /// rgba(60,45,20,0.06) / rgba(255,250,240,0.07)
@@ -127,6 +127,8 @@ enum InletColor {
     static let accentPressed = Color.inlet(light: .init(r: 0.1725, g: 0.7882, b: 0.7216), dark: .init(r: 0.2039, g: 0.7804, b: 0.7137))
     /// rgba(60,45,20,0.10) / rgba(255,250,240,0.12)
     static let pressed = Color.inlet(light: .init(r: 0.2353, g: 0.1765, b: 0.0784, a: 0.1), dark: .init(r: 1, g: 0.9804, b: 0.9412, a: 0.12))
+    /// #17150F / #46E6D6
+    static let focus = Color.inlet(light: .init(r: 0.0902, g: 0.0824, b: 0.0588), dark: .init(r: 0.2745, g: 0.902, b: 0.8392))
 // END GENERATED: colors
 }
 
