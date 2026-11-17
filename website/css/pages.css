@@ -631,3 +631,42 @@ html { scroll-behavior: smooth; }
 .steps li > div > ol > li::before { content: none; }
 .steps li > div > ol { margin-top: 4px; }
 .steps li > div > ol > li + li { margin-top: 10px; }
+
+/* ---------- Pricing ---------- */
+.cards.plans { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card.plan { display: flex; flex-direction: column; padding: 32px 30px; }
+.plan-kicker { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-2); }
+.plan-price { display: flex; align-items: baseline; gap: 10px; margin-top: 14px; }
+.plan-price .amount { font-size: 52px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--text); }
+.plan-price .per { font-size: 15px; color: var(--text-2); }
+.plan-lede { margin-top: 14px; font-size: 15px; color: var(--text-2); text-wrap: pretty; }
+.plan-list { list-style: none; margin: 24px 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.plan-list li {
+  position: relative;
+  padding: 12px 0 12px 22px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 15px;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+.plan-list li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 21px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.plan-cta { margin-top: auto; align-self: flex-start; min-height: 44px; }
+.plan-supporter { border-color: var(--sel-ring, var(--hair)); }
+.plan-cta.is-disabled { background: var(--field); color: var(--text-2); border-color: var(--hair); cursor: default; pointer-events: none; }
+.plan .plan-cta { margin-top: 32px; }
+@media (max-width: 900px) {
+  .cards.plans { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .card.plan { padding: 26px 22px; }
+  .plan-price .amount { font-size: 44px; }
+}

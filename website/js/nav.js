@@ -85,6 +85,7 @@
     { group: "Pages", label: "Home", hint: "Page", icon: ICON.home, href: "index.html", keys: "home start inlet landing" },
     { group: "Pages", label: "Features", hint: "Page", icon: ICON.doc, href: "features.html", keys: "features search settings motion" },
     { group: "Pages", label: "Download", hint: "Page", icon: ICON.doc, href: "download.html", keys: "download install dmg mac requirements" },
+    { group: "Pages", label: "Pricing", hint: "Page", icon: ICON.doc, href: "pricing.html", keys: "pricing price cost free supporter subscription plan" },
     { group: "Pages", label: "Changelog", hint: "Page", icon: ICON.doc, href: "changelog.html", keys: "changelog releases version notes" },
     { group: "Pages", label: "FAQ", hint: "Page", icon: ICON.doc, href: "faq.html", keys: "faq questions help" },
     { group: "Pages", label: "Privacy", hint: "Page", icon: ICON.lock, href: "privacy.html", keys: "privacy data tracking update check" },
