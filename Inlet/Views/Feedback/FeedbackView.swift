@@ -118,7 +118,7 @@ struct FeedbackView: View {
             Button("Open GitHub Issue") {
                 openIssue()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(InletAccentButtonStyle())  // ink label on aqua, 12:1 in Dark
             .keyboardShortcut(.defaultAction)
         }
     }
