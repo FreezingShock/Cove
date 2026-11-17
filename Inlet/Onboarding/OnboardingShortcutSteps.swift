@@ -18,7 +18,7 @@ struct ShortcutStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(
-                eyebrow: "Step 3 of 4",
+                eyebrow: "Step 4 of 5",
                 title: "Pick your shortcut",
                 lead: "Press it from anywhere to open Inlet. Choose what opens, how you press it, and which keys to use."
             )
@@ -209,7 +209,7 @@ struct TryStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(
-                eyebrow: "Step 4 of 4",
+                eyebrow: "Step 5 of 5",
                 title: "Try it out",
                 lead: "Press \(model.hotkeyLabel) from anywhere. Inlet opens right here, and you can type to search."
             )

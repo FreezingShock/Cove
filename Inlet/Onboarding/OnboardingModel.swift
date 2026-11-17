@@ -10,6 +10,8 @@
 //  - Habit: only suggests a starting shortcut. Nothing is stored.
 //  - Files and Folders: InletSettings.Key.searchIncludesFiles, written at once.
 //  - Open at Login: SMAppService.mainApp, changed at once.
+//  - Groups: which preset groups start on. Written to the layout when setup
+//    finishes, so closing the window early leaves the grid as it was.
 //  - Shortcut: the KeyboardShortcuts name of the chosen surface. Saved when the
 //    user moves forward from the shortcut step, because the try step needs it.
 //  - Try it: borrows HotkeyManager's two handlers while the step is on screen,
@@ -36,10 +38,10 @@ enum OnboardingKeys {
 
 /// The screens in order. `done` is the summary after the try step.
 enum OnboardingStep: Int, CaseIterable {
-    case welcome, habit, access, shortcut, tryIt, done
+    case welcome, habit, access, groups, shortcut, tryIt, done
 
     /// Progress bars above the content. One per screen before the summary.
-    static let barCount = 5
+    static let barCount = 6
 }
 
 /// The answer to "how do you open apps today?". Only used to suggest a shortcut.
@@ -188,14 +190,20 @@ final class OnboardingModel {
     private(set) var openAtLogin: Bool
     private(set) var loginError: String?
 
-    // MARK: Step 3: shortcut
+    // MARK: Step 3: groups
+
+    /// The preset groups that start on. Only the six presets are offered here;
+    /// custom groups are added later from the Groups panel.
+    private(set) var presetChoices: Set<AppCategory>
+
+    // MARK: Step 4: shortcut
 
     var surface: OnboardingSurface = .grid
     var press: OnboardingPress = .tap
     var modifiers: NSEvent.ModifierFlags = [.option]
     var key: OnboardingKey = .space
 
-    // MARK: Step 4: try it
+    // MARK: Step 5: try it
 
     private(set) var tried = false
     /// True while the practice desk is open.
@@ -207,6 +215,11 @@ final class OnboardingModel {
     /// real hotkey opens the desk while another app is active.
     var onRequestFront: (() -> Void)?
 
+    /// The saved layout the group choice is written to. Nil in previews.
+    private let layoutStore: LayoutStore?
+    /// Installed apps, for counting each group and moving apps on change.
+    private let library: AppLibrary?
+
     private var isTrying = false
     private var savedGridHandler: (() -> Void)?
     private var savedQuickHandler: (() -> Void)?
@@ -215,8 +228,16 @@ final class OnboardingModel {
     private static weak var trying: OnboardingModel?
     private static var keyUpInstalled = false
 
-    init() {
+    init(layoutStore: LayoutStore? = nil, library: AppLibrary? = nil) {
         let defaults = UserDefaults.standard
+        self.layoutStore = layoutStore
+        self.library = library
+        // Reopening from Help starts with the groups the user already has.
+        // A fresh install has none saved yet, so all six start on.
+        let existing = layoutStore?.layout.groups ?? []
+        presetChoices = existing.isEmpty
+            ? Set(AppCategory.allCases)
+            : Set(AppCategory.allCases.filter { category in existing.contains { $0.id == category.rawValue } })
         includeFiles = defaults.bool(forKey: InletSettings.Key.searchIncludesFiles.rawValue)
         openAtLogin = SMAppService.mainApp.status == .enabled
         press = OnboardingPress(rawValue: defaults.string(forKey: OnboardingKeys.pressMode) ?? "") ?? .tap
@@ -264,7 +285,22 @@ final class OnboardingModel {
         openAtLogin = SMAppService.mainApp.status == .enabled
     }
 
-    // MARK: Step 3: the shortcut
+    // MARK: Step 3: groups
+
+    func togglePreset(_ category: AppCategory) {
+        if presetChoices.contains(category) {
+            presetChoices.remove(category)
+        } else {
+            presetChoices.insert(category)
+        }
+    }
+
+    /// How many installed apps the category's group would start with.
+    func appCount(in category: AppCategory) -> Int {
+        library?.apps.filter { $0.category == category }.count ?? 0
+    }
+
+    // MARK: Step 4: the shortcut
 
     var shortcut: KeyboardShortcuts.Shortcut {
         KeyboardShortcuts.Shortcut(key.keyboardKey, modifiers: modifiers)
@@ -319,6 +355,7 @@ final class OnboardingModel {
 
     var canContinue: Bool {
         switch step {
+        case .groups: !presetChoices.isEmpty
         case .shortcut: shortcutBlock == nil
         case .tryIt: tried
         default: true
@@ -361,6 +398,7 @@ final class OnboardingModel {
     /// Ends setup. Called by "Start using Inlet", so it does not open at the next launch.
     func finish() {
         endTrial()
+        layoutStore?.update { $0.setPresetGroups(presetChoices, apps: library?.apps ?? []) }
         UserDefaults.standard.set(true, forKey: OnboardingKeys.completed)
     }
 
@@ -376,7 +414,7 @@ final class OnboardingModel {
         defaults.set(press.rawValue, forKey: OnboardingKeys.pressMode)
     }
 
-    // MARK: Step 4: practice desk
+    // MARK: Step 5: practice desk
 
     /// Runs on each press of a Inlet hotkey while the try step is up. Only the
     /// hotkey for the surface being set up opens the desk; the other is ignored.
@@ -479,6 +517,7 @@ final class OnboardingModel {
     var summaryRows: [OnboardingSummaryRow] {
         [
             OnboardingSummaryRow(label: "Shortcut", value: hotkeyLabel),
+            OnboardingSummaryRow(label: "Groups", value: "\(presetChoices.count) of \(AppCategory.allCases.count)"),
             OnboardingSummaryRow(label: "What opens", value: surface.label),
             OnboardingSummaryRow(label: "Press", value: press == .tap ? "Tap to toggle" : "Hold to peek"),
             OnboardingSummaryRow(label: "Files and Folders", value: includeFiles ? "On" : "Off"),

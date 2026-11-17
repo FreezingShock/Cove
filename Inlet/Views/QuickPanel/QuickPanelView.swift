@@ -43,9 +43,7 @@ struct QuickPanelView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: InletSpace.l) {
             appsSection
-            if !model.files.isEmpty {
-                filesSection
-            }
+            filesSection
             showAllButton
         }
         .padding(InletSpace.panelPad)
@@ -86,6 +84,14 @@ struct QuickPanelView: View {
     private var filesSection: some View {
         VStack(alignment: .leading, spacing: InletSpace.xs) {
             sectionLabel("Recent files")
+            if model.files.isEmpty {
+                // Spotlight has no last-used files yet, or the query is still running.
+                Text("Files you open show up here.")
+                    .font(InletFont.caption)
+                    .foregroundStyle(InletText.secondary(contrast))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, InletSpace.s)
+            }
             ForEach(model.files) { file in
                 Button {
                     model.onOpenFile(file)
