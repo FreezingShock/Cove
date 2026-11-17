@@ -1,0 +1,161 @@
+/* Release notes on the changelog page.
+   The list is written at build time by scripts/release/render-changelog.py from the
+   published GitHub Releases. Colors, type and radii come from tokens.css and type.css.
+   Loads after pages.css. */
+
+.release-band { --sec-y: 88px; }
+.release-head { max-width: 760px; }
+.release-head .h-section { max-width: 24ch; }
+.release-head .lede { margin-top: 18px; max-width: 60ch; }
+
+/* Empty state, shown until the first release is published */
+.release-empty {
+  margin-top: 48px;
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  max-width: 62ch;
+  padding: 32px;
+  border-radius: var(--r-panel);
+  background: var(--field);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.release-empty-title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.release-empty p:not(.release-empty-title) { color: var(--text-2); font-size: var(--fs-small); line-height: var(--lh-small); text-wrap: pretty; }
+.release-empty-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
+/* The release list */
+.releases { list-style: none; margin: 56px 0 0; padding: 0; }
+.release {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+  gap: 40px;
+  padding: 40px 0;
+  border-top: 1px solid var(--hair);
+  scroll-margin-top: 96px;
+}
+.release:first-child { border-top: 0; padding-top: 0; }
+.release:last-child { padding-bottom: 0; }
+
+.release-meta {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+.release-ver {
+  font-size: 28px;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.release-date { font-size: 14px; color: var(--text-3); }
+.release-date time { font-variant-numeric: tabular-nums; }
+.release-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.release-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: var(--r-pill);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.release-tag.is-latest { color: var(--accent-ink); background: var(--accent); box-shadow: none; }
+
+.release-body { min-width: 0; max-width: 66ch; }
+.release-body > * + * { margin-top: 14px; }
+.release-body p { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-2); text-wrap: pretty; }
+.release-body ul,
+.release-body ol { padding: 0; list-style: none; display: grid; gap: 10px; }
+.release-body li {
+  position: relative;
+  padding-left: 22px;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+.release-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.release-body ol { counter-reset: rl; }
+.release-body ol > li { counter-increment: rl; }
+.release-body ol > li::before {
+  content: counter(rl) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.release-body strong { color: var(--text); font-weight: 600; }
+.release-body a,
+.release-link a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--hair);
+  text-underline-offset: 3px;
+}
+.release-body a:hover,
+.release-link a:hover { text-decoration-color: var(--accent); }
+.release-body a:focus-visible,
+.release-link a:focus-visible,
+.release-empty a:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; border-radius: 4px; }
+.release-body code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.92em;
+  padding: 1px 6px;
+  border-radius: var(--r-xs);
+  background: var(--field);
+  color: var(--text);
+}
+.release-body pre {
+  overflow-x: auto;
+  padding: 14px 16px;
+  border-radius: var(--r-sm);
+  background: var(--field);
+  color: var(--text);
+}
+.release-body pre code { padding: 0; background: none; }
+.release-body blockquote {
+  margin-left: 0;
+  padding-left: 16px;
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.release-body .release-sub {
+  margin-top: 26px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.release-link { margin-top: 22px !important; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .release { grid-template-columns: 1fr; gap: 18px; padding: 32px 0; }
+  .release-meta { position: static; }
+  .release-ver { font-size: 24px; }
+}
+@media (max-width: 560px) {
+  .release-empty { padding: 24px 20px; }
+  .release-empty-actions .btn { flex: 1 1 auto; }
+}
