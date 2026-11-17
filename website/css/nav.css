@@ -134,6 +134,78 @@ main p a:hover,
 .nav-right { flex: none; }
 .nav :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
+/* ---------- Header states (js/nav.js sets data-phase: top, mid or end) ----------
+   mid: the progress line shows and the section label fades in next to the brand.
+   end: the progress line is full, Download turns solid, and the header stays on screen.
+   Hover (fine pointer) and no hover show different things: with the pointer on the header, the
+   label steps aside, the progress line thickens and the links take focus. Without a pointer
+   (touch), the label and the progress line carry the state. */
+.nav-progress {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-fade), height var(--dur-fast) var(--ease-fade);
+}
+.nav[data-phase="mid"] .nav-progress,
+.nav[data-phase="end"] .nav-progress { opacity: 1; }
+.nav-here {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 12px;
+  border-left: 1px solid var(--hair);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-2);
+  opacity: 0;
+  transform: translate3d(-4px, 0, 0);
+  transition: opacity var(--dur-base) var(--ease-fade), transform var(--dur-medium) var(--ease-standard);
+}
+.nav-here:empty { display: none; }
+.nav[data-phase="mid"] .nav-here,
+.nav[data-phase="end"] .nav-here { opacity: 1; transform: none; }
+.nav[data-phase="end"] .nav-here { color: var(--text); }
+
+/* Download: outlined through the top and middle of the page, solid once you reach the end. */
+.nav:not([data-phase="end"]) .nav-right .dl-mac {
+  background: var(--field);
+  color: var(--text);
+  background-image: none;
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.nav:not([data-phase="end"]) .nav-right .dl-mac:hover {
+  background: var(--hover);
+  color: var(--text);
+  filter: none;
+  box-shadow: inset 0 0 0 1px var(--g-edge);
+}
+.nav[data-phase="end"] .nav-right .dl-mac {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 10px 26px -10px var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav:hover .nav-here { opacity: 0; transform: translate3d(-4px, 0, 0); }
+  .nav:hover .nav-progress { height: 3px; }
+  .nav:hover .links > a:hover,
+  .nav:hover .links > a[aria-current="page"],
+  .nav:hover .links > a[aria-current="true"] { color: var(--text); }
+}
+@media (max-width: 1180px) {
+  .nav-here { max-width: 120px; }
+}
+
 /* ---------- Desktop links ----------
    One pill slides to the link you point at, focus or are on (aria-current). js/nav.js moves it. */
 .links {
@@ -340,7 +412,21 @@ main p a:hover,
   .nav-right .dl-mac { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nav, .nav::before, .nav-inner, .links-ind { transition: none; }
+  .nav, .nav::before, .nav-inner, .links-ind, .nav-here, .nav-progress { transition: none; }
+}
+
+/* Phones cannot install the disk image, so their end state brings a "Download Inlet" button into the bar
+   (it links to the download section, which hands the link to the phone). The search icon and the
+   section label step aside to make room. */
+.nav-cta { display: none; }
+@media (max-width: 560px) {
+  .nav-here { max-width: 96px; padding-left: 10px; }
+  .nav[data-phase="end"] .nav-cta { display: inline-flex; }
+  .nav[data-phase="end"] .nav-right .search-btn { display: none; }
+  .nav[data-phase="end"] .nav-here { display: none; }
+}
+@media (max-width: 359px) {
+  .nav[data-phase="end"] .nav-cta { padding: 0 12px; }
 }
 
 /* ---------- Command palette (⌘K) ---------- */
