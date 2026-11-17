@@ -9,11 +9,30 @@
   <title>Privacy Policy · Inlet</title>
   <meta name="description" content="How Inlet handles your data. Inlet runs on your Mac and keeps its data there.">
   <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/pages.css">
   <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/motion.css">
   <style>
   /* Document layout only. Colors, type, and buttons come from tokens.css and site.css. */
   .doc-main { width: min(760px, 100%); padding-top: 56px; padding-bottom: 96px; }
@@ -246,5 +265,6 @@
 
 <script src="js/pages.js" defer></script>
 <script src="js/nav.js" defer></script>
+<script src="js/motion.js" defer></script>
 </body>
 </html>

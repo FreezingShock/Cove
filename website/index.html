@@ -6,6 +6,24 @@
   <title>Inlet for Mac: every app, one keystroke away</title>
   <meta name="description" content="Inlet is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
   <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    /* Motion setup before first paint: tier (full, lite or static) and the home-page intro. If this fails, the page shows as is. */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add("js");
+      try {
+        var n = navigator, c = n.connection || {};
+        var r = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var low = !!c.saveData || n.deviceMemory <= 2 || n.hardwareConcurrency <= 2;
+        d.setAttribute("data-motion", r ? "static" : low ? "lite" : "full");
+        if (r || !/(\/|index\.html)$/.test(location.pathname)) return;
+        var seen = sessionStorage.getItem("inlet-intro");
+        d.setAttribute("data-intro", seen ? "soft" : "full");
+        d.classList.add("intro-pending");
+        setTimeout(function () { d.classList.remove("intro-pending"); }, 4500);
+      } catch (e) { /* no storage or no matchMedia: nothing is hidden */ }
+    })();
+  </script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
@@ -516,5 +534,6 @@
 <script src="js/home.js" defer></script>
 <script src="js/download.js" defer></script>
 <script src="js/nav.js" defer></script>
+<script src="js/motion.js" defer></script>
 </body>
 </html>

@@ -64,7 +64,7 @@
   }
 
   /* ---------- Reveal: blocks rise in once when they enter the screen ---------- */
-  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box, .recipe, .proof-item, .uses-head";
+  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box, .recipe, .proof-item, .uses-head, .showcase-head, .facts";
   var revealTargets = Array.prototype.slice.call(document.querySelectorAll(REVEAL));
   if (hasIO && !reduceQuery.matches) {
     revealTargets.forEach(function (el, i) {
@@ -134,7 +134,8 @@
     track.style.setProperty("--nav-h", navH + "px");
     track.classList.remove("is-pinned");
     track.style.height = "";
-    if (reduceQuery.matches) { setPinned(false); return; }
+    // Lite and static tiers play the demo as a plain video: no pin, no per-frame seeks.
+    if (reduceQuery.matches || document.documentElement.getAttribute("data-motion") === "lite") { track.classList.remove("is-pinned"); setPinned(false); return; }
     // Pin only when the whole sticky block fits below the header, so nothing gets cut off.
     track.classList.add("is-pinned");
     var fits = inner.offsetHeight <= stickyH;
@@ -173,6 +174,8 @@
   }
 
   if (demo && track) {
+    // Tier changes (frame probe, Reduce Motion) re-check whether the pin is allowed.
+    window.addEventListener("inlet:tier", layoutScrub);
     frameHooks.push(function () { if (pinned) updateScrub(); });
     demo.addEventListener("seeked", function () { if (pinned) requestFrame(); });
     reduceQuery.addEventListener("change", layoutScrub);
