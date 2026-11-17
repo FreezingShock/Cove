@@ -403,3 +403,5 @@
 .recipe-dock { gap: 10px; justify-content: center; padding: 10px 14px; border-radius: 22px; }
 .recipe-dock .ico { width: 36px; height: 36px; border-radius: 9px; }
 .recipe-dock .ico svg { width: 50%; height: 50%; stroke: #FFFFFF; stroke-width: 1.8; }
+
+.hero-status { margin: 0 0 20px; font-size: var(--fs-caption); color: var(--text-2); }
