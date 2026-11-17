@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="css/nav.css">
   <link rel="stylesheet" href="css/explore.css">
   <link rel="stylesheet" href="css/download.css">
+  <link rel="stylesheet" href="css/ledger.css">
   <link rel="canonical" href="https://freezingshock.github.io/Inlet/">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
@@ -355,6 +356,45 @@
     </div>
   </section>
 
+  <div class="lit-band" role="note" aria-label="No accounts. No analytics. Nothing leaves your Mac.">
+    <div class="lit-band-track">
+      <ul><li>No accounts</li><li>No analytics</li><li>No search requests</li><li>Nothing leaves your Mac</li><li>MIT licensed</li></ul>
+      <ul aria-hidden="true"><li>No accounts</li><li>No analytics</li><li>No search requests</li><li>Nothing leaves your Mac</li><li>MIT licensed</li></ul>
+    </div>
+  </div>
+  <!-- Privacy -->
+  <section class="privacy ld-ink ld-full" id="privacy" aria-label="Privacy"><div class="ld-inner">
+    <div class="privacy-head">
+      <div>
+        <h2 class="h-section">Your data stays on your Mac.</h2>
+      </div>
+      <p class="lede">Inlet has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
+    </div>
+    <div class="facts">
+      <div class="fact">
+        <h3>One update check</h3>
+        <p>Inlet checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
+      </div>
+      <div class="fact">
+        <h3>No accounts</h3>
+        <p>There is no sign-in, no profile, and no sync between machines.</p>
+      </div>
+      <div class="fact">
+        <h3>Your own search</h3>
+        <p>File search uses Spotlight, which already runs on your Mac. Inlet does not build a second index.</p>
+      </div>
+      <div class="fact">
+        <h3>Reports only when you send them</h3>
+        <p>Crash reporting is off unless you turn it on. Reports stay on your Mac until you choose to share one.</p>
+      </div>
+      <div class="fact">
+        <h3>Erase history</h3>
+        <p>Clear the list of recent apps in one step, from Settings, Privacy.</p>
+      </div>
+    </div>
+    <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
+  </div></section>
+
   <!-- Everyday recipes and what the page is built on -->
   <section class="wrap uses" id="uses" aria-labelledby="uses-title">
     <div class="uses-head">
@@ -414,39 +454,6 @@
     </div>
   </section>
 
-
-  <!-- Privacy -->
-  <section class="wrap privacy" id="privacy">
-    <div class="privacy-head">
-      <div>
-        <h2 class="h-section">Your data stays on your Mac.</h2>
-      </div>
-      <p class="lede">Inlet has no accounts and no analytics. It doesn't send your files, your searches, or your launch history anywhere. The one connection it makes on its own is a daily update check to GitHub, and you can turn that off.</p>
-    </div>
-    <div class="facts">
-      <div class="fact">
-        <h3>One update check</h3>
-        <p>Inlet checks GitHub about once a day for new versions. You can turn that off. It never sends your files, searches, or app list.</p>
-      </div>
-      <div class="fact">
-        <h3>No accounts</h3>
-        <p>There is no sign-in, no profile, and no sync between machines.</p>
-      </div>
-      <div class="fact">
-        <h3>Your own search</h3>
-        <p>File search uses Spotlight, which already runs on your Mac. Inlet does not build a second index.</p>
-      </div>
-      <div class="fact">
-        <h3>Reports only when you send them</h3>
-        <p>Crash reporting is off unless you turn it on. Reports stay on your Mac until you choose to share one.</p>
-      </div>
-      <div class="fact">
-        <h3>Erase history</h3>
-        <p>Clear the list of recent apps in one step, from Settings, Privacy.</p>
-      </div>
-    </div>
-    <p class="privacy-link"><a href="privacy.html">Read the full privacy policy</a></p>
-  </section>
 
   <div class="tile-rule is-wide" aria-hidden="true" style="--lit:17"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="lit"></i></div>
   <!-- Get Inlet: closing call to action -->
@@ -580,5 +587,6 @@
 <script src="js/jump.js" defer></script>
 <script src="js/feedback.js" defer></script>
 <script src="js/motion.js" defer></script>
+<script src="js/ledger.js" defer></script>
 </body>
 </html>
