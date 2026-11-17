@@ -23,7 +23,7 @@ enum GridMetrics {
 ///
 /// Pages sit side by side: page `n` starts at `n * pageWidth`. Everything is
 /// measured in "grid space", where the first page starts at x = 0.
-struct GridGeometry {
+struct GridGeometry: Equatable {
     let columns: Int
     let rows: Int
     let cellSize: CGSize

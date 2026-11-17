@@ -119,7 +119,7 @@ struct GroupBar: View {
             }
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(InletRowButtonStyle(cornerRadius: InletRadius.pill))
         .accessibilityLabel(title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }

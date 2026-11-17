@@ -18,12 +18,12 @@ struct FileResultRow: View {
             Image(nsImage: NSWorkspace.shared.icon(forFile: item.url.path))
                 .resizable()
                 .interpolation(.high)
-                .frame(width: 30, height: 30)
+                .frame(width: InletSize.rowIcon, height: InletSize.rowIcon)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: InletSpace.xxs) {
                 Text(item.name)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(InletFont.rowTitle)
                     .foregroundStyle(InletColor.text)
                     .lineLimit(1)
                     .truncationMode(.middle)
