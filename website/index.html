@@ -5,28 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Inlet for Mac: every app, one keystroke away</title>
   <meta name="description" content="Inlet is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
+  <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/type.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/motion.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/nav.css">
-  <link rel="canonical" href="https://freezingshock.github.io/Cove/">
+  <link rel="canonical" href="https://freezingshock.github.io/Inlet/">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#E6ECF2" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#05070C" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0B110F" media="(prefers-color-scheme: dark)">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Inlet">
   <meta property="og:title" content="Inlet for Mac: every app, one keystroke away">
   <meta property="og:description" content="A full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.">
-  <meta property="og:url" content="https://freezingshock.github.io/Cove/">
-  <meta property="og:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <meta property="og:url" content="https://freezingshock.github.io/Inlet/">
+  <meta property="og:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Inlet for Mac: every app, one keystroke away">
   <meta name="twitter:description" content="A full-screen grid and search for your Mac. Your apps and files stay on your Mac.">
-  <meta name="twitter:image" content="https://freezingshock.github.io/Cove/assets/launch/og-image.png">
+  <meta name="twitter:image" content="https://freezingshock.github.io/Inlet/assets/launch/og-image.png">
   <meta name="twitter:image:alt" content="Inlet grid of sample apps beside the headline Every app, one keystroke away.">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="assets/inlet-icon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
@@ -39,25 +41,25 @@
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://freezingshock.github.io/Cove/#website",
-      "url": "https://freezingshock.github.io/Cove/",
+      "@id": "https://freezingshock.github.io/Inlet/#website",
+      "url": "https://freezingshock.github.io/Inlet/",
       "name": "Inlet",
       "inLanguage": "en",
       "description": "Inlet is a full-screen app grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac."
     },
     {
       "@type": "SoftwareApplication",
-      "@id": "https://freezingshock.github.io/Cove/#app",
+      "@id": "https://freezingshock.github.io/Inlet/#app",
       "name": "Inlet",
-      "url": "https://freezingshock.github.io/Cove/",
+      "url": "https://freezingshock.github.io/Inlet/",
       "description": "A full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "macOS 26 or later",
-      "image": "https://freezingshock.github.io/Cove/assets/icons/icon-512.png",
+      "image": "https://freezingshock.github.io/Inlet/assets/icons/icon-512.png",
       "publisher": {
         "@type": "Organization",
         "name": "Inlet",
-        "url": "https://freezingshock.github.io/Cove/"
+        "url": "https://freezingshock.github.io/Inlet/"
       }
     }
   ]
@@ -78,6 +80,7 @@
     <nav class="links" id="siteLinks" aria-label="Site">
       <a href="features.html">Features</a>
       <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
       <a href="changelog.html">Changelog</a>
       <a href="faq.html">FAQ</a>
       <div class="menu-extra">
@@ -183,7 +186,7 @@
   <section class="wrap feature" id="features">
     <div class="copy">
       <h2 class="h-feature">Search finds apps and files together.</h2>
-      <p class="body-2">The grid filters as you type. The best match is highlighted, and matching files appear underneath. Anything Spotlight can find, Inlet can find too.</p>
+      <p class="body-2">The grid filters as you type. The best match is highlighted, and matching files appear below it.</p>
       <ul class="specs">
         <li>Return opens the top hit</li>
         <li>Files come from Spotlight</li>
@@ -191,7 +194,7 @@
     </div>
     <div class="stage search-stage" role="region" aria-label="Search demo">
       <div class="scrim">
-        <div class="glass capsule searchbar bloom">
+        <div class="glass capsule searchbar">
           <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
           <input id="q" type="search" placeholder="Search apps and files" aria-label="Search sample apps and files" autocomplete="off" spellcheck="false">
         </div>
@@ -202,7 +205,7 @@
         </div>
         <div class="grid sm" id="searchGrid"></div>
         <p class="empty" id="emptyMsg" hidden>Nothing matches that search.</p>
-        <div class="files glass bloom" id="filesPanel" hidden>
+        <div class="files glass" id="filesPanel" hidden>
           <p class="eyebrow">Files</p>
           <ul class="rows" id="fileRows"></ul>
         </div>
@@ -211,10 +214,10 @@
   </section>
 
   <!-- Feature: quick panel -->
-  <section class="wrap feature rev" id="quick">
+  <section class="wrap feature" id="quick">
     <div class="copy">
       <h2 class="h-feature">A quick panel from your Dock.</h2>
-      <p class="body-2">Click the Inlet icon in the Dock for a compact panel with recent apps, recent files, and a button for the full grid. It rises from the icon and closes without a bounce.</p>
+      <p class="body-2">Click the Inlet icon in the Dock for a compact panel with recent apps, recent files, and a button for the full grid.</p>
       <ul class="specs">
         <li>Recent apps: 4, 8 or 12, eight by default</li>
         <li>Recent files: 0 to 5, three by default</li>
@@ -223,9 +226,8 @@
     </div>
     <div class="stage qp-stage" role="region" aria-label="Quick panel demo">
       <div class="scrim">
-        <div class="ghost" aria-hidden="true"></div>
         <div class="qp-wrap" id="qpWrap">
-          <div class="qp glass bloom" id="qp">
+          <div class="qp glass" id="qp">
             <div class="qp-search glass capsule">
               <svg class="sm-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg>
               <span>Search</span>
@@ -269,7 +271,7 @@
           <span class="org-hidden-label">Hidden</span>
           <div class="org-hidden-list" id="orgHiddenList"></div>
         </div>
-        <div class="org-folder glass bloom" id="orgFolder" role="region" aria-labelledby="orgFolderName" hidden>
+        <div class="org-folder glass" id="orgFolder" role="region" aria-labelledby="orgFolderName" hidden>
           <div class="org-folder-head">
             <b id="orgFolderName">Folder</b>
             <button class="capsule-btn glass capsule" type="button" id="orgFolderClose">Done</button>
@@ -285,10 +287,10 @@
   </section>
 
   <!-- Feature: settings -->
-  <section class="wrap feature rev" id="settings">
+  <section class="wrap feature" id="settings">
     <div class="copy">
-      <h2 class="h-feature">Set it up your way.</h2>
-      <p class="body-2">Pick how many columns the grid shows, and whether Inlet is light, dark, or follows your Mac. Changes apply right away.</p>
+      <h2 class="h-feature">Two settings. Changes apply right away.</h2>
+      <p class="body-2">Pick how many columns the grid shows, and whether Inlet is light, dark, or follows your Mac.</p>
       <ul class="specs">
         <li>5 to 9 columns</li>
         <li>Light, Dark, or Auto</li>
@@ -296,7 +298,7 @@
     </div>
     <div class="stage settings-stage" role="region" aria-label="Settings demo">
       <div class="scrim">
-        <div class="group glass bloom">
+        <div class="group glass">
           <div class="row">
             <label for="cols">Columns</label>
             <div class="row-ctrl">
@@ -396,15 +398,15 @@
     </div>
     <div class="stage motion-stage" role="region" aria-label="Spring demo">
       <div class="scrim">
-        <div class="mcard glass bloom" data-spring="open" data-from="0" data-to="1">
+        <div class="mcard glass" data-spring="open" data-from="0" data-to="1">
           <div class="mhead"><b>Open</b><span>0.46 s · bounce 0.24</span></div>
           <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
         </div>
-        <div class="mcard glass bloom" data-spring="press" data-from="0" data-to="1">
+        <div class="mcard glass" data-spring="press" data-from="0" data-to="1">
           <div class="mhead"><b>Press</b><span>0.26 s · bounce 0.42</span></div>
           <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
         </div>
-        <div class="mcard glass bloom" data-spring="dismiss" data-from="1" data-to="0">
+        <div class="mcard glass" data-spring="dismiss" data-from="1" data-to="0">
           <div class="mhead"><b>Dismiss</b><span>0.26 s · no bounce</span></div>
           <div class="mrow"><div class="mtrack"><i class="mdot"></i></div><button class="play" type="button">Play</button></div>
         </div>
@@ -460,8 +462,8 @@
         </div>
       </div>
       <div class="get-actions">
-        <a class="btn btn-primary" href="https://github.com/FreezingShock/Cove/releases/latest/download/Inlet.dmg" rel="noopener">Download Inlet</a>
-        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-primary" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" rel="noopener">Download Inlet</a>
+        <a class="btn btn-ghost" href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">View on GitHub</a>
       </div>
     </div>
   </section>
@@ -483,6 +485,7 @@
       <p class="foot-h">Product</p>
       <a href="features.html">Features</a>
       <a href="download.html">Download</a>
+      <a href="pricing.html">Pricing</a>
       <a href="changelog.html">Changelog</a>
     </div>
     <div class="foot-col">
@@ -493,7 +496,7 @@
     </div>
     <div class="foot-col">
       <p class="foot-h">Project</p>
-      <a href="https://github.com/FreezingShock/Cove" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/FreezingShock/Inlet" target="_blank" rel="noopener">GitHub</a>
     </div>
   </nav>
   <div class="foot-bar">

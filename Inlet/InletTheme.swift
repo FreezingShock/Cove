@@ -3,7 +3,7 @@
 //  Inlet
 //
 //  Design tokens from the Inlet design system, v1.2 (theme-spec.md section 12;
-//  values from design-system/inlet-tokens.css). Colors, shape, spacing, type,
+//  values from design-system/cove-tokens.css). Colors, shape, spacing, type,
 //  spring motion, glass, and the accessibility fallbacks.
 //  Target: macOS 26. Written against Apple's docs (checked 2026-11-16) but
 //  not compiled yet: build in Xcode 26 and fix anything the compiler flags.
@@ -251,20 +251,24 @@ enum InletSize {
 
 // MARK: - Type (SF Pro throughout; see spec section 7a)
 
-/// SwiftUI has no 650 weight, so the spec's 650 becomes .semibold (600).
-/// Hierarchy comes from size and weight, not color.
+// BEGIN GENERATED: type. Source: design/tokens.json, built by scripts/build-tokens.py.
+// Edit the JSON and rerun the script; do not hand-edit this block.
+
+/// Type roles. SF Pro throughout, through Font.system, which picks the optical size itself.
+/// SwiftUI has no 650 weight, so the spec's 650 becomes .semibold.
 enum InletFont {
-    static let wordmark = Font.system(size: 28, weight: .semibold)  // Display (v1.2: 28)
-    static let title = Font.system(size: 20, weight: .semibold)     // Title
-    static let headline = Font.system(size: 15, weight: .semibold)  // Headline: top hit and row titles
-    static let subhead = Font.system(size: 15)                      // Subhead (v1.2: 15)
-    static let body = Font.system(size: 13)                         // Body
+    static let wordmark = Font.system(size: 28, weight: .semibold)  // Display: wordmark and onboarding title
+    static let title = Font.system(size: 20, weight: .semibold)  // Title
+    static let headline = Font.system(size: 15, weight: .semibold)  // Top hit and row titles
+    static let subhead = Font.system(size: 15)  // Subhead: intro copy and grid labels
+    static let body = Font.system(size: 13)  // Body
     static let section = Font.system(size: 13, weight: .semibold)  // Section label on the launcher
-    static let caption = Font.system(size: 12)                      // Caption: paths, footers
-    static let label = Font.system(size: 11, weight: .semibold)    // Label: use with textCase(.uppercase)
-    static let search = Font.system(size: 18)                      // Launcher search input
+    static let caption = Font.system(size: 12)  // Caption: paths, footers
+    static let label = Font.system(size: 11, weight: .semibold)  // Label: use with textCase(.uppercase)
+    static let search = Font.system(size: 18)  // Launcher search input
     static let iconLabel = Font.system(size: 12, weight: .medium)  // One line under each icon
 }
+// END GENERATED: type
 
 /// Tracking values from the spec, converted from em to points.
 enum InletTracking {

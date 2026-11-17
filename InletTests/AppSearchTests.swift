@@ -2,8 +2,9 @@
 //  AppSearchTests.swift
 //  InletTests
 //
-//  Checks how app search ranks matches: exact, prefix, word, initials, and
-//  loose letter matches, plus launch counts breaking ties.
+//  Checks the rules behind the search field: accents and case are ignored,
+//  exact names beat prefixes, prefixes beat word matches, and an empty query
+//  keeps the grid as it was.
 //
 
 import XCTest
@@ -20,53 +21,37 @@ final class AppSearchTests: XCTestCase {
         )
     }
 
-    func testInitialsFindMultiWordName() {
-        let apps = [app("Visual Studio Code"), app("Chrome"), app("Mail")]
-
-        XCTAssertEqual(AppSearch.results(for: "vsc", in: apps).map(\.name), ["Visual Studio Code"])
-    }
-
-    func testLettersInOrderFindNameWithGaps() {
-        let apps = [app("Visual Studio Code"), app("Chrome"), app("Mail")]
-
-        XCTAssertEqual(AppSearch.results(for: "chrm", in: apps).map(\.name), ["Chrome"])
-    }
-
-    func testTwoLettersDoNotMatchLooseLetters() {
-        let apps = [app("Chrome")]
-
-        XCTAssertTrue(AppSearch.results(for: "cm", in: apps).isEmpty)
-    }
-
-    func testExactMatchComesBeforePrefix() {
-        let apps = [app("Mail Merge"), app("Mail")]
-
-        XCTAssertEqual(AppSearch.results(for: "mail", in: apps).map(\.name), ["Mail", "Mail Merge"])
-    }
-
-    func testLaunchCountBreaksTiesWithinARank() {
-        let mailMerge = app("Mail Merge")
-        let mailNotes = app("Mail Notes")
-        let usage = [mailNotes.id: 3]
-
-        let results = AppSearch.results(for: "mail", in: [mailMerge, mailNotes], usage: usage)
-
-        XCTAssertEqual(results.map(\.name), ["Mail Notes", "Mail Merge"])
-    }
-
-    func testLaunchCountNeverBeatsABetterRank() {
-        let gmail = app("Gmail")
-        let mailMerge = app("Mail Merge")
-        let usage = [gmail.id: 99]
-
-        let results = AppSearch.results(for: "mail", in: [gmail, mailMerge], usage: usage)
-
-        XCTAssertEqual(results.map(\.name), ["Mail Merge", "Gmail"])
-    }
-
-    func testEmptyQueryKeepsEveryAppInOrder() {
-        let apps = [app("Mail"), app("Chrome"), app("Notes")]
+    func testEmptyQueryReturnsEveryAppInOrder() {
+        let apps = [app("Mail"), app("Maps"), app("Notes")]
 
         XCTAssertEqual(AppSearch.results(for: "   ", in: apps), apps)
+    }
+
+    func testExactThenPrefixThenWordThenContains() {
+        let apps = [app("Gmail Archive"), app("Apple Mail"), app("Mail Merge"), app("Mail")]
+
+        let names = AppSearch.results(for: "mail", in: apps).map(\.name)
+
+        XCTAssertEqual(names, ["Mail", "Mail Merge", "Apple Mail", "Gmail Archive"])
+    }
+
+    func testIgnoresCaseAndAccents() {
+        let apps = [app("Café"), app("Safari")]
+
+        XCTAssertEqual(AppSearch.results(for: "CAFE", in: apps).map(\.name), ["Café"])
+        XCTAssertEqual(AppSearch.results(for: "safari", in: apps).map(\.name), ["Safari"])
+    }
+
+    func testNoMatchReturnsNothing() {
+        let apps = [app("Mail"), app("Notes")]
+
+        XCTAssertTrue(AppSearch.results(for: "zzz", in: apps).isEmpty)
+    }
+
+    func testTiesKeepGridOrder() {
+        // Both names are word matches for "pro", so the input order must hold.
+        let apps = [app("Adobe Pro"), app("Xcode Pro")]
+
+        XCTAssertEqual(AppSearch.results(for: "pro", in: apps).map(\.name), ["Adobe Pro", "Xcode Pro"])
     }
 }
