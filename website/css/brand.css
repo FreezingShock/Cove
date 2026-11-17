@@ -13,6 +13,31 @@
   :root:not([data-theme="light"]) { --tile: rgba(244, 239, 230, 0.12); }
 }
 
+/* Page-level ink tokens. .bg-ink redefines --text and friends for its children, so a light card placed inside an ink band (the roadmap) reads these instead. Values match the color block in tokens.css. */
+:root {
+  --page-ink: #17150F;
+  --page-ink-2: rgba(23, 21, 15, 0.76);
+  --page-ink-3: rgba(23, 21, 15, 0.64);
+  --page-hair: rgba(60, 45, 20, 0.13);
+  --page-field: rgba(60, 45, 20, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-ink: #F4EFE6;
+    --page-ink-2: rgba(244, 239, 230, 0.78);
+    --page-ink-3: rgba(244, 239, 230, 0.60);
+    --page-hair: rgba(244, 239, 230, 0.12);
+    --page-field: rgba(255, 250, 240, 0.07);
+  }
+}
+:root[data-theme="dark"] {
+  --page-ink: #F4EFE6;
+  --page-ink-2: rgba(244, 239, 230, 0.78);
+  --page-ink-3: rgba(244, 239, 230, 0.60);
+  --page-hair: rgba(244, 239, 230, 0.12);
+  --page-field: rgba(255, 250, 240, 0.07);
+}
+
 /* ---- Call to action: aqua fill, ink label. The one accent carries the action. ---- */
 .btn-primary { background: var(--accent); color: var(--accent-ink); }
 .btn-primary:hover { background: var(--accent-hover); }
@@ -173,7 +198,8 @@
   background: rgba(23, 21, 15, 0.10);
   border-color: transparent;
 }
-.get .get-box .dl-gk a { color: var(--accent-ink); }
+.get .get-box .dl-gk a,
+.get .get-box .dl-gk strong { color: var(--accent-ink); }
 
 /* ---- Section backgrounds: the rhythm of the page. ----
    Four treatments sit on top of the cream ground (no class):
