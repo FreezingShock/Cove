@@ -44,6 +44,12 @@ enum InletSettings {
         case dockClickOpens           = "inlet.quickPanel.dockClickOpens"        // String, "quickPanel" or "grid"
         case quickPanelRecentApps     = "inlet.quickPanel.recentApps"            // Int, 4, 8 or 12, 8
         case quickPanelRecentFiles    = "inlet.quickPanel.recentFiles"           // Int, 0...5, 3
+
+        // Supporter: custom themes and zones. Honor-based gate, see Supporter.swift
+        case supporterActive          = "inlet.supporter.active"                 // Bool, false
+        case activeTheme              = "inlet.themes.active"                    // String, an AppTheme id, "inlet"
+        case customThemes             = "inlet.themes.custom"                    // Data, JSON [AppTheme]
+        case zones                    = "inlet.zones"                            // Data, JSON [GridZone]
     }
 
     /// Values for `Appearance`. Stored as the raw string.
@@ -71,7 +77,12 @@ enum InletSettings {
             Key.dockClickOpens.rawValue: DockClickAction.quickPanel.rawValue,
             Key.quickPanelRecentApps.rawValue: 8,
             Key.quickPanelRecentFiles.rawValue: 3,
+            Key.supporterActive.rawValue: false,
+            Key.activeTheme.rawValue: AppTheme.standard.id,
         ])
+        // Theme colors and sizes are read by the tokens on every draw, so the
+        // saved theme has to be loaded before the first window opens.
+        ThemeRuntime.loadFromDefaults()
     }
 
     // MARK: - Typed reads for non-view code

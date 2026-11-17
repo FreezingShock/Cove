@@ -34,12 +34,14 @@ struct AppIconCell: View {
                     .interpolation(.high)
                     .frame(width: InletSize.gridIcon, height: InletSize.gridIcon)
 
-                Text(app.name)
-                    .font(InletFont.iconLabel)
-                    .foregroundStyle(InletColor.text)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: InletSize.gridCell.width - InletSpace.l)
+                if ThemeRuntime.showsLabels {
+                    Text(app.name)
+                        .font(ThemeRuntime.labelFont)
+                        .foregroundStyle(InletColor.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: InletSize.gridCell.width - InletSpace.l)
+                }
             }
             .padding(.vertical, InletSpace.s + InletSpace.xxs)
             .frame(width: InletSize.gridCell.width - InletSpace.s)

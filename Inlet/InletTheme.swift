@@ -40,9 +40,15 @@ extension Color {
 /// Accent is a fill, never text: use `text` for any text that was aqua.
 enum InletColor {
     /// #E6ECF2 / #05070C
-    static let base = Color.inlet(light: .init(r: 0.902, g: 0.925, b: 0.949), dark: .init(r: 0.020, g: 0.027, b: 0.047))
+    static var base: Color {
+        Color.inlet(light: ThemeRuntime.background(.init(r: 0.902, g: 0.925, b: 0.949)),
+                    dark: ThemeRuntime.background(.init(r: 0.020, g: 0.027, b: 0.047)))
+    }
     /// #F6F8FB / #0B0F18
-    static let base2 = Color.inlet(light: .init(r: 0.965, g: 0.973, b: 0.984), dark: .init(r: 0.043, g: 0.059, b: 0.094))
+    static var base2: Color {
+        Color.inlet(light: ThemeRuntime.background(.init(r: 0.965, g: 0.973, b: 0.984)),
+                    dark: ThemeRuntime.background(.init(r: 0.043, g: 0.059, b: 0.094)))
+    }
     /// rgba(70,230,214,0.42) / rgba(48,196,186,0.36)
     static let glowA = Color.inlet(light: .init(r: 0.275, g: 0.902, b: 0.839, a: 0.42), dark: .init(r: 0.188, g: 0.769, b: 0.729, a: 0.36))
     /// rgba(122,138,255,0.34) / rgba(70,90,200,0.34)
@@ -50,7 +56,10 @@ enum InletColor {
     /// rgba(255,255,255,0.85) / rgba(120,90,220,0.16)
     static let glowC = Color.inlet(light: .init(r: 1, g: 1, b: 1, a: 0.85), dark: .init(r: 0.471, g: 0.353, b: 0.863, a: 0.16))
     /// #F4F6F9 / #161A22
-    static let window = Color.inlet(light: .init(r: 0.957, g: 0.965, b: 0.976), dark: .init(r: 0.086, g: 0.102, b: 0.133))
+    static var window: Color {
+        Color.inlet(light: ThemeRuntime.background(.init(r: 0.957, g: 0.965, b: 0.976)),
+                    dark: ThemeRuntime.background(.init(r: 0.086, g: 0.102, b: 0.133)))
+    }
     /// #FFFFFF / rgba(255,255,255,0.055)
     static let grouped = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 1, g: 1, b: 1, a: 0.055))
     /// #0B111C / #FFFFFF
@@ -62,15 +71,36 @@ enum InletColor {
     /// rgba(12,22,44,0.10) / rgba(255,255,255,0.12)
     static let hair = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.10), dark: .init(r: 1, g: 1, b: 1, a: 0.12))
     /// #0A7F74 / #3FD9C9. Fills and controls: cursor, Dock dot, switches, sliders, selected segment.
-    static let accent = Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455), dark: .init(r: 0.247, g: 0.851, b: 0.788))
+    /// A Supporter theme can replace this with its own accent.
+    static var accent: Color {
+        guard let custom = ThemeRuntime.customAccent else {
+            return Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455), dark: .init(r: 0.247, g: 0.851, b: 0.788))
+        }
+        return Color(red: custom.r, green: custom.g, blue: custom.b)
+    }
     /// #FFFFFF / #022522
-    static let accentInk = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.008, g: 0.145, b: 0.133))
+    /// White or near-black, whichever reads better on a custom accent.
+    static var accentInk: Color {
+        guard let custom = ThemeRuntime.customAccent else {
+            return Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.008, g: 0.145, b: 0.133))
+        }
+        let ink = ThemeColor.inkOn(custom)
+        return Color(red: ink.r, green: ink.g, blue: ink.b)
+    }
     /// rgba(10,127,116,0.14) / rgba(63,217,201,0.16)
-    static let accentSoft = Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455, a: 0.14), dark: .init(r: 0.247, g: 0.851, b: 0.788, a: 0.16))
+    static var accentSoft: Color {
+        guard let custom = ThemeRuntime.customAccent else {
+            return Color.inlet(light: .init(r: 0.039, g: 0.498, b: 0.455, a: 0.14), dark: .init(r: 0.247, g: 0.851, b: 0.788, a: 0.16))
+        }
+        return Color(red: custom.r, green: custom.g, blue: custom.b, opacity: 0.15)
+    }
     /// #46E6D6 in both appearances. The logo keeps the brighter aqua.
     static let logoAqua = Color(red: 0.275, green: 0.902, blue: 0.839)
     /// rgba(250,252,255,0.50) / rgba(12,16,26,0.55)
-    static let gFill = Color.inlet(light: .init(r: 0.980, g: 0.988, b: 1.000, a: 0.50), dark: .init(r: 0.047, g: 0.063, b: 0.102, a: 0.55))
+    static var gFill: Color {
+        Color.inlet(light: ThemeRuntime.glass(.init(r: 0.980, g: 0.988, b: 1.000, a: 0.50)),
+                    dark: ThemeRuntime.glass(.init(r: 0.047, g: 0.063, b: 0.102, a: 0.55)))
+    }
     /// #FFFFFF / #242A35. Replaces glass under Reduce Transparency and Increase Contrast.
     static let gSolid = Color.inlet(light: .init(r: 1, g: 1, b: 1), dark: .init(r: 0.141, g: 0.165, b: 0.208))
     /// rgba(255,255,255,0.62) / rgba(255,255,255,0.13)
@@ -110,7 +140,10 @@ enum InletColor {
     /// rgba(12,22,44,0.05) / rgba(255,255,255,0.07)
     static let hover = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.05), dark: .init(r: 1, g: 1, b: 1, a: 0.07))
     /// rgba(236,241,246,0.42) / rgba(4,6,10,0.44)
-    static let scrim = Color.inlet(light: .init(r: 0.925, g: 0.945, b: 0.965, a: 0.42), dark: .init(r: 0.016, g: 0.024, b: 0.039, a: 0.44))
+    static var scrim: Color {
+        Color.inlet(light: ThemeRuntime.veil(.init(r: 0.925, g: 0.945, b: 0.965, a: 0.42)),
+                    dark: ThemeRuntime.veil(.init(r: 0.016, g: 0.024, b: 0.039, a: 0.44)))
+    }
     /// rgba(12,22,44,0.50) / rgba(255,255,255,0.40). Meets 3:1 for control state on Light (3.3:1 on base).
     static let track = Color.inlet(light: .init(r: 0.047, g: 0.086, b: 0.173, a: 0.50), dark: .init(r: 1, g: 1, b: 1, a: 0.40))
     /// #FFFFFF / #F4F6FA
@@ -225,7 +258,8 @@ enum InletSpace {
 // MARK: - Sizes (points)
 
 enum InletSize {
-    static let gridIcon: CGFloat = 72
+    /// Artwork size from the active theme. 72 in Inlet's own look.
+    static var gridIcon: CGFloat { ThemeRuntime.iconSize }
     static let gridCell = CGSize(width: 144, height: 108)
     static let gridColumns = 7
     static let gridRowGap: CGFloat = 26
