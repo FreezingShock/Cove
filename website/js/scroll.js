@@ -64,7 +64,7 @@
   }
 
   /* ---------- Reveal: blocks rise in once when they enter the screen ---------- */
-  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box";
+  var REVEAL = ".feature .copy, .feature .stage, .privacy-head, .fact, .get-box, .recipe, .proof-item, .uses-head";
   var revealTargets = Array.prototype.slice.call(document.querySelectorAll(REVEAL));
   if (hasIO && !reduceQuery.matches) {
     revealTargets.forEach(function (el, i) {
