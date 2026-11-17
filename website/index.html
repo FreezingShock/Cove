@@ -110,20 +110,24 @@
 </header>
 
 <main id="main">
-  <!-- Hero -->
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="hero-status">In development. Requires macOS 26 or later.</p>
-        <h1 class="h-display">Every app,<br><span class="soft">one keystroke away.</span></h1>
-        <p class="lede">Inlet is a full-screen grid and search for your Mac. Press the hotkey, type a few letters, and press return. Your apps and files stay on your Mac.</p>
-        <div class="cta">
-          <a class="btn btn-primary" href="#get">Get Inlet</a>
-          <a class="btn btn-ghost" href="#features">See how it works</a>
-        </div>
-        <p class="keys"><kbd>⌥</kbd><kbd>Space</kbd><span>opens the grid by default. You can change the shortcut.</span></p>
+  <!-- Hero: the app icon, one claim, one button, then the live window (js/hero.js drives it) -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-inner">
+      <div class="hero-icon">
+        <img class="i-light" src="assets/inlet-app-icon-light.png" width="176" height="176" alt="Inlet app icon">
+        <img class="i-dark" src="assets/inlet-app-icon-dark.png" width="176" height="176" alt="" aria-hidden="true">
       </div>
+      <h1 class="h-display hero-title" id="hero-title">Launchpad is gone.<br><span class="soft">Get your app grid back.</span></h1>
+      <p class="lede hero-lede">Inlet is a full-screen grid of your apps, with search.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary dl-mac" href="https://github.com/FreezingShock/Inlet/releases/latest/download/Inlet.dmg" download>Download Inlet</a>
+        <a class="btn btn-primary dl-phone-only" href="#get">Get Inlet</a>
+        <a class="hero-link" href="#demo">See it in action</a>
+      </div>
+      <p class="hero-note"><span><kbd>⌥</kbd><kbd>Space</kbd> opens it</span><span>macOS 26 or later</span><span>In development</span></p>
+    </div>
 
+    <div class="wrap hero-stage-wrap">
       <div class="stage hero-stage" id="heroStage" role="region" aria-label="Inlet window, animated sample">
         <div class="win" id="heroWin">
           <div class="win-bar">
