@@ -16,7 +16,7 @@ struct GeneralPane: View {
     @AppStorage(InletSettings.Key.showMenuBarIcon.rawValue) private var showMenuBarIcon = true
     @AppStorage(InletSettings.Key.closeAfterLaunch.rawValue) private var closeAfterLaunch = true
     @AppStorage(InletSettings.Key.escapeClearsSearchFirst.rawValue) private var escapeClearsSearchFirst = true
-    @AppStorage(InletSettings.Key.rememberLastCategory.rawValue) private var rememberLastCategory = true
+    @AppStorage(InletSettings.Key.rememberLastGroup.rawValue) private var rememberLastGroup = true
 
     /// The login item state comes from the system, so it is read live and never stored.
     @State private var loginStatus: SMAppService.Status = SMAppService.mainApp.status
@@ -43,7 +43,7 @@ struct GeneralPane: View {
             Section {
                 Toggle("Close after launching an app", isOn: $closeAfterLaunch)
                 Toggle("Escape clears the search first", isOn: $escapeClearsSearchFirst)
-                Toggle("Remember the last category", isOn: $rememberLastCategory)
+                Toggle("Remember the last group", isOn: $rememberLastGroup)
             }
         }
         .formStyle(.grouped)
