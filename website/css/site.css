@@ -628,8 +628,7 @@ kbd {
 .caption-line { font-size: 13px; color: var(--text-3); }
 
 /* ---------- Features ---------- */
-/* Every feature reads the same way: copy on the left, the demo on the right, numbered 01 to 05. */
-body { counter-reset: feature; }
+/* Every feature reads the same way: copy on the left, the demo on the right. */
 .feature {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -637,17 +636,6 @@ body { counter-reset: feature; }
   align-items: center;
   padding: var(--sec-y) 0;
   border-top: 1px solid var(--hair);
-  counter-increment: feature;
-}
-.feature .copy::before {
-  content: counter(feature, decimal-leading-zero);
-  display: block;
-  margin-bottom: 20px;
-  font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--text-3);
-  font-variant-numeric: tabular-nums;
 }
 .feature .copy .body-2 { margin-top: 18px; font-size: 17px; max-width: 46ch; }
 .specs {
