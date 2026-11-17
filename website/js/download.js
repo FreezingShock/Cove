@@ -25,6 +25,37 @@
     button.textContent = label;
   }
 
+  // Release details come from release.json. The Website workflow adds it beside the page
+  // when it deploys. If the file is missing (for example, the page opened from disk),
+  // the built-in version stays and the size stays hidden.
+  function megabytes(bytes) {
+    return (bytes / 1048576).toFixed(1) + " MB";
+  }
+
+  function showRelease(info) {
+    if (!info) { return; }
+    if (typeof info.version === "string" && /^[0-9][0-9.]*$/.test(info.version)) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-release="version"]'), function (el) {
+        el.textContent = "Version " + info.version;
+      });
+    }
+    if (typeof info.dmg_bytes === "number" && info.dmg_bytes > 0) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-release="size"]'), function (el) {
+        el.textContent = megabytes(info.dmg_bytes);
+        el.hidden = false;
+      });
+    }
+  }
+
+  try {
+    fetch("release.json", { cache: "no-cache" })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(showRelease)
+      .catch(function () { /* keep the built-in text */ });
+  } catch (err) {
+    /* fetch is unavailable: keep the built-in text */
+  }
+
   var buttons = document.querySelectorAll("[data-copy]");
   Array.prototype.forEach.call(buttons, function (button) {
     var original = button.textContent;

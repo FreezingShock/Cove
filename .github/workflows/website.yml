@@ -29,6 +29,10 @@ on:
       - "lighthouserc.json"
       - ".github/workflows/website.yml"
   workflow_dispatch:
+  # When a release finishes on main, redeploy the site so it shows the new version and size.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
 
 permissions:
   contents: read
@@ -110,12 +114,14 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: check
-    # Only a push to main (nate's integration-to-main merge) or a manual run
-    # from main publishes the site.
+    # A push to main (nate's integration-to-main merge), a manual run from main, or a
+    # finished Release on main publishes the site.
     if: >-
       needs.check.outputs.present == 'true' &&
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      (github.event_name == 'push' ||
+       github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -139,9 +145,26 @@ jobs:
         with:
           enablement: true
 
+      # Stage a copy of the site and add release.json from the latest release, so the
+      # page shows the current version and disk image size. Without a release, the page
+      # keeps its built-in version and hides the size.
+      - name: Stage the site with the latest release info
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf _site
+          cp -R website _site
+          if gh release download --repo "$GITHUB_REPOSITORY" --pattern release.json \
+               --dir "$RUNNER_TEMP/release-info" --clobber 2>/dev/null; then
+            cp "$RUNNER_TEMP/release-info/release.json" _site/release.json
+            echo "Added release info:"; cat _site/release.json
+          else
+            echo "::notice::No release with release.json yet. The site keeps its built-in version."
+          fi
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: website
+          path: _site
 
       - id: deployment
         uses: actions/deploy-pages@v4
