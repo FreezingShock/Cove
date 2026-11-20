@@ -77,8 +77,8 @@ enum OnboardingSurface: String, CaseIterable, Identifiable {
     }
 }
 
-/// How the shortcut behaves. Hold is stored now; the overlay reads it once
-/// HotkeyManager handles key-up (see the PR notes).
+/// How the shortcut behaves. Hold opens the surface while the keys are down
+/// and closes it on release. HotkeyManager.isHoldMode reads this choice.
 enum OnboardingPress: String, CaseIterable, Identifiable {
     case tap, hold
     var id: String { rawValue }
